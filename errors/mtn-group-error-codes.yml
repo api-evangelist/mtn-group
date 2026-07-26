@@ -1,0 +1,251 @@
+generated: '2026-07-25'
+method: searched
+source: https://developers.mtn.com/getting-started/response-and-error-codes and https://momodeveloper.mtn.com/api-documentation/common-error
+format: proprietary
+rfc9457: false
+envelopes:
+- surface: MTN Developer Platform (MADAPI)
+  media_type: application/json
+  fields:
+  - timestamp
+  - status
+  - error
+  - message
+  - path
+  example:
+    timestamp: 2019-03-12T07:21:07.710+0000
+    status: 404
+    error: Not Found
+    message: No message available
+    path: /customers/278320123456
+  docs: https://developers.mtn.com/getting-started/response-and-error-codes
+- surface: MoMo Open API
+  media_type: application/json
+  fields:
+  - code
+  - message
+  docs: https://momodeveloper.mtn.com/api-documentation/common-error
+http_status_codes:
+- status: 200
+  meaning: Success
+- status: 102
+  meaning: Processing — request pending, await completion
+- status: 207
+  meaning: Multi-Status — partial failure, inspect the JSON body per component
+- status: 400
+  meaning: Bad Request
+- status: 401
+  meaning: Unauthorized
+- status: 403
+  meaning: Forbidden
+- status: 404
+  meaning: Not Found
+- status: 405
+  meaning: Method Not Allowed
+- status: 408
+  meaning: Request Timeout
+- status: 429
+  meaning: Too Many Requests
+- status: 500
+  meaning: Server Error
+- status: 503
+  meaning: Service Unavailable
+error_codes:
+- code: '0000'
+  group: success
+  description: Successful operation
+  http_status: 200
+  action: No action needed
+  surface: MADAPI
+- code: '1000'
+  group: customer
+  description: User not found
+  http_status: 404
+  action: Verify the customer identifier
+  surface: MADAPI
+- code: '1001'
+  group: customer
+  description: Request error
+  http_status: 400
+  action: Check the request format
+  surface: MADAPI
+- code: '1002'
+  group: customer
+  description: Already subscribed
+  http_status: 400
+  action: Verify subscription status before subscribing
+  surface: MADAPI
+- code: '1003'
+  group: customer
+  description: Already unsubscribed
+  http_status: 400
+  action: Verify subscription status before unsubscribing
+  surface: MADAPI
+- code: '1004'
+  group: customer
+  description: Request pending
+  http_status: 102
+  action: Await completion
+  surface: MADAPI
+- code: '1005'
+  group: customer
+  description: Retry
+  http_status: 500
+  action: Retry the request
+  surface: MADAPI
+- code: '1007'
+  group: customer
+  description: Operation timeout
+  http_status: 500
+  action: Retry with backoff
+  surface: MADAPI
+- code: '1012'
+  group: customer
+  description: Timeout
+  http_status: 408
+  action: Retry the operation
+  surface: MADAPI
+- code: '1013'
+  group: customer
+  description: Request rate exceeded
+  http_status: 429
+  action: Back off and respect rate limits
+  surface: MADAPI
+- code: '2000'
+  group: network
+  description: Connection error
+  http_status: 400
+  action: Check network connectivity
+  surface: MADAPI
+- code: '3000'
+  group: server
+  description: Service not available
+  http_status: 503
+  action: Wait and retry
+  surface: MADAPI
+- code: '3001'
+  group: server
+  description: System error
+  http_status: 500
+  action: Retry; contact support if persistent
+  surface: MADAPI
+- code: '3003'
+  group: server
+  description: Timeout
+  http_status: 408
+  action: Retry with delay
+  surface: MADAPI
+- code: '3006'
+  group: server
+  description: Rate exceeded
+  http_status: 429
+  action: Reduce request frequency
+  surface: MADAPI
+- code: '4000'
+  group: authentication
+  description: Unauthorized
+  http_status: 401
+  action: Verify credentials
+  surface: MADAPI
+- code: '4001'
+  group: authentication
+  description: Not allowed
+  http_status: 405
+  action: Check permissions
+  surface: MADAPI
+- code: '5000'
+  group: parameters
+  description: Invalid parameters
+  http_status: 400
+  action: Validate all fields
+  surface: MADAPI
+- code: '5001'
+  group: parameters
+  description: Request failed
+  http_status: 400
+  action: Review the request format
+  surface: MADAPI
+- code: '6000'
+  group: billing
+  description: Billing failed
+  http_status: 403
+  action: Review billing details
+  surface: MADAPI
+- code: '6001'
+  group: billing
+  description: Insufficient funds
+  http_status: 403
+  action: Add funds to the account
+  surface: MADAPI
+- code: RESOURCE_ALREADY_EXIST
+  group: momo
+  description: Duplicated reference id. Every request must carry a unique reference id; reusing a previous id returns
+    this error.
+  http_status: 409
+  action: Check the X-Reference-Id is unique and in UUID v4 format
+  surface: MoMo Open API
+- code: ACCESS DENIED DUE TO INVALID SUBSCRIPTION KEY
+  group: momo
+  description: Authentication failed. The Ocp-Apim-Subscription-Key header value is incorrect.
+  http_status: 401
+  action: Collection, Disbursement and Remittance have different subscription keys; try the secondary key, then
+    contact MTN support
+  surface: MoMo Open API
+- code: RESOURCE NOT FOUND
+  group: momo
+  description: Reference id not found. Occurs mostly on status GETs and implies the reference id does not exist.
+  http_status: 404
+  action: Confirm the originating request to pay / transfer was accepted with 202
+  surface: MoMo Open API
+- code: REQUEST REJECTED/ BAD REQUEST
+  group: momo
+  description: 'Request does not follow the specification: bad header values, X-Reference-Id not UUID v4, a body
+    sent to an API that takes none, unsupported special characters such as an apostrophe, invalid currency for the
+    target environment, note/message longer than 160 characters, or a malformed URL.'
+  http_status: 400
+  action: Validate headers, id format, currency and payload length
+  surface: MoMo Open API
+- code: FORBIDDEN IP
+  group: momo
+  description: Authorization failed. Calling IP is not authorised to use the Disbursement API.
+  http_status: 403
+  action: Share the originating public IP with the MTN Account Manager
+  surface: MoMo Open API
+- code: NOT_ALLOWED
+  group: momo
+  description: Authorization failed. The account authenticated via the token is restricted.
+  http_status: 500
+  action: Contact the MTN Account Manager
+  surface: MoMo Open API
+- code: NOT_ALLOWED_TARGET_ENVIRONMENT
+  group: momo
+  description: The X-Target-Environment header value is incorrect.
+  http_status: 500
+  action: 'Use the country target environment: mtnuganda, mtnghana, mtnivorycoast, mtnzambia, mtncameroon, mtnbenin,
+    mtncongo, mtnswaziland, mtnguineaconakry, mtnsouthafrica, mtnliberia, mtnsouthsudan, mtnnigeria, mtnrwanda;
+    or sandbox for test'
+  surface: MoMo Open API
+- code: INVALID_CALLBACK_URL_HOST
+  group: momo
+  description: The callback URL host differs from the host configured for the API user.
+  http_status: 500
+  action: Callback host must match the providerCallbackHost registered when the API user was created, and must be
+    a hostname not an IP
+  surface: MoMo Open API
+- code: INVALID_CURRENCY
+  group: momo
+  description: Currency not supported on the requested account.
+  http_status: 500
+  action: Use the currency code specific to the country
+  surface: MoMo Open API
+- code: SERVICE_UNAVAILABLE
+  group: momo
+  description: Service temporarily unavailable.
+  http_status: 503
+  action: Retry later or contact MTN support
+  surface: MoMo Open API
+multi_status_example:
+  systemId: RBT
+  status: Inactive
+  statusCode: 200
+  message: Request timed out.

@@ -1,0 +1,159 @@
+# MTN Group
+
+> MTN Group is Africa's largest mobile network operator, headquartered in Johannesburg, serving roughly 290 million subscribers across around 16 African markets. It runs two public developer surfaces: the MTN Developer Platform (MADAPI) at developers.mtn.com, which publishes 200+ API products across 15 African markets and lets anyone download the OpenAPI/Swagger definition for a product without an account, and momodeveloper.mtn.com, an Azure API Management portal with a self-serve sandbox for the MoMo Collection, Disbursement and Remittance APIs. The catalogue is heavily TM Forum Open API shaped.
+
+Authentication: OAuth 2.0 client_credentials against https://api.mtn.com/v1/oauth/access_token (token_type BearerToken, expires_in 3599) plus an x-api-key header. MoMo uses an Ocp-Apim-Subscription-Key per product together with a provisioned API user/key and the X-Target-Environment header. Versioning is URI-path (https://api.mtn.com/v1/...) and only the current and n-1 versions are supported. Dates are RFC 3339, MSISDNs E.123, countries ISO 3166, currencies ISO 4217. MoMo requests carry a unique X-Reference-Id (UUID v4) that acts as the idempotency and correlation key; replaying one returns 409 RESOURCE_ALREADY_EXIST.
+
+## Developer surfaces
+
+- [MTN Developer Platform](https://developers.mtn.com/): 200+ API products, anonymous spec download
+- [Getting started](https://developers.mtn.com/getting-started): account, apps and keys
+- [Understanding OAuth 2.0](https://developers.mtn.com/getting-started/understanding-oauth-20): token endpoint and grant
+- [Things every developer should know](https://developers.mtn.com/getting-started/things-every-developer-should-know): platform conventions
+- [Response and error codes](https://developers.mtn.com/getting-started/response-and-error-codes): MTN error code registry
+- [MoMo Open API](https://momodeveloper.mtn.com/): Collection, Collection Widget, Disbursements, Remittances
+- [MoMo documentation](https://momodeveloper.mtn.com/api-documentation): getting started, use cases, sandbox, errors, callbacks
+- [MoMo developer community](https://momodevelopercommunity.mtn.com/): support forum
+
+## Repository artifacts
+
+- [Authentication](authentication/mtn-group-authentication.yml): every security scheme across the harvested specifications
+- [OAuth scopes](scopes/mtn-group-scopes.yml): oauth2 schemes, flows and scopes
+- [Conventions](conventions/mtn-group-conventions.yml): auth, idempotency, versioning, tracing, async semantics
+- [Error codes](errors/mtn-group-error-codes.yml): MADAPI and MoMo error registries plus envelopes
+- [Decline codes](errors/mtn-group-decline-codes.yml): MoMo transaction failure reasons
+- [Problem types](errors/mtn-group-problem-types.yml): 4xx/5xx census derived from the specs
+- [Sandbox](sandbox/mtn-group-sandbox.yml): MoMo sandbox environments, keys and published test values
+- [Webhooks](asyncapi/mtn-group-webhooks.yml): MoMo callbacks, TMF hub/listener, 3PP notifications
+- [Components](components/mtn-group-components.yml): MoMo Collection Widget
+- [Lifecycle](lifecycle/mtn-group-lifecycle.yml): versioning and version-support policy
+- [Conformance](conformance/mtn-group-conformance.yml): TM Forum, OAuth2, CAMARA and standards posture
+- [Data model](data-model/mtn-group-data-model.yml): entity graph derived from the specs
+- [Packages](packages/mtn-group-packages.yml): community client libraries (MTN ships none)
+- [MCP](mcp/mtn-group-mcp.yml): candidate MCP tool surface derived from the specs
+- [Tool crosswalk](mcp/mtn-group-tool-crosswalk.yml): tool to operationId bindings
+- [Domain security](security/mtn-group-domain-security.yml): TLS, HSTS, DNSSEC, CAA, SPF, DMARC probe
+- [Agent skills](skills/_index.yml): packaged operating instructions per flow
+
+## APIs (119)
+
+- [MTN Account Decisioning](https://developers.mtn.com/products/account-decisioning): API to consume and process account management actions to perform account status changes to customers with a MoMo Advance account. ChangeLog: 03-March-
+- [MTN TMF Customer Bill Management - TMF678](https://developers.mtn.com/products/tmf-customer-bill-management): TMF API Reference: TMF 678 - Customer bill Management Release: 19.5 - December 2019 The Customer Bill Management API allows to find and retrieve one o
+- [MTN Loans](https://developers.mtn.com/products/mtn-customer-loans-api-v1): Api Documentation.
+- [MTN Subscriber Details](https://developers.mtn.com/products/subscriber-details): Api Documentation.
+- [MTN Subscriber Type](https://developers.mtn.com/products/subscriber-type): Api Documentation.
+- [MTN Provisioning](https://developers.mtn.com/products/provisioning): Api Documentation.
+- [MTN Unified Balance V1](https://developers.mtn.com/products/unified-balance-v1): Api Documentation.
+- [MTN TMF Resource Inventory Management - TMF639](https://developers.mtn.com/products/tmf-resourceinventorymanagement-tmf639): TMF API Reference: TMF639 - Resource Inventory Release : 19.5 - December 2019 Resource Inventory API goal is to provide the ability to manage Resource
+- [MTN Sales Lead](https://developers.mtn.com/products/sales-management): TMF API Reference : TMF 699 - Sales This API provides interfaces for Sales Lead, Sales Opportunity, Sales Quote and the other management capabilities
+- [MTN Service Activation and Configuration](https://developers.mtn.com/products/service-activation-and-configuration): TMF API Reference: TMF640 - Service Activation and Configuration Version 4.0 Service Activation and Configuration API goal is to provide the ability t
+- [MTN Service Ordering](https://developers.mtn.com/products/service-ordering): TMF API Reference : TMF 641 - Service Ordering Management Version 4.1 TMF641 performs the following operations on service order resource : - Retrieval
+- [MTN BSS TT OAuth V1](https://developers.mtn.com/products/bss-tt-oauth-v1): Authentication API.
+- [MTN Balance Management V1](https://developers.mtn.com/products/balance-management-v1): The Balance Management API facilitates the management of Customer Account capabilitites. It provides a generic API any client or back-end can call to
+- [MTN Callmeback V1](https://developers.mtn.com/products/callmeback-v1): callmeback API will be used to post a request in AYO, when initiated by Users via different Applications like "portal", "IVR" etc.
+- [MTN Callmeback V2](https://developers.mtn.com/products/callmeback-v2): callmeback API will be used to post a request to Backend systems when initiated by Users via different Applications like "portal", "IVR" etc.
+- [MTN RCS Communication](https://developers.mtn.com/products/rcs-communication): This API Provides a capability to create and send communications, notifications, and instructions to Parties, Individuals, Organizations or Users.
+- [MTN Communication Management V1](https://developers.mtn.com/products/communication-management-v1): This is Swagger UI environment generated for the TMF Communication Management specification.
+- [MTN TMF681 Communication Management](https://developers.mtn.com/products/tmf681-communication-management): This is Swagger UI environment generated for the TMF Communication Management specification.
+- [MTN Consent Validation V1](https://developers.mtn.com/products/ayo-preapproval): A suite of apis for customer consent validation.
+- [MTN Content Push](https://developers.mtn.com/products/content-push): The API provides a target system with data content to be pushed via a channel to a customer. Supported Actions 1. SendSms. **Supported OpCo's:** MTN U
+- [MTN Customer Bill Management](https://developers.mtn.com/products/mtn-customer-bill-management): To facilitate the capability for consumers to retrieve bill information at service level , account level or invoice level etc.
+- [MTN Customer Billing Token V1](https://developers.mtn.com/products/customer-billing-token-v1): To register services and activate services content tokens.
+- [MTN Data Gifting](https://developers.mtn.com/products/mtn-nigeria-data-gifting-v1): The Data Gifting API facilitates purchase of data product for Beneficiary subscriber(Customer) and charging shall be done from Charging system using R
+- [MTN Customer Datashare](https://developers.mtn.com/products/mtn-nigeria-customer-datashare): The Data Share API facilitates data share between Data Share Agent(Data Sender) and Customer(Data Receiver) also provides a data analytics. It also pr
+- [MTN Customer Delivery Booking](https://developers.mtn.com/products/customer-delivery-booking): To retrieve and schedule delivery information for MTN Customers.
+- [MTN Customer Identification V1](https://developers.mtn.com/products/customer-identification-v1): The Customer Identification API provides information about a customer and their historical usage events on voice, data, SMS, Roaming etc. Information
+- [MTN KYC Consent](https://developers.mtn.com/products/kyc-consent): The Customer KYC Consent API facilitates the consent from the customer while capturing and retrieval of Customer Information. This aggregator service
+- [MTN Customer Loyalty Management](https://developers.mtn.com/products/customer-loyalty-management): An API to manage customer loyalty operations. Can also be used by 3rd-party partners (3PP) to get a customer's loyalty products and rewards **04-Oct-2
+- [MTN Customer Management - COE](https://developers.mtn.com/products/customer-management-coe-za-preprod): An API to Create customers,create admin users,activate/deactivate,disable Sims.
+- [MTN Customer Pin Management v2](https://developers.mtn.com/products/customer-pin-management-v2): To facilitate the capability for customer to create/validate/change Pin Information.
+- [MTN Customer Promotion](https://developers.mtn.com/products/customer-promotion): API Documentation.
+- [MTN Customer Survey](https://developers.mtn.com/products/customer-survey): The API facilitates product survey with a MTN Customer.
+- [MTN Customer Data Transfer(ng prod)](https://developers.mtn.com/products/customer-data-transfer-ng-prod): API will enable MTN customers to transfer part of their active airtime or data to another MTN customer. This service excludes special data plans.
+- [MTN Customer Data Transfer](https://developers.mtn.com/products/mtn-customer-datatransfer): API will enable MTN customers to transfer part of their active airtime or data to another MTN customer. This service excludes special data plans.
+- [MTN Device Swap V1](https://developers.mtn.com/products/device-swap-v1): The Device Swap API is designed to detect changes in the International Mobile Equipment Identity (IMEI) associated with a mobile subscriber's number (
+- [MTN TMF 720 - Digital Identity Management](https://developers.mtn.com/products/tmf-720-digital-identity-management): TMF API Reference: TMF720 - Digital Identity Management Digital Identity Management API goal is to provide the ability to manage a digital identity. T
+- [MTN Digital Partner Management](https://developers.mtn.com/products/digital-partner-management): TM Forum Open APIs (Apache 2.0) Party Management API Provides standardized mechanism for digital partner management such as creation, update, retrieva
+- [MTN Document Management](https://developers.mtn.com/products/document-managment): TMF667 Document API describes the meta-data of a Document, such as the name, creationDate and lifecycle status. The (typically binary) body of this do
+- [MTN TMF Document Management - TMF667](https://developers.mtn.com/products/tmf-document-management-tmf667): This is Swagger UI environment generated for the TMF Document Management specification.
+- [MTN TMF688 - Event Management](https://developers.mtn.com/products/tmf688-event-management): The Event Management API provides a standardized client interface to the enterprise event management system.
+- [MTN EEC Token Management](https://developers.mtn.com/products/eec-token-management): This API provides EEC Token Management.
+- [MTN Insurance](https://developers.mtn.com/products/insurance): List of services to integrate with insurance service provider to manage insurance policies and policy related information. It provides the ability for
+- [MTN IoT Device Management](https://developers.mtn.com/products/iot-device-management): This service provides comprehensive IoT device management capabilities for TMF908 operations including device information retrieval, device management
+- [MTN HCM V1](https://developers.mtn.com/products/hcm-v1): Api Documentation.
+- [MTN LogBack V1](https://developers.mtn.com/products/logback-v1): Facility to query failed transactions.
+- [MTN TMF Loyalty Management - TMF658](https://developers.mtn.com/products/tmf-loyalty-management-tmf658): The TMForum Loyalty API Specification as developed by Globetom.
+- [MTN RCS Capability](https://developers.mtn.com/products/rcs-capability): This API provides ability to check the capability of an MSISDN to receive RCS mesages.
+- [MTN Medallia SMS V2](https://developers.mtn.com/products/medallia-sms-v2): Provides a RESTful API to expose SMS capability.
+- [MTN Advertising V2](https://developers.mtn.com/products/advertising-v2): This service provides comprehensive mobile advertisement management capabilities for MTN operations including ad targeting, content delivery, campaign
+- [MTN Advertising](https://developers.mtn.com/products/mtn-advertising-api-v1): A brief description of the API. It can be multiple lines.
+- [MTN Mobile Customer Information](https://developers.mtn.com/products/mobile-customer-information): The mobile info API provides network related data. Supported Operations 1. Get last SIM Swap date of an MSISDN. 2. Get last SIM Swap date indicator of
+- [MTN MoMo Withdrawals V1](https://developers.mtn.com/products/withdrawals-v1): To facilitate the capability for consumers to realize withdrawals via MADAPI. The callback (i.. Completed) will be handled via MADAPI's callback API.
+- [MTN MoMo Verification V1-ToBeDeleted](https://developers.mtn.com/products/momo-verification): A suite of apis for customer validation.
+- [MTN AccountHolders V1](https://developers.mtn.com/products/ayoaccountholderinfo): The Accountholders API returns basic information of the Accountholder including MTN Mobile Money account status. i.e. ACTIVE, SUSPENDED, BLOCKED etc.
+- [MTN Agent Profile](https://developers.mtn.com/products/agent-profile): An API to retrieve the profile of an MTN field agent. Please refer to the reference guides https://developers.mtn.com/getting-started and Response and
+- [MTN Customer Account Management V1](https://developers.mtn.com/products/customer-account-management-v1): This API manages tasks for an MTN customer.
+- [MTN KYC v1](https://developers.mtn.com/products/mtn-customer-kyc-api-v1-product): MTN Customer KYC API allows clients to view the KYC (Know Your Customer) details of an MTN customer. The KYC API is a subset of the Customer Profile A
+- [MTN Customer KYC Verification](https://developers.mtn.com/products/customer-kyc-verification): The Customer KYC(Know Your Client) Verification API will validate the 3PP Customer KYC information with MTN Customer KYC information.
+- [MTN Loans v2](https://developers.mtn.com/products/loans-v2): This API facilitate loan in advance for an MTN customer.
+- [MTN Locations](https://developers.mtn.com/products/mtn-customer-locations-api-v1): An API to retrieve the Location details of an MTN customer. Please refer to the Response and Error Codes documents https://developers.mtn.com/insights
+- [MTN Customer Management](https://developers.mtn.com/products/customer-management): An API to register MoMo on Tier 0 for BSS. Please refer to the reference guides https://developers.mtn.com/API-Reference-Guides and Response and Error
+- [MTN Plans v2](https://developers.mtn.com/products/mtn-customer-plans-api-v2): An API to retrieve the Plan details of an MTN customer and calculate aYo premiums. Can also be used by 3rd-party partners (3PP) for airtime recharge o
+- [MTN Profiles V2](https://developers.mtn.com/products/mtn-customer-profiles-api-v2-product): An API to retrieve the profile of an MTN customer. Please refer to the reference guides https://developers.mtn.com/API-Reference-Guides and Response a
+- [MTN Risk Management](https://developers.mtn.com/products/risk-management): This API assesses risks for an MTN customer as well as creates applications.
+- [MTN Customer Score V1](https://developers.mtn.com/products/mtn-customer-score): This API is used to determine the customer's score through an activities performed within a period of time.
+- [MTN SIM Verification](https://developers.mtn.com/products/simverification): This API is used to verify/validate SIM Swap status, SIM Activation status and SIM Recycle status of a customer's msisdn. - **'/simSwap/verifyStatus'*
+- [MTN Subscriptions v2](https://developers.mtn.com/products/mtn-subscription-api-v2): MTN Customer Subscription Management API — an MTN Group API product published on the MTN Developer Platform (MADAPI) with a downloadable machine-reada
+- [MTN G2M](https://developers.mtn.com/products/g2m): API to provide capability to manage Offering specification of products.
+- [MTN OAuth V1](https://developers.mtn.com/products/oauth-v1): Generates an access token based on username and password.
+- [MTN Merchant Provisioning V1](https://developers.mtn.com/products/merchant-provisioning-v1): To enable merchants to manage purchases of subscribers.
+- [MTN SMS](https://developers.mtn.com/products/mtn-sms-api-v1): MTN SMS Messaging API allowing developers to include SMS messaging in their applications.
+- [MTN USSD interface](https://developers.mtn.com/products/ussd): Provides a RESTful API to expose USSD capability.
+- [MTN Product Offering v2](https://developers.mtn.com/products/mtn-product-offering-api-v2): A MTN API that controls the display of the catalog of Products available for a customer to purchase.
+- [MTN Product Offering v3](https://developers.mtn.com/products/mtn-product-offering-api-v3): A MTN API that controls the display of the catalog of Products available for a customer to purchase.
+- [MTN Retailer Productivity Tracking v1](https://developers.mtn.com/products/mtn-ng-retailer-productivity-tracking-v1): An API to enable MTN retailers track their productivity KPI's over a period of time. Please refer to the reference guides https://developers.mtn.com/A
+- [MTN TMF633 - Shopping Cart Management](https://developers.mtn.com/products/tmf633-shopping-cart-management): The Shopping Cart API provides a standardized mechanism for the management of shopping carts. Including creation, update, retrieval.
+- [MTN Siebel](https://developers.mtn.com/products/siebel): This API assesses risks for an MTN customer as well as creates applications.
+- [MTN TMF Party Management - TMF632](https://developers.mtn.com/products/tmf-party-management): This service provides comprehensive party management capabilities for MTN customers including individual and organization management, credit informati
+- [MTN TMF Usage Management - TMF635](https://developers.mtn.com/products/tmf-usage-management-tmf635): This service provides comprehensive usage management capabilities for MTN operations including data usage tracking, subscription management, balance i
+- [MTN Usage Management](https://developers.mtn.com/products/usage-management): This service provides comprehensive usage management capabilities for MTN operations including data usage tracking, subscription management, balance i
+- [MTN MTNID-getInfo](https://developers.mtn.com/products/mtnid-getinfo): Interface to the Apigee Cloud MTN-ID userinfo function.
+- [MTN Notification V1](https://developers.mtn.com/products/notification-production): To facilitate notifications. Allows 3PPs to register and have notifications processed to them from the applicable backends.
+- [MTN Notification v2](https://developers.mtn.com/products/notification-v2): To facilitate notifications. Allows 3PPs to register and have notifications processed to them from the applicable backends.
+- [MTN Order Fulfillment](https://developers.mtn.com/products/order-fulfillment): This API provides ability to digital channel to purchase different offers and make payment through Netbanking or Card Payments.
+- [MTN TMF Party Interaction - TMF683](https://developers.mtn.com/products/tmf-party-interaction-tmf683): **TMF API Reference : TMF - 683 Party Interaction** **Release : 19.5 - Oct 2019** The Party Interaction Management API provides a mechanism to manage
+- [MTN Party Management](https://developers.mtn.com/products/mtn-party-management): This API provides standardized mechanism for party management such as creation, update, retrieval and deletion of a party. Party can be an individual
+- [MTN Rwanda Party Management](https://developers.mtn.com/products/rwanda-party-management): This API provides standardized mechanism for party management such as creation, update, retrieval and deletion of a party. Party can be an individual
+- [MTN Payment Methods V1](https://developers.mtn.com/products/payment-methods-management-sa): A suite of apis for customer payment method details and its data type. **07-July-21: ChangeID: 00000** - Updated the response body for the /paymentMet
+- [MTN Payments V1](https://developers.mtn.com/products/payments-v1): This is the Payment API for MADAPI. Handles payment use cases such as spTransfer, Debit request, Payment request, and related financial transactions.
+- [MTN TMF Prepay Balance Management - TMF654](https://developers.mtn.com/products/tmf-prepay-balance-management-tmf654): This is a sample representation of the Prepay Balance Management TMForum API. It is important to bear in mind that swagger 2.0 does not properly suppo
+- [MTN Product Catalog - COE](https://developers.mtn.com/products/product-catalog-coe): API to provide capability to manage catalog, category, Offerings, Offering price and specification of products.
+- [MTN Product Catalog Management V1](https://developers.mtn.com/products/product-catalog-management-v1): API to provide capability to manage catalog, category, Offerings, Offering price and specification of products.
+- [MTN Product Catalogue Management](https://developers.mtn.com/products/product-catalogue-management): API to provide capability to manage catalog, category, Offerings, Offering price and specification of products.
+- [MTN TMF Product Catalog - TMF620](https://developers.mtn.com/products/tmf-product-catalog-tmf620): API to provide capability to manage catalog, category, Offerings, Offering price and specification of products.
+- [MTN Product Ordering - COE](https://developers.mtn.com/products/product-ordering-coe): A Product Order is a type of order which can be used to place an order between a customer and a service provider or between a service provider and a p
+- [MTN TMF Product Ordering - TMF622](https://developers.mtn.com/products/tmf-product-ordering-tmf622): A Product Order is a type of order which can be used to place an order between a customer and a service provider or between a service provider and a p
+- [MTN Resource Configuration V1](https://developers.mtn.com/products/resource-config-v1): API to provision,configure and activate Resource Functions.
+- [MTN TMF Resource Ordering - TMF652](https://developers.mtn.com/products/tmf-resource-ordering-tmf652): This is Swagger UI environment generated for the TMF Resource Ordering Management specification.
+- [MTN TMF Service Activation - TMF640](https://developers.mtn.com/products/tmf-service-activation-tmf678): Service Activation and Configuration API goal is to provide the ability to activate and configure Service. This API features Monitor pattern allowing
+- [MTN Job Card Management](https://developers.mtn.com/products/job-card-management): An API to share an incident tickets between Remedy and ServiceNow.
+- [MTN Incident API](https://developers.mtn.com/products/ticket): An API to share an incident tickets between Remedy and ServiceNow.
+- [MTN SMS V2](https://developers.mtn.com/products/mtn-sms-interface): Provides a RESTful API to expose SMS capability.
+- [MTN SMS v3 API](https://developers.mtn.com/products/sms-v3-api): Provides a Restful API to expose SMS capability for sending of messages , Mobile originating messages and Delivery Receipts.
+- [MTN SIM Management V1](https://developers.mtn.com/products/sim-management-staging): This API provides a comprehensive suite of services for managing SIM-related operations, including SIM swap initiation, status tracking, eligibility c
+- [MTN SIM Swap Verification V1](https://developers.mtn.com/products/sim-swap-verification-v1): The SIM Swap Verification API provides information about an MSISDN's sim-swap details. Supported Operations 1. Get last SIM Swap date of a phone Numbe
+- [MTN Subscriber Management](https://developers.mtn.com/products/subscriber-management): This API to be used to manage a Subscriber information.
+- [MTN Taxation V1](https://developers.mtn.com/products/taxation-v1): This service provides comprehensive taxation management capabilities for MTN operations including tax calculation, validation, reporting, and complian
+- [MTN TMF Trouble Ticket - TMF621](https://developers.mtn.com/products/tmf-trouble-ticket-tmf621): TMF621 Trouble Ticket Management Aggregator This service provides endpoint to fetch the ticket details with ticket id, create ticket, fetch list of ti
+- [MTN TMF629 - Customer Management](https://developers.mtn.com/products/tmf629-customer-management): This is Swagger UI environment generated for the TMF Customer Management specification.
+- [MTN TMF637 Product Inventory](https://developers.mtn.com/products/tmf637-product-inventory): **TMF API Reference : TMF 637 - Product Inventory Management**.
+- [MTN Account Management - COE](https://developers.mtn.com/products/account-management-coe): TMF666 Account Management API with MTN extensions to retrieve financial account transactions, transaction details, outstanding balances, account balan
+- [MTN TMF Payment Management - TMF676](https://developers.mtn.com/products/tmf-payment-management-tmf676): TMF676 Payment Management Aggregator API provides comprehensive payment management capabilities following TM Forum TMF676 standards. This service enab
+- [MTN TMF Resource Pool Management - TMF685](https://developers.mtn.com/products/resource-pool-management): This API provides the option to reserver MSISDN for registration and also validate starter pack pairing.
+- [MTN TMF Usage Consumption - TMF677](https://developers.mtn.com/products/tmf-usage-consumption-tmf677): API to fetch Airtime, Currency, Voice, Data and SMS balance details for a subscriber.
+- [MTN Usage Consumption V1](https://developers.mtn.com/products/usage-consumption): API to fetch Airtime, Currency, Voice, Data and SMS balance details for a subscriber.
+- [MTN MoMo Collection API](https://momodeveloper.mtn.com/api-documentation): Enable remote collection of bills, fees or taxes from consumer and business MoMo wallets. Operations include RequestToPay, invoices, pre-approvals, de
+- [MTN MoMo Disbursements API](https://momodeveloper.mtn.com/api-documentation): Disburse payments from a business MoMo wallet to consumers or other businesses — salary payments, benefits disbursement and supplier payouts — with de
+- [MTN MoMo Remittance API](https://momodeveloper.mtn.com/api-documentation): Transfer funds into MTN MoMo wallets from remittance originators, including cash transfer, transfer, account balance and account holder validation ope
+- [MTN MoMo Sandbox User Provisioning API](https://momodeveloper.mtn.com/api-documentation): Provision sandbox API users and API keys for the MTN MoMo Open API test environment, the self-serve step that lets a developer obtain credentials befo
+

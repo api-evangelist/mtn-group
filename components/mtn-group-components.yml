@@ -1,0 +1,70 @@
+generated: '2026-07-25'
+method: searched
+source: https://momodeveloper.mtn.com/widget-api
+note: 'MTN ships one first-party client-side component: the MoMo Collection Widget, a drop-in QR/USSD payment element
+  loaded from a script tag and driven by data-* attributes. It is a subscribable product on momodeveloper.mtn.com
+  alongside Collection, Disbursements and Remittances. No component library exists for the MTN Developer Platform
+  (MADAPI).'
+families:
+- name: MoMo Collection Widget
+  type: web component / DOM element
+  docs: https://momodeveloper.mtn.com/widget-api
+  loaders:
+  - environment: sandbox
+    script: https://widget.northeurope.cloudapp.azure.com:9443/v0.1.0/mobile-money-widget-mtn.js
+  - environment: production
+    script: null
+    note: production script path is issued at go-live; the public docs still carry a TODO_REPLACE_WITH_PRODUCTION_PATH
+      placeholder
+  components:
+  - name: mobile-money-qr-payment
+    element: <div class="mobile-money-qr-payment"></div>
+    description: Receive and approve a Mobile Money payment on a web page by scanning a QR code (or via USSD).
+    initial_size: 36x45 px collapsed, 200x400 px expanded
+    attributes:
+    - name: data-api-user-id
+      required: true
+      format: UUID (RFC 4122 v4)
+      description: the API user created in the Partner GUI
+    - name: data-amount
+      required: true
+      format: positive number up to four decimals
+      description: amount to charge
+    - name: data-currency
+      required: true
+      format: ISO 4217
+      description: payment currency
+    - name: data-external-id
+      required: true
+      format: string
+      description: partner identifier for the payment
+    events:
+    - name: mobile-money-qr-payment-created
+      emits: the created invoice
+    - name: mobile-money-qr-payment-canceled
+      emits: the canceled invoice
+    - name: mobile-money-qr-payment-successful
+      emits: the successful invoice
+    - name: mobile-money-qr-payment-failed
+      emits: no invoice — network or Partner Gateway errors
+    event_detail_fields:
+    - invoiceId
+    - externalId
+    - referenceId
+    - paymentReference
+    - payee.partyIdType
+    - payee.partyId
+    - payeeFirstName
+    - payeeLastName
+    - amount
+    - currency
+    - status
+    - expiryDateTime
+    invoice_status_values:
+    - PENDING
+    - SUCCESSFUL
+    - FAILED
+    runtime_api:
+    - function: mobileMoneyReinitializeWidgets()
+      description: initialise widgets added to the DOM after DOMContentLoaded
+    browser_support: evergreen browsers plus Internet Explorer 11

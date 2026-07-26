@@ -1,0 +1,118 @@
+generated: '2026-07-25'
+method: searched
+source: https://momodeveloper.mtn.com/api-documentation/callback plus openapi/ TM Forum hub+listener and 3PP notification
+  operations
+spec_type: null
+asyncapi_published: false
+note: 'MTN publishes no AsyncAPI document. It does run three genuine event surfaces: MoMo transaction callbacks,
+  the TM Forum hub/listener registration pattern on several MADAPI products, and a 3PP notification registration
+  API. Catalogued here as a webhook/event surface.'
+surfaces:
+- name: MoMo transaction callbacks
+  style: http callback
+  docs: https://momodeveloper.mtn.com/api-documentation/callback
+  registration: sandbox — set providerCallbackHost when creating the API user; production — register the callback
+    host in the Accounts Portal when creating API keys
+  per_request_header: X-Callback-Url (must be on the registered domain)
+  transport: HTTPS only; the listener must accept POST and PUT
+  delivery: exactly once, NO retry — MTN recommends polling the status GET as the fallback
+  payload: same shape as the status-check response for the operation
+  tls: the partner callback certificate chain must come from an MTN-approved intermediate CA (Amazon, Certum, COMODO,
+    DigiCert and others are pre-loaded in the OpenAPI Partner Gateway tls_keystore)
+  events:
+  - name: requesttopay.result
+    trigger: a Collection request-to-pay reaches a final state
+    status_values:
+    - PENDING
+    - SUCCESSFUL
+    - FAILED
+  - name: requesttowithdraw.result
+    trigger: a Collection request-to-withdraw reaches a final state
+  - name: transfer.result
+    trigger: a Disbursement or Remittance transfer reaches a final state
+  - name: deposit.result
+    trigger: a Disbursement deposit reaches a final state
+  - name: refund.result
+    trigger: a Disbursement refund reaches a final state
+- name: TM Forum hub / listener
+  style: TMF register-listener pattern
+  registration_operations:
+  - registerListener (POST /hub)
+  - unregisterListener (DELETE /hub/{id})
+  apis:
+  - api: MTN TMF688 Event Management
+    spec: openapi/mtn-group-tmf688-event-management.yml
+    events:
+    - listenToTopicCreateEvent
+    - listenToTopicChangeEvent
+    - listenToTopicDeleteEvent
+    extra:
+    - listHub
+    - createHub
+    - retrieveHub
+    - deleteHub scoped to /topic/{topicId}/hub
+  - api: MTN Service Activation and Configuration
+    spec: openapi/mtn-group-service-activation-and-configuration.yml
+    events:
+    - listenToServiceCreateEvent
+    - listenToServiceAttributeValueChangeEvent
+    - listenToServiceStateChangeEvent
+    - listenToServiceDeleteEvent
+    - listenToMonitorCreateEvent
+    - listenToMonitorAttributeValueChangeEvent
+    - listenToMonitorStateChangeEvent
+    - listenToMonitorDeleteEvent
+  - api: MTN TMF Resource Inventory Management - TMF639
+    spec: openapi/mtn-group-tmf-resourceinventorymanagement-tmf639.yml
+    events:
+    - listenToResourceCreateEvent
+    - listenToResourceAttributeValueChangeEvent
+    - listenToResourceStateChangeEvent
+    - listenToResourceDeleteEvent
+  - api: MTN TMF Customer Bill Management - TMF678
+    spec: openapi/mtn-group-tmf-customer-bill-management.yml
+    events: []
+    note: hub registration only; no listener operations declared
+- name: 3PP notification registration
+  style: provider-push notification
+  apis:
+  - api: MTN Notification v2
+    spec: openapi/mtn-group-notification-v2.yml
+    operations:
+    - register3PPNotificationDetailsUsingPOST
+    - get3PPNotificationDetailsByIdUsingGET
+    - delete3PPNotificationDetailsByIDUsingDELETE
+    - notification3PPByIdUsingPOST
+    - notification3PPByNameAndCodeAndnotificonTypeUsingPOST
+  - api: MTN Notification V1
+    spec: openapi/mtn-group-notification-production.yml
+    operations:
+    - register3PPNotificationDetailsUsingPOST
+    - register3PPNotificationDetailsUsingPUT
+    - notification3PPByIdUsingPOST
+- name: Messaging subscriptions
+  style: delivery-receipt subscription
+  apis:
+  - api: MTN SMS
+    spec: openapi/mtn-group-mtn-sms-api-v1.yml
+    operations:
+    - registerCallback
+    - deregister Callback
+  - api: MTN SMS v3 API
+    spec: openapi/mtn-group-sms-v3-api.yml
+    paths:
+    - /messages/sms/subscription
+    - /messages/sms/subscription/{subscriptionId}
+  - api: MTN USSD interface
+    spec: openapi/mtn-group-ussd.yml
+    paths:
+    - /messages/ussd/subscription
+    - /messages/ussd/subscription/{subscriptionId}
+- name: MoMo Collection Widget browser events
+  style: DOM CustomEvent (client side, not a webhook)
+  events:
+  - mobile-money-qr-payment-created
+  - mobile-money-qr-payment-canceled
+  - mobile-money-qr-payment-successful
+  - mobile-money-qr-payment-failed
+  see: components/mtn-group-components.yml

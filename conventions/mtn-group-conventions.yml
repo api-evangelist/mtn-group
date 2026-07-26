@@ -1,0 +1,118 @@
+generated: '2026-07-25'
+method: searched
+source: https://developers.mtn.com/getting-started/things-every-developer-should-know, https://developers.mtn.com/getting-started/understanding-oauth-20,
+  https://developers.mtn.com/getting-started/response-and-error-codes, https://momodeveloper.mtn.com/api-documentation/common-error,
+  https://momodeveloper.mtn.com/api-documentation/callback
+note: 'MTN runs two distinct developer surfaces with different conventions: the MTN Developer Platform (MADAPI,
+  developers.mtn.com -> api.mtn.com) and the MoMo Open API (momodeveloper.mtn.com -> Azure API Management). Both
+  are captured.'
+surfaces:
+- name: MTN Developer Platform (MADAPI)
+  host: https://api.mtn.com
+  docs: https://developers.mtn.com/getting-started
+- name: MoMo Open API
+  host: https://sandbox.momodeveloper.mtn.com (sandbox) / https://momoapi.mtn.com (production profile)
+  docs: https://momodeveloper.mtn.com/api-documentation
+authentication:
+  madapi:
+    style: oauth2 client_credentials bearer + api key header
+    token_url: https://api.mtn.com/v1/oauth/access_token?grant_type=client_credentials
+    token_request: POST application/x-www-form-urlencoded with client_id={consumer-key}&client_secret={consumer-secret}
+    token_type: BearerToken
+    expires_in_seconds: 3599
+    call_header: 'Authorization: Bearer {access_token}'
+    api_key_header: x-api-key
+    docs: https://developers.mtn.com/getting-started/understanding-oauth-20
+  momo:
+    style: subscription key + provisioned API user/key exchanged for an OAuth token
+    headers:
+    - Ocp-Apim-Subscription-Key
+    - 'Authorization: Bearer {token}'
+    - X-Target-Environment
+    - X-Reference-Id
+    - X-Callback-Url
+    note: Collection, Disbursement and Remittance each carry their own primary/secondary subscription key; keys
+      never expire and are managed on the developer profile page.
+    sandbox_keys: https://momodeveloper.mtn.com/profile
+    production_keys: https://momoapi.mtn.com/profile
+    docs: https://momodeveloper.mtn.com/api-documentation/getting-started
+idempotency:
+  supported: true
+  header: X-Reference-Id
+  surface: MoMo Open API (Collection / Disbursement / Remittance)
+  format: UUID version 4
+  semantics: Every request must carry a unique reference id. Replaying a reference id that has already been used
+    is rejected with HTTP 409 RESOURCE_ALREADY_EXIST. The same reference id is then the key used to poll transaction
+    status and is echoed on the callback, so it doubles as the client-generated correlation key for an asynchronous
+    transaction.
+  retention: not published
+  madapi_equivalent:
+    header: transactionID
+    required: false
+    semantics: MADAPI supports a transactionID header for traceability; optional on most products, mandatory on
+      some.
+  docs:
+  - https://momodeveloper.mtn.com/api-documentation/common-error
+  - https://developers.mtn.com/getting-started/things-every-developer-should-know
+pagination:
+  style: not documented platform-wide
+  note: MADAPI conventions page does not publish a platform pagination contract; TM Forum shaped products follow
+    TMF offset/limit query conventions where the individual spec declares them.
+versioning:
+  scheme: uri-path
+  example: https://api.mtn.com/v1/customers
+  support_window: only two versions are maintained; anything older than n-1 is unsupported
+  docs: https://developers.mtn.com/getting-started/things-every-developer-should-know
+request_tracing:
+  header: transactionID
+  scope: MADAPI
+  required: per-product
+  docs: https://developers.mtn.com/getting-started/things-every-developer-should-know
+serialization:
+  media_type: application/json
+  field_case: camelCase
+  envelope: response wrapper carrying a data object and a _links object
+  hateoas: true
+  date_time: RFC 3339
+  msisdn: E.123
+  country_codes: ISO 3166
+  currency: ISO 4217 (sandbox currency is EUR)
+  docs: https://developers.mtn.com/getting-started/things-every-developer-should-know
+async_semantics:
+  accepted_status: 202 Accepted for asynchronous MoMo /requesttopay and /transfer; MADAPI returns 201 with a status
+    object for async submissions
+  completion: callback POST to X-Callback-Url, or poll the status GET with the same X-Reference-Id
+  delivery: the MoMo Wallet Platform sends each callback exactly once with NO retry — MTN explicitly recommends
+    status polling as the fallback
+  docs: https://momodeveloper.mtn.com/api-documentation/callback
+errors:
+  madapi_envelope:
+    fields:
+    - timestamp
+    - status
+    - error
+    - message
+    - path
+    note: Spring-style envelope; NOT RFC 9457 application/problem+json
+  momo_envelope:
+    fields:
+    - code
+    - message
+    note: error response code strings such as RESOURCE_ALREADY_EXIST, PAYER_NOT_FOUND
+  catalog: errors/mtn-group-error-codes.yml
+  decline_codes: errors/mtn-group-decline-codes.yml
+  docs:
+  - https://developers.mtn.com/getting-started/response-and-error-codes
+  - https://momodeveloper.mtn.com/api-documentation/common-error
+rate_limiting:
+  published: false
+  signal: HTTP 429 is documented as Too Many Requests with MTN error codes 1013 (customer request rate exceeded)
+    and 3006 (server rate exceeded); no quota headers or numeric limits are published
+  docs: https://developers.mtn.com/getting-started/response-and-error-codes
+cross_links:
+  authentication: authentication/mtn-group-authentication.yml
+  scopes: scopes/mtn-group-scopes.yml
+  errors: errors/mtn-group-error-codes.yml
+  lifecycle: lifecycle/mtn-group-lifecycle.yml
+  sandbox: sandbox/mtn-group-sandbox.yml
+  webhooks: asyncapi/mtn-group-webhooks.yml

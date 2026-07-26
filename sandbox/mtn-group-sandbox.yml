@@ -1,0 +1,285 @@
+generated: '2026-07-25'
+method: searched
+source: https://momodeveloper.mtn.com/api-documentation/testing, https://momodeveloper.mtn.com/api-documentation/getting-started,
+  https://momodeveloper.mtn.com/widget-api
+applies_to: 'MTN MoMo Open API. The MTN Developer Platform (developers.mtn.com / api.mtn.com) publishes no self-serve
+  sandbox: specs download anonymously but calling any product requires a vetted, commercially negotiated app.'
+environments:
+- name: sandbox
+  base_url: https://sandbox.momodeveloper.mtn.com
+  target_environment_header: sandbox
+  keys: https://momodeveloper.mtn.com/profile
+  self_serve: true
+- name: production
+  profile: https://momoapi.mtn.com/profile
+  self_serve: false
+  target_environment_header: 'per market: mtnuganda, mtnghana, mtnivorycoast, mtnzambia, mtncameroon, mtnbenin,
+    mtncongo, mtnswaziland, mtnguineaconakry, mtnsouthafrica, mtnliberia, mtnsouthsudan, mtnnigeria, mtnrwanda'
+credentials:
+  subscription_key:
+    header: Ocp-Apim-Subscription-Key
+    note: primary and secondary key issued per product (Collection Widget, Collection, Remittances, Disbursements);
+      no expiry; regenerate from the profile page
+  api_user_and_key:
+    how: provision through the Sandbox Provisioning API (POST /v1_0/apiuser then POST /v1_0/apiuser/{X-Reference-Id}/apikey),
+      supplying providerCallbackHost in the body
+    note: existing partner accounts created in the Partner GUI CANNOT be used for the sandbox use cases — a sandbox
+      apiuser/apikey pair must be generated
+  oauth_token: generated from the API Key and Secret obtained through the provisioning API
+test_currency: EUR
+test_values:
+  note: Published, provider-supplied test identifiers. Each value deterministically drives one scenario; ANY OTHER
+    number results in Success.
+  msisdn_scenarios:
+  - scenario: AccountHolderActiveMsisdnNotFound
+    value: '46733123450'
+  - scenario: AccountHolderActiveMsisdnNotActive
+    value: '46733123451'
+  - scenario: AccountHolderActiveMsisdnNotAllowed
+    value: '46733123452'
+  - scenario: AccountHolderActiveMsisdnNotAllowedTargetEnvironment
+    value: '46733123453'
+  - scenario: AccountHolderActiveMsisdnInternalProcessingError
+    value: '46733123454'
+  - scenario: AccountHolderActiveMsisdnServiceUnavailable
+    value: '46733123455'
+  - scenario: RequestToPayPayerFailed
+    value: '46733123450'
+  - scenario: RequestToPayPayerTransfertypeUnknown
+    value: '46733123464'
+  - scenario: RequestToPayPayerRejected
+    value: '46733123451'
+  - scenario: RequestToPayPayerExpired
+    value: '46733123452'
+  - scenario: RequestToPayPayerOngoing
+    value: '46733123453'
+  - scenario: RequestToPayPayerDelayed
+    value: '46733123454'
+  - scenario: RequestToPayPayerNotFound
+    value: '46733123455'
+  - scenario: RequestToPayPayerPayeeNotAllowedToReceive
+    value: '46733123456'
+  - scenario: RequestToPayPayerNotAllowed
+    value: '46733123457'
+  - scenario: RequestToPayPayerNotAllowedTargetEnvironment
+    value: '46733123458'
+  - scenario: RequestToPayPayerInvalidCallbackUrlHost
+    value: '46733123459'
+  - scenario: RequestToPayPayerInvalidCurrency
+    value: '46733123460'
+  - scenario: RequestToPayPayerInternalProcessingError
+    value: '46733123461'
+  - scenario: RequestToPayPayerServiceUnavailable
+    value: '46733123462'
+  - scenario: RequestToPayPayerCouldNotPerformTransaction
+    value: '46733123463'
+  - scenario: PreApprovalPayerFailed
+    value: '46733123450'
+  - scenario: PreApprovalPayerRejected
+    value: '46733123451'
+  - scenario: PreApprovalPayerExpired
+    value: '46733123452'
+  - scenario: PreApprovalPayerOngoing
+    value: '46733123453'
+  - scenario: PreApprovalPayerDelayed
+    value: '46733123454'
+  - scenario: PreApprovalPayerNotFound
+    value: '46733123455'
+  - scenario: PreApprovalPayerNotAllowed
+    value: '46733123456'
+  - scenario: PreApprovalPayerNotAllowedTargetEnvironment
+    value: '46733123457'
+  - scenario: PreApprovalPayerInvalidCallbackUrlHost
+    value: '46733123458'
+  - scenario: PreApprovalPayerInvalidCurrency
+    value: '46733123459'
+  - scenario: PreApprovalPayerInternalProcessingError
+    value: '46733123460'
+  - scenario: PreApprovalPayerServiceUnavailable
+    value: '46733123461'
+  - scenario: PreApprovalGetApprovedNoneExisting
+    value: '46733123469'
+  - scenario: RequestToWithdrawPayerFailed
+    value: '46733123450'
+  - scenario: RequestToWithdrawPayerRejected
+    value: '46733123451'
+  - scenario: RequestToWithdrawPayerExpired
+    value: '46733123452'
+  - scenario: RequestToWithdrawPayerOngoing
+    value: '46733123453'
+  - scenario: RequestToWithdrawPayerDelayed
+    value: '46733123454'
+  - scenario: RequestToWithdrawPayerNotFound
+    value: '46733123455'
+  - scenario: RequestToWithdrawPayerPayeeNotAllowedToReceive
+    value: '46733123456'
+  - scenario: RequestToWithdrawPayerNotAllowed
+    value: '46733123457'
+  - scenario: RequestToWithdrawPayerNotAllowedTargetEnvironment
+    value: '46733123458'
+  - scenario: RequestToWithdrawPayerInvalidCallbackUrlHost
+    value: '46733123459'
+  - scenario: RequestToWithdrawPayerInvalidCurrency
+    value: '46733123460'
+  - scenario: RequestToWithdrawPayerInternalProcessingError
+    value: '46733123461'
+  - scenario: RequestToWithdrawPayerServiceUnavailable
+    value: '46733123462'
+  - scenario: RequestToWithdrawPayerCouldNotPerformTransaction
+    value: '46733123463'
+  - scenario: DepositPayerFailed
+    value: '46733123450'
+  - scenario: DepositPayerRejected
+    value: '46733123451'
+  - scenario: DepositPayerExpired
+    value: '46733123452'
+  - scenario: DepositPayerOngoing
+    value: '46733123453'
+  - scenario: DepositPayerDelayed
+    value: '46733123454'
+  - scenario: DepositPayerNotFound
+    value: '46733123455'
+  - scenario: DepositPayerPayeeNotAllowedToReceive
+    value: '46733123456'
+  - scenario: DepositPayerNotAllowed
+    value: '46733123457'
+  - scenario: DepositPayerNotAllowedTargetEnvironment
+    value: '46733123458'
+  - scenario: DepositPayerInvalidCallbackUrlHost
+    value: '46733123459'
+  - scenario: DepositPayerInvalidCurrency
+    value: '46733123460'
+  - scenario: DepositPayerInternalProcessingError
+    value: '46733123461'
+  - scenario: DepositPayerServiceUnavailable
+    value: '46733123462'
+  - scenario: DepositPayerCouldNotPerformTransaction
+    value: '46733123463'
+  - scenario: TransferPayeeFailed
+    value: '46733123450'
+  - scenario: TransferPayeeTransfertypeUnknown
+    value: '46733123464'
+  - scenario: TransferPayeeRejected
+    value: '46733123451'
+  - scenario: TransferPayeeExpired
+    value: '46733123452'
+  - scenario: TransferPayeeOngoing
+    value: '46733123453'
+  - scenario: TransferPayeeDelayed
+    value: '46733123454'
+  - scenario: TransferPayeeNotEnoughFunds
+    value: '46733123455'
+  - scenario: TransferPayeePayerLimitReached
+    value: '46733123456'
+  - scenario: TransferPayeeNotFound
+    value: '46733123457'
+  - scenario: TransferPayeeNotAllowed
+    value: '46733123458'
+  - scenario: TransferPayeeNotAllowedTargetEnvironment
+    value: '46733123459'
+  - scenario: TransferPayeeInvalidCallbackUrlHost
+    value: '46733123460'
+  - scenario: TransferPayeeInvalidCurrency
+    value: '46733123461'
+  - scenario: TransferPayeeInternalProcessingError
+    value: '46733123462'
+  - scenario: TransferPayeeServiceUnavailable
+    value: '46733123463'
+  email_scenarios:
+  - scenario: AccountHolderActiveEmailNotFound
+    value: notfound@email.com
+  - scenario: AccountHolderActiveEmailNotActive
+    value: notactive@email.com
+  - scenario: AccountHolderActiveEmailNotAllowed
+    value: notallowed@email.com
+  - scenario: AccountHolderActiveEmailNotAllowedTargetEnvironment
+    value: notallowedtargetenvironment@email.com
+  - scenario: AccountHolderActiveEmailInternalProcessingError
+    value: internalprocessingerror@email.com
+  - scenario: AccountHolderActiveEmailServiceUnavailable
+    value: serviceunavailable@email.com
+  party_code_scenarios:
+  - scenario: AccountHolderActivePartyCodeNotFound
+    value: 5cecb5a7-8bd0-4f49-87b1-8eb9ecc7b7bc
+  - scenario: AccountHolderActivePartyCodeNotActive
+    value: b0040b3c-b426-4a90-af6e-673e65861cd7
+  - scenario: AccountHolderActivePartyCodeNotAllowed
+    value: 4d5f500f-c385-4901-9be5-25b6d36ad220
+  - scenario: AccountHolderActivePartyCodeNotAllowedTargetEnvironment
+    value: d2265f9b-0c22-496d-908f-79a65ad66266
+  - scenario: AccountHolderActivePartyCodeInternalProcessingError
+    value: 8f548a78-ceb8-4d12-a243-5640b91e91a4
+  - scenario: AccountHolderActivePartyCodeServiceUnavailable
+    value: 585c07a4-2c80-42f7-9e73-e586b36dee68
+  refund_reference_scenarios:
+  - scenario: RefundTransactionNotFound
+    value: '1'
+  - scenario: RefundTransactionFailed
+    value: '2'
+  - scenario: RefundTransactionRejected
+    value: '3'
+  - scenario: RefundTransactionExpired
+    value: '4'
+  - scenario: RefundTransactionOngoing
+    value: '5'
+  - scenario: RefundTransactionDelayed
+    value: '6'
+  - scenario: RefundTransactionNotAllowed
+    value: '7'
+  - scenario: RefundTransactionNotAllowedTargetEnvironment
+    value: '8'
+  - scenario: RefundTransactionInvalidCallbackUrlHost
+    value: '9'
+  - scenario: RefundTransactionInvalidCurrency
+    value: '10'
+  - scenario: RefundTransactionInternalProcessingError
+    value: '11'
+  - scenario: RefundTransactionServiceUnavailable
+    value: '12'
+  - scenario: RefundTransactionCouldNotPerformTransaction
+    value: '13'
+  amount_scenarios:
+  - scenario: PaymentAmountSuccess
+    amount: '1000'
+  - scenario: PaymentAmountFailed
+    amount: '2000'
+  - scenario: PaymentAmountPendingSuccess
+    amount: '3000'
+  - scenario: PaymentAmountPendingFailed
+    amount: '4000'
+  - scenario: PaymentAmountPendingPending
+    amount: '5000'
+  - scenario: PaymentAmountPendingPending
+    amount: '6000'
+  - scenario: PaymentTransfertypeUnknown
+    amount: '7000'
+  account_balance_responses:
+  - Success
+  - AccountNotFound
+  - ZeroBalance
+  - NegativeBalance
+  - NotAllowed
+  - NotAllowedTargetEnvironment
+  - InternalProcessingError
+  - ServiceUnavailable
+  oauth2_custom_scopes:
+  - all_info
+widget_sandbox:
+  script: https://widget.northeurope.cloudapp.azure.com:9443/v0.1.0/mobile-money-widget-mtn.js
+  demo: https://widget.northeurope.cloudapp.azure.com:9443/demo.html
+  amount_behaviour:
+  - range: 1 - 19
+    status: PENDING
+  - range: 20 - 79
+    status: FAILED
+  - range: all other amounts
+    status: SUCCESSFUL
+  docs: https://momodeveloper.mtn.com/widget-api
+test_clocks: false
+fixture_tooling: Sandbox Provisioning collection on the developer portal; no CLI or fixture generator is published
+callback_rules:
+  https_only: true
+  sandbox: register the domain as providerCallbackHost when creating the API user; supply X-Callback-Url per request
+  methods_to_allow:
+  - POST
+  - PUT

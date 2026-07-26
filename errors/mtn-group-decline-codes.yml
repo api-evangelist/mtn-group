@@ -1,0 +1,69 @@
+generated: '2026-07-25'
+method: searched
+source: https://momodeveloper.mtn.com/api-documentation/common-error and https://momodeveloper.mtn.com/api-documentation/testing
+applies_to: MTN MoMo Open API — Collection (requesttopay, requesttowithdraw), Disbursement (transfer, deposit, refund),
+  Remittance
+envelope_field: reason (returned on the transaction status object and echoed on the callback payload); status carries
+  PENDING | SUCCESSFUL | FAILED
+masked_to_buyers: MTN does not publish a buyer-masking policy; the reason string is returned to the integrating
+  partner, not to the paying consumer
+note: Reason values are documented across the MoMo common-error reference and the sandbox use-case matrix, where
+  each reason is bound to a predefined test MSISDN. See sandbox/mtn-group-sandbox.yml for the test value that triggers
+  each one.
+decline_codes:
+- code: INTERNAL_PROCESSING_ERROR
+  meaning: Generic failure used when no specific mapping exists; predominantly insufficient customer funds, service
+    denied, or the Wallet Platform being unreachable.
+  action: Ask the customer to confirm funds and retry; escalate to the MTN Account Manager if it persists with funded
+    accounts
+- code: PAYEE_NOT_FOUND
+  meaning: The MSISDN being paid is invalid or not registered for Mobile Money.
+  action: Send the MSISDN with country code and confirm the payee is a registered MoMo user
+- code: PAYER_NOT_FOUND
+  meaning: The MSISDN the money was requested from is invalid or not registered for Mobile Money.
+  action: Send the MSISDN with country code and confirm the payer is a registered MoMo user
+- code: COULD_NOT_PERFORM_TRANSACTION
+  meaning: Transaction timeout — the payer did not approve within the 5 minute window.
+  action: Ask the customer to retry and approve within 5 minutes
+- code: NOT_ENOUGH_FUNDS
+  meaning: Payer wallet balance is insufficient for the transfer.
+  action: Ask the customer to top up and retry
+- code: PAYER_LIMIT_REACHED
+  meaning: The payer has hit a wallet or transaction limit.
+  action: Advise the customer of their limit; retry within limits
+- code: PAYEE_NOT_ALLOWED_TO_RECEIVE
+  meaning: The target wallet is not permitted to receive this transaction.
+  action: Confirm the payee wallet type and market rules
+- code: REJECTED
+  meaning: The payer explicitly rejected the request to pay.
+  action: Terminal — do not retry automatically
+- code: EXPIRED
+  meaning: The request to pay expired before the payer acted.
+  action: Re-issue a new request with a fresh X-Reference-Id
+- code: ONGOING
+  meaning: The transaction is still being processed.
+  action: Continue polling the status endpoint
+- code: PENDING
+  meaning: The transaction is pending final state.
+  action: Continue polling the status endpoint
+- code: DELAYED
+  meaning: Processing is delayed downstream.
+  action: Continue polling; do not re-submit
+- code: TRANSFER_TYPE_UNKNOWN
+  meaning: The transfer type supplied is not recognised.
+  action: Correct the transfer type in the request
+- code: NOT_ALLOWED
+  meaning: The authenticated account is restricted from this operation.
+  action: Contact the MTN Account Manager
+- code: NOT_ALLOWED_TARGET_ENVIRONMENT
+  meaning: X-Target-Environment does not match a permitted market.
+  action: Set the correct market value, or sandbox in test
+- code: INVALID_CALLBACK_URL_HOST
+  meaning: Callback host does not match the registered providerCallbackHost.
+  action: Register the host or send a matching X-Callback-Url
+- code: INVALID_CURRENCY
+  meaning: Currency is not supported on the target wallet.
+  action: Use the market currency (EUR in sandbox)
+- code: SERVICE_UNAVAILABLE
+  meaning: Wallet platform temporarily unavailable.
+  action: Retry later
