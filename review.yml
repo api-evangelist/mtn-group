@@ -1,0 +1,408 @@
+aid: mtn-group
+name: MTN Group
+review:
+  question: >-
+    Does MTN Group — Africa's largest mobile network operator, home market South
+    Africa — expose a real, self-serve, machine-readable public API surface, and
+    what is its CAMARA / GSMA Open Gateway posture?
+  answer: true
+  date: '2026-07-25'
+  reviewer: API Evangelist
+  homeMarket: South Africa
+  tier: mno-carrier
+  gated: false
+  gatingNote: >-
+    The portal itself is not gated. Anyone can browse the full 221-product
+    catalogue and download the OpenAPI/Swagger definition for a product with no
+    account and no login. Registration is required only to create an app and
+    obtain sandbox keys, and the FAQ states plainly that moving beyond the
+    sandbox to production is a vetted, commercially negotiated step ("If we
+    allow you to move beyond the sandbox, at that time we can discuss next steps
+    and pricing"). Self-serve read, vetted write.
+findings:
+  summary: |
+    MTN Group is the exception to the mobile-network-operator pattern. Where most
+    carriers publish a marketing page called "developer", MTN runs two live,
+    anonymously browsable developer portals and lets an unauthenticated visitor
+    download machine-readable API definitions in bulk.
+
+    developers.mtn.com — the MTN Developer Platform, branded MADAPI internally
+    and built on Apigee — returned HTTP 200 and lists 221 API products across 15
+    African markets in ten categories (Customer 171, TMF 21, Messaging 7, Payment
+    6, Security 6, Advertising 3, Analytics 2, Resource 2, Tickets 2, Agent 1).
+    Every product page carries a "Download Swagger Specifications" link at
+    /products/{slug}/download/swagger. That endpoint answers anonymously with
+    content-disposition: attachment and a real spec body. All 221 were probed on
+    2026-07-25: 115 returned HTTP 200 with a document that parses as OpenAPI 3.x
+    or Swagger 2.0 with a non-empty paths object, 106 returned HTTP 500 (product
+    listed, no definition attached). The 115 real specs — 404 documented paths in
+    total — were saved verbatim to openapi/.
+
+    momodeveloper.mtn.com — the MTN MoMo Open API portal — returned HTTP 200 and
+    is a managed Azure API Management developer portal with self-serve sign-up,
+    a documented sandbox at sandbox.momodeveloper.mtn.com, and four published
+    APIs: Collection, Disbursements, Remittance, and Sandbox User Provisioning.
+    Its anonymous data plane (/developer/apis?api-version=2022-04-01-preview)
+    lists the APIs and their full operation sets, but the APIM OpenAPI export
+    (format=openapi / openapi-link) returns a stub with an EMPTY paths object for
+    anonymous callers, so no MoMo spec was harvested. The MoMo APIs are listed in
+    apis.yml with documentation pointers only — no fabricated OpenAPI.
+
+    CAMARA is the finding that matters and it is a negative one. Across all 116
+    downloaded documents, the string "camara" appears zero times, "open gateway"
+    zero times, and "CIBA"/"backchannel" zero times. MTN South Africa IS a GSMA
+    Open Gateway participant: on 22 February 2024 MTN, Cell C and Telkom jointly
+    announced Number Verification and SIM Swap for South Africa under the GSMA
+    Open Gateway initiative. But that announcement names no developer channel,
+    and nothing CAMARA-shaped is callable from either MTN portal. What MTN does
+    publish are its own equivalents: a SIM Swap Verification API
+    (GET /v1/mobile/phoneNumbers/{phoneNumber}/simswap-date) and a Device Swap
+    API (POST /v1/devices/deviceSwap), both MTN-proprietary designs on api.mtn.com
+    secured with OAuth2 client-credentials — not the CAMARA path shapes
+    (POST /sim-swap/v0/check, /retrieve-date) and not the CAMARA OIDC/CIBA
+    authorization profile. No Number Verification product exists in the catalogue
+    at all. The press release is real; the CAMARA implementation is not visible.
+  camara:
+    posture: >-
+      GSMA Open Gateway participant with proprietary equivalents, not CAMARA
+      specs — announcement without a callable CAMARA implementation.
+    openGatewayMember: true
+    openGatewayEvidence: >-
+      GSMA press release, 22 February 2024, "South African mobile operators
+      announce new services to combat fraud, as part of GSMA Open Gateway
+      initiative" — Cell C, MTN and Telkom launching Number Verification and SIM
+      Swap in South Africa.
+    camaraApisWithRealEvidence: []
+    proprietaryEquivalentsPublished:
+      - name: SIM Swap Verification API
+        camaraAnalogue: SIM Swap
+        path: GET https://api.mtn.com/v1/mobile/phoneNumbers/{phoneNumber}/simswap-date
+        spec: openapi/mtn-group-sim-swap-verification-v1.yml
+        note: >-
+          MTN-proprietary shape and MTN-proprietary security (OAuth2
+          client-credentials, tokenUrl https://api.mtn.com/v1/oauth/access_token).
+          Not the CAMARA SIM Swap API.
+      - name: Device Swap API
+        camaraAnalogue: Device Swap
+        path: POST https://api.mtn.com/v1/devices/deviceSwap
+        spec: openapi/mtn-group-device-swap-v1.yml
+        note: >-
+          IMEI-change detection over a date range. MTN-proprietary shape, OAuth2
+          client-credentials. Not the CAMARA Device Swap API.
+      - name: MTN Customer Locations API
+        camaraAnalogue: Device Location (loosely)
+        path: GET https://api.mtn.com/v1/customers/{customerId}/locations
+        spec: openapi/mtn-group-mtn-customer-locations-api-v1.yml
+        note: >-
+          Customer location details keyed on customerId, secured with an X-API-Key
+          header. Not CAMARA Device Location / Location Verification.
+      - name: MTN Customer KYC Verification API / Customer KYC Consent API
+        camaraAnalogue: KYC Match (loosely)
+        path: https://api.mtn.com/v1/kycVerification/, https://api.mtn.com/v1
+        spec: openapi/mtn-group-customer-kyc-verification.yml
+        note: >-
+          MTN's own KYC verification and consent-capture services. Not the CAMARA
+          KYC Match API.
+    numberVerification: >-
+      Announced by GSMA for South Africa in February 2024 but ABSENT from the
+      published catalogue — no Number Verification product, no spec, no endpoint.
+    adunaShareholder: false
+    adunaNote: >-
+      Aduna, the Ericsson-led network-API joint venture, completed its equity
+      round with AT&T, Bharti Airtel, Deutsche Telekom, KDDI, Orange, Reliance
+      Jio, Singtel, Telefonica, Telstra, T-Mobile, Verizon and Vodafone. MTN is
+      not among the shareholders and no Aduna channel for MTN network APIs was
+      found.
+    aggregatorChannel: >-
+      No evidence found that MTN reaches network-API developers through Aduna or
+      a CPaaS aggregator. MTN reaches developers DIRECTLY, through its own two
+      portals — which is the opposite of the sector norm — but what it reaches
+      them with is a BSS/customer/mobile-money catalogue, not CAMARA network APIs.
+    verdict: >-
+      A press release is not an implementation. MTN's Open Gateway participation
+      is real as a commitment and invisible as a developer surface; its actual
+      published anti-fraud APIs are pre-CAMARA proprietary designs that predate
+      and sit outside the standard.
+  tmForum:
+    posture: >-
+      Deep, visible TM Forum Open API adoption — the single strongest signal in
+      MTN's catalogue.
+    dedicatedCategory: https://developers.mtn.com/categories/tmf
+    productCount: 21
+    tmfApisReferencedInProductTitles:
+      - TMF620 Product Catalog Management
+      - TMF621 Trouble Ticket Management
+      - TMF622 Product Ordering
+      - TMF629 Customer Management
+      - TMF632 Party Management
+      - TMF633 Service Catalog / Shopping Cart
+      - TMF635 Usage Management
+      - TMF637 Product Inventory Management
+      - TMF639 Resource Inventory Management
+      - TMF640 Service Activation and Configuration
+      - TMF652 Resource Ordering Management
+      - TMF654 Prepay Balance Management
+      - TMF658 Loyalty Management
+      - TMF666 Account Management
+      - TMF667 Document Management
+      - TMF676 Payment Management
+      - TMF677 Usage Consumption
+      - TMF678 Customer Bill Management
+      - TMF681 Communication Management
+      - TMF683 Party Interaction Management
+      - TMF685 Resource Pool Management
+      - TMF688 Event Management
+      - TMF720 Digital Identity Management
+    additionalTmfReferencedInsideSpecs:
+      - TMF641 Service Ordering
+      - TMF699 (referenced)
+      - TMF908 (referenced)
+    conformanceCertification: >-
+      No TM Forum Open API Conformance badge held by MTN Group itself was found.
+      MTN participated as the operator in TM Forum Open API conformance
+      certifications carried out by its BSS vendor Tecnotree in live MTN
+      operations — the badge is Tecnotree's, not MTN's. Recorded as vendor-held
+      certification validated on MTN infrastructure.
+  threeGpp:
+    nefOrScef: >-
+      No NEF (Network Exposure Function) or SCEF surface is documented on either
+      portal, and none of the 115 specs describes one.
+    networkSlicing: none documented
+    edgeMec: none documented
+    qualityOnDemand: >-
+      No Quality on Demand / QoD API published. No 5G network-API surface of any
+      kind is exposed to developers.
+  auth:
+    schemes:
+      - >-
+        OAuth2 client-credentials (two-legged) — the documented default across
+        developers.mtn.com; token endpoints
+        https://api.mtn.com/oauth/client_credential/accesstoken and
+        https://api.mtn.com/v1/oauth/access_token; declared in 77 of the 115
+        harvested specs.
+      - >-
+        API key via X-API-Key header — legacy scheme still declared in 72 of the
+        115 harvested specs; the FAQ states "Most of the MTN APIs use API Key
+        today to support legacy apps, but is switching over to OAuth."
+      - >-
+        HTTP bearer token — declared in 13 of the harvested specs, including the
+        TMF666 Account Management API.
+      - >-
+        HTTP basic — declared in 2 specs alongside the API key.
+      - >-
+        MoMo (momodeveloper.mtn.com) is separate — Ocp-Apim-Subscription-Key or
+        subscription-key (Azure APIM) to reach the gateway, plus an OAuth2 token
+        from the Wallet Platform token endpoint and an X-Target-Environment
+        routing header.
+    threeLeggedOAuth: >-
+      Documented on the portal ("check out our OAuth page to get information on
+      implementing a 2-legged and 3-legged OAuth flow"), but no OIDC discovery
+      document is served: https://developers.mtn.com/.well-known/openid-configuration
+      and https://momodeveloper.mtn.com/.well-known/openid-configuration both
+      returned HTTP 404, as did /.well-known/oauth-authorization-server.
+    ciba:
+      present: true
+      whereNotWhere: >-
+        CIBA appears at MTN, but NOT where CAMARA needs it. The MoMo Collection,
+        Disbursements and Remittance APIs each expose
+        POST /v1_0/bc-authorize — a Client-Initiated Backchannel Authentication
+        flow with login_hint=ID:{msisdn}/MSISDN, scope, access_type, and a
+        response carrying auth_req_id, interval and expires_in. It is used to
+        claim account-holder consent for mobile-money scopes. No CIBA appears
+        anywhere in the network-API/MADAPI catalogue, where CAMARA would require
+        it.
+      evidence: >-
+        https://momodeveloper.mtn.com/developer/apis/collection/operations/bc-authorize?api-version=2022-04-01-preview
+        (HTTP 200, anonymous, 2026-07-25)
+  webhooks:
+    present: true
+    note: >-
+      Callback-style webhooks rather than a published event catalogue. The MoMo
+      APIs take an X-Callback-Url header per request. The MADAPI catalogue
+      includes a Customer KYC Consent API with a POST /callback endpoint for
+      consent callbacks, a TMF688 Event Management ("Event Streaming API")
+      product with 11 paths covering hub/listener registration, and a
+      Notifications API. No AsyncAPI document is published anywhere on either
+      portal.
+  sdks:
+    firstParty: >-
+      No first-party SDK was confirmed. The GitHub organisation
+      https://github.com/MTN-Group is real (created 2018-04-10, blog field set to
+      https://developers.mtn.com) but holds only four incidental public repos —
+      mtn-libphonenumber, mcc-mnc-table, mtnplay-cpinfo, react-native-portalize —
+      and no API SDK. The portal FAQ says "Stay posted at our GitHub to see
+      various reference helper applications and SDKs," which is a promise rather
+      than a shipped artifact.
+    thirdParty: >-
+      Packages named mtn-momo (npm) and mtnmomo (PyPI) exist and resolve, but
+      neither is published under an MTN-controlled namespace and neither is
+      claimed by MTN; treated as community, not first-party.
+    postman: No public MTN Postman workspace was found.
+    graphql: >-
+      No GraphQL surface found. No /graphql endpoint is documented and no spec
+      references one.
+    grpc: No published .proto files found.
+  portals:
+    - url: https://developers.mtn.com/
+      status: 200
+      verdict: >-
+        REAL self-serve developer portal. Catalogue browsable and specs
+        downloadable without an account; registration needed only for keys.
+    - url: https://momodeveloper.mtn.com/
+      status: 200
+      verdict: >-
+        REAL self-serve developer portal (Azure APIM managed portal) with sign-up,
+        documented sandbox and anonymous API/operation listing.
+    - url: https://www.mtn.co.za/
+      status: 200
+      verdict: Consumer/retail site for the South African opco. Not a developer surface.
+  probes:
+    - url: https://developers.mtn.com/
+      status: 200
+    - url: https://developers.mtn.com/products
+      status: 200
+      note: 221 products across 15 countries.
+    - url: https://developers.mtn.com/products/{slug}/download/swagger
+      status: 200 for 115 slugs, 500 for 106 slugs
+      note: Anonymous spec download; content-disposition attachment.
+    - url: https://momodeveloper.mtn.com/
+      status: 200
+    - url: https://momodeveloper.mtn.com/developer/apis?api-version=2022-04-01-preview
+      status: 200
+      note: Anonymous JSON listing of Collection, Disbursements, Remittance, Sandbox User Provisioning.
+    - url: https://momodeveloper.mtn.com/developer/apis/collection?export=true&format=openapi
+      status: 200
+      note: Returns an OpenAPI 3.0.1 stub with an EMPTY paths object for anonymous callers. Not harvested.
+    - url: https://sandbox.momodeveloper.mtn.com/collection/v1_0/apiuser
+      status: 404
+      note: Live Azure APIM gateway responding with a JSON error envelope — the sandbox host is real.
+    - url: https://api.mtn.com/
+      status: 418
+      note: Production Apigee gateway; refuses browser traffic.
+    - url: https://developer.mtn.com/
+      status: 000
+      note: TLS certificate does not match the host. Dangling/abandoned subdomain.
+    - url: https://developer.mtn.co.za/
+      status: 000
+      note: TLS certificate does not match the host. Dangling/abandoned subdomain.
+    - url: https://docs.mtn.com/
+      status: 000
+      note: DNS does not resolve.
+    - url: https://opengateway.mtn.com/
+      status: 000
+      note: DNS does not resolve. No Open Gateway subdomain exists.
+    - url: https://developers.opengateway.mtn.com/
+      status: 000
+      note: DNS does not resolve.
+    - url: https://www.mtn.com/opengateway
+      status: 404
+    - url: https://www.mtn.com/developer
+      status: 404
+    - url: https://www.mtn.com/developers
+      status: 404
+    - url: https://www.mtn.com/api
+      status: 404
+    - url: https://developers.mtn.com/.well-known/openid-configuration
+      status: 404
+    - url: https://momodeveloper.mtn.com/.well-known/openid-configuration
+      status: 404
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.mtn.com/
+      documented: true
+      note: Primary MADAPI production gateway for the 115 harvested specs.
+    - protocol: REST
+      scheme: https
+      baseURL: https://za.api.mtn.com/
+      documented: true
+      note: South Africa opco gateway used by several catalogue products.
+    - protocol: REST
+      scheme: https
+      baseURL: https://sandbox.momodeveloper.mtn.com/
+      documented: true
+      note: MoMo Open API sandbox gateway.
+    - protocol: Webhook
+      scheme: https
+      documented: true
+      note: X-Callback-Url / clientCallbackUrl callbacks and a TMF688 hub-listener pattern. No AsyncAPI.
+    - protocol: GraphQL
+      documented: false
+    - protocol: gRPC
+      documented: false
+    - protocol: WebSocket
+      documented: false
+specHarvest:
+  method: >-
+    Anonymous HTTP GET of https://developers.mtn.com/products/{slug}/download/swagger
+    for every one of the 221 product slugs listed on
+    https://developers.mtn.com/products. Responses saved verbatim; only documents
+    that parse as OpenAPI 3.x or Swagger 2.0 with a non-empty paths object were
+    kept.
+  fetchDate: '2026-07-25'
+  sourcePattern: https://developers.mtn.com/products/{slug}/download/swagger
+  httpStatus: 200
+  productsProbed: 221
+  specsHarvested: 115
+  productsWithNoSpec: 106
+  productsWithNoSpecStatus: 500
+  totalDocumentedPaths: 404
+  specVersions:
+    swagger-2.0: 99
+    openapi-3.0.x: 16
+  storedIn: openapi/mtn-group-{slug}.yml
+  notHarvested:
+    - source: https://momodeveloper.mtn.com
+      reason: >-
+        The Azure APIM OpenAPI export returns an empty paths object to anonymous
+        callers. Operation metadata is readable via the portal data API but a
+        spec assembled from it would not be a first-party published document, so
+        none was created.
+sources:
+  - url: https://developers.mtn.com/
+    type: DeveloperPortal
+    note: MTN Developer Platform home. HTTP 200.
+  - url: https://developers.mtn.com/products
+    type: APIReference
+    note: 221 products, 15 countries, 10 categories. HTTP 200.
+  - url: https://developers.mtn.com/getting-started
+    type: Documentation
+    note: >-
+      "The MTN Developer Platform is a single point of access to a rich MTN
+      developer ecosystem." Names Mobile Money, Messaging, Location Services,
+      Payment, Collections, E-Commerce, IoT, Customer, Offers and Promotions,
+      Digital Subscriptions, Identity and Access, Products and Bundles.
+  - url: https://developers.mtn.com/faq
+    type: Documentation
+    note: >-
+      Auth model (API key + OAuth 2.0, 2-legged and 3-legged), free sandbox,
+      vetted production access.
+  - url: https://developers.mtn.com/categories/tmf
+    type: Documentation
+    note: Dedicated TM Forum category — "TMForum Implementations".
+  - url: https://momodeveloper.mtn.com/
+    type: DeveloperPortal
+    note: MTN MoMo Open API portal. HTTP 200.
+  - url: https://momodeveloper.mtn.com/developer/apis?api-version=2022-04-01-preview
+    type: APIReference
+    note: Anonymous APIM listing of the four MoMo APIs.
+  - url: https://www.gsma.com/newsroom/press-release/south-african-mobile-operators-announce-new-services-to-combat-fraud-as-part-of-gsma-open-gateway-initiative/
+    type: PressRelease
+    note: >-
+      22 February 2024 — Cell C, MTN and Telkom, Number Verification and SIM Swap
+      under GSMA Open Gateway in South Africa.
+  - url: https://github.com/MTN-Group
+    type: GitHubOrganization
+    note: Real org, four incidental repos, no SDKs.
+actions:
+  apisYmlCreated: true
+  apisListed: 119
+  openapiHarvested: true
+  readmeCreated: true
+  reason: >-
+    MTN Group is scored as a genuine public API provider. The developer portal is
+    real, the specs are real and machine-readable at scale, and the TM Forum
+    footprint is deep. The CAMARA/Open Gateway story is the honest negative: a
+    2024 GSMA announcement with no callable CAMARA API behind it, proprietary
+    SIM Swap and Device Swap in its place, no Number Verification at all, and no
+    Aduna relationship.

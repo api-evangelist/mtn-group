@@ -1,0 +1,1099 @@
+swagger: '2.0'
+info:
+  description: List of services to integrate with insurance service provider to manage insurance policies and policy related information. It provides the ability for channel applications to request for quote, submit application, manage application and fetch list of policies. 
+  version: "v1.0"
+  title: Insurance API
+
+schemes:
+  - https
+host: "za.api.mtn.com"
+basePath: "/insurance"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "x-api-key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/edgemicro-custom-auth/token?grant_type=client_credentials
+
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+
+paths:
+  /v1/quotation:
+    post:
+      tags:
+        - Quotation
+      summary: Request for one or bulk quotations
+      description: Provides the ability for channels to request for one or bulk quotations.
+      operationId: Quotation 
+      parameters:
+        - name: "channelId"
+          in: header
+          description: Source system identifier
+          required: true
+          type: string
+          x-example: EBUPortal
+        - name: "targetSystem"
+          in: header
+          required: false
+          type: string
+          description: Name of the backend system
+          default: ATS
+          enum:
+            - ATS
+        - name: transactionId
+          in: header
+          type: string
+          description: Unique identifier of this transaction. Generated automatically by MADAPI and passed to backend if not sent by channel.
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/QuotationRequest"
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/QuotationResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/ErrorBadRequest"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorUnauthorized"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/ErrorForbidden"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/ErrorBackend"
+            
+  /v1/application:
+    post:
+      tags:
+        - Policy
+      summary: Create a set of new policies based on a quote
+      description: Provides the ability for channels to submit application to create one or more policies based on a given quote.
+      operationId: Application 
+      parameters:
+        - name: "channelId"
+          in: header
+          description: Source system identifier
+          required: true
+          type: string
+          x-example: EBUPortal
+        - name: "targetSystem"
+          in: header
+          required: false
+          type: string
+          description: Name of the backend system
+          default: ATS
+          enum:
+            - ATS
+        - name: transactionId
+          in: header
+          type: string
+          description: Unique identifier of this transaction. Generated automatically by MADAPI and passed to backend if not sent by channel.
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ApplicationRequest"
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/ApplicationResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/ErrorBadRequest"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorUnauthorized"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/ErrorForbidden"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/ErrorBackend"
+
+definitions:
+  QuotationRequest:
+    type: object
+    required:
+    - quoteType
+    properties:
+      customer: 
+        type: object
+        required:
+        - type
+        properties: 
+          type:
+            type: string
+            description: "Type of customer"
+            enum:
+              - cbu
+              - ebu
+              - sme
+          customerSubType:
+            type: string
+            enum:
+              - sme
+          title:
+            type: string
+            enum: 
+              - mr
+              - mrs
+              - ms
+          initials: 
+            type: string
+            description: "Intials of the customer. Data encrypted by MADAPI before sending to backend system."
+            example: MJ
+            maxLength: 10
+          firstName:
+            type: string
+            description: "First name of the customer. Data encrypted by MADAPI before sending to backend system."
+            example: Mary
+            minLength: 1
+            maxLength: 100
+          lastName:
+            type: string
+            description: "Surname of the customer. Data encrypted by MADAPI before sending to backend system."
+            example: Joan
+            minLength: 2
+            maxLength: 100
+          companyName:
+            type: string
+            description: "Company name of the customer. Data encrypted by MADAPI before sending to backend system."
+            minLength: 2
+            maxLength: 100
+            example: Missy Joans (Pty) Ltd
+          tradingName:
+            type: string
+            description: "Trading name of the customer. Data encrypted by MADAPI before sending to backend system."
+            minLength: 2
+            maxLength: 100
+            example: Missy Joans & Co
+          companyRegistration:
+            type: string
+            description: "Company name of the customer. Data encrypted by MADAPI before sending to backend system."
+            minLength: 15
+            maxLength: 100
+      quoteItem: 
+        type: array
+        items:
+          required:
+          - productType
+          - quantity
+          properties:
+            productType:
+              type: string
+              description: "Type of the insured product, like Device, Cyber Sim or Contract Protector or Router Insurance"
+              enum:
+              - device
+              - cyberSim
+              - contractProtector
+              - routerInsurance
+            coverType:
+              type: string
+              description: "Premium type filter (optional). Mandatory for Downgrade if product type is chosen as 'device'."
+              enum:
+              - allRisk
+              - repairOnly
+              - accident
+              - lossTheft
+            addOn:
+              type: array
+              items:
+                type: string
+                example: "excessBuyDown"
+                description: "List of addOn covers like excessBuyDown, cyberSim, contractProtector, routerInsurance"
+            productIdType:
+              type: string
+              description: "How the insured product is identified, such as using a Product Code, TAC or SKU. Mandatory if product type is chosen as 'device'."
+              enum:
+              - code
+              - tac
+              - sku
+              - marketingId
+            productId:
+              type: string
+              description: "Actual identifier for the selected type such as a specific SKU. Mandatory if product type is chosen as 'device'."
+              minLength: 2
+              maxLength: 50
+              example: 7923642
+            quantity:
+              type: number
+              description: "Total devices to be quoted on for insurance."
+              example: 5
+     
+      quoteType:
+        type: string
+        description: "Type of quotation requested."
+        enum:
+        - quotation
+        - downgrade
+        - finalisation
+
+  QuotationResponse:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+      - transactionId
+      - data
+    properties:
+        statusCode:
+          type: string
+          description: Result code.
+          default: "0000"
+        statusMessage:
+          type: string
+          description: "Short message describing how many quotes were generated."
+        transactionId:
+          type: string
+          description: Unique id of this transaction.
+        data:
+          type: object
+          required:
+          - quoteId
+          - quoteExpirationDate
+          - quote
+          properties:
+            quoteId:
+              type: integer
+              description: "Unique quote identifier for this request."
+            quoteExpirationDate:
+              type: string
+              format: date
+              description: "Date this quote expires in the future."
+            quote:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - subQuoteId
+                  - cover
+                  properties:
+                    subQuoteId:
+                      type: string
+                      description: "Unique quote identifier for this device. This is the item level quotationID that is also used for the selected covers on /application service"
+                      example: 245-371-18
+                    cover:
+                      type: array
+                      items:
+                        type: object
+                        required:
+                        - coverType
+                        - premiumAmountIncl
+                        - premiumAmountExcl
+                        - discountAmountIncl
+                        - discountAmountExcl
+                        - quantity
+                        - totalAmountIncl
+                        - totalAmountExcl
+                        - totalDiscountAmountIncl
+                        - totalDiscountAmountExcl
+                        - linkedToDevice
+                        properties:
+                          coverType:
+                            type: string
+                            description: "Code for this premium band."
+                            enum:
+                            - allRisk
+                            - repairOnly
+                            - accident
+                            - lossTheft
+                            - excessBuyDown
+                            - cyberSim
+                            - contractProtector
+                            - routerInsurance
+                          coverTypeName: 
+                            type: string
+                            description: "Name of this premium band. User friendly  label."
+                            example: All Risk
+                          premiumAmountIncl:
+                            type: string
+                            description: "Calculated item Insurance Amount (excl VAT)"
+                          premiumAmountExcl:
+                            type: string
+                            description: "Calculated item Insurance Amount (incl VAT)"
+                          discountAmountIncl:
+                            type: string
+                            description: "Calculated item discount Insurance Amount (excl VAT)"
+                          discountAmountExcl:
+                            type: string
+                            description: "Calculated item discount Insurance Amount (incl VAT)"
+                          quantity:
+                            type: integer
+                            description: "Total devices this premium type applies to."
+                            example: 10
+                          totalDiscountAmountIncl:
+                            type: string
+                            description: "Total calculated discounted Insurance Amount (excl VAT)"
+                          totalDiscountAmountExcl:
+                            type: string
+                            description: "Total calculated discounted Insurance Amount (incl VAT)"
+                          totalAmountIncl:
+                            type: string
+                            description: "Total calculated Insurance Amount (excl VAT). Total amount is after discount is applied."
+                          totalAmountExcl:
+                            type: string
+                            description: "Total calculated Insurance Amount (incl VAT). Total amount is after discount is applied"
+                          tooltip:
+                            type: string
+                            description: "Toolip, if applicable"
+                          description:
+                            type: string
+                            description: "Description for this premium band, if applicable"
+                          addon:
+                            type: array
+                            items:
+                              type: object
+                              required: 
+                              - coverType
+                              - amountIncl
+                              - amountExcl
+                              - quantity
+                              - totalAmountIncl
+                              - totalAmountExcl
+                              properties:
+                                coverType:
+                                  type: string
+                                  description: "Code for this premium band."
+                                  enum:
+                                  - cyberSim
+                                  - contractProtector
+                                coverTypeName: 
+                                  type: string
+                                  description: "Name of this premium band."
+                                premiumAmountIncl:
+                                  type: string
+                                  description: "Calculated item Insurance Amount (excl VAT)"
+                                premiumAmountExcl:
+                                  type: string
+                                  description: "Calculated item Insurance Amount (incl VAT)"
+                                discountAmountIncl:
+                                  type: string
+                                  description: "Calculated item discount Insurance Amount (excl VAT)"
+                                discountAmountExcl:
+                                  type: string
+                                  description: "Calculated item discount Insurance Amount (incl VAT)"
+                                quantity:
+                                  type: integer
+                                  description: "Total devices this premium type applies to."
+                                totalDiscountAmountIncl:
+                                  type: string
+                                  description: "Total calculated discounted Insurance Amount (excl VAT)"
+                                totalDiscountAmountExcl:
+                                  type: string
+                                  description: "Total calculated discounted Insurance Amount (incl VAT)"
+                                totalAmountIncl:
+                                  type: string
+                                  description: "Total calculated Insurance Amount (excl VAT). Total amount is after discount is applied"
+                                totalAmountExcl:
+                                  type: string
+                                  description: "Total calculated Insurance Amount (incl VAT). Total amount is after discount is applied"
+                                tooltip:
+                                  type: string
+                                  description: "Toolip, if applicable"
+                                description:
+                                  type: string
+                                  description: "Description for this premium band, if appplicable"
+                    product:
+                      type: object
+                      required:
+                      - productIdType
+                      - productId
+                      - insuredValue
+                      - quantity
+                      - category
+                      properties:
+                        productIdType:
+                          type: string
+                          description: "How the insured product is identified, sucha as using a Product Code, TAC or SKU"
+                          enum:
+                          - code
+                          - tac
+                          - sku
+                          - marketingId
+                        productId:
+                          type: string
+                          description: "Actual identifier for the selected type such as a specific SKU"
+                          maxLength: 50
+                        insuredValue:
+                          type: string
+                          description: "Insured value of the item"
+                        quantity:
+                          type: integer
+                          description: "Total devices this cover applies to"
+                        category:
+                          type: string
+                          description: "Category of the item"
+                          enum:
+                          - cellphone
+                          - tablets
+                          - iPad
+                          - modems
+                          - laptops
+                          - simCards
+                          - wearables
+                          - other
+
+  ApplicationRequest:
+    type: object
+    required: 
+      - customer
+      - billing
+      - cover
+      - compliance
+    properties:
+      customer: 
+        type: object
+        required:
+        - customerIdType
+        - customerId
+        - type
+        - firstName
+        - lastName 
+        properties: 
+          customerIdType: 
+            type: string
+            description: "Customer identification type chosen on request"
+            enum:
+            - billingMsisdn
+            - insuredMsisdn
+            - policyId
+            - idNumber
+            - company
+            - appReferenceNumber
+          customerId:
+            type: string
+            description: "Actual identifier for the selected customer type chosen on request"
+            example: 27831234567
+            minLength: 5
+            maxLength: 50
+          type:
+            type: string
+            description: "Type of customer"
+            enum:
+              - cbu
+              - ebu
+              - sme
+          customerSubType:
+            type: string
+            enum:
+              - sme
+          title:
+            type: string
+            enum: 
+              - mr
+              - mrs
+              - ms
+          initials: 
+            type: string
+            description: "Intials of the customer. Data encrypted by MADAPI before sending to backend system."
+            example: MJ
+            maxLength: 10
+          firstName:
+            type: string
+            description: "First name of the customer. Data encrypted by MADAPI before sending to backend system."
+            example: Mary
+            minLength: 1
+            maxLength: 100
+          lastName:
+            type: string
+            description: "Surname of the customer. Data encrypted by MADAPI before sending to backend system."
+            example: Joan
+            minLength: 2
+            maxLength: 100
+          additionalIdType:
+            type: string
+            enum:
+              - saId
+              - drivers
+              - passport
+              - other
+          additionalId:
+            type: string
+            description: "Length is 13 characters if SA ID. Data encrypted by MADAPI before sending to backend system."
+            example: 8010200033854
+            minLength: 2
+            maxLength: 13
+          company:
+            type: object
+            required:
+            - name
+            - registrationNumber
+            properties:
+              name:
+                type: string
+                description: "Company name of the customer. Data encrypted by MADAPI before sending to backend system."
+                minLength: 2
+                maxLength: 100
+                example: Missy Joans (Pty) Ltd
+              tradingName:
+                type: string
+                description: "Trading name of the customer. Data encrypted by MADAPI before sending to backend system."
+                minLength: 2
+                maxLength: 100
+                example: Missy Joans & Co
+              registrationNumber:
+                type: string
+                description: "Company registration number of the customer. Data encrypted by MADAPI before sending to backend system."
+                minLength: 20
+                maxLength: 100
+              address:
+                type: object
+                description: "Clients address. Data encrypted by MADAPI before sending to backend system."
+                required: 
+                  - province
+                  - country
+                properties:
+                  streetNumber:
+                    type: string
+                    description: "Unit or house number. Data encrypted by MADAPI before sending to backend system."
+                    example: 45
+                    minLength: 1
+                    maxLength: 10
+                  streetName:
+                    type: string
+                    description: "Street name. Data encrypted by MADAPI before sending to backend system."
+                    example: Sandton Drive
+                    minLength: 2
+                    maxLength: 100
+                  buildingName:
+                    type: string
+                    description: "Building name. Data encrypted by MADAPI before sending to backend system."
+                    example: Block B
+                    maxLength: 100
+                  unitNumber:
+                    type: string
+                    description: "Third line of the client's address, if needed. Data encrypted by MADAPI before sending to backend system."
+                    minLength: 1
+                    maxLength: 10
+                    example: 2A
+                  suburb:
+                    type: string
+                    description: "Suburb for the client's address. Data encrypted by MADAPI before sending to backend system."
+                    example: Sandton
+                    minLength: 2
+                    maxLength: 100
+                  city:
+                    type: string
+                    description: "City for the client's address. Data encrypted by MADAPI before sending to backend system."
+                    example: Johannesburg
+                    minLength: 2
+                    maxLength: 100
+                  province:
+                    type: string
+                    description: "Province of the client's address. Data encrypted by MADAPI before sending to backend system."
+                    example: Gauteng
+                    minLength: 2
+                    maxLength: 100
+                  country:
+                    type: string
+                    description: "Country of the client's address. Data encrypted by MADAPI before sending to backend system."
+                    example: South Africa
+                    minLength: 2
+                    maxLength: 100
+                  postalCode:
+                    type: string
+                    description: "Postal code of the client's address."
+                    example: 2192
+                    minLength: 4
+                    maxLength: 10
+          dateOfBirth:
+            type: string
+            format: date
+            description: "Date of birth in YYYY-MM-DD format. Data encrypted by MADAPI before sending to backend system."
+            example: 2001-10-20
+            minLength: 10
+            maxLength: 10
+          emailAddress:
+            type: string
+            format: email
+            description: "Email address of the client. Data encrypted by MADAPI before sending to backend system."
+            example: mary.joan@mycompany.com
+            minLength: 8
+            maxLength: 100
+          contactNumber:
+            type: string
+            description: "Contact phone number of the client. Data encrypted by MADAPI before sending to backend system."
+            example: 27842401234
+            minLength: 10
+            maxLength: 11
+          additionalContactNumber:
+            type: string
+            description: "Any other phone number of the client, if applicable. Data encrypted by MADAPI before sending to backend system."
+            example: 27841230099
+            minLength: 10
+            maxLength: 11
+          address:
+            type: object
+            description: "Clients address. Data encrypted by MADAPI before sending to backend system."
+            required: 
+              - province
+              - country
+            properties:
+              streetNumber:
+                type: string
+                description: "Unit or house number. Data encrypted by MADAPI before sending to backend system."
+                example: 45
+                minLength: 1
+                maxLength: 10
+              streetName:
+                type: string
+                description: "Street name. Data encrypted by MADAPI before sending to backend system."
+                example: Sandton Drive
+                minLength: 2
+                maxLength: 100
+              buildingName:
+                type: string
+                description: "Building name. Data encrypted by MADAPI before sending to backend system."
+                example: Block B
+                maxLength: 100
+              unitNumber:
+                type: string
+                description: "Third line of the client's address, if needed. Data encrypted by MADAPI before sending to backend system."
+                minLength: 1
+                maxLength: 10
+                example: 2A
+              suburb:
+                type: string
+                description: "Suburb for the client's address. Data encrypted by MADAPI before sending to backend system."
+                example: Sandton
+                minLength: 2
+                maxLength: 100
+              city:
+                type: string
+                description: "City for the client's address. Data encrypted by MADAPI before sending to backend system."
+                example: Johannesburg
+                minLength: 2
+                maxLength: 100
+              province:
+                type: string
+                description: "Province of the client's address. Data encrypted by MADAPI before sending to backend system."
+                example: Gauteng
+                minLength: 2
+                maxLength: 100
+              country:
+                type: string
+                description: "Country of the client's address. Data encrypted by MADAPI before sending to backend system."
+                example: South Africa
+                minLength: 2
+                maxLength: 100
+              postalCode:
+                type: string
+                description: "Postal code of the client's address."
+                example: 2192
+                minLength: 4
+                maxLength: 10
+      beneficiary:
+        type: object
+        description: "Details of the policy beneficiary. Mandatory when covers section has cover type is Contact Protector"
+        required:
+        - firstName
+        - surname
+        - contactNumber
+        - dateOfBirth
+        properties:
+          firstName:
+            type: string
+            description: "First name of the beneficiary, mandatory. Data encrypted by MADAPI before sending to backend system."
+            example: Jack
+            minLength: 1
+            maxLength: 100
+          surname:
+            type: string
+            description: "Surname of the beneficiary, mandatory. Data encrypted by MADAPI before sending to backend system."
+            example: Kabelo
+            minLength: 2
+            maxLength: 100
+          emailAddress:
+            type: string
+            format: email
+            description: "Email address of the beneficiary. Data encrypted by MADAPI before sending to backend system."
+            example: jkabelo@gmail.com
+            minLength: 8
+            maxLength: 100
+          contactNumber:
+            type: string
+            description: "Contact number of the beneficiary, mandatory. Data encrypted by MADAPI before sending to backend system."
+            minLength: 10
+            maxLength: 11
+          dateOfBirth:
+            type: string
+            format: date
+            description: "Date of birth of the beneficiary, in YYYY-MM-DD format, mandatory. Data encrypted by MADAPI before sending to backend system."
+            example: 1998-08-12
+            minLength: 10
+            maxLength: 10
+          beneficiaryIdType:
+            type: string
+            description: "Type of identification used by the beneficiary. "
+            enum:
+            - saId
+            - passport
+          beneficiaryId:
+            type: string
+            description: "Identification number of the beneficiary. Length is 13 characters if SA ID. Data encrypted by MADAPI before sending to backend system."
+            minLength: 2
+            maxLength: 13
+      cover: 
+        type: array
+        description: "Insurace covers requested by customer. Multiple instances allowed."
+        required:
+        - quoteId
+        - coverType
+        items:
+          type: object
+          required:
+          - quoteId
+          - coverType
+          properties:
+            quoteId:
+              type: string
+              description: "Unique quote identifier for this product. This is the primary Quote ID or item level Quote ID that is also used for the selected cover. This ID is obtained from the service /quotation"
+              example: 245-371-18
+            product:
+              type: object
+              required:
+              - productIdType
+              - productId
+              properties:
+                productIdType:
+                  type: string
+                  description: "How the insured product is identified, such as using a Product Code, TAC or SKU"
+                  enum:
+                  - code
+                  - tac
+                  - sku
+                  - marketingId
+                productId:
+                  type: string
+                  description: "Actual identifier for the selected type such as a specific SKU"
+                  example: 7923642
+                  minLength: 2
+                  maxLength: 50
+            asset: 
+              type: array
+              description: "This array contains the insured MSISDN details, along with the device details"                       
+              items:
+                type: object
+                required:
+                - msisdn
+                - id
+                properties:
+                  msisdn:
+                    type: string
+                    minLength: 1
+                    maxLength: 12 
+                    description: "Insured MSISDNs for the related device. If multiple, then first MSISDN item in list relates to first IMEI/Serial No in related list."
+                    example: 27832227008
+
+                  id:
+                    type: string
+                    minLength: 1
+                    maxLength: 100
+                    description: "IMEI numbers or Serial numbers for the related device. IMEI should be 14 to 16 digits long, if applicable."
+                    example: AA-BBBBBB-CCCCCC-D
+            
+            
+            coverType:
+              type: string
+              description: "Type of premium band for this group of policies."
+              enum:
+              - allRisk
+              - repairOnly
+              - accident
+              - lossTheft
+              - excessBuyDown
+              - cyberSim
+              - contractProtector
+              - routerInsurance
+            addOn:
+              type: array
+              items:
+                type: string
+                example: "excessBuyDown"
+                description: "List of addOn covers like excessBuyDown, cyberSim, contractProtector, routerInsurance"
+      billing:
+        type: object
+        required:
+        - collectionType
+        properties:
+          collectionType:
+            type: string
+            default: contract
+            description: "Type of collection for policy."
+            enum:
+            - debitOrder 
+            - contract
+          billingIdType:
+            type: string
+            description: "Customer's MTN billing identification type."
+            enum:
+            - profileId 
+            - msisdn 
+          billingId:
+            type: string
+            description: "Customer’s MTN billing identifier."
+            example: 27832227008
+            minLength: 10
+            maxLength: 50
+          bank:
+            type: object
+            properties:
+              bankName:
+                type: string
+                description: "Data encrypted by MADAPI before sending to backend system."
+                minLength: 5
+                maxLength: 50
+                example: Absa
+              bankAccountHolderName:
+                type: string
+                description: "Data encrypted by MADAPI before sending to backend system."
+                minLength: 5
+                maxLength: 50
+                example: Mary Joan
+              bankAccountNumber:
+                type: string
+                description: "Data encrypted by MADAPI before sending to backend system."
+                example: 8074812224
+              bankBranchNumber:
+                type: string
+                description: "Data encrypted by MADAPI before sending to backend system."
+                example: 62005
+              bankBranchName:
+                type: string
+                description: "Data encrypted by MADAPI before sending to backend system."
+                example: Sandton City
+              bankAccountType:
+                type: string
+                description: "Data encrypted by MADAPI before sending to backend system."
+                example: cheque
+              bankDebitDay: 
+                type: integer
+                example: 1
+      commission:
+        type: object
+        description: Agent information used for commission purposes.
+        properties:       
+          storeCode:
+            type: string
+            description: "Code of the store initiating the policy. Internal MTN store code. Used commission purposes."
+            example: SABC0001
+            minLength: 2
+            maxLength: 30
+          agentIdType:
+            type: string
+            enum:
+            - storeAgent
+          agentId:
+            type: string
+            description: "Identifier of the agent handling the policy. Used commission purposes."
+            example: 149220
+            minLength: 2
+            maxLength: 30
+      compliance: 
+        type: object
+        description: "List of regulations. Once instance allowed."
+        required:
+        - consent
+        properties:
+          consent:
+            type: boolean
+            description: "Electronic signature provided as consent to share customer information. For example, false is not signed."
+          advertisingConsent:
+            type: boolean
+            description: "Electronic signature provided as consent to receive marketing related communications. For example, false is not signed."
+            default: false
+          document:
+            type: array
+            items:
+              type: object
+              properties:
+                fileType: 
+                  type: string
+                  enum:
+                  - proofOfPurchase
+                  - authorisationLetter
+                  - mandate
+                  - waiver
+                  - imeisMsisdns
+                fileRefNumber:
+                  type: string
+  
+  ApplicationResponse:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+      - transactionId
+      - data
+    properties:
+        statusCode:
+          type: string
+          description: Result code.
+          default: "0000"
+        statusMessage:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Unique id of this transaction.
+        data:
+          type: object
+          properties:
+            applicationRefNumbers:
+              type: array
+              items:
+                required:
+                - groupId
+                - subGroupId
+                - coverTypeCode
+                properties:
+                  groupId:
+                    minLength: 5
+                    maxLength: 50
+                    example: ATS-EBU-22333-MTNAR–12345
+                    description: "Structure would include ATS-EBU-ClientIdentifier-CoverType–DeviceID.\nClientIdentifier: Max 11 digits\nCoverTypes: MTNAR (All Risk), MTNLT (Loss & Theft), MTNAD (Liquid & Accident), MTNRO (Repair Only), MTNCS (Cyber Sim), MTNRI (Router Insurance), MTNCP (Contract Protector)\nDeviceID: System product code for the device"
+                  subGroupId:
+                    minLength: 5
+                    maxLength: 50
+                    example: ATS-EBU-22333-MTNAR–12345
+                    description: "Structure would include ATS-EBU-ClientIdentifier-CoverType–DeviceID-QuoteID.\nClientIdentifier: Max 11 digits\nCoverTypes: MTNAR (All Risk), MTNLT (Loss & Theft), MTNAD (Liquid & Accident), MTNRO (Repair Only), MTNCS (Cyber Sim), MTNRI (Router Insurance), MTNCP (Contract Protector)\nDeviceID: System product code for the device\nQuoteID: As per cover in application request"
+                  coverTypeCode:
+                    minLength: 2
+                    maxLength: 50
+                    example: "allRisk"
+                    enum:
+                    - allRisk
+                    - repairOnly
+                    - accident
+                    - lossTheft
+                    - excessBuyDown
+                    - cyberSim
+                    - contractProtector
+                    - routerInsurance
+                  deviceId:
+                    type: string
+                    minLength: 1
+                    maxLength: 50
+                    example: "12345"
+  
+  ErrorBadRequest:
+    type: "object"
+    title: "ErrorBadRequest"
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: "string"
+        description: "MADAPI Canonical Error Code of 4 digit long"
+        default: "5000"
+      statusMessage:
+        type: "string"
+        description: "Error description"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Timestamp of the error"
+      transactionId:
+        type: "string"
+        description: "Unique identifier of this transaction"
+        
+  ErrorUnauthorized:
+    type: "object"
+    title: "ErrorUnauthorized"
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: "string"
+        description: "MADAPI Canonical Error Code of 4 digit long"
+        default: "4000"
+      statusMessage:
+        type: "string"
+        description: "Error description"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Timestamp of the error"
+      transactionId:
+        type: "string"
+        description: "Unique identifier of this transaction"
+        
+  ErrorForbidden:
+    type: "object"
+    title: "ErrorForbidden"
+    required:
+      - "error"
+      - "error_description"
+    properties:
+      error:
+        type: "string"
+        description: "Error description"
+      error_description:
+        type: "string"
+        description: "More error details and corrective measures"
+   
+  ErrorBackend:
+    type: "object"
+    title: "ErrorBackend"
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: "string"
+        description: "MADAPI Canonical Error Code of 4 digit long"
+        default: "5000"
+      statusMessage:
+        type: "string"
+        description: "Error description"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Timestamp of the error"
+      transactionId:
+        type: "string"
+        description: "Unique identifier of this transaction"  

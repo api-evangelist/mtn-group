@@ -1,0 +1,481 @@
+swagger: '2.0'
+info:
+  title: Communication Management API
+  description: This is Swagger UI environment generated for the TMF Communication Management specification
+  version: 4.0.0
+schemes:
+  - https
+host: "api.mtn.com"
+basePath: "/v1"
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/v1/oauth/access_token
+
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+
+paths:
+  /chat/inboundMessage:
+    post:
+      operationId: createInboundMessage
+      summary: Creates a inbound CommunicationMessage
+      description: This operation creates a inbound CommunicationMessage entity.
+      tags:
+        - communicationMessage
+      parameters:
+        - name: Request body
+          description: The CommunicationMessage to be created
+          required: true
+          schema:
+            $ref: '#/definitions/CommunicationMessage_inbound'
+          in: body
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/CommunicationMessage'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /chat/outboundMediaUpload/{communicationId}:
+    post:
+      operationId: UploadMedia
+      summary: Uploads media content
+      description: This operation uploads media file .
+      tags:
+        - communicationMessage
+      parameters:
+        - name: communicationId
+          description: The Communication Id to which the media is to be sent
+          type: string
+          required: true
+          in: path
+        - name: name
+          description: The media filename that is to be sent
+          type: string
+          in: header
+        - name: mediaType
+          description: The media type of the file that is to be sent
+          type: string
+          in: header
+        - name: body
+          description: The file contents to be transferred
+          required: true
+          in: body
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/MediaResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /chat/outboundMessageWithMedia:
+    post:
+      operationId: Send message with media reference
+      summary: Sends message with media reference
+      description: This operation Sends message with media reference.
+      tags:
+        - communicationMessage
+      parameters:
+        - name: Request body
+          description: The CommunicationMessage to be created
+          required: true
+          schema:
+            $ref: '#/definitions/CommunicationMessage_outboundMessageWithMedia'
+          in: body
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/MessageMediaResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+            
+definitions:
+  CommunicationMessage_inbound:
+    type: object
+    properties:
+      integrationId:
+        type: string
+      integrationName:
+        type: string
+      event:
+        $ref: '#/definitions/ReplyEvents'
+  
+  ReplyEvents:
+    type: object
+    properties:
+      moText:
+        type: array
+        items:
+          $ref: '#/definitions/TextReply'
+      moMedia:
+        type: array
+        items:
+          $ref: '#/definitions/MediaReply'
+  
+  TextReply:
+    type: object
+    properties:
+      channel:
+        type: string
+      messageId:
+        type: string
+      relatedMessageId:
+        type: string
+      relatedClientMessageId:
+        type: string
+      from:
+        type: string
+      to:
+        type: string
+      timestamp:
+        type: integer
+        format: int64
+      encryptionKey:
+        type: string
+      whatsapp:
+        $ref: '#/definitions/WhatsAppContent'
+      charset:
+        type: string
+      content:
+        type: string
+  
+  MediaReply:
+    type: object
+    properties:
+      channel:
+        type: string
+      messageId:
+        type: string
+      relatedMessageId:
+        type: string
+      relatedClientMessageId:
+        type: string
+      from:
+        type: string
+      to:
+        type: string
+      timestamp:
+        type: integer
+        format: int64
+      encryptionKey:
+        type: string
+      whatsapp:
+        $ref: '#/definitions/WhatsAppContent'
+      caption:
+        type: string
+      anyOf:
+        $ref: '#/definitions/ReferenceMediaReply'
+  
+  WhatsAppContent:
+      type: object
+      properties:
+        profileName:
+          type: string
+          
+  ReferenceMediaReply:
+      required:
+      - files
+      type: object
+      properties:
+        channel:
+          type: string
+        messageId:
+          type: string
+        relatedMessageId:
+          type: string
+        relatedClientMessageId:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+        encryptionKey:
+          type: string
+        whatsapp:
+          $ref: '#/definitions/WhatsAppContent'
+        caption:
+          type: string
+        files:
+          type: array
+          description: 'An array of the file object with a list of media items that
+            is attached to the inbound media message. This parameter is only applicable
+            to MO event callbacks for media by reference '
+          items:
+            $ref: '#/definitions/ReferenceMediaFile'
+            
+  ReferenceMediaFile:
+    required:
+    - byteSize
+    - contentType
+    - downloadUrl
+    type: object
+    properties:
+      contentType:
+        type: string
+        description: Media content type for the media item
+      downloadUrl:
+        type: string
+        description: Download URL to be used for downloading the media item
+      sha256Hash:
+          type: string
+      byteSize:
+        type: integer
+        description: Byte size of the file to be downloaded
+        format: int64
+      fileName:
+        type: string
+        description: Original file name (if it is available)  
+
+  CommunicationMessage:
+    allOf:
+      - required:
+          - statusCode
+          - statusMessage
+          - integrationId
+        properties:
+          statusCode:
+            type: string
+            description: >-
+              Status of the transaction •  0- Success •  Any value other than 0-
+              Failure
+            example: "0000"
+          statusMessage:
+            type: string
+            description: Indicates status of transaction
+          supportMessage:
+            type: string
+            description: Support message
+          integrationId:
+            type: string
+            description: >-
+              Unique integration Id
+  
+  CommunicationMessage_outboundMessageWithMedia:
+    type: object
+    properties:
+      id:
+        type: string
+      type:
+        type: string
+        example: Text
+      text:
+        type: string
+        description: Text Content
+      channel:
+        type: object
+        properties:
+          id:
+            type: string
+          platform:
+            type: string
+            example: Open
+          type:
+            type: string
+            example: Private
+          to:
+            type: object
+            properties:
+              id:
+                type: string
+              idType:
+                type: string
+              nickname:
+                type: string
+          from:
+            type: object
+            properties:
+              id:
+                type: string
+              idType:
+                type: string
+              nickname:
+                type: string
+          time:
+            type: string
+            format: date-time
+          messageId:
+            type: string
+      content:
+        $ref: '#/definitions/MessagingTemplate'
+  
+  MessagingTemplate:
+    type: array
+    items:
+      properties:
+        contentType:
+          type: string
+          example: Attachment
+        attachment:
+          type: object
+          properties:
+            mediaType:
+              type: string
+            filename:
+              type: string
+            mime:
+              type: string
+            url:
+              type: string
+  
+  MediaResponse:
+      allOf:
+      - required:
+          - fileId
+          - accepted
+          - error
+        properties:
+          fileId:
+            type: string
+            description: >-
+              Unique identifier for every file upload response
+          accepted:
+            type: boolean
+            description: >-
+              Status of the upload
+          error:
+            type: string
+            description: Indicates error status
+            
+  MessageMediaResponse:
+      allOf:
+      - required:
+          - apiMessageId
+          - accepted
+          - error
+        properties:
+          apiMessageId:
+            type: string
+            description: >-
+              Unique identifier for every file upload response
+          accepted:
+            type: boolean
+            description: >-
+              Status of the upload
+          to:
+            type: string
+            description: >-
+              Sender Id
+          error:
+            type: string
+            description: Indicates error status
+
+  Error:
+    type: object
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '1000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      supportMessage:
+        type: string
+        description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp of the error
+        example: "2019-08-23T07:29:25.593+0000"
+      _links:
+        type: object
+        properties:
+          self:
+            type: object
+            properties:
+              href:
+                type: string
+                example: "https://api.mtn.com/v1/<path>"

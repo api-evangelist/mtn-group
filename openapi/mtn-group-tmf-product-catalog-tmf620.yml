@@ -1,0 +1,1402 @@
+swagger: '2.0'
+info:
+  title: Product Catalog Management
+  description: >-
+    API to provide capability to manage catalog, category, Offerings, Offering price and specification of  products. 
+  version: 1.0.0
+host: api.mtn.com
+basePath: /tmf-api/productcatalog/v1
+schemes:
+  - https
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+tags:
+  - name: catalog
+  - name: category
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/v1/oauth/access_token
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+paths:
+ /catalog:
+    get:
+      operationId: listCatalog
+      summary: List or find Catalog objects
+      description: This operation list or find Catalog entities
+      tags:
+        - catalog
+      parameters:
+        - name: "transactionId"
+          in: header
+          required: false
+          description: 'Client generated Id to include for tracing requests.'
+          type: string
+          x-example: '6f0bece6-7df3-4da4-af02-5e7f16e5e6fc'
+        - name: "Issellable"
+          in: query
+          required: true
+          type: string
+          enum:
+           - True
+           - False
+          description: 'ascertains whether the product is sellable or not'
+        - name: category name
+          in: query
+          description: "name of the product category"
+          required: True
+          type: string
+          enum:
+            - VAS
+            - CUG
+            - FNF
+            - Devices
+            - Accessories
+            - ProviderActivation
+            - SharedData
+            - PoolShare
+            - FixedShare
+            - LoyaltyCatalog
+            - GDS
+        - name: lifecycle
+          in: query
+          type: string
+          required: False
+          enum:
+           - Launched
+           - Active
+           - Initial
+           - Rejected
+           - Retired
+           - Obsolete
+           - In design
+        - name: business type
+          in: query
+          type: string
+          required: True
+          enum:
+           - Postpay
+           - Prepay
+        - name: depth
+          description: used to expand inline referenced entities up to the level specified
+          required: false
+          in: query
+          type: integer
+          x-example: 4
+        - name: market segment
+          description: name of the product market segment,e.g individual, Staff
+          required: false
+          in: query
+          type: string
+        - name: fields
+          in: query
+          required: false
+          type: string
+          description: fields to be included in the response, name, id, url
+          x-example: name
+      responses:
+        '200':  
+          description: Success
+          schema:
+           $ref: '#/definitions/Response_Catalog'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Customer Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+ 
+ /catalog/{id}:
+    get:
+      operationId: retrieveCatalog
+      summary: Retrieves a 'Catalog' by Id
+      tags:
+        - catalog
+      parameters:
+        - name: id
+          description: Identifier of the Category
+          required: true
+          type: string
+          in: path
+        - name: "transactionId"
+          in: header
+          required: false
+          description: 'Client generated Id to include for tracing requests.'
+          type: string
+          x-example: '6f0bece6-7df3-4da4-af02-5e7f16e5e6fc'
+        - name: fields
+          required: false
+          type: string
+          in: query
+          description: name,id,description,businessType,version,productOffering,productOfferingTerm,productOfferingPrice
+        - name: targetprice
+          required: false
+          type: string
+          in: query
+          description: target of the policy to determine pricing, pass pricepolicy for this parameter
+        - name: countryCode
+          in: header
+          type: string
+          description: "Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)"
+          required: false
+        
+        
+          
+      responses:
+        '200':  
+          description: Success
+          schema:
+           $ref: '#/definitions/Response_Catalog2'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Customer Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+ 
+ /category/{id}:
+    get:
+      operationId: retrieveCategory
+      summary: Retrieves a Category by ID
+      description: >-
+        This operation retrieves a Category entity. Attribute selection is
+        enabled for all first level attributes.
+      tags:
+        - category
+      parameters:
+        - name: id
+          description: Identifier of the Category
+          required: true
+          type: string
+          in: path
+        - name: "transactionId"
+          in: header
+          required: false
+          description: 'Client generated Id to include for tracing requests.'
+          type: string
+          x-example: '6f0bece6-7df3-4da4-af02-5e7f16e5e6fc'
+        - name: countryCode
+          in: header
+          type: string
+          description: "Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)"
+          required: false
+        - name: "senderId"
+          in: query
+          required: false
+          type: string
+          description: 'Provide the channel information'
+          x-example: 'IVR'
+        - name: "serviceNumber"
+          in: query
+          required: false
+          type: string
+          description: Unique identifier. This may be customer msisdn, customer id etc.
+          x-example: '25067564321'
+        - name: custom
+          in: query
+          required: false
+          type: string
+          description: 'Reserve for future use. Hold additional filter criteria'
+      responses:
+        '200':  
+          description: Success
+          schema:
+           $ref: '#/definitions/Response_Category_ID'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Customer Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+            
+ /productOffering/{id}/dynamicOffers:
+    get:
+      operationId: retrieveDynamicProductOffering
+      summary: Retrieves the dynamic ProductOffering by ID for USSD
+      description: This operation retrieves a ProductOffering entity. Attribute selection is enabled for all first level attributes.
+      tags:
+        - channelService
+      parameters:
+        - name: id
+          description: Identifier of the ProductOffering
+          required: true
+          type: string
+          in: path
+        - name: transactionId
+          in: header
+          type: string
+          description: transactionId
+          required: false
+        - name: "offerType"
+          in: "query"
+          required: false
+          type: "string"
+          enum: [AIRTIME,VOICE,DATA,SOCIAL,COMBO,SMS,ALL,NDAKO,DYNAMICDATA,Burner Cross Sell,Burner Offer One,Burner Upsell]
+        - name: "offerMenuId"
+          in: "query"
+          required: false
+          type: "string"
+          description: This will be used by 3PP to pass the AuthKey values.
+        - name: "validity"
+          in: "query"
+          required: false
+          type: "string"
+          enum: [Daily,Weekly,Monthly]
+        - name: "category"
+          in: "query"
+          type: "string"
+          description: "Category of the product to be fetched from that catalogue"
+          enum: [StandardATL,PersonalizedATL,Burner,All]
+        - name: "subCategory"
+          in: "query"
+          type: "string"
+          description: "This can be any of the sub category of the category entered. This may be require only if the category is passed. Subscriber Type can be passed like Prepaid or Postpaid."
+        - name: "platform"
+          in: "query"
+          type: "string"
+          description: "This flag correlates to the allPlatforms flag in the response. In essence, its a ‘Flag’ indicating which platform the bundles is being requested for. All - Indicates that all bundles should be returned. ‘Self Service’ - Indicates the bundles are being requested for self-service platforms ‘Assisted Sales’ - Indicates the bundles are being requested for assisted sales channels CSR Only"
+        - name: "channel"
+          in: "query"
+          required: false
+          type: "string"
+          description: This parameter indicates which channel the response is for. like "All", "IVR", "MTNApp", "USSD", "Portal"
+        - name: "bundleState"
+          in: "query"
+          required: false
+          type: "string"
+          description: When passed in input ,helps to return only the 'Active' or 'Inactive' or 'All' the bundles . Allowed values 'Active' , 'Inactive' and 'All'.
+        - name: "subscriberType"
+          in: "query"
+          required: false
+          type: "string"
+          description: The subscriber type associated to the MSISDN entered above. The field can be one of the following values-Converged,Prepaid, MVNO,Contract,Hybrid,EBU,FTTH.The Neon offers will be returned irrespective of the subtye.
+        - name: "amount"
+          in: "query"
+          type: "string"
+          description: "Specify the balance amount"
+        - name: "topSeller"
+          in: "query"
+          type: "string"
+          description: "When set to 'Yes' output contains both the top selling and regular bundles. When set to 'No' the output contains only the regular bundles. When set to 'All' returns both the top selling and regular bundles .Allowed values 'Yes','No','All'"
+        - name: "purchaseMedium"
+          in: "query"
+          type: "string"
+          description: "When passed in input ,helps to return only the matched bundles.Suppose if user tries to buy via Airtime this parameter takes value as 'Airtime' and those applicable bundles are returned.Allowed values 'Card','Airtime','Momo','Loyalty' and 'All'."
+        - name: pricePlanId
+          in: query
+          type: string
+          description: >-
+            The priceplan ID associated to the MSISDN entered above. Bundles
+            that are not applicable to this price plan are excluded from the
+            response based on this parameter and also bundles only applicable
+            for the price plan is returned.
+        - name: "suburb"
+          in: "query"
+          type: "string"
+          description: "Specify the suburb of the customer"
+        - name: "city"
+          in: "query"
+          type: "string"
+          description: "Specify the city of the customer"
+        - name: "province"
+          in: "query"
+          type: "string"
+          description: "Specify the province of the customer"
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/DynamicProductOffering'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'    
+definitions:
+  Catalog:
+    type: object
+    description: >-
+      A collection of Product Offerings, intended for a specific
+      DistributionChannel, enhanced with additional information such as SLA
+      parameters, invoicing and shipping details
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the Catalog
+      name:
+        type: string
+        description: Name of the catalog
+      href:
+        type: string
+        description: Unique reference of the catalog
+      catalogType:
+        type: string
+        description: 'Indicates if the catalog is a product, service or resource catalog'
+      description:
+        type: string
+        description: Description of this catalog
+      offertype: 
+        type: string
+        description: Type of catalog e.g., voice,SMS, Data
+      price: 
+        description: charges of the product
+        $ref: '#/definitions/Money'
+      validity:
+       $ref: '#/definitions/Validity' 
+        
+      lifecycleStatus:
+        type: string
+        description: Used to indicate the current lifecycle status
+      
+      version:
+        type: string
+        description: Catalog version
+      lastUpdate:
+        type: string
+        format: date-time
+        description: Date and time of the last update
+      category:
+        type: array
+        items:
+          $ref: '#/definitions/CategoryRef'
+        description: List of root categories contained in this catalog
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+        description: List of parties involved in this catalog
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period for which the catalog is valid
+      baseType:
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      type:
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+        
+  Category:
+    type: object
+    description: >-
+      The category resource is used to group product offerings, service and
+      resource candidates in logical containers. Categories can contain other categories and/or product offerings, resource or service candidates.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the category
+      href:
+        type: string
+        description: Holds URI
+      description:
+        type: string
+        description: Description of the category
+      isRoot:
+        type: boolean
+        description: >-
+          If true, this Boolean indicates that the category is a root of
+          categories
+      lastUpdate:
+        type: string
+        format: date-time
+        description: Date and time of the last update
+      lifecycleStatus:
+        type: string
+        description: Used to indicate the current lifecycle status
+      name:
+        type: string
+        description: Name of the category
+      parentId:
+        type: string
+        description: Unique identifier of the parent category
+      version:
+        type: string
+        description: Category version
+      type:
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      baseType:
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      productOffering:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOfferingRef'
+        description: >-
+          A product offering represents entities that are orderable from the
+          provider of the catalog, this resource includes pricing information.
+      subCategory:
+        type: array
+        items:
+          $ref: '#/definitions/CategoryRef'
+        description: >-
+          The category resource is used to group product offerings, service and
+          resource candidates in logical containers. Categories can contain
+          other (sub-)categories and/or product offerings.
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period for which the category is valid
+  SubCategory:
+    type: object
+    description: >-
+      The category resource is used to group product offerings, service and
+      resource candidates in logical containers. Categories can contain other categories and/or product offerings, resource or service candidates.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the category
+      href:
+        type: string
+        description: Holds URI
+      description:
+        type: string
+        description: Description of the category
+      isRoot:
+        type: boolean
+        description: >-
+          If true, this Boolean indicates that the category is a root of
+          categories
+      lastUpdate:
+        type: string
+        format: date-time
+        description: Date and time of the last update
+      lifecycleStatus:
+        type: string
+        description: Used to indicate the current lifecycle status
+      name:
+        type: string
+        description: Name of the category
+      parentId:
+        type: string
+        description: Unique identifier of the parent category
+      version:
+        type: string
+        description: Category version
+      type:
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      baseType:
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      productOffering:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOfferingRef'
+        description: >-
+          A product offering represents entities that are orderable from the
+          provider of the catalog, this resource includes pricing information.
+      subCategory:
+        type: array
+        items:
+          $ref: '#/definitions/SubCategoryRef'
+        description: >-
+          The sub category resource is used to group product offerings, service and resource candidates in logical containers. Categories can contain other (sub-)categories and/or product offerings.
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period for which the category is valid
+  CategoryRef:
+    type: object
+    description: The category for grouping recommendations
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity
+      href:
+        type: string
+        description: Holds URI.
+      name:
+        type: string
+        description: Name of the related entity.
+      description:
+        type: string
+        description: Description of the related entity.
+      lifecycleStatus:
+        type: string
+        description: Used to indicate the current lifecycle status
+      version:
+        type: string
+        description: Category version
+      baseType:
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      type:
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      referredType:
+        type: string
+        description: 'The actual type of the target instance when needed for disambiguation.'
+      haSubCategory:
+        type: string
+        description: Sub category flag . Valid values are 1 for 'has child' and 0 for 'no child' 
+      level:
+        type: string
+        description: Level of navigation at the menu will be displayed.
+      
+    required:
+      - id
+  SubCategoryRef:
+    type: object
+    description: The category for grouping recommendations
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity
+      href:
+        type: string
+        description: Holds URI.
+      name:
+        type: string
+        description: Name of the related entity.
+      description:
+        type: string
+        description: Description of the related entity.
+      lifecycleStatus:
+        type: string
+        description: Used to indicate the current lifecycle status
+      version:
+        type: string
+        description: Category version
+      baseType:
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      type:
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      referredType:
+        type: string
+        description: 'The actual type of the target instance when needed for disambiguation.'
+    required:
+      - id
+  Money:
+    type: object
+    description: A base / value business entity used to represent money
+    properties:
+      unit:
+        type: string
+        description: Currency (ISO4217 norm uses 3 letters to define the currency)
+      value:
+        type: number
+        format: float
+        description: A positive floating point number
+  Validity:
+    type: object
+    description: A used to represent start date and end date
+    properties:
+      start date:
+        type: string
+        description: start date
+      expirely date:
+        type: string
+        description: End date
+  Quantity:
+    type: object
+    description: An amount in a given unit
+    properties:
+      amount:
+        default: 1
+        type: number
+        format: float
+        description: Numeric value in a given unit
+      units:
+        type: string
+        description: Unit
+  RelatedParty:
+    type: object
+    description: >-
+      Related Entity reference. A related party defines party or party role
+      linked to a specific entity.
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      role:
+        type: string
+        description: Role played by the related party
+      baseType:
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      type:
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      referredType:
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  TimePeriod:
+    type: object
+    description: >-
+      A period of time, either as a deadline (endDateTime only) a startDateTime
+      only, or both
+    properties:
+      endDateTime:
+        type: string
+        format: date-time
+        description: 'End of the time period, using IETC-RFC-3339 format'
+      startDateTime:
+        type: string
+        format: date-time
+        description: >-
+          Start of the time period, using IETC-RFC-3339 format. If you define a
+          start, you must also define an end
+  Response_Catalog:
+    type: object
+    required: 
+      - resultCode
+      - resultDescription
+      - catalog
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+      catalog:
+        type: array
+        items:
+          $ref: '#/definitions/Catalog_level-1'
+  
+  Catalog_level-1:     
+    type: object
+    description: >-
+      A collection of Product Offerings, intended for a specific
+      DistributionChannel, enhanced with additional information such as SLA
+      parameters, invoicing and shipping details
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the Catalog
+        example: 63514374jfgfs
+      name:
+        type: string
+        description: Name of the catalog
+        example: Ketir Bundles
+  Catalog_level-2:
+    type: object
+    required:
+      - category
+    properties:
+      name:
+        type: string
+      businessType:
+        type: string  
+      version:
+        type: string
+      lifecycleStatus:
+        type: string
+      category:
+        $ref: '#/definitions/Category_level_2'
+        
+  Response_Catalog2:        
+    type: object
+    required: 
+      - resultCode
+      - resultDescription
+      - catalog
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+      catalog:
+          $ref: '#/definitions/Catalog_level-2'
+       
+  Category_level_2:
+    type: object
+    required:
+      - productoffering
+    properties:
+      productoffering:
+        $ref: '#/definitions/ProductOffering_level_2'
+        
+  ProductOffering_level_2:
+    type: object
+    required:
+      - productSpecification
+      - id
+    properties:
+      id:
+        type: string
+      name: 
+        type: string
+      productSpecification:
+        $ref: '#/definitions/productSpecification'
+       
+      productOfferingTerm:
+        type: array
+        items:
+          $ref: '#/definitions/ProductTerm'
+      productOfferingPrice:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOfferingPriceRef'
+  productSpecification:
+    type: array
+    items:
+      $ref: '#/definitions/productSpecificationRef'
+  productSpecificationRef:
+    type: object
+    required:
+      - productSpecCharacteristic
+    properties:
+      id:
+        type: string
+      name: 
+        type: string
+      lifeCycleStatus:
+        type: string
+      href: 
+        type: string
+      version: 
+        type: string
+      lastUpdate: 
+        type: string
+      type: 
+        type: string
+      productSpecCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/ProductSpecCharacteristic'
+  ProductSpecCharacteristic:
+    type: array
+    items:
+      $ref: '#/definitions/ProductSpecCharacteristicRef'
+  ProductSpecCharacteristicRef:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      maxCardinality:
+        type: string
+      minCardinality:
+        type: string
+      value:
+        type: string
+        description: A discrete value that the characteristic can take on. the value type is defined by 'valueType' characteristic
+      unitOfMeasure:
+        type: string
+        description: Could be minutes, GB, SMS, minutes
+      '@type':
+        type: string
+        description: description on the type of the resouce eg data, voice,SMS, 
+      '@schemaLocation':
+        type: string
+        description: Hyperlink reference to schema describing this object 
+  ProdSpecCharValueUse:
+    type: object
+    description: A use of the ProdSpecCharacteristicValue by a ProductOffering to which additional properties (attributes) apply or override the properties of similar properties contained in ProdSpecCharacteristicValue. It should be noted that characteristics which their value(s) addressed by this object must exist in corresponding product specification. The available characteristic values for a ProductSpecCharacteristic in a Product specification can be modified at the ProductOffering level. For example, a characteristic 'Color' might have values White, Blue, Green, and Red. But, the list of values can be restricted to e.g. White and Blue in an associated product offering. It should be noted that the list of values in 'ProdSpecCharValueUse' is a strict subset of the list of values as defined in the corresponding product specification characteristics.
+    properties:
+      name:
+        type: string
+        description: Name of the associated productSpecCharacteristic
+      description:
+        type: string
+        description: A narrative that explains in detail what the productSpecCharacteristic is
+      valueType:
+        type: string
+        description: A kind of value that the characteristic can take on, such as numeric, text and so forth
+      minCardinality:
+        type: integer
+        description: The minimum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where zero is the value for the minCardinality.
+      maxCardinality:
+        type: integer
+        description: The maximum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where five is the value for the maxCardinality.
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period for which the productSpecCharacteristic is valid
+      productSpecCharacteristicValue:
+        type: array
+        items:
+          $ref: '#/definitions/ProductSpecCharacteristicRef'
+          
+  ProductTerm:
+    type: object
+    description: Description of a productTerm linked to this product. This represent a commitment with a duration
+    properties:
+      validFor:
+        $ref: '#/definitions/validity'
+       
+  ProductOfferingPriceRef:
+    type: object
+    properties:
+      name:
+        type: string
+      recurringChargePeriodType:
+        type: string
+        example: weekly
+      priceType:
+        type: string
+        description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth.
+      recurringChargePeriodLength:
+        type: integer
+        description: 'the period of the recurring charge:  1, 2, ... .It sets to zero if it is not applicable'
+      price:
+        $ref: '#/definitions/price'
+
+      constraint:
+        type: object
+        properties:
+          prodSpecCharValueUse:
+            type: array
+            items:
+             $ref: '#/definitions/ProdSpecCharValueUse'
+          productOfferingPrice:
+            type: object
+            properties:
+              price:
+                type: array
+                items:
+                  $ref: '#/definitions/price'
+
+  price:
+    type: object
+    properties:
+      value:
+        type: number
+        description: number representing value of the price/amount
+        example: 10
+      unit:
+        type: string
+        description: unit of mesureof the value/amount eg. SSP
+        example: SSP
+  
+  validity:
+    type: object
+    properties:
+      amount:
+        type: number
+        description: number representing the validity
+        example: 7
+      unitofmeasure:
+        type: string
+        description: amount unit of mesure e.g days, month, weekly
+        example: days
+    
+  Response_Category:
+    type: object
+    required: 
+      - resultCode
+      - resultDescription
+      - data
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/Category'
+  Response_Category_ID:
+    type: object
+    required: 
+      - resultCode
+      - resultDescription
+      - data
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+      data:
+        $ref: '#/definitions/SubCategory'
+  ProductOfferingRef:
+    type: object
+    required:
+     - id
+    properties:
+      id:
+       type: string
+       description: Unique identifier of a related entity. This can be product id or offer id etc.
+      name:
+        type: string
+        description: Name of the related entity. This can be product name or offer name etc.
+      type:
+        type: string
+        description: Type of a product or offer,e.g., weekly, daily, monthly etc.
+      description:
+        type: string
+      occurance:
+        type: string
+        enum:
+         - autoRenew
+         - onceOff
+      isChargable:
+        type: boolean
+      price:
+        $ref : "#/definitions/Money"
+      productSpecification:
+        $ref: "#/definitions/ProductSpecificationRef"
+      referredType:
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+      baseType:
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+  ProductSpecificationRef:
+    type: object
+    properties:
+      id:
+       type: string
+       description: Unique identifier of a related entity. This can be product id or offer id etc.
+      name:
+        type: string
+        description: Name of the related entity. This can be product name or offer name etc.
+      type:
+        type: string
+        description: Type of a product or offer,e.g., Data, SMS, Voice etc.
+      validity:
+        type : string
+        description : Validity of a product or offer.
+      quantity:
+        $ref: "#/definitions/Quantity"
+        
+  DynamicProductOffering:
+    type: object
+    description: Represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
+    properties:
+      statusCode:
+        type: string
+      statusMessage: 
+        type: string
+      transactionId: 
+        type: string
+      data:
+        type: object
+        properties:
+          BundledCatalogue:
+            type: array
+            items:
+              $ref: '#/definitions/BundledCatalogue'
+            description: A type of ProductOffering that belongs to a grouping of ProductOfferings made available to the market. It inherits of all attributes of ProductOffering from XMF for Standard ATL offers.
+          personalizedBundles:
+            type: array
+            items:
+              $ref: '#/definitions/personalizedBundles'
+            description: Details of the personalized bundles returned for the customer. This is personalised ATL offers from XMF.
+          burnerOffer:
+            type: array
+            items:
+              $ref: '#/definitions/burnerOffer'
+            description: Details of the burner offer returned for the customer. This is Burner offers returned from NEON.
+  BundledCatalogue:
+    type: object
+    description: A type of ProductOffering that belongs to a grouping of ProductOfferings made available to the market. It inherits of all attributes of ProductOffering.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the BundledProductOffering
+      active:
+        type: string
+        enum: [True,False]
+      serviceOptionId:
+        type: string
+        example: "9"
+      description:
+        type: string
+        description: offer description
+        example: "k"
+      bundleType:
+        type: string
+        description: Type of bundle like Voice
+        example: "Voice"
+      channel:
+        type: string
+        description: source channel
+        example: "USSD"
+      platform:
+        type: string
+        description: indicates if this is self service or assisted
+        example: "Assisted"
+      attributeId:
+        type: string
+        example: "19"
+      bundleValue:
+        type: string
+        description: value of the bundle
+      bundleUOM:
+        type: string
+        description: UOM value of bundle
+      price:
+        type: string
+        description: price of the bundle
+        example: "10"
+      validity:
+        type: string
+        description: offer validity
+        example: "Days"
+      validityExtension:
+        type: string
+        description: extension limit of the validity
+      chargeType:
+        type: string
+        description: whether the offer is renewable or once off
+        example: "Once-Off"
+      recurringSOID:
+        type: string
+        description: Service option ID of the recurring offer
+      cardType:
+        type: string
+        description: Type of the card
+        example: "Simple"
+      name:
+        type: string
+        description: Name of the BundledProductOffering
+        example: "USER"
+      indicator:
+        type: string
+        description: indicator of the bundle
+      ip:
+        type: string
+        description: IP of the bundle
+      spec:
+        type: string
+        description: bundle specification
+      additionalInfo:
+        type: string
+        description: Additional information on bundle
+      collapsedDescription:
+        type: string
+        description: small description of the bundle
+      expandedDescription:
+        type: string
+        description: detailed description of the bundle
+      image:
+        type: string
+        description: Image URL
+      productPrompt:
+        type: string
+        description: product description
+      pricePlan:
+        type: string
+        description: Price plan of the offer
+      pricePlanExclusion:
+        type: string
+        description: exclusion from the price plan
+      type:
+        type: string
+        description: subscriber type
+        example: "C"
+      flag:
+        type: string
+        description: indication of shared flag
+        example: "N"
+      me2uFlag:
+        type: string
+        description: indication of ME2U flag
+        example: "N"
+      purchaseMedium:
+        type: string
+        description: medium of purchase
+        example: "AIRTIME"
+      saaeId:
+        type: string
+        description: SAAE ID
+      topSeller:
+        type: string
+        description: indication the channel
+        example: "USSD"
+      chargeable:
+        type: string
+        description: indicates if the bundle is chargable
+        example: "T"
+      pricePlanCount:
+        type: string
+        description: count of the price plans
+  personalizedBundles:
+    type: object
+    description: provides personalized bundle details of the customer
+    properties:
+      offerId:
+        type: string
+        description: The service option id associated with the product which is being returned
+      name:
+        type: string
+        description: Bundle description
+      productType:
+        type: string
+        description: The type of product which is being returned
+      segmentCategory:
+        type: string
+        description: The category or validity period of the product which is being returned
+      bundleValue:
+        type: string
+        description: The inclusive value associated with the product that is being returned
+      bundleUOM:
+        type: string
+        description: The unit of measure associated with the product that is being returned
+      bundlePrice:
+        type: string
+        description: The price associated with the product that is being returned
+      validity:
+        type: string
+        description: The validity period of the product in days
+      recurrence:
+        type: string
+        description: The recurrence period of the product that is being returned
+      chargable:
+        type: string
+        description: The charge attribute of the product that is being returned
+  burnerOffer:
+    type: object
+    description: provides personalized bundle details of the customer
+    properties:
+      offerId:
+        type: string
+        description: The service option id associated with the product which is being returned
+      message:
+        type: string
+        description: Bundle description
+        example: "1 Day-8GB\n"
+      shortMessage:
+        type: string
+        description: short Bundle description
+        example: "1 Day-8GB"
+      encoding:
+        type: string
+        description: message encoding
+        example: "UTF-8"
+      language:
+        type: string
+        description: message language
+        example: "English (UK)"
+      offerType:
+        type: string
+        description: Type of offer
+        example: "stv"
+      category:
+        type: string
+        description: The category of the product which is being returned
+        example: "DataBTL"
+      subCategory:
+        type: string
+        description: The validity period of the product which is being returned
+        example: "Daily"
+      service:
+        type: array
+        description: details of the service
+        items:
+          properties:
+            serviceType:
+              type: string
+              description: service type
+              example: "Data"
+            value:
+              type: string
+              description: value of the service
+              example: "8192"
+            valueUOM:
+              type: string
+              description: unit of the value
+              example: "MB"
+            rate:
+              type: string
+              description: effective rate
+              example: "0"
+            validity:
+              type: string
+              description: validity of the service
+            validityUOM:
+              type: string
+              description: unit of the validity value
+            promotion:
+              type: string
+              description: indicates if the offer is promotional
+              example: "F"
+      provisionValidity:
+        type: string
+        description: provision validity of the offer
+        example: "7"
+      provisionValidityUOM:
+        type: string
+        description: provision validity unit of the offer
+        example: "Days"
+      provisionType:
+        type: string
+        description: provision type of the offer
+        example: "Integrated"
+      serviceOptionID:
+        type: string
+        description: service option ID of the offer
+        example: "2436"
+      catalogue:
+        type: string
+        description: reporting catalogue name
+        example: "SupersizePrepaid"
+      bundleDescription:
+        type: string
+        description: description of the bundle
+        example: "7 Day-1.25GB"
+      frequency:
+        type: string
+        description: interval of offer
+        example: "ADHOC"
+      provisionPrice:
+        type: string
+        description: The price associated with the product that is being returned
+      validity:
+        type: string
+        description: The validity period of the product in days
+      weightage:
+        type: string
+        description: weightage of the returned offer
+      order:
+        type: string
+        description: order number
+      price:
+        type: string
+        description: price of order
+  Error:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      code:
+        type: string
+        description: Application relevant detail, defined in the API or a common list.
+      reason:
+        type: string
+        description: Explanation of the reason for the error which can be shown to a client user.
+      message:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client user.
+      status:
+        type: string
+        description: HTTP Error code extension
+      referenceError:
+        type: string
+        format: uri
+        description: URI of documentation describing the error.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class.
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name

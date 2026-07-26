@@ -1,0 +1,235 @@
+swagger: "2.0"
+info:
+  description: The Balance Management API facilitates the management of Customer Account capabilitites. It provides a generic API any client or back-end can call to request a Topup function that allows a reseller to refill/credit a subscriber airtime account from the reseller’s account
+  version: "1.0"
+  title: Balance Management V1
+host: api.mtn.com
+schemes:
+- https
+basePath: "/v1"
+consumes:
+- application/json
+produces:
+- application/json
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    name: X-API-Key
+    in: header
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: 'https://api.mtn.com/v1/oauth/access_token'
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+paths:
+  /accounts/{recipientPhoneNumber}/topUp:
+    post:
+      tags:
+      - Balance Management
+      summary: Provides the ability to request a TopUp on a specified balanceType
+      description: Manages Customer accountBalance information by specifying the 'recipientPhoneNumber'.
+      parameters:
+      - name: recipientPhoneNumber
+        in: path
+        description: PhoneNumber of the recipient for whom the Topup is intended. The format must be E.123
+        required: true
+        type: string
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests, so that the API can easily trace the HTTP request all the way from a client to MTNs backend processes (via our proxies). Each time a request is made to an MTN API the client should include a unique request reference in the HTTP Header. The value must be between 5 and 20 characters, and consist of ASCII letters, digits, or the characters +, /, =, and -. Invalid or blank IDs will be ignored and replaced with generated ones. MTN may use this to detect duplicate transactions from the client, but this functionality is not always guaranteed, so clients must make their own efforts to prevent duplicate transactions. MTN will also log the transactionId in order to assist with debugging and to correlate transactions processed by the API to requests from the client.
+        required: false
+        type: string
+      - in: body
+        name: body
+        description: Request body
+        required: true
+        schema:
+          $ref: '#/definitions/BalanceTopUpRequest'
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/BalanceTopUpResponse'
+        "204":
+          description: Success
+          schema:
+            $ref: '#/definitions/BalanceTopUpResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/Error'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/Error'
+        "415":
+          description: Unsopported media Type
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  BalanceTopUpRequest:
+    type: object
+    required:
+      - balanceType
+      - amount
+      - senderAccountId
+    properties:
+      currency:
+        type: string
+        example: FCFA
+        description: Currency of the country where topup is performed
+        enum:
+          - FCFA
+      clientReference:
+        type: string
+        example: Ayo123
+        description: Comment that the client want to assign to this transaction. 
+      balanceType:
+        type: string
+        example: "airtime"
+        description: Specifying the bucket type on which the topUp should be performed.
+        enum:
+          - airtime
+      senderAccountId:
+        type: string
+        example: 0788003055
+        description: the AccountId on ERS of the sender. This is needed ot identify the Reseller's account on ERS
+      amount:
+       $ref: "#/definitions/Amount"
+  BalanceTopUpResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+      Data:
+        $ref: '#/definitions/Data'
+      _links:
+        $ref: '#/definitions/BalanceTopUpResponse__links'
+  Error:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client.
+      supportMessage:
+        type: string
+        description: Support Message
+      transactionId:
+        type: string
+        description: Message ID
+      _links:
+        $ref: '#/definitions/BalanceTopUpResponse__links'
+  BalanceTopUpResponse__links_self:
+    type: object
+    properties:
+      href:
+        type: string
+        example: https://host:port/accounts/v1/balanceTopUp/12345
+        description: Hyperlink to access the problem.
+  BalanceTopUpResponse__links:
+    type: object
+    properties:
+      self:
+        $ref: '#/definitions/BalanceTopUpResponse__links_self'
+    description: Relevant links to the problem.
+  Data:
+    type: object
+    properties:
+      requestedTopUpAmount:
+       $ref: "#/definitions/Amount"
+      senderInformation:
+        type: object
+        properties:
+          senderAccountNumber:
+            type: string
+            example: AYO123
+            description: Account number of the Reseller on ERS
+          senderAccountDescription:
+            type: string
+            example: Reseller account for reseller
+            description: Sender Account Description
+          senderCreditLimit:
+            $ref: "#/definitions/Amount"
+          senderUpdatedBalance:
+            $ref: "#/definitions/Amount"
+          senderStatus:
+            type: string
+            example: active
+            description: The account status of the sender
+          senderPhoneNumber:
+            type: string
+            example: 0780055601
+            description: PhoneNumber of the sender / Reseller for whom the Topup is intended. The format must be E.123
+      recipientInformation:
+        type: object
+        properties:
+          recipientAccountId:
+            type: string
+            example: 07880056231
+            description: The ERS AccountID of the Recipient
+          recipientPhoneNumber:
+            type: string
+            example: 0788004541
+            description: the recipient's Phone Number
+          recipientUpdatedBalance:
+            $ref: "#/definitions/Amount"
+          actualTopUpAmount:
+            $ref: "#/definitions/Amount"
+  Amount:
+    type: "object"
+    required:
+      - "value"
+      - "type"
+      - "unit"
+    description: "The amount details for a wallet. Decimals and negatives not allowed"
+    properties:
+      type:
+        description: "This is the type of the wallet value."
+        type: string
+        enum:
+          - "CURRENCY"
+          - "DATA"
+          - "MINUTES"
+          - "SMS"
+      value:
+        type: "string"
+        description: "This is the value of a balance wallet."
+        example: "45.25"
+      unit:
+        description: "This is the unit of the wallet value."
+        type: string
+        enum:
+          - "ZAR"
+          - "NGN"
+          - "GB"
+          - "MB"
+          - "MINUTES"
+          - "SMS"
+          - "FCFA"
+        example: "NGN"

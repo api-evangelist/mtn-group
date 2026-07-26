@@ -1,0 +1,613 @@
+swagger: "2.0"
+info:
+  version: "v1"
+  title: "MTN Accountholders API"
+  contact:
+    name: "MTN API Support"
+    email: "api.support@mtn.com"
+  description: The Accountholders API returns basic information of the Accountholder including MTN Mobile Money account status. i.e. ACTIVE, SUSPENDED, BLOCKED etc. It also support validation of a MoMo accountholder, as well as the verification of financial resourceinformation.
+host: "api.mtn.com"
+basePath: "/v1"
+schemes:
+  - "https"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+  
+securityDefinitions:
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/v1/oauth/access_token
+
+security:
+  - OAuth2: []
+paths:
+  '/accountholders/{id}':
+    get:
+      tags:
+        - "status"
+      summary: "View accountholder's profile"
+      description: "Retrieves the acountholder's profile of a MTN customer."
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID value of the Accountholder i.e. MSISDN - the format must be E.123"
+          required: true
+          type: "string"
+        - name: "transactionId"
+          description: "Transaction ID"
+          in: "header"
+          required: false
+          type: "string"
+        - name: includeoffnet
+          description: Indicates whether to include offnet data in the response
+          in: query
+          required: false
+          type: boolean
+        - name: x-authorization
+          in: header
+          description: 'Encrypted ECW credentials'
+          required: true
+          type: string
+        - name: targetSystem
+          in: query
+          type: string
+          description: "The target system or the backend system"
+          x-example: "EWP"  
+        - name: validationType  
+          in: query 
+          type: string 
+          description: "Enum of types of validations to be passed"
+          enum: [CHECK_ELIGIBILITY, MOMO,NextGen_PaymentGateway]
+        - name: segment
+          type: string
+          in: query
+          required: false
+          description: This is the type of customer doing the transaction. This can be [agent , admin, merchant,subscriber]
+          enum:
+            - subscriber
+            - admin
+            - agent
+            - merchant
+          x-example: subscriber
+
+        - name: idType
+          type: string
+          in: query
+          required: false
+          description: Type of the customerId in the path.
+          enum: [MSISDN, USER]  
+
+        - name: nodeId
+          type: string
+          in: query
+          description: Node making the request
+          x-example: Comviva
+        - name: channel
+          type: string
+          x-example: "MyMTNAPP"
+          in: query 
+          required: false 
+          description: "Channel identifier"  
+
+      responses:
+        "200":
+          description: "Successful response"
+          schema:
+            $ref: "#/definitions/AccountholderProfile"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/Error'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/Error'
+        "415":
+          description: Unsupported Media Type
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+
+  '/accountholders/{id}/validate':
+    get:
+      tags:
+        - "Validate an Individual's Account Status"
+      summary: "Validate an accountholder's account status"
+      description: "Validates the account status of a MoMo customer. By supplying the customer's id to validate, MADAPI will send the reques tto the backend system and map the response back to a boolean which will indicate whether the customer is a valid MoMo customer on ECW"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID value of the Accountholder i.e. MSISDN - the format must be E.123, resource or accountholderid can be passed if targetSystem is EWP"
+          required: true
+          type: "string"
+        - name: "transactionId"
+          description: "Transaction ID or Session ID if target system is EWP"
+          in: "header"
+          required: false
+          type: "string"
+        - name: X-Authorization
+          in: header
+          description: 'Encrypted ECW credentials'
+          required: true
+          type: string
+        - name: accountNumber
+          in: query
+          type: string
+          x-example: "2222000000012345"
+          description: "An optional customer account number"
+        - name: channelId
+          in: query
+          type: string
+          description: "Channel code or ID"
+          x-example: '1'
+        - name: targetSystem
+          in: query
+          type: string
+          description: "The target system or the backend system"
+          x-example: "EWP"
+        - name: validationType
+          in: query
+          type: string
+          description: "The action or type of validation the API call is suppose to undertake."
+          x-example: "ELIGIBILITY"
+
+      responses:
+        "200":
+          description: "Successful response"
+          schema:
+            $ref: "#/definitions/AccountholderStatus"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/Error'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/Error'
+        "415":
+          description: Unsupported Media Type
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+  '/accountholders/{id}/verify':
+    post:
+      tags:
+        - "Verify a Partner's FInancial Resources"
+      summary: "Verify an accountholder's financial resource information."
+      description: "Verifies an accountholder's (or list of accountholders) financial resource information.This is typically called before linking an accountholder to a specific resource in the consuming system. The response will return a boolean to indicate whether an accountholder and service resource is valid (true) in the service provider system. The extension variable is an open field where any additional information that needs to flow between the consumer and target system, can be specified."
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID value of the Accountholder in the Service Provider Systemi.e. MSISDN - the format must be E.123 - as this operation is typically used to link financial resources, the liset of accountholder id's in the input model, will be verified against this partner id."
+          required: true
+          type: "string"
+        - name: "transactionId"
+          description: "Client generated Id to include for tracing requests, so that the API can easily trace the HTTP request all the way from a client to MTNs backend processes (via our proxies). Each time a request is made to an MTN API the client should include a unique request reference in the HTTP Header. The value must be between 5 and 20 characters, and consist of ASCII letters, digits, or the characters +, /, =, and -. Invalid or blank IDs will be ignored and replaced with generated ones. MTN may use this to detect duplicate transactions from the client, but this functionality is not always guaranteed, so clients must make their own efforts to prevent duplicate transactions. MTN will also log the transactionId in order to assist with debugging and to correlate transactions processed by the API to requests from the client."
+          in: "header"
+          required: true
+          type: "string"
+        - name: X-Authorization
+          in: header
+          description: 'Encrypted ECW credentials'
+          required: false
+          type: string
+        - in: body
+          name: body
+          description: Request body
+          required: true
+          schema:
+            $ref: '#/definitions/verifyRequest'
+
+      responses:
+        "200":
+          description: "Successful response"
+          schema:
+            $ref: "#/definitions/AccountholderStatus"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/Error'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/Error'
+        "415":
+          description: Unsupported Media Type
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  verifyRequest:
+    type: object
+    properties:
+      accountholderids:
+        type: array
+        items:
+          type: string
+      extension:
+        type: object
+      resource:
+        type: string
+    title: VerifyRequest
+  AccountholderStatus:
+    type: "object"
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+      statusMessage:
+        type: string
+        description: "Status description of the response"
+      customerId:
+        type: string
+        example: MTN123456
+        description: Id provided in the input
+      sequenceNo:
+        type: string 
+        example: 1234 
+        description: A unique id for tracing all requests  
+      data:
+        $ref: '#/definitions/validationData'
+      _links:
+        $ref: '#/definitions/AccountholderStatusResponse__links'
+  AccountholderStatusResponse__links:
+    type: object
+    properties:
+      self:
+        $ref: '#/definitions/AccountholderStatusResponse__links_self'
+    description: Relevant links to the Accoutholder Profile.
+  AccountholderStatusResponse__links_self:
+    type: object
+    properties:
+      href:
+        type: string
+        example: https://host:port/v1/accountholderstatus/12345
+        description: Hyperlink to access the Accountholder's Status.
+  validationData:
+    type: "object"
+    properties:
+
+      firstName:
+        type: string
+        description: "First Name of the customer"
+        example: "John"
+      lastName:
+        type: string
+        description: "Last Name of the customer"
+        example: "Doe"
+      gender:
+        type: string
+        description: "Gender of the customer"
+        example: "FEMALE"
+      dateOfBirth:
+        type: string
+        description: "Date of birth of the customer"
+        example: "1992-12-17"
+      isValid:
+        type: boolean
+        description: Indicates whether the accountholder is validated. True = yes.
+        example: false
+      extension:
+        type: "array"
+        description: "List of additional values returned from the provider system"
+        items:
+          type: string
+
+  AccountholderProfile:
+    type: "object"
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+      statusMessage:
+        type: string
+        description: Message of the transaction. Either Success or Failure.
+      transactionId:
+        type: string
+        description: Unique identifier for every request to the backend. Mapped from input request.
+        example: 5345345
+      customerId:
+        type: string
+        example: MTN123456
+        description: Id provided in the input, could be an MSISDN or an account id that was used in getting the info.
+      sequenceNo:
+        type: string 
+        description: A unique id used in tracing all requests
+        example: 12345  
+      data:
+        $ref: '#/definitions/data'
+      _links:
+        $ref: '#/definitions/AccountholderProfileResponse__links'
+  AccountholderProfileResponse__links:
+    type: object
+    properties:
+      self:
+        $ref: '#/definitions/AccountholderProfileResponse__links_self'
+    description: Relevant links to the Accoutholder Profile.
+  AccountholderProfileResponse__links_self:
+    type: object
+    properties:
+      href:
+        type: string
+        example: https://host:port/v1/accountholders/12345
+        description: Hyperlink to access the Accountholder's Profile.
+
+  data:
+    type: "object"
+    properties:
+      identity:
+        type: "array"
+        description: "The account holder's list of identity values. eg. Internal identity code associated with the account holder"
+        items:
+          type: "object"
+          properties:
+            idType:
+              type: "string"
+              description: "A valid identity type associated with the account holder."
+              example: "MSISDN"
+              enum:
+                - "ALIAS"
+                - "EMAIL"
+                - "EXT"
+                - "ID"
+                - "MSISDN"
+                - "MPOS"
+                - "USER"
+            idValue:
+              type: "string"
+              description: "A valid identity value associated with the account holder. eg. ID:470007/ID. etc"
+              example: "22546370829"
+      offnet:
+        type: "boolean"
+        description: "Indicates whether the record is for an offnet customer."
+        example: "false"
+      firstName:
+        type: "string"
+        description: "The account holder's first name."
+        example: "John"
+      lastName:
+        type: "string"
+        description: "The account holder's last name or surname."
+        example: "Doe"
+      profileName:
+        type: "string"
+        description: "The account holder's profile name."
+        example: "Mobile Money User Profile"
+      employeeId:
+        type: "string"
+        description: "The account holder's employee Id."
+      fris:
+        type: "array"
+        description: "The default Financial Resource Identifiers, if any, of the account holder, and their associated currencies"
+        items:
+          type: "object"
+          properties:
+            friType:
+              type: "string"
+              description: "Defined FRI Type"
+              example: "MSISDN, ALIAS, BANK, etc"
+            currency:
+              type: "object"
+              description: "The currency of the FRI."
+              properties:
+                code:
+                  type: "string"
+                  description: "The currency, as an ISO 4217 formatted string."
+                  example: "XOF"
+      loyaltyPointsAccountFri:
+        type: "string"
+        description: "The loyalty points account FRI of the account holder."
+        example: "FRI:1040249/MM"
+      acceptedtc:
+        type: "array"
+        description: "The version of the terms and conditions that the account holder has accepted."
+        items:
+          type: "object"
+          properties:
+            acceptedtcversion:
+              type: "string"
+              description: "The account holder's accepted tc version."
+              example: "v2"
+            dateTime:
+              type: "string"
+              format: "date-time"
+              description: "The account holder's accepted tc date."
+              example: "2018-05-01T00:00"
+      accountholderStatus:
+        type: "string"
+        description: "Status of the currently queried account holder"
+        example: "ACTIVE"
+        enum:
+          - "ACTIVE"
+          - "BLOCKED"
+          - "CLOSED"
+          - "CREATED"
+          - "REGISTERED"
+          - "REGISTERED_BLOCKED"
+          - "REGISTERED_CLOSED"
+      bankDomainName:
+        type: "string"
+        description: "The account holder's bank domain name."
+        example: "MFS"
+      homeChargingRegionName:
+        type: "string"
+        description: "The account holder's home charging region name."
+      accountholderType:
+        type: "string"
+        description: "Account holder Type."
+      hasParent:
+        type: "boolean"
+        description: "Indicates if the account holder has a parent"
+        example: "false"
+      parentAttributes:
+        type: "array"
+        description: Parent attributes
+        items:
+          $ref: "#/definitions/ParentAttributes"
+      languageCode:
+        type: "object"
+        description: "The language code of the account holder."
+        properties:
+          code:
+            type: "string"
+ 
+
+  OpenWallet:
+    type: "object"
+    description: "Describes the payload to sent by a 3PP for opening an account"
+    properties:
+      msisdn:
+        type: string
+        description: The MSISDN of the wallet to be created
+        maxLength: 16
+        example: 234039994032
+      msisdnVerificationCode:
+        type: string
+        description: OTP to the validate mobile number or MSISDN
+        maxLength: 64
+        example: "03904"
+      username:
+        type: string
+        description: A valid unique username the account holder have registered for verification
+        maxLength: 64
+        example: "EWP"
+      emailVerificationCode:
+        type: string
+        description: OTP to the validation email
+        maxLength: 64
+      alias:
+        type: string
+        description: An Alias name added to the account holder
+      accountHolder:
+        type:  object
+        $ref: "#/definitions/WalletHolderData"
+
+  WalletHolderData:
+    type: object
+    description: All personal details about the account holder. eg. Name, birth dates, addresses, employments
+    properties:
+      name:
+        type: string
+        description: Legitimate name associated with the account holder
+
+  ParentAttributes:
+    type: "object"
+    description: >-
+      Describes a given characteristic of an object or entity through a name/value pair.
+    required:
+      - name
+      - value
+    properties:
+      name:
+        type: string
+        description: Name of the characteristic
+      valueType:
+        type: string
+        description: Data type of the value of the characteristic
+      value:
+        $ref: '#/definitions/Any'
+        description: The value of the characteristic
+
+  Any: {}
+
+  Error:
+    type: "object"
+    required:
+      - statusCode
+      - statusMessage
+    properties:
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Timestamp when the error occured."
+        example: "2018-05-01T00:00"
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client.
+      supportMessage:
+        type: string
+        description: Support Message
+      customerId:
+        type: string
+        description: "Customer ID or msisdn"
+      sequenceNo:
+        type: string 
+        description: A unique id for tracing all requests   
+        example: 12345
+      transactionId:
+        type: string
+        description: Message ID
+      _links:
+        $ref: '#/definitions/AccountholderProfileResponse__links'

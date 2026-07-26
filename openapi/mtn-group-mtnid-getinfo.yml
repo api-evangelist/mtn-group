@@ -1,0 +1,107 @@
+swagger: '2.0'
+info:
+  description: Interface to the Apigee Cloud MTN-ID userinfo function.
+  version: "v1.0"
+  title: MTNID-getInfo
+schemes:
+  - https
+host: "api.mtn.com"
+basePath: "/mtn-id"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    name: x-api-key
+    in: header
+security:
+  - ApiKeyAuth: []
+
+paths:
+
+  /userinfo:
+    get:
+      operationId: GetUserInfo
+      summary: Gets the Auth0 user info.
+      description: "This operation returns information from Auth0, decrypting 'services' if needed"
+      tags:
+        - getInfo
+      parameters:
+        - name: mtnid-authorization
+          in: header
+          description: "JWT token obtained from Auth0 containing MTN ID user's access token for authorization to access Auth0 tenant"
+          required: true
+          type: "string"
+
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/madapi_cannonical_response'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error401'
+            
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error500'            
+
+
+definitions:
+
+      madapi_cannonical_response:
+        type: object
+        required:
+        - "statusCode"
+        - "statusMessage"
+        - "supportMessage"
+        properties:
+          statusCode:
+            type: string
+            description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned.
+            example: '0000'
+          statusMessage:
+            type: string
+            description: More details and corrective actions related to the error which can be shown to a client. Map with status from backend response.
+            example: 'success'
+          supportMessage:
+            type: string
+            description: Success Message. Map with description from backend response.
+            example: ''
+
+
+      Error401:
+        properties:
+          statusCode:
+            type: "integer"
+            description: Status code to indicate authorisation failure.
+            example: 401
+          statusMessage:
+            type: "string"
+            description: Status message indicating authorisation failure.
+            example: Unauthorised
+          supportMessage:
+            type: "string"
+            description: Optional message with supporting information.
+            example: Please verify x-api-key | Please verify JWT token
+# some comment
+
+      Error500:
+        properties:
+          statusCode:
+            type: "integer"
+            description: Status code to indicate authentication failure.
+            example: 500
+          statusMessage:
+            type: "string"
+            description: Status message indicating authentication failure.
+            example: Internal Server Error
+          supportMessage:
+            type: "string"
+            description: Optional message with supporting information.
+            example: Error processing in Apigee
+            

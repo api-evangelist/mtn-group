@@ -1,0 +1,650 @@
+swagger: '2.0'
+info:
+  title: Party Interaction
+  description: |+
+    **TMF API Reference : TMF - 683 Party Interaction**
+
+    **Release : 19.5 - Oct 2019**
+
+    The Party Interaction Management API provides a mechanism to manage party interactions. Creation, update and retrieval. Including creation, update, retrieval, deletion and notification of event. 
+    A Party Interaction captures information about past interactions in order to re-use it in future ones. 
+    his allows agents to serve users better by knowing the steps they went through. 
+    It also allows customers to see better the actions they have performed and how they interacted with the service provider.
+
+
+    Copyright © TM Forum 2019. All Rights Reserved
+
+
+  version: 1.0.0
+host: api.mtn.com
+basePath: /partyInteraction/v1
+schemes:
+  - https
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+tags:
+  - name: partyInteraction
+
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    name: X-API-Key
+    in: header
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: 'https://api.mtn.com/v1/oauth/access_token'
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+
+paths:
+  /partyInteraction:
+    post:
+      operationId: createPartyInteraction
+      summary: Creates a PartyInteraction
+      description: This operation creates a PartyInteraction entity.
+      tags:
+        - partyInteraction
+      parameters:
+        - name: partyInteraction
+          description: The PartyInteraction to be created
+          required: true
+          schema:
+            $ref: '#/definitions/PartyInteraction_Create'
+          in: body
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/PartyInteraction'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  Attachment:
+    type: object
+    description: Complements the description of an element (for instance a product) through video, pictures...
+    properties:
+      id:
+        type: string
+        description: Unique identifier for this particular attachment
+      href:
+        type: string
+        description: URI for this Attachment
+      attachmentType:
+        type: string
+        description: Attachment type such as video, picture
+      content:
+        type: string
+        description: The actual contents of the attachment object, if embedded, encoded as base64
+      description:
+        type: string
+        description: A narrative text describing the content of the attachment
+      mimeType:
+        type: string
+        description: Attachment mime type such as extension file for video, picture and document
+      name:
+        type: string
+        description: The name of the attachment
+      url:
+        type: string
+        description: Uniform Resource Locator, is a web page address (a subset of URI)
+      size:
+        $ref: '#/definitions/Quantity'
+        description: The size of the attachment.
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period of time for which the attachment is valid
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  AttachmentRef:
+    type: object
+    description: Attachment reference. An attachment complements the description of an element (for instance a product) through video, pictures
+    properties:
+      id:
+        type: string
+        description: Unique-Identifier for this attachment
+      href:
+        type: string
+        description: URL serving as reference for the attachment resource
+      description:
+        type: string
+        description: A narrative text describing the content of the attachment
+      name:
+        type: string
+        description: Name of the related entity.
+      url:
+        type: string
+        description: Link to the attachment media/content
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  AttachmentRefOrValue:
+    type: object
+    description: An attachment by value or by reference. For AttachmentRefOrValue, the attribute type,schemaLocation and referredType are related to the contained entity and not to AttchmentRefOrValue itself
+    properties:
+      id:
+        type: string
+        description: Unique identifier for this particular attachment
+      href:
+        type: string
+        description: URI for this Attachment
+      attachmentType:
+        type: string
+        description: Attachment type such as video, picture
+      content:
+        type: string
+        description: The actual contents of the attachment object, if embedded, encoded as base64
+      description:
+        type: string
+        description: A narrative text describing the content of the attachment
+      mimeType:
+        type: string
+        description: Attachment mime type such as extension file for video, picture and document
+      name:
+        type: string
+        description: The name of the attachment
+      url:
+        type: string
+        description: Uniform Resource Locator, is a web page address (a subset of URI)
+      size:
+        $ref: '#/definitions/Quantity'
+        description: The size of the attachment.
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period of time for which the attachment is valid
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+
+  InteractionItem:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the interaction item
+      creationDate:
+        type: string
+        format: date-time
+        description: Date when the interaction item is created in the system
+      reason:
+        type: string
+        description: Reason why this item is referred
+      reasonCode:
+        type: string
+        description: Corresponding code to the reason tagged
+      resolution:
+        type: string
+        description: Resolution of the interaction item
+      prefLang:
+        type: string
+        description: Preffered language of the customer. It can be 'en or fr'
+      csrUserName:
+        type: string
+        description: User name of the customer service agent
+      csrUserId:
+        type: string
+        description: User Id of the customer service agent
+      location:
+        type: string
+        description: this respresents the location of the customer/agent
+      actionDate:
+        type: string
+        description: this respresents the date when the action will take place
+      attachment:
+        type: array
+        items:
+          $ref: '#/definitions/AttachmentRefOrValue'
+      channel:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedChannel'
+        description: 'Where the interaction took place (e.g.: web, mobile app, store, kiosk, etc.)'
+      item:
+        $ref: '#/definitions/RelatedEntityRefOrValue'
+        description: RelatedEntity defines a reference to any entity. It uses polymorphism in order to let the API client know how to treat the element, as the entity type is not known beforehand.
+      itemDate:
+        $ref: '#/definitions/TimePeriod'
+        description: Moment this item is referred
+      note:
+        type: array
+        items:
+          $ref: '#/definitions/Note'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  InteractionRelationship:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the referenced party interaction
+      href:
+        type: string
+        description: Hyperlink to access the referenced party interaction
+      relationshipType:
+        type: string
+        description: Type of the interaction relationship
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  Note:
+    type: object
+    description: Extra information about a given entity
+    properties:
+      id:
+        type: string
+        description: Identifier of the note within its containing entity (may or may not be globally unique, depending on provider implementation)
+      author:
+        type: string
+        description: Author of the note
+      date:
+        type: string
+        format: date-time
+        description: Date of the note
+      text:
+        type: string
+        description: Text of the note
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  PartyInteraction:
+    type: object
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      customerId:
+        type: string
+        description: MSISDN of the customer.
+      id:
+        type: string
+        description: Unique identifier of the party interaction
+      href:
+        type: string
+        description: Hyperlink to access the party interaction
+      creationDate:
+        type: string
+        format: date-time
+        description: Date when the interaction is created in the system
+      description:
+        type: string
+        description: Description of the interaction
+      direction:
+        type: string
+        description: Specifies who started the interaction. It might be the party or the enterprise exposing this API. Possible values are “inbound” and “outbound”
+      reason:
+        type: string
+        description: Reason why the interaction happened
+      status:
+        type: string
+        description: Status of the interaction (opened, inProgress, completed)
+      statusChangeDate:
+        type: string
+        format: date-time
+        description: Last time the status changed
+      attachment:
+        type: array
+        items:
+          $ref: '#/definitions/AttachmentRefOrValue'
+      channel:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedChannel'
+        description: Where the interaction took place (e.g. web, mobile app, store, kiosk, etc.)
+      interactionDate:
+        $ref: '#/definitions/TimePeriod'
+        description: The period during which the interaction took place. Start and end will be different in case of a call or a store visit. They will be the same (or only one will appear) in case of a message or other momentary interactions.
+      interactionItem:
+        type: array
+        items:
+          $ref: '#/definitions/InteractionItem'
+      interactionRelationship:
+        type: array
+        items:
+          $ref: '#/definitions/InteractionRelationship'
+      note:
+        type: array
+        items:
+          $ref: '#/definitions/Note'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  PartyInteraction_Create:
+    type: object
+    description: |-
+
+      Skipped properties: id,href
+    required:
+      - interactionDate
+      - reason
+      - status
+      - direction
+      - channel
+    properties:
+      creationDate:
+        type: string
+        format: date-time
+        description: Date when the interaction is created in the system
+      description:
+        type: string
+        description: Description of the interaction
+      direction:
+        type: string
+        description: Specifies who started the interaction. It might be the party or the enterprise exposing this API. Possible values are “inbound” and “outbound”
+      transactionId:
+        type: string
+        description: transactionId of the request initiated used for tracking purpose
+      customerId:
+        type: string
+        description: MSISDN of the customer interacted with agent
+      reason:
+        type: string
+        description: Reason why the interaction happened
+      status:
+        type: string
+        description: Status of the interaction (opened, inProgress, completed)
+      statusChangeDate:
+        type: string
+        format: date-time
+        description: Last time the status changed
+      attachment:
+        type: array
+        items:
+          $ref: '#/definitions/AttachmentRefOrValue'
+      channel:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedChannel'
+        minItems: 1
+        description: Where the interaction took place (e.g. web, mobile app, store, kiosk, etc.)
+      interactionDate:
+        $ref: '#/definitions/TimePeriod'
+        description: The period during which the interaction took place. Start and end will be different in case of a call or a store visit. They will be the same (or only one will appear) in case of a message or other momentary interactions.
+      interactionItem:
+        type: array
+        items:
+          $ref: '#/definitions/InteractionItem'
+      interactionRelationship:
+        type: array
+        items:
+          $ref: '#/definitions/InteractionRelationship'
+      note:
+        type: array
+        items:
+          $ref: '#/definitions/Note'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  PartyInteractionStatusExampleType:
+    type: string
+    description: Possible values for the status of party interaction
+    enum:
+      - open
+      - inProgress
+      - completed
+  Quantity:
+    type: object
+    description: An amount in a given unit
+    properties:
+      amount:
+        default: 1
+        type: number
+        format: float
+        description: Numeric value in a given unit
+      units:
+        type: string
+        description: Unit
+  RelatedChannel:
+    type: object
+    description: Related channel to another entity. May be online web, mobile app, social ,etc.
+    required:
+      - id
+      - href
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the channel.
+      role:
+        type: string
+        description: Role playing by the channel.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  RelatedEntityRefOrValue:
+    type: object
+    description: A reference to an entity, where the type of the entity is not known in advance. A related entity defines a entity described by reference or by value linked to a specific entity. The polymorphic attributes @type, @schemaLocation & @referredType are related to the Entity and not the RelatedEntityRefOrValue class itself
+    required:
+      - role
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      role:
+        type: string
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  RelatedParty:
+    type: object
+    description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+    required:
+      - '@referredType'
+      - id
+      - href
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      role:
+        type: string
+        description: Role played by the related party
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  TimePeriod:
+    type: object
+    description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+    properties:
+      endDateTime:
+        type: string
+        format: date-time
+        description: End of the time period, using IETC-RFC-3339 format
+      startDateTime:
+        type: string
+        format: date-time
+        description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+
+  Error:
+    description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+    type: object
+    required:
+      - code
+      - reason
+    properties:
+      code:
+        type: string
+        description: Application relevant detail, defined in the API or a common list.
+      reason:
+        type: string
+        description: Explanation of the reason for the error which can be shown to a client user.
+      message:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client user.
+      status:
+        type: string
+        description: HTTP Error code extension
+      transactionId: 
+        type: "string"
+        description: "A unique identifier for tracking all incoming requests"  
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Error response code"
+      referenceError:
+        type: string
+        format: uri
+        description: URI of documentation describing the error.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class.
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name.

@@ -1,0 +1,652 @@
+swagger: '2.0'
+info:
+  description: A suite of apis for customer consent validation.
+  version: "2.0.0"
+  title: Consent Validation API
+
+schemes:
+  - https
+host: "api.mtn.com"
+basePath: "/v1"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/v1/oauth/access_token
+
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+
+tags:
+  - name: Consent Validation
+    description: Consent Validation Implementation to confirm user consent
+
+paths:
+
+  /consent/{msisdn}:
+    post:
+      tags:
+        - Consent Validation
+      summary:  Provides an easy way for double opt-in to their traditional channel applications like USSD.
+      description: Confirms next action based on subscriber consent mostly for traditional channels.
+      operationId: consentValidation
+      produces:
+        - application/json
+      parameters:
+        - name: msisdn
+          in:  path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ConsentRequest'
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: '#/definitions/SuccessConsentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/consentError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/consentError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/consentError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/consentError'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/consentError'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/consentError'
+        "415":
+          description: Unsupported media Type
+          schema:
+            $ref: '#/definitions/consentError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/consentError'
+
+  /consent/preapproval:
+
+    post:
+      tags:
+        - Create Customer PreApproval
+      summary: Provides the ability to create a customer PreApproval Request
+      description: Manages Customer PreApproval information by specifying the from and to 'customerIds'. For most solution the to and from customer id's will be the same. This functionality is used when the preapprovals are used to preapprove future debit transaction between different parties.
+      parameters:
+        - name: transactionId
+          in: header
+          description: Client generated Id to include for tracing requests, so that the API can easily trace the HTTP request all the way from a client to MTNs backend processes (via our proxies). Each time a request is made to an MTN API the client should include a unique request reference in the HTTP Header. The value must be between 5 and 20 characters, and consist of ASCII letters, digits, or the characters +, /, =, and -. Invalid or blank IDs will be ignored and replaced with generated ones. MTN may use this to detect duplicate transactions from the client, but this functionality is not always guaranteed, so clients must make their own efforts to prevent duplicate transactions. MTN will also log the transactionId in order to assist with debugging and to correlate transactions processed by the API to requests from the client.
+          required: true
+          type: string
+        - name: X-Authorization
+          in: header
+          description: 'Encrypted ECW credentials'
+          required: false
+          type: string    
+        - in: body
+          name: body
+          description: Request body
+          required: true
+          schema:
+            $ref: '#/definitions/preapprovalRequest'
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/preapprovalResponse'
+        "204":
+          description: Success
+          schema:
+            $ref: '#/definitions/preapprovalResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "415":
+          description: Unsupported media Type
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/preapprovalError'
+    
+  /consent/cancelPreapproval:
+    post:
+      tags:
+        - Cancel Customer PreApproval
+      summary: Provides the ability to cancel an existing customer PreApproval Request(s)
+      description: Manages existing Customer PreApproval information by been able to cancel a single or multiple preapprovals (this is based on what request parameters are sent).
+      parameters:
+        - name: transactionId
+          in: header
+          description: Client generated Id to include for tracing requests, so that the API can easily trace the HTTP request all the way from a client to MTNs backend processes (via our proxies). Each time a request is made to an MTN API the client should include a unique request reference in the HTTP Header. The value must be between 5 and 20 characters, and consist of ASCII letters, digits, or the characters +, /, =, and -. Invalid or blank IDs will be ignored and replaced with generated ones. MTN may use this to detect duplicate transactions from the client, but this functionality is not always guaranteed, so clients must make their own efforts to prevent duplicate transactions. MTN will also log the transactionId in order to assist with debugging and to correlate transactions processed by the API to requests from the client.
+          required: true
+          type: string
+        - name: X-Authorization
+          in: header
+          description: 'Encrypted ECW credentials'
+          required: false
+          type: string    
+        - in: body
+          name: body
+          description: Request body
+          required: true
+          schema:
+            $ref: '#/definitions/cancelPreapprovalRequest'
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/cancelPreapprovalResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "415":
+          description: Unsupported media Type
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/preapprovalError'
+            
+  /consent/{customerId}/generateotp:
+    post:
+      tags:
+        - OTP
+      summary: Generate OTP and send to the customer's registered Id
+      description: Generate OTP and send it to the customer's Id
+      parameters:
+        - name: customerId
+          in:  path
+          required: true
+          type: string
+          description: id for the Customer; if id is msisdn, format must be E.123
+          x-example: '2568810000026'
+        - name: X-Authorization
+          in: header
+          type: string
+          description: Bearer token to the backend.
+          x-example: b7b2320f4-xxxxx-xxxx-xxxxx-45ewr0388dca
+        - name: transactionId
+          in: header
+          type: string
+          description: Unique identifier for the 3PP sending the request
+        - name: GenerateOTP 
+          in: body
+          schema:
+            type: object
+            properties:
+              IdNumber:
+                type: string
+                description: ID Number of the customer
+              notificationChannel:
+                type: string
+                example: ussd
+                description: "Channel to be used - ussd, sms or email"
+                enum:
+                  - "ussd"
+                  - "sms"
+                  - "email"
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GenerateOTPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "415":
+          description: Unsupported media Type
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/preapprovalError' 
+
+  /consent/{customerId}/verifyotp:
+    post:
+      tags:
+        - OTP
+      summary: Validates the OTP sent to the subscriber from the generateotp request call
+      description: Validates the OTP sent to the subscriber. Once the otp has been verified, it will return invalid for subsequent calls.
+      parameters:
+        - name: customerId
+          in:  path
+          required: true
+          type: string
+          description: id for the Customer; if id is msisdn, format must be E.123
+          x-example: '2568810000026'
+        - name: transactionId
+          in: header
+          type: string
+          description: Unique identifier for the 3PP sending the request
+        - name: otpKey 
+          in: query
+          type: string
+          description: Unique identifier for the OTP that was originally sent. This is the value used in the "requestOTP" method.
+        - name: otp
+          in: query
+          required: true
+          type: string
+          description: OTP as recieved on the SMS or Email Id
+        
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/VerifyOTPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "415":
+          description: Unsupported media Type
+          schema:
+            $ref: '#/definitions/preapprovalError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/preapprovalError' 
+
+definitions:
+  ConsentRequest:
+    type: object
+    required:
+      - flowType
+      - confirmationMessage
+      - callbackUrl
+    properties:
+      confirmationMessage:
+        type: string
+        example: "Do you consent to making this purchase? . Press 1 to accept , Press 2 to reject."
+      flowType:
+        type: string
+        example: ussd
+        description: "ussd or sms"
+        enum:
+          - "ussd"
+          - "sms"
+      callbackUrl:
+        type: string
+        example: "https://your-domain/notification"
+        description: "The callback url where the user's consent will be posted to"
+      customData:
+        type: array
+        items:
+          type: string
+        example: [ "custom data 1", "custom data 2" ]
+        description: "This is a custom list of strings that you want to be sent back to you when the user's consent is posted back in ConsentNotificationResponse object."
+
+  SuccessConsentResponse:
+    type: object
+    required:
+      - statusCode
+      - data
+      - _links
+    properties:
+      statusCode:
+        type: string
+        example: "0000"
+      customerId:
+        type: string
+        example: "234806589013"
+      data:
+        type: object
+        properties:
+          sent:
+            type: boolean
+            example: true
+      _links:
+        $ref: '#/definitions/SuccessConsentResponseLink'
+
+
+  SuccessConsentResponseLink:
+    type: object
+    properties:
+      self:
+        type: string
+        example: "https://api.mtn.com/v1/consent"
+
+  preapprovalRequest:
+    type: object
+    required:
+      - message
+    properties:
+      fromCustomerId:
+        type: string
+        example: FRI:2330183736/MSISDN
+        description: The sending account of the approval (typically but not necessarily, the customer/subscriber information)
+      toCustomerId:
+        type: string
+        example: FRI:ayo.deposit/USER
+        description: The receiving entity of the approval (typically but not necessarily, a wallet)
+      fromCurrency:
+        type: string
+        example: ZAR
+        description: The currency code of the sending
+          account. It is the consuming client's responsibility to populate this with a valid value.
+      toCurrency:
+        type: string
+        example: GBP
+        description: The currency code of the receiving
+          account. It is the consuming client's responsibility to populate this with a valid value.
+      message:
+        type: string
+        example: Please process preapproval
+        description: Message to be considered for preapproval request. Max 256 characters allowed
+      duration:
+        type: string
+        format: long
+        example: 20
+        description: Duration in seconds for which the preapproval would be valid, Numeric 64-bit signed value, Null and Zero allowed.
+      callbackURL:
+        type: string
+        minLength: 8
+        maxLength: 256
+        example: https://api.mtn.com/v1/preapprovalCompleted/ece09e1b-77e1-45f2-8da0-83a82e05258a
+        description: Callback URL of the calling application of this API, for the preapprovalCompleted notification to be sent back
+      referenceId:
+        type: string
+        example: ece09e1b-77e1-45f2-8da0-83a82e05258a
+        description: External Reference. This number must be unique as the consuming client will have to store and use this number to tie the callback.
+
+  preapprovalResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+      preapprovalId:
+        type: string
+        example: 12456789
+        description: ID of the preapproval, generated by back-end system
+      data:
+        $ref: '#/definitions/preapprovalData'
+      _links:
+        $ref: '#/definitions/preapprovalResponse__links'
+
+  cancelPreapprovalRequest:
+    type: object
+    required:
+      - message
+    properties:
+      preapprovalId:
+        type: string
+        example: 12456789
+        description: ID of the preapproval (generated by back-end system) that needs to be cancelled/deleted. Note that if you want to delete multiple preapprovals than this needs to be left blank.
+      customerId:
+        type: string
+        example: FRI:2330183736/MSISDN
+        description: The ID of the customer for which to cancel ALL their preapprovals (this can be used for multiple preapproval cancellations)
+      accountHolderId:
+        type: string
+        example: ID:1234567/ID
+        description: The internal ID of the accountHolder - If provided than will delete ALL preapprovals for this user
+
+  cancelPreapprovalResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+      _links:
+        $ref: '#/definitions/cancelPreapprovalResponse__links'
+
+  preapprovalData:
+    type: object
+    properties:
+      preapprovalStatus:
+        type: string
+        example: APPROVED
+        description: Current status of the preapproval. Valid values that is expected in the return is APPROVED, EXPIRED, PENDING, REJECTED
+      expiryTime:
+        type: string
+        format: dateTime
+        description: Expiry date and time of the preapproval. Expected format is yyyy:DD:mmThh:mm:ssZ
+        example: 2020-05-30T17:00:00Z
+      existingPreapproval:
+        type: boolean
+        example: true
+        description: Indicates whether an existing preapproval exists
+        
+  GenerateOTPResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        example: '0000'
+      statusMessage:
+        type: string
+        description: Generated or NotGenerated
+        example: 'Generated'
+      customerId:
+          type: string
+          description: Customer's new MSISDN or Primary MSISDN
+          example: '2568810000026'
+      transactionId:
+        type: string
+      data:
+        type: object
+        properties:
+          IdNumber:
+            type: string
+            description: ID Number of the customer
+          servicesCount:
+            type: integer
+            description: Number of MSISDNs linked to the same customer's ID Number
+            example: 4
+          otpKey:
+            type: string
+            description: "otpKey will be retuned to 3PP as response"
+            
+  VerifyOTPResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        example: '0000'
+      statusMessage:
+        type: string
+        description: Generated or NotGenerated
+        example: 'Generated'
+      customerId:
+          type: string
+          description: Customer's new MSISDN or Primary MSISDN
+          example: '2568810000026'
+      transactionId:
+        type: string
+      data:
+        type: object
+        properties:
+          otpKey:
+            type: string
+            description: "otpKey will be retuned to 3PP as response"
+
+  preapprovalError:
+    type: object
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '1000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      supportMessage:
+        type: string
+        description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: 'cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4'
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred 
+        example: '2020-08-01T12:34'
+      path:
+        type: string
+        description: The path that caused the error
+        example: '/subscribers/27831234567'
+      method:
+        type: string
+        description: The HTTP method type that was used
+        example: 'GET'
+
+  preapprovalResponse__links_self:
+    type: object
+    properties:
+      href:
+        type: string
+        example: https://host:port/consent/v1/preapprovals/12345
+        description: Hyperlink to access the problem.
+
+  preapprovalResponse__links:
+    type: object
+    properties:
+      self:
+        $ref: '#/definitions/preapprovalResponse__links_self'
+    description: Relevant links to the problem.
+
+  cancelPreapprovalResponse__links_self:
+    type: object
+    properties:
+      href:
+        type: string
+        example: https://host:port/consent/v1/preapproval
+        description: Hyperlink to access the problem.
+
+  cancelPreapprovalResponse__links:
+    type: object
+    properties:
+      self:
+        $ref: '#/definitions/cancelPreapprovalResponse__links_self'
+    description: Relevant links to the problem.
+    
+  consentError:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client.
+      SupportMessage:
+        type: string
+        description: Support Message
+      transactionId:
+        type: string
+        description: Message ID

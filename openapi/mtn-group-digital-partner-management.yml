@@ -1,0 +1,2419 @@
+swagger: '2.0'
+info:
+  title: Digital Partners Management API
+  description: >-  
+    TM Forum Open APIs (Apache 2.0) Party Management API
+    Provides standardized mechanism for digital partner management such as creation, update, retrieval, deletion and notification of events. Partner is an organization that has any kind of relation with the enterprise.
+  version: '1.0'
+host: api.mtn.com
+basePath: /digitalPartners/v1
+schemes:
+  - https
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/oauth/client_credential/accesstoken
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+tags:
+  - name: partners
+paths:
+ 
+  /partners:
+    get:
+      operationId: listOrganization
+      summary: List or find Organization details
+      description: This operation list or find Organization entities
+      tags:
+        - partners
+      parameters:
+        - type: string
+          required: false
+          in: header
+          name: "transactionId"
+          description: 'Client generated Id to include for tracing requests.'
+          x-example: '6f0bece6-7df3-4da4-af02-5e7f16e5e6fc'
+        - type: string
+          required: false
+          in: header
+          name: "targetSystem"
+          enum:
+            - ZSmart
+          description: 'Provider system name.'
+          x-example: 'ZSmart'
+        - type: string
+          required: false
+          in: query
+          name: idType
+          description: This should be the type of ID. For eaxmple- passport, national identity card,refugee under document etc.
+        - type: string
+          required: false
+          in: query
+          name: idValue
+          description: Value of the 'idType'
+        - type: string
+          required: true
+          in: query
+          name: customerId
+          description: This can be msisdn with country code or account number etc.
+        - type: string
+          required: false
+          in: query
+          name: customerCode
+          description: Unique id generated for customer.
+        - type: integer
+          required: false
+          in: query
+          name: offset
+          description: Requested index for start of resources to be provided in response
+        - type: integer
+          required: false
+          in: query
+          name: limit
+          description: Requested number of resources to be provided in response
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Total-Count:
+              type: integer
+              description: Total number of items matching criteria
+            X-Result-Count:
+              type: integer
+              description: Actual number of items returned in the response body
+          schema:
+            type: object
+            required:
+              - result
+              - data
+            properties:
+              result:
+                $ref: '#/definitions/Result'
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/Organization'
+
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Customer Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      operationId: createOrganization
+      summary: Creates a Organization
+      description: This operation creates a Organization entity.
+      tags:
+        - partners
+      parameters:
+        -  name: transactionId
+           type: string
+           description: "A unique identifier for tracking request/response"
+           x-example: "32938293823"
+           in: header
+        - name: targetSystem
+          in: header
+          description: "The target system"
+          type: string
+          enum:
+            - COMVIVA
+        - schema:
+            $ref: '#/definitions/Organization_Create'
+          required: true
+          in: body
+          name: organization
+          description: The Organization to be created
+      responses:
+        '201':
+          description: Created
+          schema:
+            type: object
+            required:
+              - result
+              - data
+            properties:
+              result:
+                $ref: '#/definitions/Result'
+              data:
+                $ref: '#/definitions/Organization'
+            #$ref: '#/definitions/Organization'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+  '/partners/{id}':
+    get:
+      operationId: retrieveOrganization
+      summary: Retrieves a Organization by ID
+      description: >-
+        This operation retrieves a Organization entity. Attribute selection is enabled for all first level attributes.
+      tags:
+        - partners
+      parameters:
+        - required: true
+          type: string
+          name: id
+          in: path
+          description: Identifier of the Organization
+       
+        - type: string
+          required: false
+          in: header
+          name: "transactionId"
+          description: 'Client generated Id to include for tracing requests.'
+          x-example: '6f0bece6-7df3-4da4-af02-5e7f16e5e6fc'
+        - type: string
+          required: false
+          in: header
+          name: "targetSystem"
+          enum:
+            - ZSmart
+            - Comviva
+          description: 'Provider system name.'
+          x-example: 'ZSmart'
+        - name: description
+          in: query
+          type: string
+          description: "Organization description"
+        - type: string
+          required: false
+          in: query
+          name: idType
+          description: This should be the type of ID. For eaxmple- passport, national identity card,refugee under document etc.
+        - type: string
+          required: false
+          in: query
+          name: idValue
+          description: Value of the 'idType'
+        - type: string
+          required: false
+          in: query
+          name: customerCode
+          description: Unique id generated for customer.
+
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: object
+            required:
+              - result
+              - data
+            properties:
+              result:
+                $ref: '#/definitions/Result'
+              data:
+                $ref: '#/definitions/Organization'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Customer Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+    patch:
+      operationId: patchOrganization
+      summary: Updates partially a Organization
+      description: This operation updates partially a Organization entity.
+      tags:
+        - partners
+      parameters:
+        - required: true
+          type: string
+          name: id
+          in: path
+          description: Identifier of the Organization
+        - required: false
+          type: string
+          name: transactionId
+          in: header
+          x-example: "88437483748374834738"
+        - schema:
+            $ref: '#/definitions/Organization_Update'
+          required: true
+          in: body
+          name: organization
+          description: The Organization to be updated
+      responses:
+        '200':
+          description: Updated
+          schema:
+            type: object
+            required:
+              - result
+              - data
+            properties:
+              result:
+                $ref: '#/definitions/Result'
+              data:
+                $ref: '#/definitions/Organization'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+
+definitions:
+  CreateCustomerRequestPayload:
+    type: object
+    description: |-
+      Individual represents a single human being (a man, woman or child). The individual can be a customer, an employee or any other person that the organization needs to store information about.
+      Skipped properties: id,href
+    required:
+      - givenName
+      - familyName
+    properties:
+      id:
+       type: string
+      href:
+       type: string
+       example: "https://bss-uat.url.co.zm/url/v1/party/PI116984"
+      reason:
+        type: string
+        example: "01"
+      description:
+        type: string
+        example: "A brief description"
+      aristocraticTitle:
+        type: string
+        description: e.g. Baron, Graf, Earl,…
+      birthDate:
+        type: string
+        format: date-time
+        description: Birth date
+      countryOfBirth:
+        type: string
+        description: Country where the individual was born
+      deathDate:
+        type: string
+        format: date-time
+        description: Date of death
+      familyName:
+        type: string
+        description: Contains the non-chosen or inherited name. Also known as last name in the Western context
+      familyNamePrefix:
+        type: string
+        description: Family name prefix
+      formattedName:
+        type: string
+        description: A fully formatted name in one string with all of its pieces in their proper place and all of the necessary punctuation. Useful for specific contexts (Chinese, Japanese, Korean,…)
+      fullName:
+        type: string
+        description: Full name flatten (first, middle, and last names)
+      gender:
+        type: string
+        description: Gender
+      generation:
+        type: string
+        description: e.g.. Sr, Jr, III (the third),…
+      givenName:
+        type: string
+        description: First name of the individual
+      legalName:
+        type: string
+        description: Legal name or birth name (name one has for official purposes)
+      location:
+        type: string
+        description: Temporary current location od the individual (may be used if the individual has approved its sharing)
+      maritalStatus:
+        type: string
+        description: Marital status (married, divorced, widow ...)
+      middleName:
+        type: string
+        description: Middles name or initial
+      nationality:
+        type: string
+        description: Nationality
+      placeOfBirth:
+        type: string
+        description: Reference to the place where the individual was born
+      preferredGivenName:
+        type: string
+        description: 'Contains the chosen name by which the individual prefers to be addressed. Note: This name may be a name other than a given name, such as a nickname'
+      title:
+        type: string
+        description: Useful for titles (aristocratic, social,...) Pr, Dr, Sir, ...
+      contactMedium:
+        type: array
+        items:
+          $ref: '#/definitions/ContactMedium'
+      creditRating:
+        type: array
+        items:
+          $ref: '#/definitions/PartyCreditProfile'
+      disability:
+        type: array
+        items:
+          $ref: '#/definitions/Disability'
+      externalReference:
+        type: array
+        items:
+          $ref: '#/definitions/ExternalReference'
+      individualIdentification:
+        type: array
+        items:
+          $ref: '#/definitions/IndividualIdentification'
+      languageAbility:
+        type: array
+        items:
+          $ref: '#/definitions/LanguageAbility'
+      otherName:
+        type: array
+        items:
+          $ref: '#/definitions/OtherNameIndividual'
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      quote:
+       type: object
+       $ref: "#/definitions/QuoteRef"
+       
+      skill:
+        type: array
+        items:
+          $ref: '#/definitions/Skill'
+      channel:
+          $ref: "#/definitions/ChannelRef"
+      status:
+        $ref: '#/definitions/IndividualStateType'
+        description: Status of the individual
+      recurring: 
+        type: boolean
+        example: false
+      recurringCount:
+        type: number
+        example: 1
+      taxExemptionCertificate:
+        type: array
+        items:
+        
+          $ref: '#/definitions/TaxExemptionCertificate'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        format: uri
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+        
+  ChannelRef:
+    type: object
+    description: The channel to which the resource reference to. e.g. channel for selling product offerings, channel for opening a trouble ticket etc..
+    properties:
+      id:
+        type: string
+        description: unique identifier
+      href:
+        type: string
+        description: Hyperlink reference
+      value:
+        type: string
+        description: "Value of a particular key"
+      name:
+        type: string
+        description: Name of the channel.
+      '@baseType':
+        example: ResourceSpecification
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        example: https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        example: LogicalResourceSpecification
+        type: string
+        description: When sub-classing, this defines the sub-class Extensible name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+        
+    required:
+      - id  
+  QuoteRef:
+    type: object
+    description: The channel to which the resource reference to. e.g. channel for selling product offerings, channel for opening a trouble ticket etc..
+    properties:
+      id:
+        type: string
+        description: unique identifier
+      href:
+        type: string
+        description: Hyperlink reference
+      value:
+       $ref: "#/definitions/Any"
+      name:
+        type: string
+        description: Name of the channel.
+      '@baseType':
+        example: ResourceSpecification
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        example: https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        example: LogicalResourceSpecification
+        type: string
+        description: When sub-classing, this defines the sub-class Extensible name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+        
+  Attachment:
+    type: object
+    description: >-
+      Complements the description of an element (for instance a product) through
+      video, pictures...
+    properties:
+      id:
+        type: string
+        description: Unique identifier for this particular attachment
+      href:
+        type: string
+        description: URI for this Attachment
+      attachmentType:
+        type: string
+        description: 'Attachment type such as video, picture'
+      content:
+        type: string
+        description: >-
+          The actual contents of the attachment object, if embedded, encoded as
+          base64
+      description:
+        type: string
+        description: A narrative text describing the content of the attachment
+      mimeType:
+        type: string
+        description: >-
+          Attachment mime type such as extension file for video, picture and
+          document
+      name:
+        type: string
+        description: The name of the attachment
+      url:
+        type: string
+        description: 'Uniform Resource Locator, is a web page address (a subset of URI)'
+      size:
+        $ref: '#/definitions/Quantity'
+        description: The size of the attachment.
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period of time for which the attachment is valid
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  AttachmentRef:
+    type: object
+    description: >-
+      Attachment reference. An attachment complements the description of an
+      element (for instance a product) through video, pictures
+    properties:
+      id:
+        type: string
+        description: Unique-Identifier for this attachment
+      href:
+        type: string
+        description: URL serving as reference for the attachment resource
+      description:
+        type: string
+        description: A narrative text describing the content of the attachment
+      name:
+        type: string
+        description: Name of the related entity.
+      url:
+        type: string
+        description: Link to the attachment media/content
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  AttachmentRefOrValue:
+    type: object
+    description: >-
+      An attachment by value or by reference. An attachment complements the
+      description of an element, for example through a document, a video, a
+      picture.
+    properties:
+      id:
+        type: string
+        description: Unique identifier for this particular attachment
+      href:
+        type: string
+        description: URI for this Attachment
+      attachmentType:
+        type: string
+        description: 'Attachment type such as video, picture'
+      content:
+        type: string
+        description: >-
+          The actual contents of the attachment object, if embedded, encoded as
+          base64
+      description:
+        type: string
+        description: A narrative text describing the content of the attachment
+      mimeType:
+        type: string
+        description: >-
+          Attachment mime type such as extension file for video, picture and
+          document
+      name:
+        type: string
+        description: The name of the attachment
+      url:
+        type: string
+        description: 'Uniform Resource Locator, is a web page address (a subset of URI)'
+      size:
+        $ref: '#/definitions/Quantity'
+        description: The size of the attachment.
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period of time for which the attachment is valid
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  Characteristic:
+    type: object
+    description: >-
+      Describes a given characteristic of an object or entity through a
+      name/value pair.
+    required:
+      - name
+      - value
+    properties:
+      id:
+        type: string
+        description: "Unique identifier"
+      name:
+        type: string
+        description: Name of the characteristic
+      valueType:
+        type: string
+        description: Data type of the value of the characteristic
+      value:
+        type: string
+        description: The value of the characteristic
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      recurring:
+        type: boolean
+        example: false
+      recurringCount:
+        type: number
+        example: 1
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  ContactMedium:
+    type: object
+    description: Indicates the contact medium that could be used to contact the party.
+    properties:
+      role:
+        type: string
+      contactName:
+        type: string
+      partyRoleType:
+        type: string
+      mediumType:
+        type: string
+        description: >-
+          Type of the contact medium, such as: CONTACT_ADDRESS, DIRECTOR_DETAIL, CONTACT_DETAIL, physicalAdress,postalAddress,contactPerson etc.
+      verified:
+        type: boolean
+        description: "Determines whether the contact details is verified or not"
+        example: false
+      preferred:
+        type: boolean
+        description: 'If true, indicates that is the preferred contact medium'
+      characteristic:
+        $ref: '#/definitions/MediumCharacteristic'
+        description: Any additional characteristic(s) of this contact medium
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The time period that the contact medium is valid for
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  Disability:
+    type: object
+    description: Lack or inadequate strength or ability.
+    properties:
+      disabilityCode:
+        type: string
+        description: Code of the disability
+      disabilityName:
+        type: string
+        description: Name of the disability
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  EntityRef:
+    type: object
+    description: Entity reference schema to be use for all entityRef class.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  ExternalReference:
+    type: object
+    description: External reference of the individual or reference in other system
+    properties:
+      externalReferenceType:
+        type: string
+        description: Type of the external reference
+      name:
+        type: string
+        description: External reference name
+      accountType:
+        type: string
+        description: Type of account current or savings, checking etc.
+      accountName:
+        type: string
+        description: Name of account.
+      accountNumber:
+        type: string
+        description: Bank account number.
+      bankName:
+        type: string
+        description: Name ofthe bank where account is domiciled.
+      branchCode:
+        type: string
+        description: Bank branch code.
+      iban:
+        type: string
+        description: Bank iban number.
+      swiftCode:
+        type: string
+        description: Bank swift code.
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  Individual:
+    type: object
+    description: >-
+      Individual represents a single human being (a man, woman or child). The individual can be a customer, an employee or any other person that the organization needs to store information about.
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the individual
+      href:
+        type: string
+        description: Hyperlink to access the individual
+      reason:
+         type: string
+      description:
+        type: string
+      aristocraticTitle:
+        type: string
+        description: 'e.g. Baron, Graf, Earl,…'
+      birthDate:
+        type: string
+        format: date-time
+        description: Birth date
+      countryOfBirth:
+        type: string
+        description: Country where the individual was born
+      deathDate:
+        type: string
+        format: date-time
+        description: Date of death
+      firstName:
+        type: string
+        description: >-
+          First name of the individual
+      middleName:
+        type: string
+        description: >-
+          Middle name of the individual
+      lastName:
+        type: string
+        description: >-
+          Contains the non-chosen or inherited name. Also known as sur name or family name.
+      familyNamePrefix:
+        type: string
+        description: Family name prefix
+      formattedName:
+        type: string
+        description: >-
+          A fully formatted name in one string with all of its pieces in their
+          proper place and all of the necessary punctuation. Useful for specific
+          contexts (Chinese, Japanese, Korean,…)
+      fullName:
+        type: string
+        description: 'Full name flatten (first, middle, and last names)'
+      gender:
+        type: string
+        description: Gender
+      generation:
+        type: string
+        description: 'e.g.. Sr, Jr, III (the third),…'
+      legalName:
+        type: string
+        description: Legal name or birth name (name one has for official purposes)
+      location:
+        type: string
+        description: >-
+          Temporary current location od the individual (may be used if the
+          individual has approved its sharing)
+      maritalStatus:
+        type: string
+        description: 'Marital status (married, divorced, widow ...)'
+      nationality:
+        type: string
+        description: Nationality
+      placeOfBirth:
+        type: string
+        description: Reference to the place where the individual was born
+      preferredGivenName:
+        type: string
+        description: >-
+          Contains the chosen name by which the individual prefers to be
+          addressed. Note: This name may be a name other than a given name, such as a nickname
+      title:
+        type: string
+        description: 'Useful for titles (aristocratic, social,...) Pr, Dr, Sir, ...'
+      contactMedium:
+        type: array
+        items:
+          $ref: '#/definitions/ContactMedium'
+      creditRating:
+        type: array
+        items:
+          $ref: '#/definitions/PartyCreditProfile'
+      creditRating2:
+        type: array
+        items:
+          $ref: '#/definitions/PartyCreditProfile'
+      disability:
+        type: array
+        items:
+          $ref: '#/definitions/Disability'
+      externalReference:
+        type: array
+        items:
+          $ref: '#/definitions/ExternalReference'
+      individualIdentification:
+        type: array
+        items:
+          $ref: '#/definitions/IndividualIdentification'
+      languageAbility:
+        type: array
+        items:
+          $ref: '#/definitions/LanguageAbility'
+      otherName:
+        type: array
+        items:
+          $ref: '#/definitions/OtherNameIndividual'
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      skill:
+        type: array
+        items:
+          $ref: '#/definitions/Skill'
+      status:
+        $ref: '#/definitions/IndividualStateType'
+        description: Status of the individual
+      taxExemptionCertificate:
+        type: array
+        items:
+          $ref: '#/definitions/TaxExemptionCertificate'
+      recurring:
+        type: boolean
+        example: false
+      recurringCount:
+        type: number
+        example: 1
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  Individual_Create:
+    type: object
+    description: >-
+      Individual represents a single human being (a man, woman or child). The
+      individual can be a customer, an employee or any other person that the
+      organization needs to store information about.
+      Skipped properties: id,href
+    required:
+      - id
+      - givenName
+      - familyName
+    properties:
+      aristocraticTitle:
+        type: string
+        description: 'e.g. Baron, Graf, Earl,…'
+      birthDate:
+        type: string
+        format: date-time
+        description: Birth date
+      countryOfBirth:
+        type: string
+        description: Country where the individual was born
+      deathDate:
+        type: string
+        format: date-time
+        description: Date of death
+      familyName:
+        type: string
+        description: >-
+          Contains the non-chosen or inherited name. Also known as last name in
+          the Western context
+      familyNamePrefix:
+        type: string
+        description: Family name prefix
+      formattedName:
+        type: string
+        description: >-
+          A fully formatted name in one string with all of its pieces in their
+          proper place and all of the necessary punctuation. Useful for specific
+          contexts (Chinese, Japanese, Korean,…)
+      fullName:
+        type: string
+        description: 'Full name flatten (first, middle, and last names)'
+      gender:
+        type: string
+        description: Gender
+      generation:
+        type: string
+        description: 'e.g.. Sr, Jr, III (the third),…'
+      givenName:
+        type: string
+        description: First name of the individual
+      legalName:
+        type: string
+        description: Legal name or birth name (name one has for official purposes)
+      location:
+        type: string
+        description: >-
+          Temporary current location od the individual (may be used if the
+          individual has approved its sharing)
+      maritalStatus:
+        type: string
+        description: 'Marital status (married, divorced, widow ...)'
+      middleName:
+        type: string
+        description: Middles name or initial
+      nationality:
+        type: string
+        description: Nationality
+      placeOfBirth:
+        type: string
+        description: Reference to the place where the individual was born
+      preferredGivenName:
+        type: string
+        description: >-
+          Contains the chosen name by which the individual prefers to be
+          addressed. Note: This name may be a name other than a given name, such
+          as a nickname
+      title:
+        type: string
+        description: 'Useful for titles (aristocratic, social,...) Pr, Dr, Sir, ...'
+      contactMedium:
+        type: array
+        items:
+          $ref: '#/definitions/ContactMedium'
+      creditRating:
+        type: array
+        items:
+          $ref: '#/definitions/PartyCreditProfile'
+      disability:
+        type: array
+        items:
+          $ref: '#/definitions/Disability'
+      externalReference:
+        type: array
+        items:
+          $ref: '#/definitions/ExternalReference'
+      individualIdentification:
+        type: array
+        items:
+          $ref: '#/definitions/IndividualIdentification'
+      languageAbility:
+        type: array
+        items:
+          $ref: '#/definitions/LanguageAbility'
+      otherName:
+        type: array
+        items:
+          $ref: '#/definitions/OtherNameIndividual'
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      skill:
+        type: array
+        items:
+          $ref: '#/definitions/Skill'
+      status:
+        $ref: '#/definitions/IndividualStateType'
+        description: Status of the individual
+      taxExemptionCertificate:
+        type: array
+        items:
+          $ref: '#/definitions/TaxExemptionCertificate'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  Individual_Update:
+    type: object
+    description: >-
+      Individual represents a single human being (a man, woman or child). The
+      individual can be a customer, an employee or any other person that the
+      organization needs to store information about.
+      Skipped properties: id,href
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the organization
+      href:
+        type: string
+        description: Hyperlink to access the individual
+      aristocraticTitle:
+        type: string
+        description: 'e.g. Baron, Graf, Earl,…'
+      reason:
+        type: string
+        description: 'Reason for an activity'
+      birthDate:
+        type: string
+        format: date-time
+        description: Birth date
+      countryOfBirth:
+        type: string
+        description: Country where the individual was born
+      deathDate:
+        type: string
+        format: date-time
+        description: Date of death
+      familyName:
+        type: string
+        description: >-
+          Contains the non-chosen or inherited name. Also known as last name in
+          the Western context
+      familyNamePrefix:
+        type: string
+        description: Family name prefix
+      formattedName:
+        type: string
+        description: >-
+          A fully formatted name in one string with all of its pieces in their
+          proper place and all of the necessary punctuation. Useful for specific
+          contexts (Chinese, Japanese, Korean,…)
+      fullName:
+        type: string
+        description: 'Full name flatten (first, middle, and last names)'
+      gender:
+        type: string
+        description: Gender
+      generation:
+        type: string
+        description: 'e.g.. Sr, Jr, III (the third),…'
+      givenName:
+        type: string
+        description: First name of the individual
+      legalName:
+        type: string
+        description: Legal name or birth name (name one has for official purposes)
+      location:
+        type: string
+        description: >-
+          Temporary current location od the individual (may be used if the
+          individual has approved its sharing)
+      maritalStatus:
+        type: string
+        description: 'Marital status (married, divorced, widow ...)'
+      description: 
+        type: string
+        description: "Description of the party"
+      middleName:
+        type: string
+        description: Middles name or initial
+      nationality:
+        type: string
+        description: Nationality
+      placeOfBirth:
+        type: string
+        description: Reference to the place where the individual was born
+      preferredGivenName:
+        type: string
+        description: >-
+          Contains the chosen name by which the individual prefers to be
+          addressed. Note: This name may be a name other than a given name, such
+          as a nickname
+      title:
+        type: string
+        description: 'Useful for titles (aristocratic, social,...) Pr, Dr, Sir, ...'
+      contactMedium:
+        type: array
+        items:
+          $ref: '#/definitions/ContactMedium'
+      # creditRating:
+      #   type: array
+      #   items:
+      #     $ref: '#/definitions/PartyCreditProfile'
+      # disability:
+      #   type: array
+      #   items:
+      #     $ref: '#/definitions/Disability'
+      externalReference:
+        type: array
+        items:
+          $ref: '#/definitions/ExternalReference'
+      individualIdentification:
+        type: array
+        items:
+          $ref: '#/definitions/IndividualIdentification'
+      # languageAbility:
+      #   type: array
+      #   items:
+      #     $ref: '#/definitions/LanguageAbility'
+      otherName:
+        type: array
+        items:
+          $ref: '#/definitions/OtherNameIndividual'
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      skill:
+        type: array
+        items:
+          $ref: '#/definitions/Skill'
+      status:
+        $ref: '#/definitions/IndividualStateType'
+        description: Status of the individual
+      channel:
+        $ref: "#/definitions/ChannelRef"
+      # taxExemptionCertificate:
+      #   type: array
+      #   items:
+      #     $ref: '#/definitions/TaxExemptionCertificate'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  Individual_UpdateResponse:
+    type: object
+    description: >-
+      Represents the response structure returned to the api caller when updating a customer information
+    required:
+     - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the organization
+      href:
+        type: string
+        description: Hyperlink to access the individual
+      reason:
+        type: string
+        description: 'Reason for an activity'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+     
+      
+  IndividualIdentification:
+    type: object
+    description: >-
+      Represents our registration of information used as proof of identity by an
+      individual (passport, national identity card, drivers license, social
+      security number, birth certificate)
+    properties:
+      identificationId:
+        type: string
+        description: Identifier
+      identificationType:
+        type: string
+        description: >-
+          Identification type (passport, national identity card, drivers
+          license, social security number, birth certificate)
+      issuingAuthority:
+        type: string
+        description: >-
+          Authority which has issued the identifier, such as 'social security','town hall' etc.
+      issuingCountry:
+        type: string
+        description: >-
+          Country which has issued the identifier
+      issuingDate:
+        type: string
+        format: date-time
+        description: Date at which the identifier was issued
+      expiryDate:
+        type: string
+        format: date-time
+        description: Date till which the identifier will be valid
+      attachment:
+        $ref: '#/definitions/AttachmentRefOrValue'
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period for which the identification information is valid.
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  IndividualStateType:
+    type: string
+    description: Valid values for the lifecycle state of the individual. The I and U represent Create & Update respectively for comviva backend
+    enum:
+      - initialized
+      - validated
+      - deceaded
+      - I
+      - U
+      - captured
+      - completed
+  Note:
+    type: array
+    items:
+      type: string
+  LanguageAbility:
+    type: object
+    description: Ability of an individual to understand or converse in a language.
+    properties:
+      isFavouriteLanguage:
+        type: boolean
+        description: >-
+          A “true” value specifies whether the language is considered by the
+          individual as his favourite one
+      languageCode:
+        type: string
+        description: Language code (RFC 5646)
+      languageName:
+        type: string
+        description: Language name
+      listeningProficiency:
+        type: string
+        description: Listening proficiency evaluated for this language
+      readingProficiency:
+        type: string
+        description: Reading proficiency evaluated for this language
+      speakingProficiency:
+        type: string
+        description: Speaking proficiency evaluated for this language
+      writingProficiency:
+        type: string
+        description: Writing proficiency evaluated for this language
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  MediumCharacteristic:
+    type: object
+    description: >-
+      Describes the contact medium characteristics that could be used to contact a party (an individual or an organization)
+    properties:
+      city:
+        type: string
+        description: The city
+      contactType:
+        type: string
+        description: >-
+          The type of contact, for example: phone number such as mobile, fixed home, fixed office. postal address such as shipping instalation…
+      addressType:
+        type: string
+        description:  Type of address such as residential address, office address etc.
+      placeName:
+        type: string
+        description:  Name of village or town or place etc.
+      sectorName:
+        type: string
+        description:  Name of sector or relevant etc.
+      cellName:
+        type: string
+        description:  Name of cell number or town or place etc.
+      districtName:
+        type: string
+        description:  Name of village or town or place etc.
+      streetName:
+        type: string
+        description: Name of the street
+      street1:
+        type: string
+        description: Describes the street
+      street2:
+        type: string
+      street3:
+        type: string
+      street4:
+        type: string
+      streetLine:
+        type: string
+      postCode:
+        type: string
+        description: Postcode
+      stateOrProvince:
+        type: string
+        description: State or province
+      country:
+        type: string
+        description: The country
+      emailAddress:
+        type: string
+        description: Full email address in standard format
+      faxNumber:
+        type: string
+        description: The fax number of the contact
+      phoneNumber:
+        type: string
+        description: The primary phone number of the contact
+      alternateNumber:
+        type: array
+        items:
+          type: string
+          description: List of alternate phone/contact numbers of the customer
+          example: ["2507865432", "2507235432", "2507234232"]
+      socialNetworkId:
+        type: string
+        description: Identifier as a member of a social network
+      title:
+        type: string
+        description: Prefix title of contact person
+      firstName:
+        type: string
+        description: First name of contact person
+      lastName:
+        type: string
+        description: Last name of contact person
+      idType:
+        type: string
+        description: Type of ID that identifies contact person
+      idNumber:
+        type: string
+        description: ID number of contact person
+      gender:
+        type: string
+        description: gender of contact person
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  Organization:
+    type: object
+    description: >-
+      Organization represents a group of people identified by shared interests
+      or purpose. Examples include business, department and enterprise. Because
+      of the complex nature of many businesses, both organizations and
+      organization units are represented by the same data.
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the organization
+      href:
+        type: string
+        description: Hyperlink to access the organization
+      isHeadOffice:
+        type: boolean
+        description: 'If value is true, the organization is the head office'
+      isLegalEntity:
+        type: boolean
+        description: >-
+          If value is true, the organization is a legal entity known by a
+          national referential.
+      name:
+        type: string
+        description: Organization name (department name for example)
+      nameType:
+        type: string
+        description: 'Type of the name : Co, Inc, Ltd,…'
+      organizationType:
+        type: string
+        description: 'Type of Organization (company, department...)'
+      tradingName:
+        type: string
+        description: Name that the organization (unit) trades under
+      totalMemberCount:
+        type: integer
+        description: Number of total memebers
+      memberList:
+        $ref : "#/definitions/MemberList"
+      contactMedium:
+        type: array
+        items:
+          $ref: '#/definitions/ContactMedium'
+      creditRating:
+        type: array
+        items:
+          $ref: '#/definitions/PartyCreditProfile'
+      existsDuring:
+        $ref: '#/definitions/TimePeriod'
+      externalReference:
+        type: array
+        items:
+          $ref: '#/definitions/ExternalReference'
+      organizationChildRelationship:
+        type: array
+        items:
+          $ref: '#/definitions/OrganizationChildRelationship'
+      organizationIdentification:
+        type: array
+        items:
+          $ref: '#/definitions/OrganizationIdentification'
+      organizationParentRelationship:
+        $ref: '#/definitions/OrganizationParentRelationship'
+      otherName:
+        type: array
+        items:
+          $ref: '#/definitions/OtherNameOrganization'
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      status:
+        $ref: '#/definitions/OrganizationStateType'
+        description: Status of the organization
+      taxExemptionCertificate:
+        type: array
+        items:
+          $ref: '#/definitions/TaxExemptionCertificate'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  Organization_Create:
+    type: object
+    description: >-
+      Organization represents a group of people identified by shared interests
+      or purpose. Examples include business, department and enterprise. Because
+      of the complex nature of many businesses, both organizations and
+      organization units are represented by the same data.
+      Skipped properties: id,href
+    required:
+      - id
+      - tradingName
+    properties:
+      isHeadOffice:
+        type: boolean
+        description: 'If value is true, the organization is the head office'
+      isLegalEntity:
+        type: boolean
+        description: >-
+          If value is true, the organization is a legal entity known by a
+          national referential.
+      name:
+        type: string
+        description: Organization name (department name for example)
+      nameType:
+        type: string
+        description: 'Type of the name : Co, Inc, Ltd,…'
+      description:
+        type: string
+        description: Could be the description of the entity etc.
+      organizationType:
+        type: string
+        description: 'Type of Organization (company, department...)'
+      tradingName:
+        type: string
+        description: Name that the organization (unit) trades under
+    
+      existsDuring:
+        $ref: '#/definitions/TimePeriod'
+     
+      organizationIdentification:
+        type: array
+        items:
+          $ref: '#/definitions/OrganizationIdentification'
+      organizationParentRelationship:
+        $ref: '#/definitions/OrganizationParentRelationship'
+    
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      status:
+        $ref: '#/definitions/OrganizationStateType'
+        description: Status of the organization
+     
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  Organization_Update:
+    type: object
+    description: >-
+      Organization represents a group of people identified by shared interests
+      or purpose. Examples include business, department and enterprise. Because
+      of the complex nature of many businesses, both organizations and
+      organization units are represented by the same data.
+      Skipped properties: id,href
+    required:
+      - id
+    properties:
+      isHeadOffice:
+        type: boolean
+        description: 'If value is true, the organization is the head office'
+      isLegalEntity:
+        type: boolean
+        description: >-
+          If value is true, the organization is a legal entity known by a
+          national referential.
+      name:
+        type: string
+        description: Organization name (department name for example)
+      nameType:
+        type: string
+        description: 'Type of the name : Co, Inc, Ltd,…'
+      organizationType:
+        type: string
+        description: 'Type of Organization (company, department...)'
+      tradingName:
+        type: string
+        description: Name that the organization (unit) trades under
+      contactMedium:
+        type: array
+        items:
+          $ref: '#/definitions/ContactMedium'
+      creditRating:
+        type: array
+        items:
+          $ref: '#/definitions/PartyCreditProfile'
+      existsDuring:
+        $ref: '#/definitions/TimePeriod'
+      externalReference:
+        type: array
+        items:
+          $ref: '#/definitions/ExternalReference'
+      organizationChildRelationship:
+        type: array
+        items:
+          $ref: '#/definitions/OrganizationChildRelationship'
+      organizationIdentification:
+        type: array
+        items:
+          $ref: '#/definitions/OrganizationIdentification'
+      organizationParentRelationship:
+        $ref: '#/definitions/OrganizationParentRelationship'
+      otherName:
+        type: array
+        items:
+          $ref: '#/definitions/OtherNameOrganization'
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      status:
+        $ref: '#/definitions/OrganizationStateType'
+        description: Status of the organization
+      taxExemptionCertificate:
+        type: array
+        items:
+          $ref: '#/definitions/TaxExemptionCertificate'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  OrganizationChildRelationship:
+    type: object
+    description: Child references of an organization in a structure of organizations.
+    properties:
+      relationshipType:
+        type: string
+        description: >-
+          Type of the relationship. Could be juridical, hierarchical,
+          geographical, functional for example.
+      organization:
+        $ref: '#/definitions/OrganizationRef'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  OrganizationIdentification:
+    type: object
+    description: >-
+      Represents our registration of information used as proof of identity by an
+      organization
+    properties:
+      identificationId:
+        type: string
+        description: Identifier
+      identificationType:
+        type: string
+        description: >-
+          Type of identification information used to identify the company in a
+          country or internationally
+      issuingAuthority:
+        type: string
+        description: Authority which has issued the identifier (chamber of commerce...)
+      issuingDate:
+        type: string
+        format: date-time
+        description: Date at which the identifier was issued
+      attachment:
+        $ref: '#/definitions/AttachmentRefOrValue'
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period for which the identification information is valid.
+      note:
+        $ref: "#/definitions/Note"
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  OrganizationParentRelationship:
+    type: object
+    description: Parent references of an organization in a structure of organizations.
+    properties:
+      relationshipType:
+        type: string
+        description: >-
+          Type of the relationship. Could be juridical, hierarchical,
+          geographical, functional for example.
+      organization:
+        $ref: '#/definitions/OrganizationRef'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  OrganizationRef:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  OrganizationStateType:
+    type: string
+    description: Valid values for the lifecycle state of the organization
+    enum:
+      - initialized
+      - validated
+      - closed
+      - active
+      - suspend
+      - resume
+  OtherNameIndividual:
+    type: object
+    description: >-
+      Keeps track of other names, for example the old name of a woman before
+      marriage or an artist name.
+    properties:
+      aristocraticTitle:
+        type: string
+        description: 'e.g. Baron, Graf, Earl,…'
+      familyName:
+        type: string
+        description: >-
+          Contains the non-chosen or inherited name. Also known as last name in
+          the Western context
+      familyNamePrefix:
+        type: string
+        description: Family name prefix
+      birthDate:
+        type: string
+      nationality:
+        type: string
+      formattedName:
+        type: string
+        description: >-
+          . A fully formatted name in one string with all of its pieces in their
+          proper place and all of the necessary punctuation. Useful for specific
+          contexts (Chinese, Japanese, Korean,…)
+      fullName:
+        type: string
+        description: 'Full name flatten (first, middle, and last names)'
+      generation:
+        type: string
+        description: 'e.g. Sr, Jr…'
+      givenName:
+        type: string
+        description: First name
+      legalName:
+        type: string
+        description: Legal name or birth name (name one has for official purposes)
+      middleName:
+        type: string
+        description: Middle name or initial
+      preferredGivenName:
+        type: string
+        description: >-
+          Contains the chosen name by which the person prefers to be addressed.
+          Note: This name may be a name other than a given name, such as a
+          nickname
+      title:
+        type: string
+        description: 'Use for titles (aristrocatic, social, ...): Pr, Dr, Sir,....'
+      gender:
+        type: string
+      maritalStatus:
+        type: string
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  OtherNameOrganization:
+    type: object
+    description: 'Keeps track of other names, for example the old name of an organization.'
+    properties:
+      name:
+        type: string
+        description: Organization name (department name for example)
+      nameType:
+        type: string
+        description: 'Co. , Inc. , Ltd. , Pty Ltd. , Plc; , Gmbh'
+      tradingName:
+        type: string
+        description: The name that the organization trades under
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  Party:
+    type: object
+    description: >-
+      Generic Party structure used to define commonalities between sub concepts
+      of Individual and Organization.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the organization
+      href:
+        type: string
+        description: Hyperlink to access the organization
+      contactMedium:
+        type: array
+        items:
+          $ref: '#/definitions/ContactMedium'
+      creditRating:
+        type: array
+        items:
+          $ref: '#/definitions/PartyCreditProfile'
+      externalReference:
+        type: array
+        items:
+          $ref: '#/definitions/ExternalReference'
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      taxExemptionCertificate:
+        type: array
+        items:
+          $ref: '#/definitions/TaxExemptionCertificate'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  PartyCreditProfile:
+    type: object
+    description: >-
+      An individual might be evaluated for its worthiness and this evaluation
+      might be based on a credit rating given by a credit agency.
+    properties:
+      creditAgencyName:
+        type: string
+        description: Name of the credit agency giving the score
+      creditAgencyType:
+        type: string
+        description: Type of the credit agency giving the score
+      ratingReference:
+        type: string
+        description: Reference corresponding to the credit rating
+      ratingReason:
+        type: string
+      ratingReason2:
+        type: string
+      ratingReason3:
+        type: string
+      ratingReason4:
+        type: string
+      ratingScore:
+        type: integer
+        description: >-
+          A measure of a party’s creditworthiness calculated on the basis of a
+          combination of factors such as their income and credit history
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  Quantity:
+    type: object
+    description: An amount in a given unit
+    properties:
+      amount:
+        default: 1
+        type: number
+        format: float
+        description: Numeric value in a given unit
+      units:
+        type: string
+        description: Unit
+  RelatedParty:
+    type: object
+    description: >-
+      Related Entity reference. A related party defines party or party role
+      linked to a specific entity.
+    required:
+      - '@referredType'
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      role:
+        type: string
+        description: Role played by the related party
+      description: 
+        type: string
+      status:
+        type: string
+      value:
+        type: string
+      isRef:
+        type: boolean
+        description: "This is a boolean indicating whether an activity should be performed or not. Eg. Activating an account, a wallet etc."
+      isMinor:
+        type: boolean
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  Skill:
+    type: object
+    description: >-
+      Skills evaluated for an individual with a level and possibly with a
+      limited validity when an obsolescence is defined (Ex: the first-aid
+      certificate first level is limited to one year and an update training is
+      required each year to keep the level).
+    properties:
+      comment:
+        type: string
+        description: A free text comment linked to the evaluation done
+      evaluatedLevel:
+        type: string
+        description: Level of expertise in a skill evaluated for an individual
+      skillCode:
+        type: string
+        description: Code of the skill
+      skillName:
+        type: string
+        description: 'Name of the skill such as Java language,…'
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  TaxDefinition:
+    type: object
+    description: >-
+      Reference of a tax definition. A tax is levied by an authorized tax
+      jurisdiction. There are many different types of tax (Federal Tax levied by
+      the US Government, State Tax levied by the State of California,…).
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the tax.
+      name:
+        type: string
+        description: Tax name.
+      taxType:
+        type: string
+        description: Type of  the tax.
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  TaxExemptionCertificate:
+    type: object
+    description: >-
+      A tax exemption certificate represents a tax exemption granted to a party
+      (individual or organization) by a tax jurisdiction which may be a city,
+      state, country,... An exemption has a certificate identifier (received
+      from the jurisdiction that levied the tax) and a validity period. An
+      exemption is per tax types and determines for each type of tax what
+      portion of the tax is exempted (partial by percentage or complete) via the
+      tax definition.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the certificate of the tax exemption
+      attachment:
+        $ref: '#/definitions/AttachmentRefOrValue'
+      taxDefinition:
+        type: array
+        items:
+          $ref: '#/definitions/TaxDefinition'
+      amountDueDetail:
+        $ref : "#/definitions/DueDetail"
+        description : Detail of the due amount.
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      '@schemaLocation':
+        type: string
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+        format: uri
+      '@type':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  TimePeriod:
+    type: object
+    description: >-
+      A period of time, either as a deadline (endDateTime only) a startDateTime
+      only, or both
+    properties:
+      endDateTime:
+        type: string
+        format: date-time
+        description: 'End of the time period, using IETC-RFC-3339 format'
+      startDateTime:
+        type: string
+        format: date-time
+        description: >-
+          Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+  Money:
+    required:
+      - amount
+      - unit
+    type: object
+    properties:
+      amount:
+        type: string
+      unit:
+        type: string
+
+  DueDetail:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier. It can be customer id or account id or invoice number etc.
+        description:
+          type: string
+          description: Description of the due detail
+        validFor:
+          $ref: "#/definitions/TimePeriod"
+        dueDate:
+          type: string
+          format: date-time
+        unpaidAmount:
+          $ref : "#/definitions/Money"
+          description: Unpaid bill amount.
+        advanceAmount:
+          $ref : "#/definitions/Money"
+          description: Advance payment of the customer.
+        taxExcludedAmount:
+          $ref : "#/definitions/Money"
+          description: Tax exempted amount.
+        taxIncludedAmount:
+          $ref : "#/definitions/Money"
+          description: Taxable amount.
+        totalDueAmount:
+          $ref : "#/definitions/Money"
+          description: total payable amount,i.e. unpaidAmount plus advance amount after taxable amount
+  Error:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Error response code"
+      status:
+        type: "string"
+        description: "HTTP Status code"
+      transactionId: 
+        type: "string"
+        description: "A unique identifier for tracking all incoming requests"  
+      error:
+        type: "string"
+        description: "Status description"
+      message:
+        type: "string"
+        description: "More error details and corrective measures"
+      sequenceNo:
+        type: string 
+        description: A unique identifier used in tracking each request  
+      path:
+        type: "string"
+        description: "the path that caused the error"
+  Result:
+    type: object
+    required:
+      - resultCode
+      - resultDescription
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+      sequenceNo:
+        type: string 
+        description: A unique identifier used in tracking each request 
+        example: 12345  
+     
+  
+  MemberList:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID used for unique identification
+        name:
+          type: string
+          description: Name of the member
+        serviceNumber:
+          type: string
+          description: Service number. In case of msisdn as service number, form will be 'countryCode+ msisdn'. example- 2507685432
+        serviceType:
+          type: string
+          description: type of service used by member. example - GSM,Fixed Line etc.
+        status:
+          type: string
+  Any: {}

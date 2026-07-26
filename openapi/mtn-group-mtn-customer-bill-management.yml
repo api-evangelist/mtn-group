@@ -1,0 +1,945 @@
+swagger: '2.0'
+info:
+  description: To facilitate the capability for consumers to retrieve bill information at service level , account level or invoice level etc.
+  version: "v1.0"
+  title: Customer Bill Management API
+
+schemes:
+  - https
+host: "api.mtn.com"
+basePath: "/v1"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/v1/oauth/access_token
+
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+
+paths:
+  /customerBill:
+    get:
+      tags:
+        - customerBill
+      summary: List or find CustomerBills
+      description: Retrieves list of paid and unpaid bill details.
+      operationId: listCustomerBill
+      parameters:
+        - name: "transactionId"
+          in: header
+          required: false
+          description: 'Client generated Id to include for tracing requests.'
+          type: string
+          x-example: '6f0bece6-7df3-4da4-af02-5e7f16e5e6fc'
+        - name: "targetSystem"
+          in: header
+          required: false
+          type: string
+          enum:
+            - ZSmart
+            - CLM
+            - DCBS
+            - CS
+          description: 'Provider system name.'
+          x-example: 'ZSmart'
+        - name: countryCode
+          in: header
+          type: string
+          description: "Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)"
+          required: false
+        - name: customerType
+          in: query
+          type: "integer"
+          enum: [1,2,3]
+          description : "This parameter will be used to query the bill information at Service level or Account level or Invoice Level. 1 refers to Service level, 2 refers to Account level and 3 refers to Invoice Level."
+          required: true
+        - name: customerId
+          in: query
+          type: "string"
+          description: "Value of 'customerType'"
+          required: true
+        - name: queryType
+          in: query
+          type: "string"
+          required: true
+          enum:
+            - unpaidBill
+            - paidBill
+            - completeBill
+          description: "This will be used to make the specific request. Either the request will be for unpaid bill or paid bill or complete bill. In case of 'unpaidBill', customer bill information along with due amount detail , related party and bill cycle information will be returned. In case of 'paidBill', applied payment information along with unpaid bill details will be returned. In case of 'completeBill', all other information like billing account,financial,taxItem,billDocument etc. will be returned along with paid and unpaid bill details."
+        - name: offset
+          description: Requested index for start of resources to be provided in response
+          required: false
+          in: query
+          type: integer
+        - name: limit
+          description: Requested number of resources to be provided in response
+          required: false
+          in: query
+          type: integer
+        - name: billingFlag
+          in: query
+          type : "string"
+          description: "This field contains three segments, like 000 or 100 etc.First segment means if include unbilled amount for current month, second segment means if include credit limit and third segment means if include deposit. 1 refers to 'include' and 0 refers to 'Not include'. Default value will be 0 "
+          default : "000"
+        - name: startDate
+          in: query
+          type: "string"
+          description: "Start date of bill information requested for. Date type format: yyyy-mm-dd"
+        - name: endDate
+          in: query
+          type: "string"
+          description: "End date of bill information requested for. Date type format: yyyy-mm-dd"
+        - name: billingCycleId
+          in: query
+          type: "string"
+          description: "Billing cycle ID"
+        - name: custom
+          in: query
+          type: "string"
+          description: "Reserve for future use. Can hold the additional filter criteria."
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/CustomerBill_Complete"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+  /customerBill/{id}:
+    get:
+      tags:
+        - customerBill
+      summary: Retrieves a CustomerBill by ID
+      description: Provides the ability for a consumer to retrieve list of unpaid bill amount, advance payment amount and total due amount
+      operationId: getCustomerBillById
+      parameters:
+        - name: id
+          required : true
+          in: path
+          type: "string"
+          description: "This can be Customer's masisdn with countrycode or Account Number or Invoice Number. Example - 23712345678"
+        - name: "transactionId"
+          in: header
+          required: false
+          description: 'Client generated Id to include for tracing requests.'
+          type: string
+
+          x-example: '6f0bece6-7df3-4da4-af02-5e7f16e5e6fc'
+        - name: "targetSystem"
+          in: header
+          required: false
+          type: string
+          enum:
+            - ZSmart
+            - CLM
+            - DCBS
+            - CS
+          description: 'Provider system name.'
+          x-example: 'ZSmart'
+        - name: countryCode
+          in: header
+          type: string
+          description: "Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)"
+          required: false
+        - name: customerType
+          in: query
+          type: "integer"
+          enum: [1,2,3]
+          description : "This parameter will be used to query the bill information at Service level or Account level or Invoice Level. 1 refers to Service level, 2 refers to Account level and 3 refers to Invoice Level "
+          required: true
+        - name: queryType
+          in: query
+          required: true
+          type: "string"
+          enum:
+            - unpaidBill
+            - paidBill
+            - completeBill
+          description: "This will be used to make the specific request. Either the request will be for unpaid bill or paid bill or complete bill. In case of 'unpaidBill', customer bill information along with due amount detail , related party and bill cycle information will be returned. In case of 'paidBill', applied payment information along with unpaid bill details will be returned. In case of 'completeBill', all other information like billing account,financial,taxItem,billDocument etc. will be returned along with paid and unpaid bill details."
+        - name: billingFlag
+          in: query
+          type : "string"
+          description: "This field contains three segments, like 000 or 100 etc.First segment means if include unbilled amount for current month, second segment means if include credit limit and third segment means if include deposit. 1 refers to 'include' and 0 refers to 'Not include'. Default value will be 0 "
+          default : "000"
+        - name: startDate
+          in: query
+          type: "string"
+          description: "Start date of bill information requested for. Date type format: yyyy-mm-dd"
+        - name: endDate
+          in: query
+          type: "string"
+          description: "End date of bill information requested for. Date type format: yyyy-mm-dd"
+        - name: billingCycleId
+          in: query
+          type: "string"
+          description: "Billing cycle ID"
+        - name: custom
+          in: query
+          type: "string"
+          description: "Reserve for future use. Can hold the additional filter criteria."
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/CustomerBill_ID"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+
+    patch:
+      tags:
+        - customerBill
+      summary:  Updates partially a CustomerBill
+      description: Provides the ability for a consumer to update postpaid bill balance
+      operationId: updateCustomerBill
+      parameters:
+        - name: id
+          in: path
+          description: "Unique id of the customer it could be service / account id"
+          required: true
+          type: string
+        - name: transactionId
+          in: header
+          description: "The transaction reference id to be passed by the 3pp for a particular transaction. This will be used for reconciliation"
+          type: string
+          required: false
+        - name: countryCode
+          in: header
+          description: "Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)"
+          required: false
+          type: string
+        - name: "targetSystem"
+          in: header
+          required: false
+          type: string
+          enum:
+            - ZSmart
+            - CLM
+            - DCBS
+            - CS
+          description: 'Provider system name.'
+          x-example: 'ZSmart'
+        - name: body
+          in: body
+          description: "Payment Details"
+          required: true
+          schema:
+            $ref: "#/definitions/CustomerBill_Payment"
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/CustomerBill_Update"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+
+
+definitions:
+
+  CustomerBill_Complete:
+    required:
+      - resultCode
+      - resultDescription
+      - data
+    type: object
+    properties:
+      result:
+        type: object
+        properties:
+          resultCode:
+            type: string
+            description: Result code. Example- '0000'
+          resultDescription:
+            type: string
+            description: Result message. Example- 'Successfully processed'
+          transactionId:
+            type: string
+            description: Transaction id returned by the provider system.
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/CustomerBill"
+          properties:
+            relatedParty:
+              type: object
+              $ref: "#/definitions/RelatedParty"
+            billCycle:
+              type: object
+              $ref: "#/definitions/BillCycle"
+            appliedPayment:
+              $ref: "#/definitions/AppliedPayment"
+            billDocument:
+              $ref : "#/definitions/BillDocument"
+            billingAccount:
+              $ref: "#/definitions/BillingAccount"
+            financialAccount:
+              $ref: "#/definitions/FinancialAccount"
+            taxItem:
+              $ref: "#/definitions/TaxItem"
+
+  CustomerBill_ID:
+    required:
+      - result
+      - data
+    type: object
+    properties:
+      result:
+        type: object
+        properties:
+          resultCode:
+            type: string
+            description: Result code. Example- '0000'
+          resultDescription:
+            type: string
+            description: Result message. Example- 'Successfully processed'
+          transactionId:
+            type: string
+            description: Transaction id returned by the provider system.
+      data:
+        type: object
+        $ref: "#/definitions/CustomerBill"
+        properties:
+          relatedParty:
+            type: object
+            $ref: "#/definitions/RelatedParty"
+          billCycle:
+            type: object
+            $ref: "#/definitions/BillCycle"
+          appliedPayment:
+            type: object
+            $ref: "#/definitions/AppliedPayment"
+          billDocument:
+            $ref : "#/definitions/BillDocument"
+          billingAccount:
+            $ref: "#/definitions/BillingAccount"
+          financialAccount:
+            $ref: "#/definitions/FinancialAccount"
+          taxItem:
+            $ref: "#/definitions/TaxItem"
+  CustomerBill_Payment:
+    type: object
+    $ref: "#/definitions/AppliedPayment"
+
+  CustomerBill_Update:
+    type: object
+    required:
+      - resultCode
+      - resultDescription
+      - data
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+      data:
+        type: object
+        properties:
+          idType:
+            type: string
+            description: This field refers the information against which bill has been paid, i.e. Account Number or Invoice Number or Service Number or Bill Number etc.
+            example: Account Number
+          id:
+            type: string
+            description: Value of the chosen 'idType'
+            example: '4567123'
+          paymentRef:
+            type: array
+            items:
+              $ref: '#/definitions/Reference'
+          amountPaid:
+            $ref : "#/definitions/Money"
+          advancePayment:
+            $ref : "#/definitions/Money"
+  CustomerBill:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the bill. It can be account number or service number or invoice number etc. Service number must be of format countrcode + msisdn, example- 250786456732
+      href:
+        type: string
+      billType:
+        type: string
+        description : Identifier of the bill type. Example -'Customer Bill'
+      billNo:
+        type: string
+        description : Bill reference known by the customer or the party and displayed on the bill. Could be different from the id.
+      billDate:
+        type: string
+        description : Bill date, external customer view (in consequence - different to the production date of the bill).
+      category:
+        type : string
+        enum:
+          - normal
+          - duplicate
+          - interim
+          - last
+          - trail customer
+          - credit note
+        description: Category of the bill produced - normal, duplicate, interim, last, trial customer or credit note for example
+      billRunType:
+        type: string
+        enum:
+          - onCycle
+          - offCycle
+        description: onCycle (a bill can be created as a result of a cycle run) or offCycle (a bill can be created as a result of other events such as customer request or account close)
+      lastUpdate:
+        type: string
+        format: date-time
+        description: Date of bill last update.
+      nextBillDate:
+        type: string
+        format: date-time
+        description: Approximate date of the next bill production given for information (only used/meaningful for on cycle / regular bills)
+      paymentDueDate:
+        type: string
+        format: date-time
+        description: Date at which the amount due should have been paid.
+      state:
+        type: string
+        description: Status of the bill.
+      amountDue:
+        $ref : "#/definitions/Money"
+        description : A base / value business entity used to represent money
+      amountDueDetail:
+        $ref : "#/definitions/DueDetail"
+        description : Detail of the due amount.
+  Money:
+    required:
+      - amount
+      - unit
+    type: object
+    properties:
+      amount:
+        type: string
+      unit:
+        type: string
+  DueDetail:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier. It can be customer id or account id or invoice number etc.
+        description:
+          type: string
+          description: Description of the due detail
+        validFor:
+          $ref: "#/definitions/TimePeriod"
+        dueDate:
+          type: string
+          format: date-time
+        unpaidAmount:
+          $ref : "#/definitions/Money"
+          description: Unpaid bill amount.
+        advanceAmount:
+          $ref : "#/definitions/Money"
+          description: Advance payment of the customer.
+        taxExcludedAmount:
+          $ref : "#/definitions/Money"
+          description: Tax exempted amount.
+        taxIncludedAmount:
+          $ref : "#/definitions/Money"
+          description: Taxable amount.
+        totalDueAmount:
+          $ref : "#/definitions/Money"
+          description: total payable amount,i.e. unpaidAmount plus advance amount after taxable amount
+  AppliedPayment:
+    description: Payment associated with the bill. There may be a partial payment, then there should be several applied payments available. On the other hand, more than one bill could be payed by one payment
+    type: object
+    properties:
+      idType:
+        type: string
+        description: Identifier of the level against which bill has been paid.
+        example: Account Number
+      id:
+        type: string
+        description: Value of 'idType'
+        example: '45632145'
+      totalPaidAmount:
+        description: "Total amount paid. This should be summation of amounts paid against multiple bill number (aka invoice number)"
+        type: object
+        $ref: "#/definitions/Money"
+      payment:
+        type: array
+        items:
+          type: object
+          $ref: "#/definitions/PaymentRef"
+
+  PaymentRef:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier
+      paymentRef:
+        type: array
+        items:
+          $ref: '#/definitions/Reference'
+      billNumber:
+        type: string
+      transactionDate:
+        type: string
+        description: format- 'yyyy-mm-dd'
+        example: '2020-07-24'
+      paidAmount:
+        type: object
+        $ref: "#/definitions/Money"
+      paymentMethod:
+        type: object
+        $ref: "#/definitions/PaymentMethodRef"
+    required:
+      - referenceId
+  PaymentMethodRef:
+    type: object
+    description: Reference or value of the method used for payment.
+    properties:
+      name:
+        type: string
+        description: 'Friendly name assigned to the payment method.'
+        example: 'Manual Boost for RWC'
+      description:
+        type: string
+        description: 'Description of the associated payment method.'
+        example: 'Manual Boost for RWC'
+      type:
+        $ref: '#/definitions/PaymentMethodTypeEnum'
+      details:
+        $ref: '#/definitions/PaymentMethodTypeDetails'
+  PaymentMethodTypeEnum:
+    type: 'string'
+    title: 'PaymentMethodTypeEnum'
+    enum:
+      - 'Bank'
+      - 'Cash'
+      - 'Cheque'
+      - 'ATM'
+      - 'BankCard'
+      - 'TokenizedCard'
+  PaymentMethodTypeDetails:
+    type: object
+    description: 'Definition of the payment method. Its content depends on the type field.'
+    properties:
+      bank:
+        $ref: '#/definitions/Bank'
+      cash:
+        $ref: '#/definitions/Cash'
+      atm:
+        $ref: '#/definitions/ATM'
+      cheque:
+        $ref: '#/definitions/Cheque'
+      bankCard:
+        $ref: '#/definitions/BankCard'
+      tokenizedCard:
+        $ref: '#/definitions/TokenizedCard'
+  BankCard:
+    description: Detailed information for a bank card.
+    properties:
+      brand:
+        type: string
+        description: 'Card brand. e.g. Visa, MasterCard, AmericanExpress.'
+        example: 'Visa'
+      type:
+        type: string
+        description: 'Type of card. e.g. Credit, Debit.'
+        example: 'Credit'
+      cardNumber:
+        type: string
+        description: 'Credit card number.'
+        example: 'xxxx xxxx xxx xxx'
+      expirationDate:
+        type: string
+        format: date-time
+        description: 'Expiration date of the card.'
+        example: '10/2020'
+      cvv:
+        type: string
+        description: 'Security Code of the card. e.g. CCV, CCV2.'
+        example: '123'
+      lastFourDigits:
+        type: string
+        description: 'Last four digits of the credit card.'
+        example: '1234'
+      nameOnCard:
+        type: string
+        description: 'Name on the card.'
+        example: 'Bruce Wayne'
+      bank:
+        type: string
+        description: 'Bank that issued the card.'
+        example: 'Bank of Gotham'
+  TokenizedCard:
+    description: Detailed information for a stored tokenized card.
+    properties:
+      brand:
+        type: string
+        description: 'Card brand. Might be used for display purposes.'
+      type:
+        type: string
+        description: 'Card type. Might be used for display purposes.'
+      lastFourDigits:
+        type: string
+        description: 'Last four digits of the credit card. Might be used for display purposes.'
+      tokenType:
+        type: string
+        description: 'Token type. e.g emv.'
+      token:
+        type: string
+        description: 'The token itself.'
+      issuer:
+        type: string
+        description: 'Whoever issued the token.'
+  Bank:
+    description: Detailed information of the  Bank through which bill payment has done.
+    properties:
+      bankName:
+        type: string
+        description: Name of the bank.
+      bankCode:
+        type: string
+        description: Code of the bank.
+      branchCode:
+        type: string
+        description: Branch code or Bank Code in case branch code is not available.
+      paymentMode:
+        type: string
+        description: It can be EFT, Internet Banking,Cash
+        enum:
+          - Transfer
+          - EFT
+          - Cash
+          - Autodebit
+          - InternetBanking
+    required:
+      - branchCode
+      - paymentMode
+  ATM:
+    description: Detailed information of the  ATM through which bill payment has done.
+    properties:
+      bankName:
+        type: string
+        description: Name or Code of the bank.
+      branchCode:
+        type: string
+        description: Branch code.
+      atmCode:
+        type: string
+        description: ATM center code.
+    required:
+      - atmCode
+  Cash:
+    description: Detailed information of the  service center/shop where bill paid through cash
+    properties:
+      centerName:
+        type: string
+        description: Name  of the service center where bill paid.
+      centerCode:
+        type: string
+        description: Code of the service center where bill paid.
+    required:
+      - centerCode
+  Cheque:
+    description: Detailed information of cheque.
+    properties:
+      chequeNumber:
+        type: string
+        description: Cheque Number
+      issueDate:
+        type: string
+        description: Issue date of the cheque.
+      expiryDate:
+        type: string
+        description: Expiry date of the cheque
+      accountNumber:
+        type: string
+      bankCode:
+        type: string
+        description: Code of the bank.
+    required:
+      - chequeNumber
+  BillCycle:
+    type: array
+    items:
+      type: object
+      properties:
+        href:
+          type: string
+        billingCycleId:
+          type: string
+          description: Billing cycle ID.
+        billingName:
+          type: string
+        billingType:
+          type: string
+          description: Type of billing.
+        startDate:
+          type: string
+          description: format- 'yyyy-mm-dd'
+        endDate:
+          type: string
+          description: format- 'yyyy-mm-dd'`
+        creditLimit:
+          $ref : "#/definitions/CreditLimit"
+  CreditLimit:
+    type: array
+    items:
+      type: object
+      properties:
+        idType:
+          type: string
+          description:  "Credit limit object flag. Whether this  is for Account or for Subscriber"
+        id:
+          type: string
+          description: "Credit limit Object value"
+        creditLimitType:
+          type: string
+          description: "Credit limit type"
+        creditLimitName:
+          type: string
+          description: "Credit limit type name"
+        creditLimit:
+          type: string
+          description: "Credit limit value of customer"
+        effectiveDate:
+          type: string
+          description: "Effective date，Date type format:yyyy-mm-dd"
+        expiryDate:
+          type: string
+          description: "Expire date，Date type format:yyyy-mm-dd"
+  BillDocument:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this particular attachment
+        description:
+          type: string
+          description: A narrative text describing the content of the attachment
+        href :
+          type: string
+          description: URI for this Attachment
+        attachmentType:
+          type: string
+          description: Attachment type such as video, picture
+        content:
+          type: string
+          description: The actual contents of the attachment object, if embedded, encoded as base64
+        mimeType:
+          type: string
+          description: Attachment mime type such as extension file for video, picture and document
+        size :
+          type: string
+          description: The size of the attachment
+        validFor:
+          type: string
+          description: The period of time for which the attachment is valid
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation
+  BillingAccount:
+    type: array
+    items:
+      type: object
+      properties:
+        accountType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation
+        accountId:
+          type: string
+        accountname:
+          type: string
+        href:
+          type: string
+  TimePeriod:
+    type: object
+    properties:
+      startDate:
+        type: string
+      endDate:
+        type: string
+  FinancialAccount:
+    type: array
+    items:
+      type: object
+      properties :
+        name:
+          type: string
+          description: Name of the related entity
+        id:
+          type: string
+          description: unique identifier
+        href:
+          type: string
+          description: Hyperlink reference
+        type:
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+  RelatedParty:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+        customerType:
+          type: string
+          description: Type of customer. Example-Individual or Corporate etc.
+        customerName:
+          type: string
+        href:
+          type: string
+          description: Hyperlink reference
+  TaxItem:
+    type: array
+    items:
+      type : object
+      properties:
+        taxAmount:
+          $ref : "#/definitions/Money"
+        taxCategory:
+          type: string
+        taxRate:
+          type: string
+        type:
+          type: string
+  Result:
+    type: object
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+    required:
+      - resultCode
+      - resultDescription
+  Reference:
+    type: "object"
+    properties:
+      referenceId:
+        type: string
+        description: Holds reference value . It can be payment reference number or slip number or transcation number etc.
+        example: "PAY-9876"
+      referenceType:
+        type: string
+        description: Holds reference type . It can be 'PaymentRef' or 'Slip Number' or 'RefTransactionNum' etc.
+        example: 'PaymentRefNum'
+      referenceName:
+        description: Holds reference name.
+        example:  "csp-bill"
+    required:
+      - referenceId
+      - referenceType
+
+  Error:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      status:
+        type: "string"
+        description: "Status code returned by provider system"
+      error:
+        type: "string"
+        description: "Status description"
+      message:
+        type: "string"
+        description: "More error details and corrective measures"
+      path:
+        type: "string"
+        description: "The path that caused the error" 
+    

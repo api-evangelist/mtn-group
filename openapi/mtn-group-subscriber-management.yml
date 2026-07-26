@@ -1,0 +1,536 @@
+swagger: '2.0'
+info:
+  
+  description: >-
+    This API to be used to manage a Subscriber information.
+  version: 1.0.2
+  title: Subscriber Management API
+  
+host: api.mtn.com
+basePath: /v1
+schemes:
+  - https
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+tags:
+  - name: subscriberinfo
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: "https://api.mtn.com/v1/oauth/access_token/accesstoken?grant_type=client_credentials"
+
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+  
+paths:
+  /subscriber/{id}:
+    get:
+      operationId: retrieveSubscriberinfoById
+      summary: Retrieves a Subscriber info by ID
+      description: >-
+        This operation retrieves a subscriber's detail based upon the filter criteria.
+      tags:
+        - subscriberinfo
+      parameters:
+        - name: id
+          description: Identifier of the subscriber
+          required: true
+          type: string
+          in: path
+        - name: queryType
+          description: "'personalDetail' will return only personal data of the subscriber, i.e., Subscriberinfo object. 'identityDetail' will return only identity information of the subscriber , i.e., SubscriberIdentification object. 'addressDetail' will return only address of the subscriber , i.e., Address object. 'deviceDetail' will return only device related information of the subscriber like puk number , imsi number etc. It will return only SubscriberAsset object in response. 'basicProfile' will return subscriber details , like- subscriber id , subscriber type, subscriber status etc. along with subscriber asset information. 'completeProfile' will return complete information of the subscriber. It will return SubscriberProfile object in response."
+          required: true
+          type: string
+          in: query
+          enum:
+           - personalDetail 
+           - identityDetail
+           - addressDetail
+           - deviceDetail
+           - basicProfile
+           - completeProfile
+          default: basicProfile
+        - name: transactionId
+          type: string
+          in: header
+          required: false
+          description: Unique transaction id genereted by client system. This will be used to track requests
+        - name: countryCode
+          type: string
+          in: header
+          required: false
+          description: Will be used internally by application
+        - name: additionalFilter
+          type: string
+          in: query
+          required: false
+          description: "Reserve for future use. This can be used to further filter the response object. For example - if we want to retrieve only username a subscriber, then choose queryType as 'personalDetail' and additionalFilter as 'username'. Use comma seperation if case of retrive multiple attributes of an object"
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Response_Subscriber'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+  /linkednumber/{id}:
+   get:
+      operationId: retrieveLinkedNumbersById
+      summary: Retrieves MTN numbers linked to an ID
+      description: >-
+        This operation will be used to retrieve the linked numbers associated to an identity, which will be sent to subscriber's msisdn.
+      tags:
+        - subscriberinfo
+      parameters:
+        - name: id
+          description: National ID of a subscriber, which is linked to his/her subscribed MTN numbers.
+          required: true
+          type: string
+          in: path
+        - name: certificateType
+          type: string
+          in: query
+          required: true
+          description: Type of National ID
+        - name: serviceNumber
+          type: string
+          in: query
+          required: true
+          description: MSISDN of the subscriber
+        - name: transactionId
+          type: string
+          in: header
+          required: false
+          description: Unique transaction id genereted by client system. This will be used to track requests
+        - name: countryCode
+          type: string
+          in: header
+          required: false
+          description: Will be used internally by application
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Response_LinkedNumber'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+  
+definitions:
+  Address:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the place
+      city:
+        type: string
+        description: City that the address is in
+      country:
+        type: string
+        description: Country that the address is in
+      buildingName:
+        type: string
+        description: allows for buildings that have well-known names
+      levelNumber:
+        type: string
+        description: used where a level type may be repeated e.g. BASEMENT 1, BASEMENT 2
+      locality:
+        type: string
+        description: >-
+          An area of defined or undefined boundaries within a local
+          authority or other legislatively defined area, usually rural or semi rural in nature. [ANZLIC-STREET], or a suburb, a bounded locality within a city, town or shire principally of urban character [ANZLICSTREET]
+      name:
+        type: string
+        description: >-
+          A user-friendly name for the place, such as [Paris Store], [London
+          Store], [Main Home]
+      postcode:
+        type: string
+        description: >-
+          descriptor for a postal delivery area, used to speed and simplify the delivery of mail (also know as zipcode)
+      stateOrProvince:
+        type: string
+        description: the State or Province that the address is in
+      streetName:
+        type: string
+        description: Name of the street or other street type
+      streetType:
+        type: string
+        description: >-
+          alley, avenue, boulevard, brae, crescent, drive, highway, lane,
+          terrace, parade, place, tarn, way, wharf 
+      streetLine1:
+        type: string
+      streetLine2:
+        type: string
+      streetLine3:
+        type: string
+  SubscriberIdentification:
+    type: object
+    description: >-
+      Represents our registration of information used as proof of identity by a subscriber (passport, national identity card, drivers license, social security number, birth certificate etc.)
+    properties:
+      identificationId:
+        type: string
+        description: Value of the chosen identification type
+      identificationType:
+        type: string
+        description: >-
+          Identification type (passport, national identity card, drivers
+          license, social security number, birth certificate etc.)
+      issuingAuthority:
+        type: string
+        description: >-
+          Authority which has issued the identifier, such as: social security,town hall etc.
+      issuingDate:
+        type: string
+        format: date
+        description: Date at which the identifier was issued
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period for which the identification information is valid.
+  Quantity:
+    type: object
+    description: An amount in a given unit
+    properties:
+      amount:
+        default: 1
+        type: number
+        format: float
+        description: Numeric value in a given unit
+      units:
+        type: string
+        description: Unit
+  TimePeriod:
+    type: object
+    description: >-
+      A period of time, either as a deadline (endDateTime only) a startDateTime
+      only, or both
+    properties:
+      endDate:
+        example: '1985-04-12'
+        type: string
+        description: 'End of the time period,represented as an [ISO8601-2004] YYYY-MM-DD format'
+      startDate:
+        example: '1985-04-10'
+        type: string
+        format: date
+        description: 'Start of the time period,represented as an [ISO8601-2004] YYYY-MM-DD format'
+  SubscriberAsset:
+    type: object
+    required:
+      - entityType
+      - id
+    properties:
+      id:
+        example: f066ffd5-e685-43bc-ad57-bfb7639decb1
+        type: string
+        description: >-
+          Unique identifier of referenced entity within the entity/asset pair (customerId, accountId, mobile line number, imsi number, iccid,puk number, pin number ...)
+      assetType:
+        type: string
+        description: >-
+          product/service/resource managed entities (e.g.: mobile line
+          subscription, video platform license, mobile equipment, device information etc). Allows identifying the specific asset within the server referenced. Supported values are implementation and application specific. Other values can be added if those listed are not enough
+      entityType:
+        type: string
+        description: >-
+          Type of managed entity (e.g.: product, resource, service, customer, account)
+      createDate:
+        type: string
+        description : Creation date of the asset resource,represented as an [ISO8601-2004] YYYY-MM-DD format
+      activationDate:
+        type: string
+        description : Activation date of the asset resource,represented as an [ISO8601-2004] YYYY-MM-DD format
+      role:
+        example: owner
+        type: string
+        description: >-
+          Represents the part played by an individual in relation to being
+          granted a set of entitlements for manageable assets (e.g.: owner,
+          user, viewer, ...)
+  Subscriberinfo:
+    type: object
+    required:
+      - name
+    properties:
+      firstName:
+        example: Jane
+        type: string
+        description: >-
+          First name(s) or given name(s) of the End-User. Note that in some
+          cultures, people can have multiple given names; all can be present, with the names being separated by space characters
+      middleName:
+        example: Mary
+        type: string
+        description: >-
+          Middle name(s) of the End-User. Note that in some cultures, people can have multiple middle names; all can be present, with the names being separated by space characters. Also note that in some cultures, middle names are not used
+      lastName:
+        example: Doe
+        type: string
+        description: >-
+          Last name(s) or surname(s) or of the End-User. Note that in some
+          cultures, people can have multiple family names or no family name; all can be present, with the names being separated by space characters
+      fullName:
+        example: Jane Mary Doe
+        type: string
+        description: >-
+          End-User's full name in displayable form including all name parts,
+          possibly including titles and suffixes, ordered according to the
+          End-User's locale and preferences
+      nickname:
+        example: JaneDoe
+        type: string
+        description: >-
+          Casual name of the End-User that may or may not be the same as the
+          given_name. For instance, a nickname value of Mike might be returned alongside a given_name value of Michael
+      gender:
+        example: female
+        type: string
+        description: >-
+          End-User's gender. Values defined by this specification are female and male. Other values MAY be used when neither of the defined values are applicable
+      birthdate:
+        example: '1970-11-02'
+        type: string
+        description: >-
+          End-User's birthday, represented as an [ISO8601-2004] YYYY-MM-DD
+          format. The year MAY be 0000, indicating that it is omitted. To
+          represent only the year, YYYY format is allowed. Note that depending on the underlying platform's date related function, providing just year can result in varying month and day, so the implementers need to take this factor into account to correctly process the dates
+      email:
+        example: jane.doe@email.com
+        type: string
+        description: >-
+          End-User's preferred e-mail address. Its value MUST conform to the
+          [RFC5322] addr-spec syntax
+      emailVerified:
+        default: false
+        type: boolean
+        description: True if the user's email has been verified.
+      phoneNumber:
+        example: +250897654321
+        type: string
+        description: >-
+          End-User's preferred mobile number or telephone number. If it's mobile number, format will be mobile number prefixed with country code and (+) sign, for example, +25076854321. [E.164] is RECOMMENDED as the format if it is telephone number, for example, +1 (425) 555-1212 or +56 82) 6872400. If the telephone number contains an extension, it is RECOMMENDED that the extension be represented using the [RFC3966] extension syntax, for example, +1 (604) 555-1234;ext=5678
+      phoneNumberVerified:
+        default: false
+        type: boolean
+        description: True if the user's phone number has been verified.
+      alternateNumber:
+        example: +250897654543
+        type: string
+        description: >-
+          End-User's preferred mobile number or telephone number. If it's mobile number, format will be mobile number prefixed with country code and (+) sign, for example, +25076854321. [E.164] is RECOMMENDED as the format if it is telephone number, for example, +1 (425) 555-1212 or +56 82) 6872400. If the telephone number contains an extension, it is RECOMMENDED that the extension be represented using the [RFC3966] extension syntax, for example, +1 (604) 555-1234;ext=5678
+      preferredLanguage:
+        example: en
+        type: string
+        description: >-
+          End-User's locale, represented as a [RFC5646] language tag. This is typically an [ISO639-1] language code in lowercase and an [ISO3166-1] country code in uppercase, separated by a dash. For example, en-US or fr-CA. As a compatibility note, some implementations have used an underscore as the separator rather than a dash, for example, en_US
+      picture:
+        example: 'https://some.url.com/janeDoe.jpg'
+        type: string
+        description: >-
+          URL of the End-User's profile picture. This URL MUST refer to an image file (for example, a PNG, JPEG, or GIF image file), rather than to a Web page containing an image. Note that this URL SHOULD specifically reference a profile photo of the End-User suitable for displaying when describing the End-User, rather than an arbitrary photo taken by the End-User
+      username:
+        example: janeDoe
+        type: string
+        description: >-
+          User ID of the subscriber
+      profile:
+        example: 'https://my.blog.com/janeDoe'
+        type: string
+        description: >-
+          URL of the End-User's profile page. The contents of this Web page
+          SHOULD be about the End-User
+      website:
+        example: 'https://janedoe.com'
+        type: string
+        description: >-
+          URL of the End-User's Web page or blog. This Web page SHOULD contain
+          information published by the End-User or an organization that the
+          End-User is affiliated with
+      zoneinfo:
+        example: America/Los_Angeles
+        type: string
+        description: >-
+          String from zoneinfo time zone database representing the End-User's
+          time zone. For example, Europe/Paris or America/Los_Angeles
+  Response_Subscriber:
+    type: object
+    required: 
+      - resultCode
+      - resultDescription
+      - data
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+      data:
+        $ref: '#/definitions/Subscriber'
+  Response_LinkedNumber:
+    type: object
+    required: 
+      - resultCode
+      - resultDescription
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+      data:
+        type: object
+        properties:
+          linkedNumbers:
+            type: array
+            items:
+              type: string
+  Subscriber:
+    type: object
+    properties:
+      subscriberId:
+        type: string
+        description: Subscriber ID
+      subscriberType:
+        type: string
+        description: Subscription type
+        enum:
+         - Prepaid
+         - Postpaid
+         - Hybrid
+      accountNumber:
+        type: string
+        description: Account number of the subscriber
+      serviceNumber:
+        type: string
+        description: Service number of the subscriber. This can be msisdn etc.
+      createDate:
+        type: string
+        description: The date of new connection,represented as an [ISO8601-2004] YYYY-MM-DD format
+      activationDate:
+        type: string
+        description: Activation date of new connection, represented as an [ISO8601-2004] YYYY-MM-DD format
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+        description: Subscription period
+      status:
+       $ref : "#/definitions/StatusType"
+      description:
+        type: string
+        description: Blocking description etc.
+      effectiveDate:
+        type: string
+        description: Effective date of blocking or termination etc, represented as an [ISO8601-2004] YYYY-MM-DD
+          format
+      personalDetail:
+        $ref: "#/definitions/Subscriberinfo"
+      addressDetail:
+        $ref: "#/definitions/Address"
+      identificationDetail:
+        type: array
+        items:
+          $ref : "#/definitions/SubscriberIdentification"
+      assetDetail:
+        type: array
+        items:
+          $ref : "#/definitions/SubscriberAsset"
+       
+  StatusType:
+    type: string
+    enum:
+     - Active
+     - Inactive
+     - One-Way Block
+     - Two-Way Block
+     - Termination
+  Error:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      status:
+        type: "string"
+        description: "Status/Error code returned from the provider system"
+      error:
+        type: "string"
+        description: "Status/Error description"
+      message:
+        type: "string"
+        description: "More error details and corrective measures"
+      path:
+        type: "string"
+        description: "the path that caused the error"

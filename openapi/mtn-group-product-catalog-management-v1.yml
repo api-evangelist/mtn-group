@@ -1,0 +1,522 @@
+swagger: '2.0'
+info:
+  title: Product Catalog Management
+  description: >-
+    API to provide capability to manage catalog, category, Offerings, Offering price and specification of  products. 
+  version: 1.0.0
+host: api.mtn.com
+basePath: /productCatalogManagement/v1/
+schemes:
+  - https
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+tags:
+  - name: catalog
+  - name: category
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: "https://api.mtn.com/v1/oauth/access_token/accesstoken?grant_type=client_credentials"
+
+    
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+paths:
+ /catalog:
+    get:
+      operationId: listCatalog
+      summary: List or find Catalog objects
+      description: This operation list or find Catalog entities
+      tags:
+        - catalog
+      parameters:
+        - name: "transactionId"
+          in: header
+          required: false
+          description: 'Client generated Id to include for tracing requests.'
+          type: string
+          x-example: '6f0bece6-7df3-4da4-af02-5e7f16e5e6fc'
+        - name: "senderId"
+          in: query
+          required: true
+          type: string
+          description: 'Provide the channel information'
+          x-example: 'IVR'
+        - name: countryCode
+          in: header
+          type: string
+          description: "Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)"
+          required: false
+        - name: offset
+          description: Requested index for start of resources to be provided in response
+          required: false
+          in: query
+          type: integer
+        - name: limit
+          description: Requested number of resources to be provided in response
+          required: false
+          in: query
+          type: integer
+        - name: custom
+          in: query
+          required: false
+          type: string
+          description: 'Reserve for future use. Hold additional filter criteria'
+      responses:
+        '200':  
+          description: Success
+          schema:
+           $ref: '#/definitions/Response_Catalog'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Customer Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+ /category/{id}:
+    get:
+      operationId: retrieveCategory
+      summary: Retrieves a Category by ID
+      description: >-
+        This operation retrieves a Category entity. Attribute selection is
+        enabled for all first level attributes.
+      tags:
+        - category
+      parameters:
+        - name: id
+          description: Identifier of the Category
+          required: true
+          type: string
+          in: path
+        - name: "transactionId"
+          in: header
+          required: false
+          description: 'Client generated Id to include for tracing requests.'
+          type: string
+          x-example: '6f0bece6-7df3-4da4-af02-5e7f16e5e6fc'
+        - name: countryCode
+          in: header
+          type: string
+          description: "Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)"
+          required: false
+        - name: "senderId"
+          in: query
+          required: false
+          type: string
+          description: 'Provide the channel information'
+          x-example: 'IVR'
+        - name: "serviceNumber"
+          in: query
+          required: false
+          type: string
+          description: Unique identifier. This may be customer msisdn, customer id etc.
+          x-example: '25067564321'
+        - name: custom
+          in: query
+          required: false
+          type: string
+          description: 'Reserve for future use. Hold additional filter criteria'
+      responses:
+        '200':  
+          description: Success
+          schema:
+           $ref: '#/definitions/Response_Category_ID'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Customer Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Catalog:
+    type: object
+    description: >-
+      A collection of Product Offerings, intended for a specific
+      DistributionChannel, enhanced with additional information such as SLA
+      parameters, invoicing and shipping details
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the Catalog
+      href:
+        type: string
+        description: Unique reference of the catalog
+      catalogType:
+        type: string
+        description: 'Indicates if the catalog is a product, service or resource catalog'
+      description:
+        type: string
+        description: Description of this catalog
+      lastUpdate:
+        type: string
+        format: date-time
+        description: Date and time of the last update
+      lifecycleStatus:
+        type: string
+        description: Used to indicate the current lifecycle status
+      name:
+        type: string
+        description: Name of the catalog
+      version:
+        type: string
+        description: Catalog version
+      category:
+        type: array
+        items:
+          $ref: '#/definitions/CategoryRef'
+        description: List of root categories contained in this catalog
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+        description: List of parties involved in this catalog
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period for which the catalog is valid
+      baseType:
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      type:
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+  Category:
+    type: object
+    description: >-
+      The category resource is used to group product offerings, service and
+      resource candidates in logical containers. Categories can contain other categories and/or product offerings, resource or service candidates.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the category
+      href:
+        type: string
+        description: Holds URI
+      description:
+        type: string
+        description: Description of the category
+      isRoot:
+        type: boolean
+        description: >-
+          If true, this Boolean indicates that the category is a root of
+          categories
+      lastUpdate:
+        type: string
+        format: date-time
+        description: Date and time of the last update
+      lifecycleStatus:
+        type: string
+        description: Used to indicate the current lifecycle status
+      name:
+        type: string
+        description: Name of the category
+      parentId:
+        type: string
+        description: Unique identifier of the parent category
+      version:
+        type: string
+        description: Category version
+      type:
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      baseType:
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      productOffering:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOfferingRef'
+        description: >-
+          A product offering represents entities that are orderable from the
+          provider of the catalog, this resource includes pricing information.
+      subCategory:
+        type: array
+        items:
+          $ref: '#/definitions/CategoryRef'
+        description: >-
+          The category resource is used to group product offerings, service and
+          resource candidates in logical containers. Categories can contain
+          other (sub-)categories and/or product offerings.
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period for which the category is valid
+  CategoryRef:
+    type: object
+    description: The category for grouping recommendations
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity
+      href:
+        type: string
+        description: Holds URI.
+      name:
+        type: string
+        description: Name of the related entity.
+      description:
+        type: string
+        description: Description of the related entity.
+      lifecycleStatus:
+        type: string
+        description: Used to indicate the current lifecycle status
+      version:
+        type: string
+        description: Category version
+      baseType:
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      type:
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      referredType:
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  Money:
+    type: object
+    description: A base / value business entity used to represent money
+    properties:
+      unit:
+        type: string
+        description: Currency (ISO4217 norm uses 3 letters to define the currency)
+      value:
+        type: number
+        format: float
+        description: A positive floating point number
+  Quantity:
+    type: object
+    description: An amount in a given unit
+    properties:
+      amount:
+        default: 1
+        type: number
+        format: float
+        description: Numeric value in a given unit
+      units:
+        type: string
+        description: Unit
+  RelatedParty:
+    type: object
+    description: >-
+      Related Entity reference. A related party defines party or party role
+      linked to a specific entity.
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      role:
+        type: string
+        description: Role played by the related party
+      baseType:
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+      type:
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name'
+      referredType:
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  TimePeriod:
+    type: object
+    description: >-
+      A period of time, either as a deadline (endDateTime only) a startDateTime
+      only, or both
+    properties:
+      endDateTime:
+        type: string
+        format: date-time
+        description: 'End of the time period, using IETC-RFC-3339 format'
+      startDateTime:
+        type: string
+        format: date-time
+        description: >-
+          Start of the time period, using IETC-RFC-3339 format. If you define a
+          start, you must also define an end
+  Response_Catalog:
+    type: object
+    required: 
+      - resultCode
+      - resultDescription
+      - data
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/Catalog'
+  Response_Category:
+    type: object
+    required: 
+      - resultCode
+      - resultDescription
+      - data
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/Category'
+  Response_Category_ID:
+    type: object
+    required: 
+      - resultCode
+      - resultDescription
+      - data
+    properties:
+      resultCode:
+        type: string
+        description: Result code. Example- '0000'
+      resultDescription:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+      data:
+        $ref: '#/definitions/Category'
+  ProductOfferingRef:
+    type: object
+    required:
+     - id
+    properties:
+      id:
+       type: string
+       description: Unique identifier of a related entity. This can be product id or offer id etc.
+      name:
+        type: string
+        description: Name of the related entity. This can be product name or offer name etc.
+      type:
+        type: string
+        description: Type of a product or offer,e.g., weekly, daily, monthly etc.
+      description:
+        type: string
+      occurance:
+        type: string
+        enum:
+         - autoRenew
+         - onceOff
+      isChargable:
+        type: boolean
+      price:
+        $ref : "#/definitions/Money"
+      productSpecification:
+        $ref: "#/definitions/ProductSpecificationRef"
+      referredType:
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+      baseType:
+        type: string
+        description: 'When sub-classing, this defines the super-class'
+  ProductSpecificationRef:
+    type: object
+    properties:
+      id:
+       type: string
+       description: Unique identifier of a related entity. This can be product id or offer id etc.
+      name:
+        type: string
+        description: Name of the related entity. This can be product name or offer name etc.
+      type:
+        type: string
+        description: Type of a product or offer,e.g., Data, SMS, Voice etc.
+      validity:
+        type : string
+        description : Validity of a product or offer.
+      quantity:
+        $ref: "#/definitions/Quantity"
+  Error:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      status:
+        type: "string"
+        description: "Status/Error code returned from the provider system"
+      error:
+        type: "string"
+        description: "Status/Error description"
+      message:
+        type: "string"
+        description: "More error details and corrective measures"
+      path:
+        type: "string"
+        description: "the path that caused the error"

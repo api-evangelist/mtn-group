@@ -1,0 +1,539 @@
+swagger: "2.0"
+info:
+  title: Mobile Customer Information API
+  version: '3.1'
+  description: |-
+    The mobile info API provides network related data.
+    ## Supported Operations
+    1. Get last SIM Swap date of an MSISDN.
+    2. Get last SIM Swap date indicator of a MSISDN
+
+    **Supported OpCo's:** MTN Uganda, MTN Ghana, MTN SA
+host: api.mtn.com
+basePath: "/v1/mobile"
+schemes:
+  - https
+securityDefinitions:
+  apiKey:
+    type: apiKey
+    in: header
+    name: X-API-Key
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: 'https://api.mtn.com/v1/oauth/access_token'
+security:
+  - apiKey: []
+  - OAuth2: []
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  '/subscribers/{subscriberId}/simswap-date':
+    get:
+      tags:
+        - Customer Mobile Carrier Data
+      summary: Retrieve sim-swap date.
+      description: >-
+        Retrieve last sim-swap date from network operator of subscriber as
+        identified by customerId (customer's MSISDN).
+      parameters:
+        - name: subscriberId
+          in: path
+          description: >-
+            ID of the subscriber is the MSISDN of the subscriber represented as
+            International  ITU-T E.164.
+          required: true
+          type: string
+        - name: transactionId
+          in: header
+          description: transaction ID for tracing purposes
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/simswapResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error400'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error401'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error403'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error404'
+        '405':
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/Error405'
+        '406':
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/Error406'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+  '/subscribers/{subscriberId}/simswap-date-indicator':
+    get:
+      tags:
+        - Customer Mobile Carrier Data
+      summary: Retrieve sim swap date indicator.
+      description: >-
+        Retrieve sim swap date indicator from network operator of subscriber as identified by customerId (customer's MSISDN).
+      parameters:
+        - name: subscriberId
+          in: path
+          description: >-
+            ID of the subscriber is the MSISDN of the subscriber represented as
+            International  ITU-T E.164.
+          required: true
+          type: string
+        - name: transactionId
+          in: header
+          description: transaction ID for tracing purposes
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/simswapIndicatorResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error400'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error401'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error403'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error404'
+        '405':
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/Error405'
+        '406':
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/Error406'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  simswapResponse:
+    required:
+      - customerId
+      - data
+      - statusCode
+      - statusMessage
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+        example: '0000'
+      statusMessage:
+        type: string
+        description: Message.
+        example: Successful
+      customerId:
+        type: string
+        description: MSISDN of the customer provided in the input as customerId
+        example: '256789999781'
+      data:
+        $ref: '#/definitions/simswapData'
+      transactionId:
+        type: string
+        description: transaction ID From the backend provider system for tracing.
+        example: 232TXYZ-212
+  simswapIndicatorResponse:
+    required:
+      - customerId
+      - data
+      - statusCode
+      - statusMessage
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+        example: '0000'
+      statusMessage:
+        type: string
+        description: Message.
+        example: Success
+      transactionId:
+        type: string
+        description: transaction ID From the backend provider system for tracing.
+        example: 232TXYZ-212
+      customerId:
+        type: string
+        description: MSISDN of the customer provided in the input as customerId
+        example: '256789999781'
+      data:
+        $ref: '#/definitions/simswapIndicator'
+  simswapData:
+    type: object
+    properties:
+      lastSimSwapDate:
+        type: string
+        description: >-
+          The date and time when the last sim swap performed on the SIM of the
+          customerId provided represented as an ISO 8601:2004 [ISO8601 2004]
+          YYYY-MM-DDTHH:MM:SSZ format. If the date cannot be determined, the
+          value will be an empty string
+        example: '2020-04-20T15:22:11+03:00'
+  simswapIndicator:
+    type: object
+    properties:
+      lastSimswapDateIndicator:
+        type: string
+        description: >-
+          Calculated based on last SIM Swap date and current date
+        example: '-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10'
+  Error:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      - transactionId
+      - timestamp
+      - path
+      - method
+    properties:
+      statusMessage:
+        type: string
+        description: >-
+          More details and corrective actions related to the error which can
+          be shown to a client
+      supportMessage:
+        type: string
+        description: >-
+          Internal message meant for consumers of the API to troubleshoot the
+          error (could possible include the back-end system error code in the
+          message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2020-08-01T12:34'
+      path:
+        type: string
+        description: The path that caused the error
+        example: /subscribers/256789999781/simswap-date-indicator
+      method:
+        type: string
+        description: The HTTP method type that was used
+        example: GET
+      statusCode:
+        type: string
+        description: >-
+          This is the MADAPI Canonical Error Code (it is 4 characters long and
+          it is not the HTTP Status Code which is 3 characters long). More
+          information on these mappings can be found at
+          https://developers.mtn.com/getting-started/response-and-error-codes
+        example: '3001'
+  Error400:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      - transactionId
+      - timestamp
+      - path
+      - method
+    properties:
+      statusMessage:
+        type: string
+        description: >-
+          More details and corrective actions related to the error which can
+          be shown to a client
+      supportMessage:
+        type: string
+        description: >-
+          Internal message meant for consumers of the API to troubleshoot the
+          error (could possible include the back-end system error code in the
+          message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2020-08-01T12:34'
+      path:
+        type: string
+        description: The path that caused the error
+        example: /subscribers/256789999781/simswap-date-indicator
+      method:
+        type: string
+        description: The HTTP method type that was used
+        example: GET
+      statusCode:
+        type: string
+        description: >-
+          This is the MADAPI Canonical Error Code (it is 4 characters long and
+          it is not the HTTP Status Code which is 3 characters long). More
+          information on these mappings can be found at
+          https://developers.mtn.com/getting-started/response-and-error-codes
+        example: '5000'
+  Error401:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      - transactionId
+      - timestamp
+      - path
+      - method
+    properties:
+      statusMessage:
+        type: string
+        description: >-
+          More details and corrective actions related to the error which can
+          be shown to a client
+      supportMessage:
+        type: string
+        description: >-
+          Internal message meant for consumers of the API to troubleshoot the
+          error (could possible include the back-end system error code in the
+          message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2020-08-01T12:34'
+      path:
+        type: string
+        description: The path that caused the error
+        example: /subscribers/256789999781/simswap-date-indicator
+      method:
+        type: string
+        description: The HTTP method type that was used
+        example: GET
+      statusCode:
+        type: string
+        description: >-
+          This is the MADAPI Canonical Error Code (it is 4 characters long and
+          it is not the HTTP Status Code which is 3 characters long). More
+          information on these mappings can be found at
+          https://developers.mtn.com/getting-started/response-and-error-codes
+        example: '4000'
+  Error403:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      - transactionId
+      - timestamp
+      - path
+      - method
+    properties:
+      statusMessage:
+        type: string
+        description: >-
+          More details and corrective actions related to the error which can
+          be shown to a client
+      supportMessage:
+        type: string
+        description: >-
+          Internal message meant for consumers of the API to troubleshoot the
+          error (could possible include the back-end system error code in the
+          message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2020-08-01T12:34'
+      path:
+        type: string
+        description: The path that caused the error
+        example: /subscribers/256789999781/simswap-date-indicator
+      method:
+        type: string
+        description: The HTTP method type that was used
+        example: GET
+      statusCode:
+        type: string
+        description: >-
+          This is the MADAPI Canonical Error Code (it is 4 characters long and
+          it is not the HTTP Status Code which is 3 characters long). More
+          information on these mappings can be found at
+          https://developers.mtn.com/getting-started/response-and-error-codes
+        example: '4001'
+  Error404:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      - transactionId
+      - timestamp
+      - path
+      - method
+    properties:
+      statusMessage:
+        type: string
+        description: >-
+          More details and corrective actions related to the error which can
+          be shown to a client
+      supportMessage:
+        type: string
+        description: >-
+          Internal message meant for consumers of the API to troubleshoot the
+          error (could possible include the back-end system error code in the
+          message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2020-08-01T12:34'
+      path:
+        type: string
+        description: The path that caused the error
+        example: /subscribers/256789999781/simswap-date-indicator
+      method:
+        type: string
+        description: The HTTP method type that was used
+        example: GET
+      statusCode:
+        type: string
+        description: >-
+          This is the MADAPI Canonical Error Code (it is 4 characters long and
+          it is not the HTTP Status Code which is 3 characters long). More
+          information on these mappings can be found at
+          https://developers.mtn.com/getting-started/response-and-error-codes
+        example: '1000'
+  Error405:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      - transactionId
+      - timestamp
+      - path
+      - method
+    properties:
+      statusMessage:
+        type: string
+        description: >-
+          More details and corrective actions related to the error which can
+          be shown to a client
+      supportMessage:
+        type: string
+        description: >-
+          Internal message meant for consumers of the API to troubleshoot the
+          error (could possible include the back-end system error code in the
+          message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2020-08-01T12:34'
+      path:
+        type: string
+        description: The path that caused the error
+        example: /subscribers/256789999781/simswap-date-indicator
+      method:
+        type: string
+        description: The HTTP method type that was used
+      statusCode:
+        type: string
+        description: >-
+          This is the MADAPI Canonical Error Code (it is 4 characters long and
+          it is not the HTTP Status Code which is 3 characters long). More
+          information on these mappings can be found at
+          https://developers.mtn.com/getting-started/response-and-error-codes
+        example: '4001'
+  Error406:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      - transactionId
+      - timestamp
+      - path
+      - method
+    properties:
+      statusMessage:
+        type: string
+        description: >-
+          More details and corrective actions related to the error which can
+          be shown to a client
+      supportMessage:
+        type: string
+        description: >-
+          Internal message meant for consumers of the API to troubleshoot the
+          error (could possible include the back-end system error code in the
+          message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2020-08-01T12:34'
+      path:
+        type: string
+        description: The path that caused the error
+        example: /subscribers/256789999781/simswap-date-indicator
+      method:
+        type: string
+        description: The HTTP method type that was used
+        example: GET
+      statusCode:
+        type: string
+        description: >-
+          This is the MADAPI Canonical Error Code (it is 4 characters long and
+          it is not the HTTP Status Code which is 3 characters long). More
+          information on these mappings can be found at
+          https://developers.mtn.com/getting-started/response-and-error-codes
+        example: '4001'

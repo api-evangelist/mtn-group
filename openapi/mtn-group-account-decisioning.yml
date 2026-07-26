@@ -1,0 +1,142 @@
+swagger: '2.0'
+info:
+  title: Account Decisioning API
+  description: |-
+    API to consume and process account management actions to perform account status changes to customers with a MoMo Advance account.
+     ### ChangeLog: 03-March-23
+      - First version
+  version: 1.0.0
+host: api.mtn.com
+basePath: /accountDecisioning/v1
+schemes:
+  - https
+securityDefinitions:
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: "https://api.mtn.com/v1/oauth/access_token?grant_type=client_credentials"
+security:
+  - OAuth2: []
+
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+paths:
+  /account/status:
+    post:
+      tags:
+        - banktech
+      summary: Change account status of momo advance customers. This is dedicated to banktech
+      description: Change account status based on customers behaviour 
+      operationId: changeAccountStatus
+      produces:
+        - application/json
+      parameters:
+        - name: transactionId
+          in: header
+          description: Transaction Id to identify the request
+          type: string
+        - name: x-country-code
+          in: header
+          description: This is the country code for the target  opco
+          required:  true
+          type: string
+        - name: partnerId
+          in: query
+          description: Momo partner Identifier eg. 2600110005124
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref:  '#/definitions/AccountDecisioningDetails'
+        
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/AccountStatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "415":
+          description: Unsopported media Type
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      deprecated: false
+definitions:
+  AccountDecisioningDetails:
+    type: object
+    properties:
+      overdraftid:
+        type: integer
+        description: "Internal id of the overdraft"
+      status:
+        type: string
+        description: "New Overdraft status"
+        example: Active
+      reason:
+        type: string
+        description: "Reason for overdraft status change"
+  AccountStatusResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        example: "0000"
+        description: The canonical
+      statusMessage:
+        type: string
+        example: OK
+      transactionId:
+        type: string
+        example: "174478014184946374"
+  ErrorResponse:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+    properties:
+      statusCode:
+        type: string
+        example: "1000"
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      supportMessage:
+        type: string
+        description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+      transactionId:
+        type: string
+        description: ID of the transaction
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp of the error

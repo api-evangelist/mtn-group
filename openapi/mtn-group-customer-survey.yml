@@ -1,0 +1,776 @@
+---
+swagger: "2.0"
+info:
+  description: The API facilitates product survey with a MTN Customer.
+  version: "1.1"
+  title: Customer Survey API
+host: api.mtn.com
+basePath: "/v1/survey"
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+security:
+  - ApiKeyAuth: []
+
+paths:
+
+  /customers/{customerId}:
+    get:
+      tags:
+        - Customer
+      summary: Get Survey Quetions
+      description: Fetch Survey Questions and Options.
+      parameters:
+        - name: "customerId"
+          in: path
+          description: Source Msisdn. The format must be E.123
+          required: true
+          type: string
+        - name: "surveyId"
+          type: string
+          in: query
+          required: false
+          description: The unique ID of a particular survey
+        - name: targetSystem
+          type: string
+          in: query
+          enum:
+            - CLM
+            - DIGISURVEY
+            - CLM_REST
+        - name: surveyType
+          type: string
+          in: query
+          enum: ['eValidator','SHARENSELL']
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: string
+                description: "This is the MADAPI Canonical response Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system response are mapped to specific canonical response codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'"
+              statusMessage:
+                type: string
+                description: "Status Message"
+              transactionId:
+                type: string
+                description: "API generated Id to include for tracing requests"
+              data:
+                $ref: '#/definitions/DataResponse'
+              _links:
+                type: object
+                properties:
+                  self:
+                    type: string
+                    example: "https://api.mtn.com/v1/survey/customers/23464618463"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/Error'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/Error'
+        "415":
+          description: Unsupported media Type
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+    post:
+      tags:
+        - Customer
+      summary: Submit Survey and more KYC Answers
+      description: Submit a list of questions and answers to survey.
+      parameters:
+        - name: surveyId
+          in: header
+          type: string
+          description: unique ID generated for each transaction
+          required: false
+        - name: surveyType
+          in: header
+          type: string
+          description: Survey type
+          required: false
+        - name: countryCode
+          in: header
+          type: string
+          description: Survey type
+          required: false
+        - name: "customerId"
+          in: path
+          description: Source Msisdn. The format must be E.123
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - answers
+            properties:
+              hash:
+                type: string
+                example: "Wk68gjJxucqM4qxTYCNH94TMid0KhIaE"
+                description: "The unique hash identifier for submiting a survey answer"
+              targetSystem:
+                type: string
+                example: DIGISURVEY
+                enum:
+                  - CLM
+                  - DIGISURVEY
+                  - CLM_REST
+                  - GENESIS
+              surveyType:
+                type: string
+                enum: ['SHARENSELL','eValidator']
+              servicePlan:
+                type: string
+                description: This is the service class of the customerId submiting survey answers
+              answers:
+                type: array
+                description: "The list of answered questions"
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    message:
+                      type: string
+                    input :
+                      type: string
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: string
+                description: "This is the MADAPI Canonical response Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system response are mapped to specific canonical response codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'"
+              statusMessage:
+                type: string
+                description: "Status Message"
+              transactionId:
+                type: string
+                description: "API generated Id to include for tracing requests"
+              data:
+                $ref: '#/definitions/DataResponse'
+              _links:
+                type: object
+                properties:
+                  self:
+                    type: string
+                    example: "https://api.mtn.com/v1/survey/customers/23464618463"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/Error'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/Error'
+        "415":
+          description: Unsupported media Type
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+  /customers/surveyOptInByTimeStamp:
+    get:
+      tags:
+        - Customer
+      summary: Get Survey Msisdn List in CSV format
+      description: Fetch Survey Msisdn List in CSV format.
+      parameters:
+        - name: startDate
+          in: query
+          type: string
+        - name: endDate
+          in: query
+          type: string
+          description: startDate
+          required: true
+        - name: targetSystem
+          type: string
+          in: query
+          enum:
+            - GENESIS
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: string
+                description: "This is the MADAPI Canonical response Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system response are mapped to specific canonical response codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'"
+              statusMessage:
+                type: string
+                description: "Status Message"
+              transactionId:
+                type: string
+                description: "API generated Id to include for tracing requests"
+              data:
+                $ref: '#/definitions/SurveyListResponse'
+              _links:
+                type: object
+                properties:
+                  self:
+                    type: string
+                    example: "https://api.mtn.com/v1/survey/customers/surveyOptInByTimeStamp"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/Error'
+        "406":
+          description: Not acceptable
+          schema:
+            $ref: '#/definitions/Error'
+        "415":
+          description: Unsupported media Type
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+  /customers/surveyInvitation:
+    post:
+      tags:
+        - Customer
+      summary: Submit Survey and more KYC Answers
+      description: Submit a list of questions and answers to survey.
+      parameters:
+        - name: transactionId
+          in: header
+          description: Transaction Id for tracking purposes
+          required: false
+          type: string
+        - name: requestBody
+          in: body
+          required: true
+          schema:
+            $ref:  '#/definitions/surveyInvitationRequest'
+      responses:
+        '200':
+          description: Identity status response from ROC Enroll
+          schema:
+                $ref: '#/definitions/surveyInvitationResponse'
+        '400':
+          description: Bad Request
+          schema:
+                $ref: '#/definitions/Error400'
+        '401':
+          description: Unauthorized
+          schema:
+                $ref: '#/definitions/Error401'
+        '404':
+          description: Not Found
+          schema:
+                $ref: '#/definitions/Error404'
+        "405":
+          description: Method No Allowed
+          schema:
+            $ref: '#/definitions/Error405'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error500'
+  
+definitions:
+  DataResponse:
+    type: object
+    properties:
+      hash:
+        type: string
+        description: The unique hash identifier attached to a survey
+        example: "Wk68gjJxucqM4qxTYCNH94TMid0KhIaE"
+      questions:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: "Unique Question Id"
+            type:
+              type: string
+              description: "Type of the question"
+              example: "QuestionScalableDIGI"
+            nested_level:
+              example: 1
+              type: integer
+              description: "Questions Current Position"
+            language:
+              type: object
+              description: "The actual Question"
+              example: {
+                "text": "How would you rate your experience performing this transaction?",
+                "error": "Please rate your experience to help us serve you better:"
+              }
+
+            options:
+              description: "Available options for the question"
+              type: object
+              example: {
+                "render_type": "star rating",
+                "required": "1",
+                "number": "5",
+                "start_from_0": "0"
+              }
+
+            answers:
+              description: "Expected answers"
+              type: object
+              example: [
+                {
+                  "id": "647",
+                  "value": "Yes",
+                  "name": "Yes"
+                },
+                {
+                  "id": "648",
+                  "value": "No",
+                  "name": "No"
+                }
+              ]
+      finish:
+        type: boolean
+        example: false
+        description: "Determined the last question"
+      state:
+        type: string
+        example: "Created"
+      requiredScore:
+        type: string
+        example: 15
+      actualScore:
+        type: string
+        example: 20
+  SurveyListResponse:
+    type: string
+    title: SurveyListResponse
+    description: msisdn list in csv format
+    example: '26876497748,26876497748,26876062635'
+  surveyInvitationRequest:
+    type: object
+    required:
+      - customerId
+      - address
+      - language
+      - surveyId
+    properties:
+      customerId:
+        type: string
+        description: MTN SA's ID of the customer that is invited to a survey
+        example: 'kbu_test'
+      address:
+        type: string
+        description: Customer's email address (email or phone number) to send out survey invitation to.
+        example: 'kbu@sansdiv.com'
+      language:
+        type: string
+        description: Required. Should contain Language code in ISO-691-1 format not of the survey to be shown to the customer. example like EN, FR, etc.
+        example: 'EN'
+      surveyId:
+        type: integer
+        description: Should contain ID of the survey the customer should be invited to. Survey ID to use for each touchpoint is provided by MTN SA's Customer Experience team (e.g. Call Center Interaction, SIM card replacement, Mobile Data plan switch, etc. Example values are 123, 234, etc.
+        example: '360'
+      metadata:
+        type: object
+        properties:
+          city:
+            type: string
+            description: Name of the city of the customer
+            example: 'Cape Town'
+          shop:
+            type: string
+            description: Name of the shop
+            example: 'MTN Cavendish Square'
+  surveyInvitationResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes',
+        example: '0000'
+        maxLength: 30
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client. Success for 200.
+        example: 'Success'
+      supportMessage:
+        type: string
+        description: More details information of status of transaction from backend.
+        example: 'Success'
+      transactionId:
+        type: string
+        description: Unique Id sent with the request
+      data:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: id
+            example: '843873'
+          self:
+            type: string
+            description: URL for questionnaire
+            example: 'https://mtn-sa-rest.sandsiv.com/api/rest/questionnaire/xqLjY9sVhsDNfTUJRCAb9gMYKXED4M32/'
+          hash:
+            type: string
+            description: hash id
+            example: 'xqLjY9sVhsDNfTUJRCAb9gMYKXED4M32'
+          survey:
+            type: object
+            description: survey details
+            properties:
+              id:
+                type: integer
+                description: survey id
+                example: '360'
+              self:
+                type: string
+                description: URL for questionnaire
+                example: 'https://mtn-sa-rest.sandsiv.com/api/rest/survey/360/'
+              channel:
+                type: string
+                description: Channel name
+                example: 'DIGI'
+              state:
+                type: integer
+                description: state of the survey
+                example: '1'
+              surveyGroup:
+                type: integer
+                description: number of survey group
+                example: '172'
+              isStepbyStep:
+                type: boolean
+                description: Indication of the process being done step wise
+                example: 'true'
+          customer:
+            type: object
+            properties:
+              id:
+                type: string
+                description: customer id
+                example: '904'
+              self:
+                type: string
+                description: URL for questionnaire
+                example: 'https://mtn-sa-rest.sandsiv.com/api/rest/customer/904/'
+              state:
+                type: integer
+                description: state of the survey
+                example: '1'
+              language:
+                type: string
+                description: language preference
+                example: 'EN'
+              externalId:
+                type: string
+                description: External id
+                example: 'kbu_test'
+              creationDate:
+                type: string
+                description: creation date
+                example: '2020-03-31T20:55:47.162853+02:00'
+          language:
+            type: object
+            properties:
+              id:
+                type: string
+                description: language id
+                example: '4'
+              self:
+                type: string
+                description: URL for questionnaire
+                example: 'https://mtn-sa-rest.sandsiv.com/api/rest/language/4/'
+              name:
+                type: string
+                description: language name
+                example: 'English'
+              iso6391code:
+                type: string
+                description: ISO code of the language
+                example: 'EN'
+          state:
+            type: integer
+            description: state of the survey
+            example: '32'
+          subState:
+            type: integer
+            description: Sub state of the survey
+            example: 'string'
+          creationDate:
+            type: string
+            description: creation date
+            example: '2020-03-31T20:55:47.162853+02:00'
+          startTime:
+            type: string
+            description: start time
+            example: '2020-03-31T20:55:47.162853+02:00'
+          invitationTime:
+            type: string
+            description: invitation time
+            example: '2020-03-31T20:55:47.162853+02:00'
+          endTime:
+            type: string
+            description: end time
+            example: '2020-04-01T20:55:47.162853+02:00'
+          details:
+            type: array
+            description: additional details
+            items:
+              properties:
+                id:
+                  type: integer
+                  description: id
+                  example: '690418'
+                self:
+                  type: string
+                  description: URL for questionnaire
+                  example: 'https://mtn-sa-rest.sandsiv.com/api/rest/questionnaire-detail/690418/'
+                questionnaire:
+                  type: integer
+                  description: questionnaire number
+                  example: '843873'
+                name:
+                  type: string
+                  description: parameter name
+                  example: 'MSISDN'
+                value:
+                  type: integer
+                  description: parameter value
+                  example: 'kbu@sandsiv.com'
+          importId:
+            type: integer
+            description: Import id
+            example: 'string'
+          transactionalDataValues:
+            type: array
+            items:
+              properties:
+                id:
+                  type: integer
+                  description: transaction data id
+                  example: '1884108'
+                self:
+                  type: string
+                  description: URL for questionnaire
+                  example: 'https://mtn-sa-rest.sandsiv.com/api/rest/transactional-data-value/1884108/'
+                creationDate:
+                  type: string
+                  description: creation date
+                  example: '2024-07-25T19:10:51.625254+02:00'
+                name:
+                  type: string
+                  description: parameter name
+                  example: 'SHOP'
+                value:
+                  type: integer
+                  description: parameter value
+                  example: 'MTN Cavendish Square'
+            
+  Error:
+    type: object
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '1000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      supportMessage:
+        type: string
+        description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+      transactionId:
+        type: string
+        description: API generated Id to include for tracing requests
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp of the error
+        example: "2019-08-23T07:29:25.593+0000"
+      _links:
+        type: object
+        properties:
+          self:
+            type: object
+            properties:
+              href:
+                type: string
+                example: "https://api.mtn.com/v1/survey/customers/surveyOptInByTimeStamp"
+  Error400:
+    properties:
+      statusCode:
+          type: "integer"
+          description: Status code from target system to indicate transaction status
+          example: '5000'
+      statusMessage:
+          type: "string"
+          description: Status message from target system to indicate transaction status.
+      supportMessage:
+          type: "string"
+          description: detail message from target system to indicate transaction status.
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: "0d1e1b18-1b6d-4792-8417-72d337f42a1c"
+      error:
+        type: object
+  Error401:
+    properties:
+      error:
+          type: "string"
+          description: error message from target system to indicate transaction status.
+          example: missing_authorization
+      error_description:
+          type: "string"
+          description: detailed error message from target system to indicate transaction status.
+          example: Missing Authorization header
+  Error404:
+    properties:
+      status:
+          type: "integer"
+          description: Status code from target system to indicate transaction status
+          example: '1000'
+      message:
+        type: string
+        description: details
+        example: "no match found"
+  Error405:
+    properties:
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2021-07-21T17:32:28Z'
+      status:
+          type: "integer"
+          description: Status code from target system to indicate transaction status
+          example: '3002'
+      error:
+          type: "string"
+          description: error message
+          example: Method Not Allowed
+      message:
+        type: string
+        description: details
+      path:
+        type: string
+        description: The path that caused the error
+  Error415:
+    properties:
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2021-07-21T17:32:28Z'
+      status:
+          type: "integer"
+          description: Status code from target system to indicate transaction status
+          example: 415
+      error:
+          type: "string"
+          description: error message
+          example: Unsupported Media Type
+      message:
+        type: string
+        description: details
+      path:
+        type: string
+        description: The path that caused the error
+  Error500:
+    properties:
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+        example: 'Internal Server Error'
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '3001'
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: "0d1e1b18-1b6d-4792-8417-72d337f42a1c"
+      supportMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+        example: 'Backend System Error'
+      httpStatus:
+        type: string
+        description: The path that caused the error
+        example: "BAD REQIUEST"

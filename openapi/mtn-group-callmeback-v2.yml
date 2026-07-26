@@ -1,0 +1,142 @@
+swagger: '2.0'
+info:
+  description: callmeback API will be used to post a request to Backend systems when initiated by Users via different Applications like "portal", "IVR" etc.
+  version: "v1.0"
+  title: Callmeback V2
+schemes:
+  - https
+host: "za.api.mtn.com"
+basePath: "/v2"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    name: X-API-Key
+    in: header
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: 'https://api.mtn.com/v1/oauth/access_token'
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+paths:
+
+  /callmeback/{id}:
+    get:
+      operationId: getGeographicLocation and postCallMeBack
+      summary: GET GeographicLocation based on id and POST a callback request to Digi Call.
+      description: This operation finds GeographicLocation based on ID of the user and POST a callback request to Digi Call for the user.
+      tags:
+        - callmeback with geographicLocation
+      parameters:
+        - name: id
+          in: "path"
+          description: "ID of the customer. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be E.123"
+          required: true
+          type: "string"
+        - name: transactionId
+          in: header
+          description: MADAPI generated transaction ID
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/callmeback_response'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error400'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error401'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error404'
+
+
+definitions:
+
+      callmeback_response:
+        type: object
+        required:
+        - "statusCode"
+        - "statusMessage"
+        properties:
+          statusCode:
+            type: string
+            description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned.
+            example: '0000'
+          statusMessage:
+            type: string
+            description: More details and corrective actions related to the error which can be shown to a client. Map with status from backend response.
+            example: 'success'
+          supportMessage:
+            type: string
+            description: Success Message. Map with description from backend response.
+            example: ''
+          transactionId:
+            type: string
+            description: This is the same transactionId that is sent in the request
+            example: 'cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4'
+
+      Error400:
+        properties:
+          statusCode:
+            type: "integer"
+            description: Status code from target system to indicate transaction status.
+            example: 5000
+          statusMessage:
+            type: "string"
+            description: "Text explaining the reason for the error"
+          transactionId:
+            type: "string"
+            description: transaction Id from target system to indicate transaction status.
+            example: 77657232-e6a9-54b8-9c05-094c6a4f4f23
+          supportMessage:
+            type: "string"
+            description: "More error details and corrective measures"
+        
+      Error401:
+        properties:
+          statusCode:
+            type: "integer"
+            description: Status code from target system to indicate transaction status.
+            example: 4000
+          statusMessage:
+            type: "string"
+            description: Status message from target system to indicate transaction status.
+            example: Unauthorised
+          supportMessage:
+            type: "string"
+            description: detail message from target system to indicate transaction status.
+            example: Please verify token environment and key
+          faultMessage1:
+            type: "string"
+            description: ""
+          faultMessage2:
+            type: "string"
+            description: fault message
+            example: oauth.v2.InvalidApiKey
+        
+      Error404:
+        properties:
+          fault:
+            properties:
+              faultstring:
+                type: "string"
+                description: ""
+                example: "Unable to identify proxy for host: southafrica and url: /v9/products/productOffering/roaming"
+          detail:
+            properties:
+              errorcode:
+                type: "string"
+                description: ""
+                example: "messaging.adaptors.http.flow.ApplicationNotFound"
+                

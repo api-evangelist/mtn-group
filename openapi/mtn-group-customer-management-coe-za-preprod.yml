@@ -1,0 +1,636 @@
+swagger: "2.0"
+
+info:
+  version: "v1.0"
+  title: Customer Management - COE
+  description: An API to Create customers,create admin users,activate/deactivate,disable Sims. 
+  
+  
+schemes:
+  - https
+
+host: "coe.api.mtn.com"
+basePath: "/customerManagement/v1"
+
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+
+
+paths:
+
+  /customer:
+    post:
+      operationId: createCustomer
+      summary: Creates a Customer
+      description: This operation creates a Customer entity.
+      tags:
+        - Create Customer
+      parameters:
+        - name: customer
+          description: The Customer to be created
+          required: true
+          schema:
+            $ref: '#/definitions/Customer_Create'
+          in: body
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Customer_Create_Response'
+       
+        
+  /customer/attribute:
+    patch:
+      operationId:  partially update the attribute of a customer
+      summary: Update a Customer
+      description: This operation partially update a Customer entity.
+      tags:
+        - Customer Attribute
+      parameters:
+        - name: customer update
+          description:  Customer Update
+          required: true
+          schema:
+            $ref: '#/definitions/Customer_Update'
+          in: body
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Customer_Update_Response'  
+            
+  /customer/{portfolioId}/user:
+    post:
+      operationId: to add a user
+      summary: To add users
+      description: This operation Create Users that will have permissions.
+      tags:
+        - Add User
+      parameters:
+        - name: portfolioId
+          in: path
+          description: Portfolio ID
+          required: true
+          type: string
+        - name: portfolioId
+          description:  Add Users
+          required: true
+          schema:
+            $ref: '#/definitions/Add_User'
+          in: body
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Add_User_Response'  
+            
+  /sim/admin/suspend/{iccid}:
+    patch:
+      operationId: to disable a sim
+      summary: To disable a sim
+      description: This operation disable a sim.
+      tags:
+        - Admin Suspend
+      parameters:
+        - name: iccid
+          in: path
+          description: Portfolio ID
+          required: true
+          type: string
+        - name:  admin disable a sim
+          description:  Fraud Suspension
+          required: true
+          schema:
+            $ref: '#/definitions/Admin_Suspend'
+          in: body
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Admin_Suspend_Response'
+        
+
+
+definitions:
+  LinkAccountData:
+    type: object
+    required:
+      - registrationDetails
+    properties:
+      registrationDetails:
+        type: object
+        description: Information of the account holder's secondary account to be created and linked to an existing account
+        $ref: "#/definitions/AccountHolderRegistrationData"
+      languageCode:
+        type: string
+        description: An optional valid language code
+      quoteId:
+        type: string
+        description: ID of the quote to use
+      additionInformationList:
+        type: array
+        items:
+          $ref: "#/definitions/AdditionalInformationListData"
+      docReferenceInformationList:
+        type: array
+        description: Contains reference information about a KYC document stored on an external document system
+        items:
+          $ref: "#/definitions/DocumentReferenceInformationListData"
+  AccountHolderRegistrationData:
+    type: object
+    required:
+      - msisdn
+      - username
+      - email
+    properties:
+      accountHolderId:
+        type: string
+        description: A uniquie identifier or an account number of the accounts to be linked
+        example: '0100002009300'
+
+      profileName:
+        type: string
+        description: A description of the account to be registered and linked, profile details
+      timeout:
+        type: number
+        description: A timeout in seconds
+        default: 30
+      bankDomainName:
+        type: string
+        description: Name of the bank eg. EcoBank
+        example: "EcoBank, AccessBank"
+  AdditionalInformationListData:
+    type: object
+    description: Any other information of the account holder
+    properties:
+      firstName:
+        type: string
+      lastName:
+        type: string
+      contactNumber:
+        type: string
+      otherName:
+        type: string
+        description: Other name of the account holder
+      residentialAddress:
+        type: string
+  RegistrationRequestBody:
+    type: "object"
+    required:
+      - "relatedParty"
+      - "individualIndentification"
+      - "contactMedium"
+      - "accountHolder"
+    properties:
+      relatedParty:
+        $ref: "#/definitions/RelatedParty"
+      individualIndentification:
+        $ref: '#/definitions/IndividualIdentification'
+      #      companyInformation:
+      #        $ref: "#/definitions/CompanyInformation"
+      #      guardianInformation:
+      #        $ref: "#/definitions/AdditionalInformationListData"
+      #      nextOfKinInformation:
+      #        $ref: "#/definitions/AdditionalInformationListData"
+      contactMedium:
+        $ref: '#/definitions/ContactMedium'
+      partyCharacteristic:
+        $ref: '#/definitions/Characteristic'
+  #      additionalInformationList:
+  #        type: array
+  #        items:
+  #          $ref: "#/definitions/AdditionalInformationListData"
+  #      documentReferenceInformationList:
+  #        type: array
+  #        items:
+  #          $ref: "#/definitions/DocumentReferenceInformationListData"
+
+  DocumentReferenceInformationListData:
+    type: object
+    properties:
+      documentReferenceNumber:
+        type: string
+      documentName:
+        type: string
+  RelatedParty:
+    required:
+      - customerMsisdn
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      name:
+        type: string
+        description: Name of the related entity
+
+    description: Related Entity reference. A related party defines party or party
+      role linked to a specific entity.
+  Characteristic:
+    required:
+      - name
+      - value
+    type: object
+    properties:
+      name:
+        type: string
+        description: Name of the characteristic
+      value:
+        $ref: '#/definitions/Any'
+        description: The value of the characteristic
+    description: Describes a given characteristic of an object xor entity through
+      a name/value pair.
+  Credential:
+    required:
+      - id
+      - state
+    type: object
+    properties:
+      id:
+        type: string
+        description: UserId 
+      state:
+        $ref: '#/definitions/Any'
+        description: " set up"
+  IndividualIdentified:
+    required:
+      - name
+    type: object
+    properties:
+      name:
+        type: string
+        description: Jobtitleid
+  PortfolioId:
+    required:
+      - id
+    type: object
+    properties:
+      id:
+        type: string
+        description: PortfolioId
+  ResourceIdentified:
+    required:
+      - name
+    type: object
+    properties:
+      name:
+        type: string
+        description: User Type Id
+  
+  IndividualIdentification:
+    type: object
+    properties:
+      individualId:
+        type: string
+        description: Unique alphanumeric string for the document used to identify the individual
+        example: G7888777
+      indentificationType:
+        type: string
+        enum: ['PASS','CPFA','SRSA','NRIN','OTHR','DRLC','SOCS','AREG','IDCD']
+        description: Identification type (passport, national identity card, drivers
+          license, social security number, birth certificate)
+      issuingAuthority:
+        type: string
+      issuingDate:
+        type: string
+        description: Date of the format yyyy-MM-dd
+        example: "2019-05-15"
+      expiryDate:
+        type: string
+        description: Date of the format yyyy-MM-dd
+        example: "2019-05-15"
+  ContactMedium:
+    type: object
+    properties:
+      characteristic:
+        $ref: '#/definitions/ContactMediumCharacteristic'
+    description: Indicates the contact medium that could be used to contact the
+      party.
+  ContactMediumCharacteristic:
+    type: object
+    properties:
+      country:
+        type: string
+        description: Contact country
+      contactType:
+        type: string
+        description: contactType  
+        example: 'GH'
+      engagedPartyName:
+        type: string
+        description: engagedPartyName
+      landLineNumber:
+        type: string
+        description: landLineNumber
+      status:
+        type: string
+        description: "ACTIVE"  
+      phoneNumber:
+        type: string
+        description: The primary phone number of the contact
+      emailAddress:
+        type: string
+        description: Full email address in standard format
+      street:
+        type: string
+        description: Street Name  
+      street2:
+        type: string
+        description: Complementary street description
+      postCode:
+        type: string
+        description: Postcode
+      socialNetworkId:
+        type: string
+        description: UserName
+      stateOrProvince:
+        type: string
+        description: State or province  
+      name:
+        type: string
+        description: Address Name
+  ServiceCharacteristic:
+    required:
+      - name
+      - value
+    type: object
+    properties:
+      name:
+        type: string
+        description: Name of the characteristic
+      value:
+        $ref: '#/definitions/Any'
+        description: The value of the characteristic
+    description: Describes a given characteristic of an object or entity through
+      a name/value pair.
+  
+        
+        
+        
+  MomoRegistrationResponse:
+    type: "object"
+    required:
+      - "accountHolderIdentity"
+      - "accountHolderIdentityType"
+      - "statusCode"
+      - "transactionId"
+    properties:
+      accountHolderIdentity:
+        type: "string"
+        description: "The ID of resource created"
+        example: "9230088"
+      accountHolderIdentityType:
+        type: "string"
+        description: "The type of ID for the resource created"
+        example: "ID"
+      statusCode:
+        type: "string"
+        description: "The status code for operation"
+        example: "0000"
+      transactionId:
+        type: string
+        description: "The transaction Id created for the request"
+        example: "A3344098765456"
+  AccountRef:
+    type: object
+    description: >-
+      Account reference. A account may be a party account or a financial
+      account.
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        description: Name of the account
+    
+  Any: {}
+  Customer_Create:
+    type: object
+    description: |-
+      Skipped properties: id,href
+    required:
+      - engagedParty
+      - name
+    properties:
+    
+      name:
+        type: string
+        description: >-
+          A word, term, or phrase by which the Customer is known and
+          distinguished from other Customers.
+      mailAddress:
+        type: string
+        description: >-
+          a mailing address.
+      mediumType:
+        type: string
+        description: >-
+          medium Type.   preferred 
+      preferred:
+        type: string
+        description: >-
+          preferred mailing Address.    
+      # account:
+      #   type: array
+      #   items:
+      #     $ref: '#/definitions/AccountRef'
+      characteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+        description: Describes the characteristic of a customer.
+      contactMedium:
+        type: array
+        items:
+          $ref: '#/definitions/ContactMedium'
+      engagedParty:
+        $ref: '#/definitions/RelatedParty'
+        description: >-
+          The party - an organization or an individual - that is engaged as a
+          customer.
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+  Customer_Update:
+    type: object
+    description: |-
+      Skipped properties: id,href
+    required:
+      - engagedParty
+      - name
+    properties:
+      portfolioId:
+        type: string
+        description: >-
+          A word, term, or phrase by which the Customer is known and
+          distinguished from other Customers.
+      characteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+        description: Describes the characteristic of a customer.
+  Add_User:
+    type: object
+    description: |-
+      Skipped properties: id,href
+    required:
+      - engagedParty
+      - name
+    properties:
+      nickName:
+        type: string
+        description: >-
+          The User Name
+      credential:
+        type: array
+        items:
+          $ref: '#/definitions/Credential'
+        description: Describes the credential of a customer.
+      individualIdentified:
+        $ref: '#/definitions/IndividualIdentified'
+        description: Describes the characteristic of a customer.
+      portfolioId:
+        $ref: '#/definitions/PortfolioId'
+        description: portfolioId of a user.
+      resourceIdentified:
+        $ref: '#/definitions/ResourceIdentified'
+        description: user Typeid of a user.
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+        description: Describes the attribute of a user.
+  Admin_Suspend:
+    type: object
+    description: |-
+      Skipped properties: id,href
+    required:
+      - engagedParty
+      - name
+    properties:
+      serviceCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceCharacteristic'
+        description: Describes the characteristic of a customer.    
+     
+     
+     
+      
+  Customer_Create_Response:
+   type: object
+   properties:
+      name:
+       type: string
+       example: joe
+      characteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+        description: Describes the characteristic of a customer.
+      contactMedium:
+        type: array
+        items:
+          $ref: '#/definitions/ContactMedium'
+      engagedParty:
+        $ref: '#/definitions/RelatedParty'
+        description: >-
+          The party - an organization or an individual - that is engaged as a
+          customer.
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+  Customer_Update_Response:
+   type: object
+   properties:
+      portfolioId:
+       type: string
+       example: PortfolioId
+      characteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+        description: Describes the characteristic of a customer.      
+  Add_User_Response:
+   type: object
+   properties:
+      nickName:
+        type: string
+        description: >-
+          The User Name
+      credential:
+        type: array
+        items:
+          $ref: '#/definitions/Credential'
+        description: Describes the credential of a customer.
+      individualIdentified:
+        $ref: '#/definitions/IndividualIdentified'
+        description: Describes the characteristic of a customer.
+      portfolioId:
+        $ref: '#/definitions/PortfolioId'
+        description: portfolioId of a user.
+      resourceIdentified:
+        $ref: '#/definitions/ResourceIdentified'
+        description: user Typeid of a user.
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+        description: Describes the attribute of a user.
+  Admin_Suspend_Response:
+    type: object
+    description: |-
+      Skipped properties: id,href
+    required:
+      - engagedParty
+      - name
+    properties:
+      serviceCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceCharacteristic'
+        description: Describes the characteristic of a customer.
+     
+    
+  
+  APIError:
+    type: object
+    required:
+      - "statusMessage"
+      - "supportMessage"
+      - "transactionId"
+      - "timestamp"
+      - "path"
+      - "method"
+    properties:
+      statusMessage:
+        type: string
+      supportMessage:
+        type: string
+      transactionId:
+        type: string
+      timestamp:
+        type: string
+        example: "2020-08-19 09:09:09"
+      path:
+        type: string
+        description: "endpoint path used to make request"
+      method:
+        type: string
+        description: "HTTP Method used to make request"
+        example: GET/POST/PATCH
+        
+        
+        
+        
+        

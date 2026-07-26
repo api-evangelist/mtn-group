@@ -1,0 +1,2065 @@
+swagger: '2.0'
+info:
+  title: TMF637- Product Inventory Management
+  description: |+
+    **TMF API Reference : TMF 637 - Product Inventory Management**
+
+  version: 4.0.0
+host: serverRoot
+basePath: /tmf-api/productInventory/v4/
+schemes:
+  - https
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+tags:
+  - name: product
+  - name: notification listeners (client side)
+  - name: events subscription
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/v1/oauth/access_token
+paths:
+  /product:
+    get:
+      operationId: listProduct
+      summary: List or find Product objects
+      description: This operation list or find Product entities
+      tags:
+        - product
+      parameters:
+        - name: customerNodeId
+          description: Identifier of the customer. SV_MAPPING:CUSTOMER_NODE_TRE_V.CUSTOMER_NODE_ID
+          required: false
+          type: string
+          in: query
+        - name: planName
+          description: Identifier of the offer display name. SV_MAPPING:PRODUCT_NSTANCE_TRE_V.PRODUCT_OFFER_DISPLAY_NAME. Default to All. Supports comma separated list of values
+          required: false
+          type: string
+          in: query
+        - name: offerIds
+          description: Identifier of the offer id. SV_MAPPING:PRODUCT_OFFER_TRE_V.PRODUCT_OFFER_ID. Supports comma separated list of values
+          required: false
+          type: string
+          in: query
+        - name: serviceName
+          description: Identifier of the service name. SV_MAPPING:SERVICE_TRE_V.SERVICE_NAME. Support wildcard. If wildcard is provided, then 'LIKE' SQL operator is enforced by the API, otherwise '=' is used.
+          required: false
+          type: string
+          in: query
+        - name: subscriberName
+          description: Identifier of the subscriber name. SV_MAPPING:PERSON_TRE_V.OFFICIAL_NAME. Support wildcard. If wildcard is provided, then 'LIKE' SQL operator is enforced by the API, otherwise '=' is used.
+          required: false
+          type: string
+          in: query
+        - name: subscriptionStatus
+          description: SV_MAPPING:PRODUCT_INSTANCE_TRE_V.PRODUCT_INSTANCE_STATUS_CODE. Refer to RT perestapi.imp.PRODUCT_INSTANCE_STATUS. Default to All
+          required: false
+          type: string
+          in: query
+        - name: includeStatus
+          description: 'Filter for base product instances status. If set to ''All'', all instances will be returned regardless the status. If set to ''Cancelled'', only all Cancelled, Moved and Upgraded status instances will be included in the main query. If set to Non-Cancelled, then all instances will be included in the main query except for Cancelled, Moved and Upgraded status instances. Default is set to ''All''. SV_MAPPING: RT perestapi.INCLUDE_STATUS'
+          required: false
+          type: string
+          in: query
+          x-refdata-source: RT-perestapi.INCLUDE_STATUS
+        - name: sortKey
+          description: To sort the response based on sortKey. Possible values - validFor. These values are retrieved from RT perestapi.imp.product.SORT_KEY
+          required: false
+          in: query
+          type: string
+        - name: sortOrder
+          description: To sort the response based on sort order. Possible value ascending, descending. Default to descending if sortKey is provided.
+          required: false
+          in: query
+          type: string
+        - name: offset
+          description: Requested index for start of resources to be provided in response. Default to 0
+          required: false
+          in: query
+          type: integer
+          format: int64
+        - name: limit
+          description: Requested number of resources to be provided in response. Default to configuration item API_CONFIGURATION1.DEFAULT_MAX_ROWS
+          required: false
+          in: query
+          type: integer
+          format: int64
+        - name: scn
+          description: Oracle system change number used for data read consistency. Default to emtpy string if configuration item API_CONFIGURATION1.USE_FLASHBACK is not ON
+          required: false
+          in: query
+          type: string
+        - name: fields
+          description: Comma-separated properties to provide in response
+          required: false
+          type: string
+          in: query
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Result-Count:
+              description: Actual number of items returned in the response body
+              type: integer
+            X-Total-Count:
+              description: Total number of items matching criteria
+              type: integer
+          schema:
+            $ref: '#/definitions/Product'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+  /product/{id}:
+    get:
+      operationId: retrieveProduct
+      summary: Retrieves a Product by ID
+      description: This operation retrieves a Product entity. Attribute selection is enabled for all first level attributes.
+      tags:
+        - product
+      parameters:
+        - name: id
+          description: Identifier of the Product
+          required: true
+          type: string
+          in: path
+        - name: fields
+          description: Comma-separated properties to provide in response
+          required: false
+          type: string
+          in: query
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Product'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  AgreementItemRef:
+    type: object
+    description: Agreement reference. An agreement represents a contract or arrangement, either written or verbal and sometimes enforceable by law, such as a service level agreement or a customer price agreement. An agreement involves a number of other business entities, such as products, services, and resources and/or their specifications.
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      agreementItemId:
+        type: string
+        description: Identifier of the agreement
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  AttachmentRefOrValue:
+    type: object
+    description: An attachment by value or by reference.
+    properties:
+      id:
+        type: string
+        description: Unique identifier for this particular attachment. For Product Offer images SV_MAPPING:IMG<ProductOfferId>-(1..n), For Product Offer Help SV_MAPPING:HLP<ProductOfferId>
+      attachmentType:
+        type: string
+        description: Attachment type such as help urls, video, picture. For Product Offer images SV_MAPPING:image, For Product Offer Help SV_MAPPING:document
+      name:
+        type: string
+        description: The name of the attachment. For Product Offer images SV_MAPPING:ImageUrl-(1..n), For Product Offer Help SV_MAPPING:HelpUrl
+      url:
+        type: string
+        description: Uniform Resource Locator, is a web page address (a subset of URI). SV_MAPPING:PRODUCT_OFFER.PRODUCT_OFFER_IMAGE_URLS, PRODUCT_OFFER.PRODUCT_OFFER_HELP_URL
+  Any: {}
+  BillingAccountRef:
+    type: object
+    description: BillingAccount reference. A BillingAccount is a detailed description of a bill structure.
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the billing account
+      href:
+        type: string
+        description: Reference of the billing account
+      name:
+        type: string
+        description: Name of the billing account
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  Bucket:
+    type: object
+    description: Describes allocation consumption details
+    properties:
+      initialQuantity:
+        description: SV_MAPPING:ENTITLEMENT_ALLOCATION_TRE_V.INITIAL_AMOUNT
+        $ref: '#/definitions/Quantity'
+      balanceQuantity:
+        description: SV_MAPPING:ENTITLEMENT_ALLOCATION_TRE_V.CONSUMED_AMOUNT
+        $ref: '#/definitions/Quantity'
+      consumptionPeriod:
+        description: It is from SV_MAPPING:ENTITLEMENT_ALLOCATION_TRE_V.START_DATE to SV_MAPPING:ENTITLEMENT_ALLOCATION_TRE_V.EXPIRY_DATE
+        $ref: '#/definitions/TimePeriod'
+      id:
+        type: string
+        description: Id of the entitlement allocation. SV_MAPPING:ENTITLEMENT_ALLOCATION_TRE_V.ENTITLEMENT_ALLOCATION_ID
+  CategoryRef:
+    type: object
+    description: The category for grouping recommendations
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity. SV_MAPPING:perestapi.imp.CATEGORY->Ref Code
+      href:
+        type: string
+        description: Reference of the category - <http:/<PEREST_HOSTNAME>:<PEREST_PORT>/<Category PEREST URL>/<perestapi.imp.CATEGORY->Ref Code>
+      name:
+        type: string
+        description: Name of the related entity. SV_MAPPING:perestapi.dCatalogCategory->Category Name
+      codeLabel:
+        type: string
+        description: Code Label corresponding to the category name. SV_MAPPING:perestapi.imp.CATEGORY->Code Label
+  Characteristic:
+    type: object
+    description: Describes a given characteristic of an object or entity through a name/value pair.
+    required:
+      - name
+      - value
+    properties:
+      name:
+        type: string
+        description: Name of the characteristic
+      valueType:
+        type: string
+        description: Data type of the value of the characteristic
+      value:
+        $ref: '#/definitions/Any'
+        description: The value of the characteristic
+      dispSequence:
+        type: integer
+        format: int64
+        description: Sequence or order in which particular attribute is shown on user interface
+      configurable:
+        type: string
+        description: If 'True', it indicates that the Characteristic is configurable/updatable, otherwise 'False'
+      enabled:
+        type: string
+        description: 'If ''True'', it indicates that the Characteristic is enabled to be supplied/selected at the time of selling. SV_MAPPING: RT BOOLEAN -> Abbreviation'
+      id:
+        type: string
+        description: Identifier of the attribute which identifies characteristic uniquely. Example - Attribute Type Id
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  CharacteristicRef:
+    type: object
+    description: Describes a given characteristic of an object or entity through a name/value pair.
+    required:
+      - name
+      - value
+    properties:
+      name:
+        type: string
+        description: Name of the characteristic
+      valueType:
+        type: string
+        description: Data type of the value of the characteristic
+      value:
+        $ref: '#/definitions/Any'
+        description: The value of the characteristic
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  EntityRef:
+    type: object
+    description: Entity reference schema to be use for all entityRef class.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  GeographicAddress:
+    type: object
+    description: Structured textual way of describing how to find a Property for service installation
+    properties:
+      street1:
+        type: string
+        description: 'Line 1, SV_MAPPING: SERVICE_TRE_V.A_LINE_1, SERVICE_TRE_V.B_LINE_1'
+      street2:
+        type: string
+        description: 'Line 2, SV_MAPPING: SERVICE_TRE_V.A_LINE_2, SERVICE_TRE_V.B_LINE_2'
+      suburb:
+        type: string
+        description: 'Suburban, SV_MAPPING: SERVICE_TRE_V.A_SUBURB, SERVICE_TRE_V.B_SUBURB'
+      city:
+        type: string
+        description: 'City, SV_MAPPING: SERVICE_TRE_V.A_CITY, SERVICE_TRE_V.B_CITY'
+      postCode:
+        type: string
+        description: 'Post Code, SV_MAPPING: SERVICE_TRE_V.A_POST_CODE, SERVICE_TRE_V.B_POST_CODE'
+      stateOrProvince:
+        type: string
+        description: 'State, SV_MAPPING: SERVICE_TRE_V.A_STATE, SERVICE_TRE_V.B_STATE'
+      country:
+        type: string
+        description: 'Country, SV_MAPPING: SERVICE_TRE_V.A_COUNTRY, SERVICE_TRE_V.B_COUNTRY'
+      addressLine1:
+        type: string
+        description: 'Address line 1, SV_MAPPING: SERVICE_TRE_V.A_GENERAL_1, SERVICE_TRE_V.B_GENERAL_1'
+      geocode:
+        type: string
+        description: 'Geo Code providing geographical coordinates corresponding to a location, SV_MAPPING: SERVICE_TRE_V.A_GEOCODE, SERVICE_TRE_V.B_GEOCODE'
+      buildingId:
+        type: string
+        description: 'Building Id as used for serviceability. SV_MAPPING: SERVICE_TRE_V.A_GENERAL_2, SERVICE_TRE_V.B_GENERAL_2'
+      region:
+        type: string
+        description: 'Region as used for serviceability. SV_MAPPING: SERVICE_TRE_V.A_GENERAL_5, SERVICE_TRE_V.B_GENERAL_5'
+      subDoorNumber:
+        type: string
+        description: 'Sub Door Number as used for serviceability. SV_MAPPING: SERVICE_TRE_V.A_GENERAL_3, SERVICE_TRE_V.B_GENERAL_3'
+      genericAddress:
+        type: string
+        description: 'Generic Address as used for serviceability. SV_MAPPING: SERVICE_TRE_V.A_GENERAL_4, SERVICE_TRE_V.B_GENERAL_4'
+      addressId:
+        type: string
+        description: 'Address ID of the service address as used for serviceability. SV_MAPPING: SERVICE_HISTORY.A_ADDRESS_ID, SERVICE_HISTORY.B_ADDRESS_ID'
+      xpos:
+        type: number
+        format: float
+        description: 'X coordinate of the geographic address, SV_MAPPING: SERVICE_TRE_V.A_XPOS | SERVICE_TRE_V.B_XPOS'
+      ypos:
+        type: number
+        format: float
+        description: 'Y coordinate of the geographic address, SV_MAPPING: SERVICE_TRE_V.A_YPOS | SERVICE_TRE_V.B_YPOS'
+      '@type':
+        type: string
+        description: This is used to differentiate service address types as 'A' and 'B'
+        x-refdata-source: CM-Address_Type
+  Money:
+    type: object
+    description: A base / value business entity used to represent money
+    properties:
+      unit:
+        type: string
+        description: Currency (ISO4217 norm uses 3 letters to define the currency)
+      value:
+        type: number
+        format: float
+        description: A positive floating point number
+  PaginationRef:
+    type: object
+    description: Query results and paging details.
+    properties:
+      offset:
+        type: integer
+        format: int64
+        description: Requested index for start of items to be provided in response
+      limit:
+        type: integer
+        format: int64
+        description: Requested number of items to be provided in response
+      remainingRecords:
+        type: integer
+        format: int64
+        description: Remaining number of items to be fetched
+      totalRecords:
+        type: integer
+        format: int64
+        description: Total number of items matching criteria
+      scn:
+        type: string
+        description: Oracle system change number for read consistency
+  Place:
+    type: object
+    description: Place reference. Place defines the places where the products are sold or delivered.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the place
+      href:
+        type: string
+        description: Unique reference of the place
+      name:
+        type: string
+        description: A user-friendly name for the place, such as [Paris Store], [London Store], [Main Home]
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  PlaceRef:
+    type: object
+    description: Place reference. PlaceRef defines the placeRefs where the products are sold or delivered.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  Price:
+    type: object
+    description: Provides all amounts (tax included, duty free, tax rate), used currency and percentage to apply for Price Alteration.
+    properties:
+      percentage:
+        type: number
+        format: float
+        description: Percentage to apply for ProdOfferPriceAlteration
+      tax:
+        type: array
+        items:
+          $ref: '#/definitions/TaxItem'
+        description: An amount of money levied on the price of a Product by a legislative body.
+      priceCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+        description: Additional attributes that describe price.
+      taxRate:
+        type: number
+        format: float
+        description: Tax rate
+      dutyFreeAmount:
+        $ref: '#/definitions/Money'
+        description: All taxes excluded amount (expressed in the given currency)
+      taxIncludedAmount:
+        $ref: '#/definitions/Money'
+        description: All taxes included amount (expressed in the given currency)
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  PriceAlteration:
+    type: object
+    description: Is an amount, usually of money, that modifies the price charged for an order item.
+    required:
+      - price
+      - priceType
+    properties:
+      id:
+        type: string
+        description: unique id of this resource.
+      applicationDuration:
+        type: integer
+        description: Duration during which the alteration applies on the order item price (for instance 2 months free of charge for the recurring charge)
+      description:
+        type: string
+        description: A narrative that explains in detail the semantics of this order item price alteration
+      name:
+        type: string
+        description: Name of the order item price alteration
+      priceType:
+        type: string
+        description: A category that describes the price such as recurring, one time and usage.
+      priority:
+        type: integer
+        description: Priority level for applying this alteration among all the defined alterations on the order item price
+      recurringChargePeriod:
+        type: string
+        description: Could be month, week...
+      unitOfMeasure:
+        type: string
+        description: Could be minutes, GB...
+      price:
+        $ref: '#/definitions/Price'
+      productOfferingPrice:
+        $ref: '#/definitions/ProductOfferingPriceRef'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  Product:
+    type: object
+    description: A product offering procured by a customer or other interested party playing a party role. A product is realized as one or more service(s) and / or resource(s).
+    properties:
+      pagination:
+        description: Query results and paging details.
+        $ref: '#/definitions/PaginationRef'
+      productDetails:
+        type: array
+        items:
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the product
+            href:
+              type: string
+              description: Reference of the product
+            description:
+              type: string
+              description: Is the description of the product. It could be copied from the description of the Product Offering.
+            isBundle:
+              type: boolean
+              description: If true, the product is a ProductBundle which is an instantiation of a BundledProductOffering. If false, the product is a ProductComponent which is an instantiation of a SimpleProductOffering.
+            isCustomerVisible:
+              type: boolean
+              description: If true, the product is visible by the customer.
+            name:
+              type: string
+              description: Name of the product. It could be the same as the name of the product offering
+            orderDate:
+              type: string
+              format: date-time
+              description: Is the date when the product was ordered
+            productSerialNumber:
+              type: string
+              description: Is the serial number for the product. This is typically applicable to tangible products e.g. Broadband Router.
+            startDate:
+              type: string
+              format: date-time
+              description: Is the date from which the product starts
+            terminationDate:
+              type: string
+              format: date-time
+              description: Is the date when the product was terminated
+            agreement:
+              type: array
+              items:
+                $ref: '#/definitions/AgreementItemRef'
+            billingAccount:
+              $ref: '#/definitions/BillingAccountRef'
+            place:
+              type: array
+              items:
+                $ref: '#/definitions/RelatedPlaceRefOrValue'
+            product:
+              type: array
+              items:
+                $ref: '#/definitions/ProductRefOrValue'
+            productCharacteristic:
+              type: array
+              items:
+                $ref: '#/definitions/Characteristic'
+            productOffering:
+              $ref: '#/definitions/ProductOfferingRef'
+            productOrderItem:
+              type: array
+              items:
+                $ref: '#/definitions/RelatedProductOrderItem'
+            productPrice:
+              type: array
+              items:
+                $ref: '#/definitions/ProductPrice'
+            productRelationship:
+              type: array
+              items:
+                $ref: '#/definitions/ProductRelationship'
+            productSpecification:
+              $ref: '#/definitions/ProductSpecificationRef'
+            productTerm:
+              type: array
+              items:
+                $ref: '#/definitions/ProductTerm'
+            realizingResource:
+              type: array
+              items:
+                $ref: '#/definitions/ResourceRef'
+            realizingService:
+              type: array
+              items:
+                $ref: '#/definitions/ServiceRef'
+            relatedParty:
+              type: array
+              items:
+                $ref: '#/definitions/RelatedParty'
+            status:
+              $ref: '#/definitions/ProductStatusType'
+              description: Is the lifecycle status of the product.
+            '@baseType':
+              type: string
+              description: When sub-classing, this defines the super-class
+            '@schemaLocation':
+              type: string
+              format: uri
+              description: A URI to a JSON-Schema file that defines additional attributes and relationships
+            '@type':
+              type: string
+              description: When sub-classing, this defines the sub-class entity name
+  Product_Create:
+    type: object
+    description: |-
+      A product offering procured by a customer or other interested party playing a party role. A product is realized as one or more service(s) and / or resource(s).
+      Skipped properties: id,href
+    required:
+      - status
+    properties:
+      description:
+        type: string
+        description: Is the description of the product. It could be copied from the description of the Product Offering.
+      isBundle:
+        type: boolean
+        description: If true, the product is a ProductBundle which is an instantiation of a BundledProductOffering. If false, the product is a ProductComponent which is an instantiation of a SimpleProductOffering.
+      isCustomerVisible:
+        type: boolean
+        description: If true, the product is visible by the customer.
+      name:
+        type: string
+        description: Name of the product. It could be the same as the name of the product offering
+      orderDate:
+        type: string
+        format: date-time
+        description: Is the date when the product was ordered
+      productSerialNumber:
+        type: string
+        description: Is the serial number for the product. This is typically applicable to tangible products e.g. Broadband Router.
+      startDate:
+        type: string
+        format: date-time
+        description: Is the date from which the product starts
+      terminationDate:
+        type: string
+        format: date-time
+        description: Is the date when the product was terminated
+      agreement:
+        type: array
+        items:
+          $ref: '#/definitions/AgreementItemRef'
+      billingAccount:
+        $ref: '#/definitions/BillingAccountRef'
+      place:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedPlaceRefOrValue'
+      product:
+        type: array
+        items:
+          $ref: '#/definitions/ProductRefOrValue'
+      productCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      productOffering:
+        $ref: '#/definitions/ProductOfferingRef'
+      productOrderItem:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedProductOrderItem'
+      productPrice:
+        type: array
+        items:
+          $ref: '#/definitions/ProductPrice'
+      productRelationship:
+        type: array
+        items:
+          $ref: '#/definitions/ProductRelationship'
+      productSpecification:
+        $ref: '#/definitions/ProductSpecificationRef'
+      productTerm:
+        type: array
+        items:
+          $ref: '#/definitions/ProductTerm'
+      realizingResource:
+        type: array
+        items:
+          $ref: '#/definitions/ResourceRef'
+      realizingService:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceRef'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      status:
+        $ref: '#/definitions/ProductStatusType'
+        description: Is the lifecycle status of the product.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  Product_Update:
+    type: object
+    description: |-
+      A product offering procured by a customer or other interested party playing a party role. A product is realized as one or more service(s) and / or resource(s).
+      Skipped properties: id,href
+    properties:
+      description:
+        type: string
+        description: Is the description of the product. It could be copied from the description of the Product Offering.
+      isBundle:
+        type: boolean
+        description: If true, the product is a ProductBundle which is an instantiation of a BundledProductOffering. If false, the product is a ProductComponent which is an instantiation of a SimpleProductOffering.
+      isCustomerVisible:
+        type: boolean
+        description: If true, the product is visible by the customer.
+      name:
+        type: string
+        description: Name of the product. It could be the same as the name of the product offering
+      orderDate:
+        type: string
+        format: date-time
+        description: Is the date when the product was ordered
+      productSerialNumber:
+        type: string
+        description: Is the serial number for the product. This is typically applicable to tangible products e.g. Broadband Router.
+      startDate:
+        type: string
+        format: date-time
+        description: Is the date from which the product starts
+      terminationDate:
+        type: string
+        format: date-time
+        description: Is the date when the product was terminated
+      agreement:
+        type: array
+        items:
+          $ref: '#/definitions/AgreementItemRef'
+      billingAccount:
+        $ref: '#/definitions/BillingAccountRef'
+      place:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedPlaceRefOrValue'
+      product:
+        type: array
+        items:
+          $ref: '#/definitions/ProductRefOrValue'
+      productCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      productOffering:
+        $ref: '#/definitions/ProductOfferingRef'
+      productOrderItem:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedProductOrderItem'
+      productPrice:
+        type: array
+        items:
+          $ref: '#/definitions/ProductPrice'
+      productRelationship:
+        type: array
+        items:
+          $ref: '#/definitions/ProductRelationship'
+      productSpecification:
+        $ref: '#/definitions/ProductSpecificationRef'
+      productTerm:
+        type: array
+        items:
+          $ref: '#/definitions/ProductTerm'
+      realizingResource:
+        type: array
+        items:
+          $ref: '#/definitions/ResourceRef'
+      realizingService:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceRef'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      status:
+        $ref: '#/definitions/ProductStatusType'
+        description: Is the lifecycle status of the product.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  ProductOfferingPriceRef:
+    type: object
+    description: ProductPriceOffering reference. An amount, usually of money, that is asked for or allowed when a ProductOffering is bought, rented, or leased
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  ProductOfferingRef:
+    type: object
+    description: ProductOffering reference. A product offering represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      description:
+        type: string
+        description: Is the description of the product.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+      category:
+        type: array
+        items:
+          $ref: '#/definitions/CategoryRef'
+        description: The category resource is used to group product offerings, service and resource candidates in logical containers. Categories can contain other categories and/or product offerings, resource or service candidates.
+      characteristic:
+        type: array
+        items:
+          $ref: '#/definitions/CharacteristicRef'
+        description: Characteristic details
+      attachment:
+        type: array
+        items:
+          $ref: '#/definitions/AttachmentRefOrValue'
+        description: Complements the description of an element (for instance a product) through help urls, video, pictures.
+  ProductPrice:
+    type: object
+    description: An amount, usually of money, that represents the actual price paid by a Customer for a purchase, a rent or a lease of a Product. The price is valid for a defined period of time.
+    required:
+      - price
+      - priceType
+    properties:
+      id:
+        type: string
+        description: unique id of this resource.
+      description:
+        type: string
+        description: A narrative that explains in detail the semantics of this product price.
+      name:
+        type: string
+        description: A short descriptive name such as "Subscription price".
+      priceType:
+        type: string
+        description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth.
+      priceKey:
+        type: string
+        description: A unique key presented in the offer tables which allows to configure multiple prices for an offer-companion combination.
+      recurringChargePeriod:
+        type: string
+        description: Could be month, week...
+      unitOfMeasure:
+        type: string
+        description: Could be minutes, GB...
+      billingAccount:
+        $ref: '#/definitions/BillingAccountRef'
+      price:
+        $ref: '#/definitions/Price'
+      productOfferingPrice:
+        $ref: '#/definitions/ProductOfferingPriceRef'
+      productPriceAlteration:
+        type: array
+        items:
+          $ref: '#/definitions/PriceAlteration'
+      productTerm:
+        type: array
+        items:
+          $ref: '#/definitions/ProductTerm'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  ProductRef:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  ProductRefOrValue:
+    type: object
+    description: A product to be created defined by value or existing defined by reference. The polymorphic attributes @type, @schemaLocation & @referredType are related to the product entity and not the RelatedProductRefOrValue class itself
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the product
+      href:
+        type: string
+        description: Reference of the product
+      description:
+        type: string
+        description: Is the description of the product. It could be copied from the description of the Product Offering.
+      isBundle:
+        type: boolean
+        description: If true, the product is a ProductBundle which is an instantiation of a BundledProductOffering. If false, the product is a ProductComponent which is an instantiation of a SimpleProductOffering.
+      isCustomerVisible:
+        type: boolean
+        description: If true, the product is visible by the customer.
+      name:
+        type: string
+        description: Name of the product. It could be the same as the name of the product offering
+      orderDate:
+        type: string
+        format: date-time
+        description: Is the date when the product was ordered
+      productSerialNumber:
+        type: string
+        description: Is the serial number for the product. This is typically applicable to tangible products e.g. Broadband Router.
+      startDate:
+        type: string
+        format: date-time
+        description: Is the date from which the product starts
+      terminationDate:
+        type: string
+        format: date-time
+        description: Is the date when the product was terminated
+      agreement:
+        type: array
+        items:
+          $ref: '#/definitions/AgreementItemRef'
+      billingAccount:
+        $ref: '#/definitions/BillingAccountRef'
+      place:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedPlaceRefOrValue'
+      product:
+        type: array
+        items:
+          $ref: '#/definitions/ProductRefOrValue'
+      productCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      productOffering:
+        $ref: '#/definitions/ProductOfferingRef'
+      productOrderItem:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedProductOrderItem'
+      productPrice:
+        type: array
+        items:
+          $ref: '#/definitions/ProductPrice'
+      usageConsumption:
+        type: array
+        items:
+          $ref: '#/definitions/UsageConsumption'
+        description: Describe a detail list of free unit consumption at each child offers.
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: 'The time period that the product offer is valid for. SV_MAPPING:PRODUCT_INSTANCE_TRE_V.EFFECTIVE_START_DATE to EFFECTIVE_END_DATE. Format: yyyy-mm-ddThh:nn:ss'
+      primaryServiceName:
+        type: string
+        description: Available for top level offer only. The primary service number of the subscription. SV_MAPPING:SERVICE_TRE_V.SERVICE_NAME
+      productRelationship:
+        type: array
+        items:
+          $ref: '#/definitions/ProductRelationship'
+      productSpecification:
+        $ref: '#/definitions/ProductSpecificationRef'
+      productTerm:
+        type: array
+        items:
+          $ref: '#/definitions/ProductTerm'
+      realizingResource:
+        type: array
+        items:
+          $ref: '#/definitions/ResourceRef'
+      realizingService:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceRef'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      status:
+        $ref: '#/definitions/ProductStatusType'
+        description: Is the lifecycle status of the product.
+      summaryOfChanges:
+        type: array
+        items:
+          $ref: '#/definitions/SummaryOfChange'
+        description: Available for top level offer only. Describes a list of summary changes for products and relevant entities. Default to past 30 days of changes
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  ProductRelationship:
+    type: object
+    description: Linked products to the one instantiate, such as [bundled] if the product is a bundle and you want to describe the bundled products inside this bundle; [reliesOn] if the product needs another already owned product to rely on (e.g. an option on an already owned mobile access product) [targets] or [isTargeted] (depending on the way of expressing the link) for any other kind of links that may be useful
+    required:
+      - product
+      - relationshipType
+    properties:
+      relationshipType:
+        type: string
+        description: Type of the product relationship, such as [bundled] if the product is a bundle and you want to describe the bundled products inside this bundle; [reliesOn] if the product needs another already owned product to rely on (e.g. an option on an already owned mobile access product) [targets] or [isTargeted] (depending on the way of expressing the link) for any other kind of links that may be useful
+      product:
+        $ref: '#/definitions/ProductRefOrValue'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  ProductSpecificationCharacteristic:
+    type: object
+    description: A characteristic quality or distinctive feature of a ProductSpecification.
+    properties:
+      id:
+        type: string
+        description: Identifier of the attribute which identifies characteristic uniquely. Example - Attribute Type Id
+      dispSequence:
+        type: integer
+        format: int64
+        description: Sequence or order in which particular attribute is shown on user interface
+      configurable:
+        type: string
+        description: 'If true, the parameter indicates that the ProductSpecificationCharacteristic is configurable/updatable. Only applicable for ProductSpecification with @baseType as Grid/GridWithImage. SV_MAPPING: RT BOOLEAN -> Abbreviation'
+      enabled:
+        type: string
+        description: 'If true, the parameter indicates that the ProductSpecificationCharacteristic is enabled to be supplied/selected at the time of selling. Only applicable for ProductSpecification with @baseType as Grid/GridWithImage. SV_MAPPING: RT BOOLEAN -> Abbreviation'
+      name:
+        type: string
+        description: Name of the ProductSpecificationCharacteristic. Names which can be Recurring Period|Recurring Period Unit|Initial Allocation Amount|Initial Allocation Amount Unit|Recurring Allocation Amount|Recurring Allocation Amount Unit|Validity Period|Validity Period Unit|Warning Period|Warning Period Unit|Delay Period|Delay Period Unit|Shareable|MIN Count|MAX Count|Service Name|VAT ID|National ID|Customer Name
+      productSpecCharacteristicValue:
+        $ref: '#/definitions/ProductSpecificationCharacteristicValue'
+        description: SV_MAPPING:ENTITLEMENT_TRE_V.RECURRING_PERIOD|RECURRING_PERIOD_UNIT_CODE|INITIAL_ALLOCATION_AMOUNT|UNIT_OF_MEASURE_COD|RECURRING_ALLOCATION_AMOUNT|UNIT_OF_MEASURE_COD|VALIDITY_PERIOD|VALIDITY_PERIOD_UNIT_CODE|WARNING_PERIOD|WARNING_PERIOD_UNIT_CODE|DELAY_PERIOD|DELAY_PERIOD_UNIT_CODE and PRODUCT_INSTANCE_TRE_V.GENERAL_3|Minimum Count of FnF Supported|Maximum Count of FnF Supported|PRODUCT_INSTANCE_TRE_V.GENERAL_1|FnF Customers' Party's PERSON_TRE_V.GENERAL_10|FnF Customers' Party's PERSON_TRE_V.PRIMARY_IDENTIFIER|FnF Customers' CUSTOMER_NODE_ID.NODE_NAME|Event Sub Type|Time Band'
+  ProductSpecificationCharacteristicValue:
+    type: object
+    description: A ProductSpecificationCharacteristicValue object is used to define a set of attributes, each of which can be assigned to a corresponding set of attributes in a ProductSpecificationCharacteristic object. The values of the attributes in the ProductSpecificationCharacteristicValue object describe the values of the attributes that a corresponding ProductSpecificationCharacteristic object can take on.
+    properties:
+      value:
+        $ref: '#/definitions/Any'
+        description: A discrete value that the characteristic can take on, or the actual value of the characteristic
+      valueType:
+        type: string
+        description: A kind of value that the characteristic can take on, such as numeric, text and so forth
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  ProductSpecificationRef:
+    type: object
+    description: 'Product specification reference: A ProductSpecification is a detailed description of a tangible or intangible object made available externally in the form of a ProductOffering to customers or other parties playing a party role.'
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      ent_id:
+        type: string
+        description: SV_MAPPING:Free Units -> ENTITLEMENT_TRE_V.ENTITLEMENT_ID
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      version:
+        type: string
+        description: Version of the product specification
+      productSpecCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/ProductSpecificationCharacteristic'
+        description: A characteristic quality or distinctive feature of a ProductSpecification.
+      targetProductSchema:
+        $ref: '#/definitions/TargetProductSchema'
+        description: A target product schema reference. The reference object to the schema and type of target product which is described by product specification.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  ProductStatusType:
+    type: string
+    description: Possible values for the status of the product
+    enum:
+      - created
+      - pendingActive
+      - cancelled
+      - active
+      - pendingTerminate
+      - terminated
+      - suspended
+      - 'aborted '
+  ProductTerm:
+    type: object
+    description: Description of a productTerm linked to this product. This represent a commitment with a duration
+    properties:
+      id:
+        type: string
+        description: SV_MAPPING:Unique identifier of the productOfferingTerm. Contract -> offerId-productId-entitlementCategoryCode-productInstanceId
+      description:
+        type: string
+        description: Description of the productTerm
+      name:
+        type: string
+        description: Name of the productTerm
+      duration:
+        $ref: '#/definitions/Quantity'
+        description: Duration of the productTerm
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: productTerm validity period
+      productTermCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/ProductTermCharacteristic'
+        description: A characteristic quality or distinctive feature of a product term like Contract Status, Document Required, Cancellation Reason and Initiate Renewal
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  ProductTermCharacteristic:
+    type: object
+    description: A characteristic quality or distinctive feature of a ProductRefOrValue.
+    properties:
+      name:
+        type: string
+        description: 'Name of the ProductTermCharacteristic. Names which can be Contract Status | Cancellation Reason | Initiate Renewal | Document Required. SV MAPPING: PRODUCT_INSTANCE_HISTORY.GENERAL_1 | PRODUCT_INSTANCE_HISTORY.GENERAL_2 | PRODUCT_INSTANCE_HISTORY.GENERAL_3 | PRODUCT_INSTANCE_HISTORY.GENERAL_4.'
+      productTermCharacteristicValue:
+        $ref: '#/definitions/ProductTermCharacteristicValue'
+        description: A ProductTermCharacteristicValue object is used to define a set of attributes, each of which can be assigned to a corresponding set of attributes in a ProductTermCharacteristic object. The values of the attributes in the ProductTermCharacteristicValue object describe the values of the attributes that a corresponding ProductTermCharacteristic object can take on.
+  ProductTermCharacteristicValue:
+    type: object
+    description: A ProductTermCharacteristicValue object is used to define a set of attributes, each of which can be assigned to a corresponding set of attributes in a ProductTermCharacteristic object. The values of the attributes in the ProductTermCharacteristicValue object describe the values of the attributes that a corresponding ProductTermCharacteristic object can take on.
+    properties:
+      value:
+        $ref: '#/definitions/Any'
+        description: A discrete value that the characteristic can take on, or the actual value of the characteristic.
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  Quantity:
+    type: object
+    description: An amount in a given unit
+    properties:
+      amount:
+        default: 1
+        type: number
+        format: float
+        description: Numeric value in a given unit
+      units:
+        type: string
+        description: Unit
+  RelatedParty:
+    type: object
+    description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+    required:
+      - '@referredType'
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      role:
+        type: string
+        description: Role played by the related party
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  RelatedPlaceRefOrValue:
+    type: object
+    description: Related Entity reference. A related place defines a place described by reference or by value linked to a specific entity. The polymorphic attributes @type, @schemaLocation & @referredType are related to the place entity and not the RelatedPlaceRefOrValue class itself
+    required:
+      - role
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the place
+      href:
+        type: string
+        description: Unique reference of the place
+      name:
+        type: string
+        description: A user-friendly name for the place, such as [Paris Store], [London Store], [Main Home]
+      role:
+        type: string
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  RelatedProductOrderItem:
+    type: object
+    description: RelatedProductOrderItem (ProductOrder item) .The product order item which triggered product creation/change/termination.
+    required:
+      - orderItemId
+      - productOrderId
+    properties:
+      orderItemAction:
+        type: string
+        description: Action of the order item for this product
+      orderItemId:
+        type: string
+        description: Identifier of the order item where the product was managed
+      productOrderHref:
+        type: string
+        description: Reference of the related entity.
+      productOrderId:
+        type: string
+        description: Unique identifier of a related entity.
+      role:
+        type: string
+        description: role of the product order item for this product
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  ResourceRef:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the resource
+      value:
+        type: string
+        description: 'The resource value that can be used to identify a resource with a public key (e.g.: a tel nr, an msisdn)'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  ServiceRef:
+    type: object
+    description: Service reference, for when Service is used by other entities
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      place:
+        type: array
+        items:
+          $ref: '#/definitions/GeographicAddress'
+        description: A list of places (Place [*]). Used to define a place useful for the service (for example a geographical place whre the service is installed)
+      serviceCharacteristic:
+        description: Contains service detail, configurable in DA 'API To CB Field Mapping',  values such as Network Number SV_MAPPING:SERVICE_TRE_V.NETWORK_NAME, Start Date SV_MAPPING:SERVICE_TRE_V.EFFECTIVE_START_DATE, etc
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      serviceSpecification:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceSpecification'
+        description: The service specification implied by this candidate
+      serviceStatusChangeReason:
+        type: string
+        description: 'Contains service status change reason. For example : General Maintanance, Downgrade, Upgrade , etc. These values are stored in SERVICE_HISTORY.GENERAL_X fields if defined.'
+        x-refdata-source: CM-ReasonForMaint
+      state:
+        $ref: '#/definitions/ServiceStatusType'
+        description: Service status
+      relatedParty:
+        type: array
+        description: Primary contact person and customer for service associated with particular product instance. Derived via PRODUCT_INSTANCE_SERVICE and SERVICE_HISTORY. One product may have reference to sereral services, however, all services will link to the person/customer. Considering this, for particular product instance, there will be two elements in relatedParty array.
+        items:
+          $ref: '#/definitions/RelatedParty'
+      usageConsumptionGroup:
+        type: array
+        items:
+          $ref: '#/definitions/UsageConsumptionGroup'
+        description: Describe a detail list of free units that available to the service for consumption.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  ServiceSpecification:
+    type: object
+    description: |-
+      ServiceSpecification is a class that offers characteristics to describe a type of service.
+      Functionally, it acts as a template by which Services may be instantiated. By sharing the same  specification, these services would therefore share the same set of characteristics.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the service specification. SV_MAPPING:Spend Limit -> offerId-productId-entCatCode-productInstanceId; Policy Counter -> offerId-productId-entCatCode-productInstanceId
+      name:
+        type: string
+        description: Name of the service specification. SV_MAPPING:Spend Limit -> offerName-companionName-entitlementCategory; Policy Counter -> offerName-companionName-entitlementCategory
+      serviceSpecCharacteristic:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceSpecCharacteristic'
+        description: A list of service spec characteristics (ServiceSpecCharacteristic [*]). This class represents the key features of this service specification.
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name, Fixed Value : spendLimit/policyCounter'
+        x-refdata-source: RT-perestapi.BASE_TYPE
+  ServiceSpecCharacteristic:
+    type: object
+    description: This class represents the key features of this service specification. For example, bandwidth is a characteristic of many different types of services; if bandwidth is a relevant characteristic (e.g., from the point-of-view of a Customer obtaining this Service via a Product) then bandwidth would be a ServiceSpecCharacteristic for that particular Service.
+    properties:
+      name:
+        type: string
+        description: A word, term, or phrase by which this characteristic specification is known and distinguished from other characteristic specifications. SV_MAPPING:Spend Limit -> Recurring Period|Threshold|Updateable|Eligibility|Spend Limit Allocation|Spend Limit Balance; Policy Counter -> Policy Status| Next Policy Status|Policy Type|Policy Threshold|Policy Threshold Balance|Recurring Period|Recurring Allocation Amount
+      serviceSpecCharRelationship:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceSpecCharRelationship'
+        description: A list of service spec char relationships (ServiceSpecCharRelationship [*]). An aggregation, migration, substitution, dependency or exclusivity relationship between/among Specification Characteristics.
+      serviceSpecCharacteristicValue:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceSpecCharacteristicValue'
+        description: A list of service spec characteristic values (ServiceSpecCharacteristicValue [*]). A ServiceSpecCharacteristicValue object is used to define a set of attributes, each of which can be assigned to a corresponding set of attributes in a ServiceSpecCharacteristic object. The values of the attributes in the ServiceSpecCharacteristicValue object describe the values of the attributes that a corresponding ServiceSpecCharacteristic object can take on.
+  ServiceSpecCharRelationship:
+    type: object
+    description: An aggregation, migration, substitution, dependency or exclusivity relationship between/among serviceSpecCharacteristics.
+    properties:
+      name:
+        type: string
+        description: Name of the target  characteristic.
+      relationshipType:
+        type: string
+        description: Type of relationship such as aggregation, migration, substitution, dependency, exclusivity. Spend Limit -> dependency.
+  ServiceSpecCharacteristicValue:
+    type: object
+    description: A ServiceSpecCharacteristicValue object is used to define a set of attributes, each of which can be assigned to a corresponding set of attributes in a ServiceSpecCharacteristic object. The values of the attributes in the ServiceSpecCharacteristicValue object describe the values of the attributes that a corresponding ServiceSpecCharacteristic object can take on.
+    properties:
+      unitOfMeasure:
+        type: string
+        description: A length, surface, volume, dry measure, liquid measure, money, weight, time, and the like. In general, a determinate quantity or magnitude of the kind designated, taken as a standard of comparison for others of the same kind, in assigning to them numerical values, as 1 foot, 1 yard, 1 mile, 1 square foot. SV_MAPPING:Spend Limit -> Currency
+      value:
+        $ref: '#/definitions/Any'
+        description: A discrete value that the characteristic can take on, or the actual value of the characteristic. SV_MAPPING:Spend Limit -> Entitlement Allocation, Initial/Available amount, Spend Limit Eligibility Event Type|Event Sub Type|Time Band, Updateable => Spend Limit Category1|Threshold,Spend Limit Category2|Threshold; Policy Counter -> Current Status, Pending Status, Initial Amount, Recurring Amount, Available Balance, Recurring Period, Policy Type
+  ServiceStatusType:
+    type: string
+    description: Service status. SV_MAPPING:SERVICE_TRE_V.SERVICE_STATUS_CODE. Refer to RT perestapi.SERVICE_STATUS_CODE
+  SummaryOfChange:
+    type: object
+    description: Summary of change
+    properties:
+      record:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+        description: Record field in name/pair values, supported fields are SV_MAPPING:EFFECTIVE_START_DATE, EFFECTIVE_END_DATE, LAST_MODIFIED, ATLANTA_OPERATOR_ID and CHANGE_HISTORY_TEXT
+      id:
+        type: string
+        description: 'String value consisted of product ID and effective period. SV_MAPPING: PRODUCT_INSTANCE_TRE_V.PRODUCT_INSTANCE_ID ''-'' floor(EFFECTIVE_DATE) - SUMMARY_OF_CHANGE_DAYS ''-'' ceil(EFFECTIVE_DATE) - 1 SEC. Dates provided in format yyyymmddhhnnss'
+  TargetProductSchema:
+    type: object
+    description: The reference object to the schema and type of target product which is described by product specification
+    required:
+      - '@schemaLocation'
+      - '@type'
+    properties:
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        description: This field provides a link to the schema describing the target product
+      '@type':
+        type: string
+        description: Class type of the target product
+  TaxItem:
+    type: object
+    description: A tax item is created for each tax rate and tax type used in the bill.
+    properties:
+      taxCategory:
+        type: string
+        description: 'Tax category. Format: ct:taxAssociation,tt:taxType,ctc:customerTaxClass'
+      taxRate:
+        type: number
+        format: float
+        description: Applied rate of the tax. tax.vat.dTaxRate->Tax
+      taxAmount:
+        $ref: '#/definitions/Money'
+        description: Amount of tax expressed in the given currency.
+  TimePeriod:
+    type: object
+    description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+    properties:
+      endDateTime:
+        type: string
+        format: date-time
+        description: End of the time period, using IETC-RFC-3339 format
+      startDateTime:
+        type: string
+        format: date-time
+        description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+  EventSubscription:
+    type: object
+    description: Sets the communication endpoint address the service instance must use to deliver notification information
+    required:
+      - id
+      - callback
+    properties:
+      id:
+        type: string
+        description: Id of the listener
+      callback:
+        type: string
+        description: The callback being registered.
+      query:
+        type: string
+        description: additional data to be passed
+  EventSubscriptionInput:
+    type: object
+    description: Sets the communication endpoint address the service instance must use to deliver notification information
+    required:
+      - callback
+    properties:
+      callback:
+        type: string
+        description: The callback being registered.
+      query:
+        type: string
+        description: additional data to be passed
+  ProductCreateEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      id:
+        type: string
+        description: Identifier of the Process flow
+      href:
+        type: string
+        description: Reference of the ProcessFlow
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/ProductCreateEventPayload'
+  ProductCreateEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      product:
+        description: The involved resource data for the event
+        $ref: '#/definitions/Product'
+  ProductAttributeValueChangeEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      fieldPath:
+        type: string
+        description: The path identifying the object field concerned by this notification.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/ProductAttributeValueChangeEventPayload'
+  ProductAttributeValueChangeEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      product:
+        description: The involved resource data for the event
+        $ref: '#/definitions/Product'
+  ProductStateChangeEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      id:
+        type: string
+        description: Identifier of the Process flow
+      href:
+        type: string
+        description: Reference of the ProcessFlow
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/ProductStateChangeEventPayload'
+  ProductStateChangeEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      product:
+        description: The involved resource data for the event
+        $ref: '#/definitions/Product'
+  ProductBatchEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      id:
+        type: string
+        description: Identifier of the Process flow
+      href:
+        type: string
+        description: Reference of the ProcessFlow
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/ProductBatchEventPayload'
+  ProductBatchEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      product:
+        description: The involved resource data for the event
+        $ref: '#/definitions/Product'
+  ProductDeleteEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      id:
+        type: string
+        description: Identifier of the Process flow
+      href:
+        type: string
+        description: Reference of the ProcessFlow
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/ProductDeleteEventPayload'
+  ProductDeleteEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      product:
+        description: The involved resource data for the event
+        $ref: '#/definitions/Product'
+  UsageConsumptionGroup:
+    type: object
+    description: Group of relevant entitlements and their consumption details at any give point in time.
+    properties:
+      id:
+        type: string
+        description: Entitlement context code ID. SV_MAPPING:ENTITLEMENT_TYPE_TRE_V.CONTEXT_CODE-PRODUCT_INSTANCE_TRE_V.PRODUCT_INSTANCE_ID-Shareable DA ID
+      context:
+        type: string
+        description: 'Entitlement context code name. SV_MAPPING:ENTITLEMENT_TYPE_TRE_V.CONTEXT_CODE. Refer to RT Entitlement Type Context e.g.: Customer, Customer Node and Service'
+      shareable:
+        type: string
+        description: '''Yes''/''No''. SV_MAPPING:RT YES_NO. For customer and customer node always ''Yes''. For service context, if ENTITLEMENT_TRE_V.SUB_CATEGORY = SHAREABLE then ''Yes'', otherwise ''No'''
+      sharePool:
+        $ref: '#/definitions/SharePool'
+        description: Share pool detail if SV_MAPPING:ENTITLEMENT_TRE_V.SUB_CATEGORY = 'SHAREABLE'
+      limits:
+        type: array
+        items:
+          $ref: '#/definitions/Limits'
+        description: Free units consumption limit tracker details for the realizing service
+      usageConsumptionList:
+        type: array
+        items:
+          $ref: '#/definitions/UsageConsumption'
+        description: Describe the list of entitlements details within the same context or same shared pool. !!!OOS(For shared pooling, the entitlments could be contributed by other services at which the source service name can be found in entitlement characteristic details.)
+      '@baseType':
+        type: string
+        description: 'When sub-classing, this defines the sub-class entity name, Fixed Value (populated only for counter entitlements as of now): Milestone; null for every other case'
+        x-refdata-source: RT-perestapi.BASE_TYPE
+  SharePool:
+    type: object
+    description: 'The pool name will only be shown when SV_MAPPING:ENTITLEMENT_TRE_V.SUB_CATEGORY = SHAREABLE and the table display name (from customer DA) that keeps the list of contributed shared entitlements is available e.g.: ''Multi Device Shared Services'' or ''Contributing FU Sharing Services''.'
+    properties:
+      id:
+        type: string
+        description: Pool ID. SV_MAPPING:DERIVED_ATTRIBUTE_TRE_V.DERIVED_ATTRIBUTE_ID
+      name:
+        type: string
+        description: Pool name. SV_MAPPING:DERIVED_ATTRIBUTE_TRE_V.TABLE_DISPLAY_NAME
+  Limits:
+    type: object
+    description: The entitlement consumption limits will only be shown when there are limit tracker companions active on the instance for this service.
+    properties:
+      id:
+        type: string
+        description: Limit ID. SV_MAPPING:ENTITLEMENT_TRE_V.ENTITLEMENT_CATEGORY_CODE-SERVICE_TRE_V.SERVICE_ID
+      name:
+        type: string
+        description: Limit name. SV_MAPPING:Abbreviation of ENTITLEMENT_TRE_V.ENTITLEMENT_CATEGORY_CODE-SERVICE_TRE_V.SERVICE_NAME
+      limit:
+        type: number
+        format: float
+        description: Initial allocated limit amount. SV_MAPPING:ENTITLEMENT_TRE_V.INITIAL_ALLOCATION_AMOUNT
+      limitBalance:
+        type: number
+        format: float
+        description: Balance available to the service out of the limited amount. SV_MAPPING:Difference of ENTITLEMENT_ALLOCATION_TRE_V.INITIAL_AMOUNT and ENTITLEMENT_ALLOCATION_TRE_V.CONSUMED_AMOUNT
+      uom:
+        type: string
+        description: UoM of the category limit is set against. SV_MAPPING:Abbreviation of ENTITLEMENT_TRE_V.UNIT_OF_MEASURE_CODE
+  UsageConsumption:
+    type: object
+    description: Entitlement consumption details the balances and the allocations at any give point in time.
+    properties:
+      id:
+        type: string
+        description: SV_MAPPING:ENTITLEMENT_TRE_V.ENTITLEMENT_ID
+      name:
+        type: string
+        description: SV_MAPPING:ENTITLEMENT_TRE_V.ENTITLEMENT_NAME
+      entitlementCharacteristic:
+        description: 'The list of entitlement characteristic fields.
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+      allocationConsumption:
+        description: The list of entitlement allocation and consumption details
+        type: array
+        items:
+          $ref: '#/definitions/Bucket'
+      totalAllocation:
+        description: The sum of initial quality
+        $ref: '#/definitions/Quantity'
+      totalBalance:
+        description: The sum of balance quality
+        $ref: '#/definitions/Quantity'
+  Error:
+    description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+    type: object
+    required:
+      - code
+      - reason
+    properties:
+      code:
+        type: string
+        description: Application relevant detail, defined in the API or a common list.
+      reason:
+        type: string
+        description: Explanation of the reason for the error which can be shown to a client user.
+      message:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client user.
+      status:
+        type: string
+        description: HTTP Error code extension
+      referenceError:
+        type: string
+        format: uri
+        description: URI of documentation describing the error.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class.
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name.

@@ -1,0 +1,3986 @@
+swagger: '2.0'
+info:
+  description: To register services and activate services content tokens 
+  version: "v1.0"
+  title: Customer Billing Token API
+
+schemes:
+  - https
+host: "api.mtn.com"
+basePath: "/v1/customer"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/v1/oauth/access_token
+
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+
+paths:
+  /bill/registerToken:
+    post:
+      tags:
+        - Registration
+      summary: Register Token Service
+      description: Billing Recurring Service Token Registration
+      operationId: Register 
+      parameters:
+        - name: "targetSystem"
+          in: header
+          required: false
+          type: string
+          default: Pantheon
+          enum:
+            - Pantheon
+            - SOA
+        - name: "allowPoll"
+          in: header
+          required: true
+          type: boolean
+          enum:
+            - TRUE
+            - FALSE
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RegisterTokenRequest"
+          
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/CreateOrderResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/ErrorBadReq"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        "452":
+          description: "Invalid API Version"
+          schema:
+            $ref: "#/definitions/ErrorInvAPIVersion"
+        "454":
+          description: "MSISDN Not Provided"
+          schema:
+            $ref: "#/definitions/ErrorMsisdnNotProvided"    
+        "463":
+          description: "Subscription Channel Not Found"
+          schema:
+            $ref: "#/definitions/ErrorSubChanNotFound"
+        "464":
+          description: "Subscription Not Found"
+          schema:
+            $ref: "#/definitions/ErrorSubNotFound"
+        "466":
+          description: "Service Not Found"
+          schema:
+            $ref: "#/definitions/ErrorSvcNotFound"
+        "467":
+          description: "Active Subscription Exists"
+          schema:
+            $ref: "#/definitions/ErrorActSubsEx"
+        "470":
+          description:  "Service Not Linked To Billing Channel"
+          schema:
+            $ref: "#/definitions/ErrorSvcNotLinked"
+        "473":
+          description:  "Service ID or Service Ref Not Found"
+          schema:
+            $ref: "#/definitions/ErrorSvcIdSvcRefNotFound"
+        "478":
+          description:  "Invalid MSISDN"
+          schema:
+            $ref: "#/definitions/ErrorInvMsisdn"    
+        "480":
+          description: "Invalid Billing Rate"
+          schema:
+            $ref: "#/definitions/ErrorInvBillRate"
+        "485":
+          description:  "Pending Subscription Exists"
+          schema:
+            $ref: "#/definitions/ErrorPendingSubEx"   
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+        "515":
+          description:  "Subscription Not Active"
+          schema:
+            $ref: "#/definitions/ErrorSubNotActive"   
+        
+        
+
+  /bill/activateToken:
+    post:
+      tags:
+        - Activation
+      summary: Activate Token Service
+      description: Billing Recurring Service Token Activation
+      parameters:
+        - name: "targetSystem"
+          in: header
+          required: false
+          type: string
+          enum:
+            - Pantheon
+        - name: "allowPoll"
+          in: header
+          required: true
+          type: boolean
+          enum:
+            - TRUE
+            - FALSE
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ActivateTokenRequest"
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/CreateOrderResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/ErrorBadReq"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        "452":
+          description: "Invalid API Version"
+          schema:
+            $ref: "#/definitions/ErrorInvAPIVersion"
+        "454":
+          description: "MSISDN Not Provided"
+          schema:
+            $ref: "#/definitions/ErrorMsisdnNotProvided"    
+        "463":
+          description: "Subscription Channel Not Found"
+          schema:
+            $ref: "#/definitions/ErrorSubChanNotFound"
+        "464":
+          description: "Subscription Not Found"
+          schema:
+            $ref: "#/definitions/ErrorSubNotFound"
+        "466":
+          description: "Service Not Found"
+          schema:
+            $ref: "#/definitions/ErrorSvcNotFound"
+        "467":
+          description: "Active Subscription Exists"
+          schema:
+            $ref: "#/definitions/ErrorActSubsEx"
+        "470":
+          description:  "Service Not Linked To Billing Channel"
+          schema:
+            $ref: "#/definitions/ErrorSvcNotLinked"
+        "473":
+          description:  "Service ID or Service Ref Not Found"
+          schema:
+            $ref: "#/definitions/ErrorSvcIdSvcRefNotFound"
+        "478":
+          description:  "Invalid MSISDN"
+          schema:
+            $ref: "#/definitions/ErrorInvMsisdn"    
+        "480":
+          description: "Invalid Billing Rate"
+          schema:
+            $ref: "#/definitions/ErrorInvBillRate"
+        "485":
+          description:  "Pending Subscription Exists"
+          schema:
+            $ref: "#/definitions/ErrorPendingSubEx"   
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+        "515":
+          description:  "Subscription Not Active"
+          schema:
+            $ref: "#/definitions/ErrorSubNotActive"   
+            
+            
+  /bill/deactivateToken:
+    put:
+      tags:
+        - Deactivation
+      summary: Deactivate Token Service
+      parameters: 
+        - name: "targetSystem"
+          in: header
+          required: false
+          type: string
+          enum:
+            - Pantheon
+        - name: isComposite
+          type: boolean
+          required: false
+          in: query
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/DeactivateTokenRequest"
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/CreateOrderResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/ErrorBadReq"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        "452":
+          description: "Invalid API Version"
+          schema:
+            $ref: "#/definitions/ErrorInvAPIVersion"
+        "454":
+          description: "MSISDN Not Provided"
+          schema:
+            $ref: "#/definitions/ErrorMsisdnNotProvided"    
+        "463":
+          description: "Subscription Channel Not Found"
+          schema:
+            $ref: "#/definitions/ErrorSubChanNotFound"
+        "464":
+          description: "Subscription Not Found"
+          schema:
+            $ref: "#/definitions/ErrorSubNotFound"
+        "466":
+          description: "Service Not Found"
+          schema:
+            $ref: "#/definitions/ErrorSvcNotFound"
+        "467":
+          description: "Active Subscription Exists"
+          schema:
+            $ref: "#/definitions/ErrorActSubsEx"
+        "470":
+          description:  "Service Not Linked To Billing Channel"
+          schema:
+            $ref: "#/definitions/ErrorSvcNotLinked"
+        "473":
+          description:  "Service ID or Service Ref Not Found"
+          schema:
+            $ref: "#/definitions/ErrorSvcIdSvcRefNotFound"
+        "478":
+          description:  "Invalid MSISDN"
+          schema:
+            $ref: "#/definitions/ErrorInvMsisdn"    
+        "480":
+          description: "Invalid Billing Rate"
+          schema:
+            $ref: "#/definitions/ErrorInvBillRate"
+        "485":
+          description:  "Pending Subscription Exists"
+          schema:
+            $ref: "#/definitions/ErrorPendingSubEx"   
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+        "515":
+          description:  "Subscription Not Active"
+          schema:
+            $ref: "#/definitions/ErrorSubNotActive"   
+
+
+
+  /bill/urlCreate:
+    post:
+      tags: 
+        - urlCreate
+      summary: Create URL
+      parameters:
+        - name: targetSystem
+          in: query
+          required: true
+          type: string
+          enum: 
+            - Pantheon
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/createUrlRequest"
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/createUrlResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+  
+  /bill/debit:   
+    post:
+      tags:
+        - Debit
+      summary: Debit Token Service
+      description: Debit token request is used to initiate billing for DCB active tokens with VATDetails. This version also accept optional parameter offerDetails and these offeDetails are fowarded to COM for pbundle provisioning.
+      parameters:
+        - name: targetSystem
+          in: query
+          required: true
+          type: string
+          enum: 
+            - Pantheon
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/debitRequest"
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/debitResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /bill/refund:
+    post:
+      tags:
+        - Refund
+      summary: Refund Token Service
+      description: Refund token request is used to refund subscribers which were succesfully billed for DCB and Adhoc tokens. A debitNotidication with billed subscriber account balance details is required for a refund to be processed.
+      parameters:
+        - name: targetSystem
+          in: query
+          required: true
+          type: string
+          enum: 
+            - Pantheon
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/refundRequest"
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/refundResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+  
+  
+  /bill/transactionStatus:   
+    get:
+      tags:
+        - Status
+      summary: Query transaction status
+      description: Query the transaction status for refunds, order and debit transactions.
+      parameters:
+        - name: targetSystem
+          in: query
+          required: true
+          type: string
+          enum: 
+            - Pantheon
+        - name: type
+          in: query
+          required: false
+          type: string
+        - name: transactionId
+          in: query
+          required: false
+          type: string
+        - name: contractingPartnerId
+          in: query
+          required: false
+          type: string
+        - name: originTransactionID
+          in: query
+          required: false
+          type: string
+        - name: paymentRef
+          in: query
+          required: false
+          type: string
+        - name: orderRef
+          in: query
+          required: false
+          type: string
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/transStatResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+  
+  /bill/tokenStatus:   
+    get:
+      tags:
+        - Status
+      summary: Query token status
+      description: Query the status of registered token
+      parameters:
+        - name: targetSystem
+          in: query
+          required: true
+          type: string
+          enum: 
+            - Pantheon
+        - name: transactionId
+          in: query
+          required: false
+          type: string
+        - name: contractingPartnerId
+          in: query
+          required: false
+          type: string
+        - name: platformPartnerId
+          in: query
+          required: false
+          type: string
+        - name: contentToken
+          in: query
+          required: false
+          type: string
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/tokenStatResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"       
+
+
+
+
+
+definitions:
+
+  RegisterTokenRequest:
+    type: object
+    properties:
+      billingToken:
+        type: object
+        required: 
+          - transactionId
+          - contractingPartnerId
+          - platformPartnerId
+          - msisdn
+          - billingType
+          - subscriberType
+        properties: 
+          transactionId:
+            type: string
+            minLength: 9
+            maxLength: 36
+            description: Unique transaction identifier. It is advised that the client system use the methods defined in [RFC4122](https://tools.ietf.org/html/rfc4122) to generate this value.
+            example: '123456768'
+          contractingPartnerId:
+            type: string
+            minLength: 9
+            maxLength: 9
+            description: Contracting Partner Identifier as supplied by MTN Digital Department.
+            example: '911844857'
+          platformPartnerId:
+            type: string
+            minLength: 9
+            maxLength: 9
+            description: Platform Partner Identifier.
+            example: '911844857'
+          customerId:
+            type: string
+            minLength: 10
+            maxLength: 12
+            description: MSISDN of the subscriber.
+            example: '27832001000'
+          customerIdType:
+            type: string
+            description: Type of customer id
+            example: "msisdn"
+          billingType:
+            type: string
+            description: Token billing attempt will be for the full amount
+          sourceReferenceNumber: 
+            type: string
+            description: The payment reference number generated for the payment at the source channel – for MTNPay card payments
+          returnUrl:
+            type: string
+            description: This field will be the self-service channel web page URL where the user is supposed to be once the payment is done on payportal – for MTNPay card payments
+          contentTypeId:
+            type: string
+            minLength: 3
+            maxLength: 3
+            description: Content type identifier. Default to 100 for DCB Google.
+            example: '100'
+          contentDescription:
+            type: string
+            minLength: 1
+            maxLength: 100
+            description: Description of content charged for.
+            example: Games
+          contentId:
+            type: string
+            minLength: 1
+            maxLength: 35
+            description: Content identifier.
+            example: '001'
+          partnerDisplayName:
+            type: string
+            minLength: 1
+            maxLength: 25
+            description: Content provider name.
+            example: Google
+          serviceInterval:
+            type: integer
+            minLength: 1
+            maxLength: 999
+            description: This field represents the service interval for a subscription/adhoc service in days. For adhoc the service interval should be 0.
+            example: 1      
+          serviceIntervalMaxBillAmount:
+            type: integer
+            minimum: 0
+            maximum: 999999
+            description: This field represents the maximum billable amount(in cents) per service interval.
+            example: 100
+          fallBackInitialStepDownServiceExtension:
+            type: integer
+            minLength: 1
+            maxLength: 999
+            description: >-
+                    If Billing type is FALL-BACK this field is the duration 
+                    for which the service will be initially extended for in days. 
+            example: 1
+          fallBackInitialStepDownCharge:
+            type: integer
+            minLength: 0
+            maxLength: 999999
+            description: This is the amount(in cents) that should be charged for the period above.
+            example: 100
+          fallBackFinalStepDownServiceExtension:
+            type: integer
+            minLength: 1
+            maxLength: 999
+            description: >-
+                        If Billing type is FALL-BACK this field is the duration in days for which the service will be
+                        extended for in the event that the initial stepdown attempt was unsuccessful, otherwise empty.
+            example: 1
+          fallBackFinalStepDownCharge:
+            type: integer
+            minLength: 0
+            maxLength: 999999
+            description: >- 
+                    This field is only applicable if the fallBack final step down service interval is present, 
+                    and it is the amount in cents.
+            example: 100
+          initialCharge:
+            type: integer
+            minLength: 0
+            maxLength: 999999
+            description: >-
+              table: This field represents the service initial charge in cents
+            example: 100
+          tokenExpiry: 
+            type: string
+            minLength: 10
+            maxLength: 10
+            description: This field represents the expiry date of a Content-Token in the format 'yyyy-mm-dd'.
+            example: '2020-02-18'
+          freeDays:
+            type: integer
+            description: This field represents the number of free service days a subscriber will be entitled to when authorizing a Content-Token.
+            example: 2
+          contentLimit:
+            type: string
+            minLength: 4
+            maxLength: 35
+            description: This field is used to indicate which limit counter to step.
+            example: 'MTN-ENTERTAINMENT'      
+          allowedRecoveryIntervals:
+            type : integer
+            minimum: 0
+            maximum: 31
+            description : This field indicates the number of intervals that can be back billed for a service.
+            example: 2
+          billingMethod:
+            type: string
+            description: >-
+                The payment method for the service: Card Payment and Momo are only compatible with billingType value FULL. If billingMethod = "MTN Airtime" then only subscriberMNO = "Onnet" is allowed. If billingMethod is not defined, Pantheon shall set default to "MTN Airtime".
+            enum : [MTN Airtime,Card Payment,Momo,Offnet Airtime] 
+          budgetPeriod:
+            type: integer
+            description: Credit Card Budget period in months. If budgetPeriod is not defined, Pantheon shall set default to 0 months.
+            example : 1
+          userAlias:
+            type: string
+            minimum: 5
+            maxLength: 50
+            description: Additional alias to identify a user i.e like an email address.
+            example : pantheon@mtn.com
+          secureDTxId:
+            type: string
+            minimum: 5
+            maxLength: 30
+            description: ID returned from the Secure-D check as part of DOI process.
+          revenueCategory:
+            type: string
+            minimum: 1
+            maxLength: 30
+            description: Revenue category.
+          revenueSubCategory:
+            type: string
+            minimum: 1
+            maxLength: 30
+            description: Revenue sub-category.
+          smeIntContractingPartnerId:
+            type: string
+            minimum: 9
+            maxLength: 9
+            description: The Subscription Management Engine internal partner identifier.
+          contractingPartnerType:
+            type: string
+            description: >-
+              table: This is the allowed content types. If contractingPartnerType is not defined, Pantheon shall set default to "Not Specified". 
+              
+                |Type                 |Description                  |
+                |-------------------|---------------------------|
+                | CP                   | Content Partner          |
+                | WASP              | External WASP Partner |
+            enum: [CP, WASP]
+          subscriberMNO:
+            type: string
+            description: Mobile Network Operator. If billingMethod = "MTN Airtime" then only subscriberMNO = "Onnet" is allowed. If subscriberMNO is not defined, Pantheon shall set default to "Onnet". 
+            enum: [ Onnet, Offnet]
+          revenueTreatment:
+            type: string
+            description: Revenue treatment. 
+            enum: [ Principle, Agent]
+          integratorPartnerId:
+            type: string
+            minLength: 9
+            maxLength: 9
+            description: A party that acts as an aggregator of the transaction.
+            example: '911844857'
+          contentProviderId:
+            type: string
+            minLength: 9
+            maxLength: 9
+            description: A party that has no contract with MTN but in the contract with the contracting party, it states that MTN needs to pay a portion of the revenue to them.
+            example: '911844857'
+          acquisitionChannel:
+            type: string
+            minLength: 1
+            maxLength: 30
+            description: This field is used to indicate the request channel.
+            example: 'USSD'
+          selectedDebitOrderDate:
+            type : integer
+            minimum: 1
+            maximum: 31    
+            description : The token anniversary date as selected by the subscriber. Note that if the selected date does not exist in any month (e.g., 29, 30, or 31), then billing will happen on the last day of the month. This field is only used for a monthly subscription - use serviceInterval for daily/weekly subscriptions.
+            example: 25
+          billCycles:
+            type: integer
+            description: This field indicates the number of cycles/intervals that can be billed for a service. This field is only used for billingType = “FULL”
+      
+      subscription:
+        type: object
+        properties: 
+          externalId:
+            type: string
+            description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
+            example: 67328fhhfdfh39u956
+          status:
+            type: string
+            example: Captured
+            description: Status of the product
+          reason:
+            type: string
+            example: 001
+          description:
+            type: string
+            example: purchase VAS product
+            
+          channel:
+            type: array
+            items:
+              $ref: '#/definitions/RelatedChannel'
+          productOrderItem:
+            type: array
+            items:
+              $ref: '#/definitions/ProductOrderItem'
+            minItems: 1
+          relatedParty:
+            type: array
+            items:
+              $ref: '#/definitions/RelatedParty'
+          
+    
+    
+  
+  ActivateTokenRequest:
+    type: object
+    properties:
+      billingToken:
+        required:
+          - transactionId
+          - contractingPartnerId
+          - platformPartnerId
+          - contentToken
+        properties:
+          transactionId:
+            type: string
+            minLength: 9
+            maxLength: 36
+            description: Unique transaction identifier. It is advised that the client system use the methods defined in [RFC4122](https://tools.ietf.org/html/rfc4122) to generate this value.
+            example: '123456768'
+          contractingPartnerId:
+            type: string
+            minLength: 9
+            maxLength: 9
+            description: Contracting Partner Identifier as supplied by MTN Digital Department.
+            example: '911844857'
+          platformPartnerId:
+            type: string
+            minLength: 9
+            maxLength: 9
+            description: Platform Partner Identifier.
+            example: '911844857'
+          contentToken:
+            type: string
+            minLength: 16
+            maxLength: 96
+            description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+            example: '81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058'
+          limitConsent:
+            type : string  
+            description : Y - Indicates consent was given by the subscriber, either the digital limit, spend limit or both will be updated. N - no limit will be updated.
+            enum: [ Y, N]
+      
+      subscription:
+        type: object
+        properties:
+          # productOrderItem:
+          #   type: object
+          #   properties:
+          #     product: 
+          #       type: object
+          #       properties:
+          #         productCharacteristic:
+          #           type: array
+          #           items: 
+          #             $ref: '#/definitions/productCharacteristicName'
+          id:
+            type: string
+          productOrderItem:
+            type: array
+            items:
+              $ref: '#/definitions/ProductOrderItem2'
+            minItems: 1
+            
+          channel:
+            type: array
+            items:
+              $ref: '#/definitions/RelatedChannel'
+            
+  DeactivateTokenRequest:
+    type: object
+    required:
+      - transactionId
+      - contractingPartnerId
+      - platformPartnerId
+      - contentToken
+    properties:
+      transactionId:
+        type: string
+        minLength: 9
+        maxLength: 36
+        description: Unique transaction identifier. It is advised that the client system use the methods defined in [RFC4122](https://tools.ietf.org/html/rfc4122) to generate this value.
+        example: '123456768'
+      contractingPartnerId:
+        type: string
+        minLength: 9
+        maxLength: 9
+        description: Contracting Partner Identifier as supplied by MTN Digital Department.
+        example: '911844857'
+      platformPartnerId:
+        type: string
+        minLength: 9
+        maxLength: 9
+        description: Platform Partner Identifier.
+        example: '911844857'
+      contentToken:
+        type: string
+        minLength: 16
+        maxLength: 96
+        description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+        example: '81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058'
+      tokenAlias:
+        description: This is the authotization Identifier(AuthID) linked to the token. MSISDN is mandatory when cancelling a token using the token alias.
+        minLength: 16
+        maxLength: 96
+        type: string
+        example: '9237232085744947941'
+      customerId:
+        type: string
+        minLength: 10
+        maxLength: 12
+        description: MSISDN of the subscriber.
+        example: '27832001000'
+      cancellationReason:
+        type : integer
+        enum: [1,2,3,4]
+        description: >-
+          table:
+        
+            |cancellationReason|Description|
+            |------------------|----------|
+            | 1                |Cancelled by subscriber - self|
+            | 2                |Cancelled by subscriber - assisted|
+            | 3                |Cancelled by partner|
+            | 4                |Cancelled due to TCF|
+      originator:
+        type: string
+        minLength: 1
+        maxLength: 32
+        description: Origin of the cancellation request.
+        example: Self Service  
+      subscriptionId: 
+        type: string
+        description: Id of Subscription
+      bc_id:
+        type: integer
+        description: billing channel identifier
+        example: 334
+  
+  DeactivateTokenResponse:
+    type: object
+    properties: 
+      statusCode: 
+        type: string
+      statusMessage:
+        type: string
+      timestamp:
+        type: string
+        format: date-time
+      supportMessage:
+        type: string
+      transactionId:
+        type: string
+        minLength: 9
+        maxLength: 36
+        description: Unique transaction identifier. It is advised that the client system use the methods defined in [RFC4122](https://tools.ietf.org/html/rfc4122) to generate this value.
+        example: '123456768'
+      data:
+        type: object
+        properties: 
+          msn: 
+            type: string
+            minLength: 16
+            maxLength: 64
+            description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+            example: '5115314911298406'     
+
+      
+  AgreementItemRef:
+    type: object
+    description: Agreement reference. An agreement represents a contract or arrangement, either written or verbal and sometimes enforceable by law, such as a service level agreement or a customer price agreement. An agreement involves a number of other business entities, such as products, services, and resources and/or their specifications.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      agreementItemId:
+        type: string
+        description: Identifier of the agreement
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  AgreementItemRef2:
+    type: object
+    description: Agreement reference. An agreement represents a contract or arrangement, either written or verbal and sometimes enforceable by law, such as a service level agreement or a customer price agreement. An agreement involves a number of other business entities, such as products, services, and resources and/or their specifications.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+  AgreementRef:
+    type: object
+    description: Agreement reference. An agreement represents a contract or arrangement, either written or verbal and sometimes enforceable by law, such as a service level agreement or a customer price agreement. An agreement involves a number of other business entities, such as products, services, and resources and/or their specifications.
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+  Any: {}
+  AppointmentRef:
+    type: object
+    description: Refers an appointment, such as a Customer presentation or internal meeting or site visit
+    properties:
+      id:
+        type: string
+        description: The identifier of the referred appointment
+      href:
+        type: string
+        description: The reference of the appointment
+      description:
+        type: string
+        description: An explanatory text regarding the appointment made with a party
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation
+    required:
+      - id
+  BillingAccountRef:
+    type: object
+    description: BillingAccount reference. A BillingAccount is a detailed description of a bill structure.
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the billing account
+      href:
+        type: string
+        description: Reference of the billing account
+      name:
+        type: string
+        description: Name of the billing account
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  CancelOrder:
+    type: object
+    description: A Order cancel is a type of task which  can  be used to place a request to cancel an order
+    properties:
+      id:
+        type: string
+        description: id of the cancellation request (this is not an order id)
+      href:
+        type: string
+        description: Hyperlink to access the cancellation request
+      cancellationReason:
+        type: string
+        description: Reason why the order is cancelled.
+      effectiveCancellationDate:
+        type: string
+        format: date-time
+        description: Date when the order is cancelled.
+      requestedCancellationDate:
+        type: string
+        format: date-time
+        description: Date when the submitter wants the order to be cancelled
+      state:
+        $ref: '#/definitions/TaskStateType'
+        description: Tracks the lifecycle status of the cancellation request, such as Acknowledged, Rejected, InProgress, Pending and so on.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  CancelProductOrder:
+    type: object
+    description: Request for cancellation an existing product order
+    required:
+      - productOrder
+    properties:
+      id:
+        type: string
+        description: id of the cancellation request (this is not an order id)
+      href:
+        type: string
+        description: Hyperlink to access the cancellation request
+      cancellationReason:
+        type: string
+        description: Reason why the order is cancelled.
+      effectiveCancellationDate:
+        type: string
+        format: date-time
+        description: Date when the order is cancelled.
+      requestedCancellationDate:
+        type: string
+        format: date-time
+        description: Date when the submitter wants the order to be cancelled
+      productOrder:
+        $ref: '#/definitions/ProductOrderRef'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  CancelProductOrder_Create:
+    type: object
+    description: |-
+      Request for cancellation an existing product order
+      Skipped properties: id,href,state,effectiveCancellationDate
+    required:
+      - productOrder
+    properties:
+      cancellationReason:
+        type: string
+        description: Reason why the order is cancelled.
+      requestedCancellationDate:
+        type: string
+        format: date-time
+        description: Date when the submitter wants the order to be cancelled
+      productOrder:
+        $ref: '#/definitions/ProductOrderRef'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  Characteristic:
+    type: object
+    description: Describes a given characteristic of an object or entity through a name/value pair.
+    required:
+      - name
+      - value
+    properties:
+      name:
+        type: string
+        description: Name of the characteristic
+      valueType:
+        type: string
+        description: Data type of the value of the characteristic
+      value:
+        $ref: '#/definitions/Any'
+        description: The value of the characteristic
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  EntityRef:
+    type: object
+    description: Entity reference schema to be use for all entityRef class.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  Money:
+    type: object
+    description: A base / value business entity used to represent money
+    properties:
+      unit:
+        type: string
+        description: Currency (ISO4217 norm uses 3 letters to define the currency)
+      value:
+        type: number
+        format: float
+        description: A positive floating point number
+  Note:
+    type: object
+    description: Extra information about a given entity
+    required:
+      - text
+    properties:
+      id:
+        type: string
+        description: Identifier of the note within its containing entity (may or may not be globally unique, depending on provider implementation)
+      author:
+        type: string
+        description: Author of the note
+      date:
+        type: string
+        format: date-time
+        description: Date of the note
+      text:
+        type: string
+        description: Text of the note
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  OrderItemActionType:
+    type: string
+    description: action to be performed on the product
+    enum:
+      - add
+      - modify
+      - delete
+      - noChange
+  OrderItemRelationship:
+    type: object
+    properties:
+      id:
+        type: string
+      relationshipType:
+        type: string
+        description: The type of order item relationship
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  OrderPrice:
+    type: object
+    description: An amount, usually of money, that represents the actual price paid by the Customer for this item or this order
+    properties:
+      priceType:
+        type: string
+        description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth
+      recurringChargePeriod:
+        type: string
+        description: Could be month, week...
+      price:
+        $ref: '#/definitions/Price'
+        description: a structure used to define price amount
+  Price:
+    type: object
+    description: Provides all amounts (tax included, duty free, tax rate), used currency and percentage to apply for Price Alteration.
+    properties:
+      taxIncludedAmount:
+        $ref: '#/definitions/Money'
+        description: All taxes included amount (expressed in the given currency)
+
+  product2:
+    type: object
+    description: A product offering procured by a customer or other interested party playing a party role. A product is realized as one or more service(s) and / or resource(s).
+    properties:
+      name:
+        type: string
+        description: Name of the product. It could be the same as the name of the product offering
+      id:
+        type: string
+        description: Unique identifier of the product
+      status:
+        type: string
+        description: status of the product
+      externalId:
+        type: string
+        description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
+      href:
+        type: string
+        description: Reference of the product
+      description:
+        type: string
+        description: Is the description of the product. It could be copied from the description of the Product Offering.
+      orderDate:
+        type: string
+        format: date-time
+        description: Is the date when the product was ordered
+      productOrderItem:
+        $ref: "#/definitions/ProductOrderItem"
+      productOffering:
+        $ref: '#/definitions/ProductOfferingRef'
+      productCharacteristic:
+        $ref: '#/definitions/productCharacteristic'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      productTerm:
+        type: array
+        items:
+          $ref: '#/definitions/ProductTerm'
+  Product:
+    type: object
+    description: A product offering procured by a customer or other interested party playing a party role. A product is realized as one or more service(s) and / or resource(s).
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the product
+      href:
+        type: string
+        description: Reference of the product
+      description:
+        type: string
+        description: Is the description of the product. It could be copied from the description of the Product Offering.
+      isBundle:
+        type: boolean
+        description: If true, the product is a ProductBundle which is an instantiation of a BundledProductOffering. If false, the product is a ProductComponent which is an instantiation of a SimpleProductOffering.
+      isCustomerVisible:
+        type: boolean
+        description: If true, the product is visible by the customer.
+      name:
+        type: string
+        description: Name of the product. It could be the same as the name of the product offering
+      orderDate:
+        type: string
+        format: date-time
+        description: Is the date when the product was ordered
+      productSerialNumber:
+        type: string
+        description: Is the serial number for the product. This is typically applicable to tangible products e.g. Broadband Router.
+      startDate:
+        type: string
+        format: date-time
+        description: Is the date from which the product starts
+      terminationDate:
+        type: string
+        format: date-time
+        description: Is the date when the product was terminated
+      agreement:
+        type: array
+        items:
+          $ref: '#/definitions/AgreementItemRef'
+      billingAccount:
+        $ref: '#/definitions/BillingAccountRef'
+      place:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedPlaceRefOrValue'
+      product:
+        type: array
+        items:
+          $ref: '#/definitions/ProductRefOrValue'
+    
+      productOffering:
+        $ref: '#/definitions/ProductOfferingRef'
+      productOrderItem:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedProductOrderItem'
+      productPrice:
+        type: array
+        items:
+          $ref: '#/definitions/ProductPrice'
+      productSpecification:
+        $ref: '#/definitions/ProductSpecificationRef'
+      productTerm:
+        type: array
+        items:
+          $ref: '#/definitions/ProductTerm'
+      realizingResource:
+        type: array
+        items:
+          $ref: '#/definitions/ResourceRef'
+      realizingService:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceRef'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      status:
+        $ref: '#/definitions/ProductStatusType'
+        description: Is the lifecycle status of the product.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  ProductOfferingPriceRef:
+    type: object
+    description: ProductPriceOffering reference. An amount, usually of money, that is asked for or allowed when a ProductOffering is bought, rented, or leased
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  ProductOfferingQualificationItemRef:
+    type: object
+    description: It's a productOfferingQualification item that has been executed previously.
+    required:
+      - id
+      - productOfferingQualificationId
+    properties:
+      id:
+        type: string
+        description: Id of an item of a product offering qualification
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      productOfferingQualificationHref:
+        type: string
+        description: Reference of the related entity.
+      productOfferingQualificationId:
+        type: string
+        description: Unique identifier of a related entity.
+      productOfferingQualificationName:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  ProductOfferingQualificationRef:
+    type: object
+    description: It's a productOfferingQualification that has been executed previously
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  ProductOfferingRef:
+    type: object
+    description: ProductOffering reference. A product offering represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      name: 
+        type: string
+        description: Name of unique identifier of related entity
+      
+      
+      
+      
+     
+     
+  ProductOrder2:
+    type: object
+    description: A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
+    required:
+      - productOrderItem
+    properties:
+      id:
+        type: string
+        description: ID created on repository side (OM system)
+      description:
+        type: string
+        description: Description of the product order
+      externalId:
+        type: string
+        description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
+      orderDate:
+        type: string
+        format: date-time
+        description: Date when the order was created
+      agreement:
+        $ref: '#/definitions/AgreementRef'
+      channel:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedChannel'
+      productOrderItem:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOrderItem'
+        minItems: 1
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+     
+     
+     
+     
+  ProductOrder_UpdateChannel:
+    type: object
+    properties:
+      productOrderItem:
+        type: object
+        properties:
+          product: 
+            type: object
+            properties:
+              productCharacteristic:
+                type: array
+                items: 
+                  $ref: '#/definitions/productCharacteristicName'
+        
+      channel:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedChannel'
+      
+    
+  productCharacteristicName:
+    type: object
+    properties:
+      name:
+        type: string
+          
+     
+      
+      
+
+  ProductOrder:
+    type: object
+    description: A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
+    required:
+      - productOrderItem
+    properties:
+      id:
+        type: string
+        description: ID created on repository side (OM system)
+      href:
+        type: string
+        description: Hyperlink to access the order
+      cancellationDate:
+        type: string
+        format: date-time
+        description: 'Date when the order is cancelled. This is used when order is cancelled. '
+      cancellationReason:
+        type: string
+        description: 'Reason why the order is cancelled. This is used when order is cancelled. '
+      category:
+        type: string
+        description: Used to categorize the order from a business perspective that can be useful for the OM system (e.g. "enterprise", "residential", ...)
+      completionDate:
+        type: string
+        format: date-time
+        description: Date when the order was completed
+      description:
+        type: string
+        description: Description of the product order
+      expectedCompletionDate:
+        type: string
+        format: date-time
+        description: Expected delivery date amended by the provider
+      externalId:
+        type: string
+        description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
+      notificationContact:
+        type: string
+        description: Contact attached to the order to send back information regarding this order
+      orderDate:
+        type: string
+        format: date-time
+        description: Date when the order was created
+      priority:
+        type: string
+        description: 'A way that can be used by consumers to prioritize orders in OM system (from 0 to 4 : 0 is the highest priority, and 4 the lowest)'
+      requestedCompletionDate:
+        type: string
+        format: date-time
+        description: Requested delivery date from the requestor perspective
+      requestedStartDate:
+        type: string
+        format: date-time
+        description: 'Order fulfillment start date wished by the requestor. This is used when, for any reason, requestor cannot allow seller to begin to operationally begin the fulfillment before a date. '
+      agreement:
+        type: array
+        items:
+          $ref: '#/definitions/AgreementRef'
+        description: A reference to an agreement defined in the context of the product order
+      billingAccount:
+        $ref: '#/definitions/BillingAccountRef'
+      channel:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedChannel'
+      note:
+        type: array
+        items:
+          $ref: '#/definitions/Note'
+      orderTotalPrice:
+        type: array
+        items:
+          $ref: '#/definitions/OrderPrice'
+      productOfferingQualification:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOfferingQualificationRef'
+      productOrderItem:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOrderItem'
+        minItems: 1
+      quote:
+        type: array
+        items:
+          $ref: '#/definitions/QuoteRef'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+  
+  
+  
+  
+  
+  
+  ProductOrder_Create2:
+    type: object
+    description: |-
+      A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
+      Skipped properties: id,href,completionDate,orderDate,state,expectedCompletionDate,productOrderItem.state
+    required:
+      - productOrderItem
+    properties:
+      externalId:
+        type: string
+        description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
+        example: 67328fhhfdfh39u956
+      status:
+        type: string
+        example: Captured
+        description: Status of the product
+      reason:
+        type: string
+        example: 001
+      description:
+        type: string
+        example: purchase VAS product
+        
+      channel:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedChannel'
+      productOrderItem:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOrderItem'
+        minItems: 1
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+  
+  productOrderDelete:
+  
+    type: object
+    description: |-
+      A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
+      Skipped properties: id,href,completionDate,orderDate,state,expectedCompletionDate,productOrderItem.state
+    required:
+      - productOrderItem
+    properties:
+      status:
+        type: string
+        example: Captured
+        description: Status of the product
+      description:
+        type: string
+        example: purchase VAS product
+        
+      channel:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedChannel'
+      productOrderItem:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOrderItem_Delete'
+        minItems: 1
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      
+  
+  
+  ProductOrderItem_Delete:
+    type: object
+    description: An identified part of the order to be deleted. A product order is decomposed into one or more order items.
+    properties: 
+      '@type':
+        type: string
+        description: type of the product
+        example: productOrder
+      product:
+        $ref: '#/definitions/ProductRefOrValueDelete'
+      productOffering:
+        $ref: '#/definitions/ProductOfferingRef'
+        
+  ProductRefOrValueDelete:
+    type: object
+    description: A product to be deleted defined by value or existing defined by reference. The polymorphic attributes @type, @schemaLocation & @referredType are related to the product entity and not the RelatedProductRefOrValue class itself
+    properties:
+      characteristic:
+          type: array
+          description: product characteristics such as amount, type, etc
+          items:
+            $ref: '#/definitions/productCharacteristic'
+  ProductOrder_Create:
+    type: object
+    description: |-
+      A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
+      Skipped properties: id,href,completionDate,orderDate,state,expectedCompletionDate,productOrderItem.state
+    required:
+      - productOrderItem
+    properties:
+      cancellationDate:
+        type: string
+        format: date-time
+        description: 'Date when the order is cancelled. This is used when order is cancelled. '
+      cancellationReason:
+        type: string
+        description: 'Reason why the order is cancelled. This is used when order is cancelled. '
+      category:
+        type: string
+        description: Used to categorize the order from a business perspective that can be useful for the OM system (e.g. "enterprise", "residential", ...)
+      description:
+        type: string
+        description: Description of the product order
+      externalId:
+        type: string
+        description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
+      notificationContact:
+        type: string
+        description: Contact attached to the order to send back information regarding this order
+      priority:
+        type: string
+        description: 'A way that can be used by consumers to prioritize orders in OM system (from 0 to 4 : 0 is the highest priority, and 4 the lowest)'
+      requestedCompletionDate:
+        type: string
+        format: date-time
+        description: Requested delivery date from the requestor perspective
+      requestedStartDate:
+        type: string
+        format: date-time
+        description: 'Order fulfillment start date wished by the requestor. This is used when, for any reason, requestor cannot allow seller to begin to operationally begin the fulfillment before a date. '
+      agreement:
+        type: array
+        items:
+          $ref: '#/definitions/AgreementRef'
+        description: A reference to an agreement defined in the context of the product order
+      billingAccount:
+        $ref: '#/definitions/BillingAccountRef'
+      channel:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedChannel'
+      note:
+        type: array
+        items:
+          $ref: '#/definitions/Note'
+      orderTotalPrice:
+        type: array
+        items:
+          $ref: '#/definitions/OrderPrice'
+      productOfferingQualification:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOfferingQualificationRef'
+      productOrderItem:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOrderItem'
+        minItems: 1
+      quote:
+        type: array
+        items:
+          $ref: '#/definitions/QuoteRef'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+        
+        
+        
+  ProductOrder_Update:
+    type: object
+    description: |-
+      A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
+      Skipped properties: id,href,orderDate
+    required:
+      - productOrderItem
+    properties:
+      cancellationDate:
+        type: string
+        format: date-time
+        description: 'Date when the order is cancelled. This is used when order is cancelled. '
+      cancellationReason:
+        type: string
+        description: 'Reason why the order is cancelled. This is used when order is cancelled. '
+      category:
+        type: string
+        description: Used to categorize the order from a business perspective that can be useful for the OM system (e.g. "enterprise", "residential", ...)
+      completionDate:
+        type: string
+        format: date-time
+        description: Date when the order was completed
+      description:
+        type: string
+        description: Description of the product order
+      expectedCompletionDate:
+        type: string
+        format: date-time
+        description: Expected delivery date amended by the provider
+      externalId:
+        type: string
+        description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
+      notificationContact:
+        type: string
+        description: Contact attached to the order to send back information regarding this order
+      priority:
+        type: string
+        description: 'A way that can be used by consumers to prioritize orders in OM system (from 0 to 4 : 0 is the highest priority, and 4 the lowest)'
+      requestedCompletionDate:
+        type: string
+        format: date-time
+        description: Requested delivery date from the requestor perspective
+      requestedStartDate:
+        type: string
+        format: date-time
+        description: 'Order fulfillment start date wished by the requestor. This is used when, for any reason, requestor cannot allow seller to begin to operationally begin the fulfillment before a date. '
+      agreement:
+        type: array
+        items:
+          $ref: '#/definitions/AgreementRef'
+        description: A reference to an agreement defined in the context of the product order
+      billingAccount:
+        $ref: '#/definitions/BillingAccountRef'
+      channel:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedChannel'
+      note:
+        type: array
+        items:
+          $ref: '#/definitions/Note'
+      orderTotalPrice:
+        type: array
+        items:
+          $ref: '#/definitions/OrderPrice'
+      productOfferingQualification:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOfferingQualificationRef'
+      productOrderItem:
+        type: array
+        items:
+          $ref: '#/definitions/ProductOrderItem'
+        minItems: 1
+      quote:
+        type: array
+        items:
+          $ref: '#/definitions/QuoteRef'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedParty'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  
+  
+  ProductOrderItem:
+    type: object
+    description: An identified part of the order. A product order is decomposed into one or more order items.
+    properties:
+      product:
+        $ref: '#/definitions/ProductRefOrValue'
+      # productOffering:
+      #   $ref: '#/definitions/ProductOfferingRef'
+      itemTotalPrice:
+        $ref: '#/definitions/OrderPrice'
+        
+  ProductOrderItem2:
+    type: object
+    description: An identified part of the order. A product order is decomposed into one or more order items.
+    properties:
+      product:
+        $ref: '#/definitions/ProductRefOrValue2'
+    
+
+        
+  removeProductOrder:
+    
+    type: object
+    description: An identified part of the order. A product order is decomposed into one or more order items.
+    properties:
+      id:
+        type: string
+        description: Identifier of the line item (generally it is a sequence number 01, 02, 03, ...)
+      quantity:
+        type: integer
+        description: Quantity ordere
+      '@type':
+        type: string
+        description: type of the product
+        example: productOrder
+      product:
+        $ref: '#/definitions/ProductRefOrValue'
+      productOffering:
+        $ref: '#/definitions/ProductOfferingRef'
+        
+        
+        
+        
+  ProductOrderItemStateType:
+    type: string
+    description: Possible values for the state of the product order item
+    enum:
+      - acknowledged
+      - rejected
+      - pending
+      - held
+      - inProgress
+      - cancelled
+      - completed
+      - failed
+      - assessingCancellation
+      - pendingCancellation
+  ProductOrderRef:
+    type: object
+    description: ProductOrder (ProductOrder) .The product order which the recommendation is related with.
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  ProductOrderStateType:
+    type: string
+    description: Possible values for the state of the order
+    enum:
+      - acknowledged
+      - rejected
+      - pending
+      - held
+      - inProgress
+      - cancelled
+      - completed
+      - failed
+      - partial
+      - assessingCancellation
+      - pendingCancellation
+  ProductPrice:
+    type: object
+    description: An amount, usually of money, that represents the actual price paid by a Customer for a purchase, a rent or a lease of a Product. The price is valid for a defined period of time.
+    required:
+      - price
+      - priceType
+    properties:
+      description:
+        type: string
+        description: A narrative that explains in detail the semantics of this product price.
+      name:
+        type: string
+        description: A short descriptive name such as "Subscription price".
+      priceType:
+        type: string
+        description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth.
+      recurringChargePeriod:
+        type: string
+        description: Could be month, week...
+      unitOfMeasure:
+        type: string
+        description: Could be minutes, GB...
+      billingAccount:
+        $ref: '#/definitions/BillingAccountRef'
+      price:
+        $ref: '#/definitions/Price'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  ProductRef:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  ProductRefOrValue:
+    type: object
+    description: A product to be created defined by value or existing defined by reference. The polymorphic attributes @type, @schemaLocation & @referredType are related to the product entity and not the RelatedProductRefOrValue class itself
+    properties:
+      agreement:
+        type: array
+        items:
+          $ref: '#/definitions/AgreementItemRef2'
+      characteristic:
+          type: array
+          description: product characteristics such as amount, type, etc
+          items:
+            $ref: '#/definitions/productCharacteristic'
+      productOffering:
+        $ref: "#/definitions/ProductOfferingRef"
+      productTerm:
+        type: array
+        description: Description of a productTerm linked to this product. This represent a commitment with a duration
+        items: 
+          $ref: "#/definitions/ProductTerm"
+      status:
+        type: array
+        description: status of product
+        items: 
+          $ref: '#/definitions/ProductStatusType'
+      orderDate:
+        type: string
+        description: Date when the order was created.
+      startDate:
+        type: string
+        description: Is the date from which the product starts
+      terminationDate: 
+        type: string
+        description: Is the date when the product was terminated.
+  
+  
+  productCharacteristic:
+    type: object
+    properties:
+      name:
+        type: string
+        example: hulaya data
+      value: 
+        type: number
+        example: 6
+        
+  productCharacteristic2:
+    type: object
+    properties:
+      name:
+        type: string
+        example: hulaya data
+        
+  ProductRefOrValue2:
+    type: object
+    description: A product to be created defined by value or existing defined by reference. The polymorphic attributes @type, @schemaLocation & @referredType are related to the product entity and not the RelatedProductRefOrValue class itself
+    properties:
+      characteristic:
+        type: array
+        description: product characteristics such as amount, type, etc
+        items:
+          $ref: '#/definitions/productCharacteristic2'
+     
+        
+  ProductSpecificationRef:
+    type: object
+    description: 'Product specification reference: A ProductSpecification is a detailed description of a tangible or intangible object made available externally in the form of a ProductOffering to customers or other parties playing a party role.'
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      version:
+        type: string
+        description: Version of the product specification
+      targetProductSchema:
+        $ref: '#/definitions/TargetProductSchema'
+        description: A target product schema reference. The reference object to the schema and type of target product which is described by product specification.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  ProductStatusType:
+    type: string
+    description: Possible values for the status of the product
+    enum:
+      - created
+      - pendingActive
+      - cancelled
+      - active
+      - pendingTerminate
+      - terminated
+      - suspended
+      - 'aborted '
+  ProductTerm:
+    type: object
+    description: Description of a productTerm linked to this product. This represent a commitment with a duration
+    properties:
+      description:
+        type: string
+        description: Description of the productTerm
+      name:
+        type: string
+        description: Name of the productTerm
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  Quantity:
+    type: object
+    description: An amount in a given unit
+    properties:
+      amount:
+        default: 1
+        type: number
+        format: float
+        description: Numeric value in a given unit
+      units:
+        type: string
+        description: Unit
+  QuoteItemRef:
+    type: object
+    description: It's a Quote item that has been executed previously.
+    required:
+      - id
+      - quoteId
+    properties:
+      id:
+        type: string
+        description: Id of an item of a quote
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      quoteHref:
+        type: string
+        description: Reference of the related entity.
+      quoteId:
+        type: string
+        description: Unique identifier of a related entity.
+      quoteName:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  QuoteRef:
+    type: object
+    description: It's a Quote that has been executed previously
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  RelatedChannel:
+    type: object
+    description: Related channel to another entity. May be online web, mobile app, social ,etc.
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      role: 
+        type: string
+        description: Role of channel
+      href:
+        type: string
+        description: Reference of the related entity.
+      
+  RelatedParty:
+    type: object
+    description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+    required:
+      - '@referredType'
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity eg MSISDN.
+        example: 9994746
+      role: 
+        type: string
+        description: Role played by the related party
+        example: Customer
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+      
+  RelatedPlaceRefOrValue:
+    type: object
+    description: Related Entity reference. A related place defines a place described by reference or by value linked to a specific entity. The polymorphic attributes @type, @schemaLocation & @referredType are related to the place entity and not the RelatedPlaceRefOrValue class itself
+    required:
+      - role
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the place
+      href:
+        type: string
+        description: Unique reference of the place
+      name:
+        type: string
+        description: A user-friendly name for the place, such as [Paris Store], [London Store], [Main Home]
+      role:
+        type: string
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  RelatedProductOrderItem:
+    type: object
+    description: RelatedProductOrderItem (ProductOrder item) .The product order item which triggered product creation/change/termination.
+    required:
+      - orderItemId
+      - productOrderId
+    properties:
+      orderItemAction:
+        type: string
+        description: Action of the order item for this product
+      orderItemId:
+        type: string
+        description: Identifier of the order item where the product was managed
+      productOrderHref:
+        type: string
+        description: Reference of the related entity.
+      productOrderId:
+        type: string
+        description: Unique identifier of a related entity.
+      role:
+        type: string
+        description: role of the product order item for this product
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+  ResourceRef:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the resource
+      value:
+        type: string
+        description: 'The resource value that can be used to identify a resource with a public key (e.g.: a tel nr, an msisdn)'
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  ServiceRef:
+    type: object
+    description: Service reference, for when Service is used by other entities
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related entity.
+      href:
+        type: string
+        description: Reference of the related entity.
+      name:
+        type: string
+        description: Name of the related entity.
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+      '@referredType':
+        type: string
+        description: The actual type of the target instance when needed for disambiguation.
+    required:
+      - id
+  TargetProductSchema:
+    type: object
+    description: The reference object to the schema and type of target product which is described by product specification
+    required:
+      - '@schemaLocation'
+      - '@type'
+    properties:
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        description: This field provides a link to the schema describing the target product
+      '@type':
+        type: string
+        description: Class type of the target product
+  TaskStateType:
+    type: string
+    description: Possible values for the state of a task
+    enum:
+      - acknowledged
+      - terminatedWithError
+      - inProgress
+      - done
+  TimePeriod:
+    type: object
+    description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+    properties:
+      endDateTime:
+        type: string
+        format: date-time
+        description: End of the time period, using IETC-RFC-3339 format
+      startDateTime:
+        type: string
+        format: date-time
+        description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+  EventSubscription:
+    type: object
+    description: Sets the communication endpoint address the service instance must use to deliver notification information
+    required:
+      - id
+      - callback
+    properties:
+      id:
+        type: string
+        description: Id of the listener
+      callback:
+        type: string
+        description: The callback being registered.
+      query:
+        type: string
+        description: additional data to be passed
+  EventSubscriptionInput:
+    type: object
+    description: Sets the communication endpoint address the service instance must use to deliver notification information
+    required:
+      - callback
+    properties:
+      callback:
+        type: string
+        description: The callback being registered.
+      query:
+        type: string
+        description: additional data to be passed
+  ProductOrderCreateEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      id:
+        type: string
+        description: Identifier of the Process flow
+      href:
+        type: string
+        description: Reference of the ProcessFlow
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/ProductOrderCreateEventPayload'
+  ProductOrderCreateEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      productOrder:
+        description: The involved resource data for the event
+        $ref: '#/definitions/ProductOrder'
+  ProductOrderAttributeValueChangeEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      fieldPath:
+        type: string
+        description: The path identifying the object field concerned by this notification.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/ProductOrderAttributeValueChangeEventPayload'
+  ProductOrderAttributeValueChangeEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      productOrder:
+        description: The involved resource data for the event
+        $ref: '#/definitions/ProductOrder'
+  ProductOrderDeleteEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      id:
+        type: string
+        description: Identifier of the Process flow
+      href:
+        type: string
+        description: Reference of the ProcessFlow
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/ProductOrderDeleteEventPayload'
+  ProductOrderDeleteEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      productOrder:
+        description: The involved resource data for the event
+        $ref: '#/definitions/ProductOrder'
+  ProductOrderStateChangeEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      id:
+        type: string
+        description: Identifier of the Process flow
+      href:
+        type: string
+        description: Reference of the ProcessFlow
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/ProductOrderStateChangeEventPayload'
+  ProductOrderStateChangeEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      productOrder:
+        description: The involved resource data for the event
+        $ref: '#/definitions/ProductOrder'
+  ProductOrderInformationRequiredEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      fieldPath:
+        type: string
+        description: The path identifying the object field concerned by this notification.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/ProductOrderInformationRequiredEventPayload'
+  ProductOrderInformationRequiredEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      productOrder:
+        description: The involved resource data for the event
+        $ref: '#/definitions/ProductOrder'
+  CancelProductOrderCreateEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      id:
+        type: string
+        description: Identifier of the Process flow
+      href:
+        type: string
+        description: Reference of the ProcessFlow
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/CancelProductOrderCreateEventPayload'
+  CancelProductOrderResponse:
+    required:
+      - statusCode
+      - statusMessage
+      - data
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: Result code. Example- '0000'
+      statusMessage:
+        type: string
+        description: Result message. Example- 'Successfully processed'
+      transactionId:
+        type: string
+        description: Transaction id returned by the provider system.
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/ProductOrder_Create2"
+
+  CreateOrderResponse:
+    required:
+      - statusCode
+      - statusMessage
+      - data
+    type: object
+    properties:
+        statusCode:
+          type: string
+          description: Result code. Example- '0000'
+        statusMessage:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          type: object
+          properties:
+            billingToken:
+              type: object
+              properties:
+                msn:
+                  type: string
+                  minLength: 16
+                  maxLength: 64
+                  description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+                  example: '5115314911298406'
+                contentToken:
+                  type: string
+                  minLength: 16
+                  maxLength: 96
+                  description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+                  example: '81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058'
+                allowToActivate:
+                  type : boolean
+                  description : Information inidicating if activation of token will be allowed.
+                  example: true
+                proposalIndicator:
+                  type : integer  
+                  description : This indicates what is proposed, 0 - Nothing, 1 - Spend Limit only, 2 - Digital Limit only, 3 - Both Digital and Spend Limit, 4 - Nothing with SUL equals to SPUL and Digital Limit equal to New Monthly Committed Value
+                  enum: [ 0, 1, 2, 3, 4]
+                proposedDigitalLimit:
+                  type : integer
+                  minimum: 1
+                  maximum: 999999    
+                  description : This the proposed digital limit in Rxx whole rands only.
+                  example: 25000
+                proposedSpendLimit:
+                  type : integer
+                  minimum: 1
+                  maximum: 999999    
+                  description : This the proposed digital limit in Rxx whole rands only.
+                  example: 25000
+                proratedBill:
+                  type : integer
+                  minimum: 0
+                  maximum: 999999  
+                  description : The prorated amount in cents. Note, this field won't be returned if the token is not a monthly token, which is specified via selectedDebitOrderDate
+                  example: 90
+                proratedBillDate:
+                  type: string
+                  minLength: 10
+                  maxLength: 10
+                  description: The date upon which the prorated billing will be performed, in the format 'yyyy-mm-dd'. Note, this field won't be returned if the token is not a monthly token, which is specified via selectedDebitOrderDate
+                  example: '2023-02-22'
+            subscription:
+              $ref: "#/definitions/ProductOrder2"
+            
+  CreateOrderResponse2:
+    required:
+      - statusCode
+      - statusMessage
+      - data
+    type: object
+    properties:
+        statusCode:
+          type: string
+          description: Result code. Example- '0000'
+        statusMessage:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          type: object
+          properties:
+            billingToken:
+              type: object
+              properties:
+                msn:
+                  type: string
+                  minLength: 16
+                  maxLength: 64
+                  description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+                  example: '5115314911298406'
+            subscription:
+              $ref: "#/definitions/ProductOrder2"
+  
+  ViewActiveVAS:
+    required:
+      - statusCode
+      - statusMessage
+      - data
+    type: object
+    properties:
+        statusCode:
+          type: string
+          description: Result code. Example- '0000'
+        statusMessage:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          type: array
+          items:
+            $ref: "#/definitions/product2"
+  
+
+  CancelProductOrderCreateEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      cancelProductOrder:
+        description: The involved resource data for the event
+        $ref: '#/definitions/CancelProductOrder'
+  CancelProductOrderStateChangeEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      id:
+        type: string
+        description: Identifier of the Process flow
+      href:
+        type: string
+        description: Reference of the ProcessFlow
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/CancelProductOrderStateChangeEventPayload'
+  CancelProductOrderStateChangeEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      cancelProductOrder:
+        description: The involved resource data for the event
+        $ref: '#/definitions/CancelProductOrder'
+  CancelProductOrderInformationRequiredEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      domain:
+        type: string
+        description: The domain of the event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      fieldPath:
+        type: string
+        description: The path identifying the object field concerned by this notification.
+      event:
+        description: The event payload linked to the involved resource object
+        $ref: '#/definitions/CancelProductOrderInformationRequiredEventPayload'
+  CancelProductOrderInformationRequiredEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      cancelProductOrder:
+        description: The involved resource data for the event
+        $ref: '#/definitions/CancelProductOrder'
+        
+  createUrlRequest:
+    type: object
+    required:
+      - transactionId
+    properties:
+      transactionId: 
+        type: string
+        description: Unique transaction identifier. It is advised that the client system use the methods defined in RFC4122 to generate this value. 
+      contentToken:
+        type: string
+        minLength: 16
+        maxLength: 96
+        description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+        example: '81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058'
+      customerId:
+        type: string
+        description: MSISDN of the customer
+  
+  createUrlResponse:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+    properties:
+      statusCode: 
+        type: string
+      statusMessage:
+        type: string
+      supportMessage:
+        type: string
+      data:
+        type: object
+        properties:
+          redirectUrl:
+            type: string
+            description: This will have the encrypted url that will be route to pay portal on click.In case of "Paylink" URL will be sent part of response. 
+    
+        
+  Error:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+      statusMessage:
+        type: "string"
+        description: "Status description"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+   
+  ErrorSubChanNotFound:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 1007
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "DEP ::: Subscription Channel Not Found"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+  
+  ErrorSubNotFound:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 1000
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "DEP ::: Subscription Not Found"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+  
+  ErrorSvcNotFound:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 3000
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "DEP ::: Service Not Found"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+  
+  ErrorActSubsEx:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 1002
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "DEP ::: Active Subscription Exists"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+        
+  ErrorSvcNotLinked:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 5001
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "DEP ::: Service Not Linked To Billing Channel"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+        
+  ErrorSvcIdSvcRefNotFound:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 3004
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "DEP ::: Service ID or Service Ref Not Found"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+  
+  ErrorPendingSubEx:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 1005
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "DEP ::: Pending Subscription Exists"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+  
+  ErrorSubNotActive:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 1003
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "DEP ::: Subscription Not Active"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+        
+        
+  ErrorInvAPIVersion:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 3001
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "DEP ::: Invalid API Version"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+        
+  ErrorMsisdnNotProvided:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 4003
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "DEP ::: MSISDN Not Provided"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+        
+  ErrorInvMsisdn:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 1008
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "DEP ::: Invalid MSISDN"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+        
+  ErrorInvBillRate:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 1006
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "DEP ::: Invalid Billing Rate"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+  
+  debitRequest:
+    type: object
+    properties:
+      transactionId:
+        type: string
+        minLength: 9
+        maxLength: 36
+        description: Unique transaction identifier. It is advised that the client system use the methods defined in [RFC4122](https://tools.ietf.org/html/rfc4122) to generate this value.
+        example: '123456768'
+      contractingPartnerId:
+        type: string
+        minLength: 9
+        maxLength: 9
+        description: Contracting Partner Identifier as supplied by MTN Digital Department.
+        example: '911844857'
+      platformPartnerId:
+        type: string
+        minLength: 9
+        maxLength: 9
+        description: Platform Partner Identifier.
+        example: '911844857'
+      contentToken:
+        type: string
+        minLength: 16
+        maxLength: 96
+        description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+        example: '81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058'
+      debitAmount:
+        type: integer
+        minimum: 0
+        maximum: 999999
+        description: This field represents the amount to debited in cents.
+        example: 1500
+      contentTypeId:
+        type: string
+        minLength: 3
+        maxLength: 3
+        description: Content type identifier. Default to 100 for DCB Google.
+        example: '100'
+      contentId:
+        type: string
+        minLength: 1
+        maxLength: 35
+        description: Content identifier.
+        example: '001'
+      contentDescription:
+        type: string
+        minLength: 1
+        maxLength: 100
+        description: Description of content charged for.
+        example: Games
+      partnerDisplayName:
+        type: string
+        minLength: 1
+        maxLength: 25
+        description: Content provider name.
+        example: Google
+      VATDetails:
+        type: array
+        items:
+            $ref: '#/definitions/VATDetails'
+        example:
+          - VATProvider: MTN
+            amount: 1000
+            VATSupply: Y
+          - VATProvider: Partner
+            amount: 500
+            VATSupply: "Y"
+      offerDetails:
+        type: array
+        items:
+          $ref: '#/definitions/offerDetails'
+  
+  VATDetails:
+    type: object
+    properties:
+      VATProvider:
+        type: string
+        minLength: 1
+        description: VAT Provider.
+        example: MTN
+      amount:
+        type: integer
+        minimum: 0
+        maximum: 999999
+        description: This field represents the amount in cents.
+        example: 1500
+      VATSupply:
+        type: string
+        description: VAT Supply.
+        enum: [Y, N]
+  
+  offerDetails:
+    type: object
+    properties:
+      offerId:
+        type: string
+        minLength: 1
+        description: Offer Identification
+        example: 12345
+      offerInfo:
+        type: string
+        minLength: 1
+        description: Offer Description
+        example: 1 GB ShowmaxBundle
+        
+  debitResponse:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+    properties:
+      statusCode: 
+        type: string
+      statusMessage:
+        type: string
+      supportMessage:
+        type: string
+      transactionId:
+        type: string
+      data:
+        type: object
+        properties:
+          msn: 
+            type: string
+            minLength: 16
+            maxLength: 64
+            description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+            example: '5115314911298406' 
+          orderRef:
+            type: string
+            minLength: 1
+            description: >-
+              This field is the payment reference of the transaction being queried.
+            example: '1236457'
+          timestamp:
+            type: "string"
+            format: "date-time"
+            description: "Time stamp of the error"
+              
+  transStatRequest:
+    type: object
+    properties: 
+      type:
+        description: The transaction query type.
+        minLength: 2
+        maxLength: 30
+        type: string
+        enum: [debit, order, refund]
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+      contractingPartnerId:
+        type: string
+        minLength: 9
+        maxLength: 9
+        description: Contracting Partner Identifier as supplied by MTN Digital Department.
+        example: '911844857'
+      originTransactionId:
+        type : string
+        description : This field is the Request Sequence Number of the transaction being queried.
+        minLength: 9
+        maxLength: 36
+        example: '123456789'
+      paymentRef : 
+        type : string
+        description : This field is the payment reference of the transaction being queried.
+        example: '123456789'
+      orderRef:
+            type: string
+            minLength: 1
+            description: >-
+              This field is the payment reference of the transaction being queried.
+            example: '1236457'
+      
+  transStatResponse:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+    properties:
+      statusCode: 
+        type: string
+      statusMessage:
+        type: string
+      supportMessage:
+        type: string
+      transactionId:
+        type: string
+      data:
+        type: object
+        properties:
+          type:
+            description: The transaction query type.
+            minLength: 2
+            maxLength: 30
+            type: string
+            enum: [debit, order, refund] 
+          msn: 
+            type: string
+            minLength: 16
+            maxLength: 64
+            description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+            example: '5115314911298406' 
+          orderRef:
+            type: string
+            minLength: 1
+            description: >-
+              This field is the payment reference of the transaction being queried.
+            example: '1236457'
+          timestamp:
+            type: "string"
+            format: "date-time"
+            description: "Time stamp of the error"
+  
+  tokenStatRequest:
+    type: object
+    properties:
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+      contractingPartnerId:
+        type: string
+        minLength: 9
+        maxLength: 9
+        description: Contracting Partner Identifier as supplied by MTN Digital Department.
+        example: '911844857'
+      platformPartnerId:
+        type: string
+        minLength: 9
+        maxLength: 9
+        description: Platform Partner Identifier.
+        example: '911844857'
+      contentToken:
+        type: string
+        minLength: 16
+        maxLength: 96
+        description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+        example: '81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058'
+        
+  tokenStatResponse:
+    type: object
+    properties:
+      statusCode: 
+        type: string
+      statusMessage:
+        type: string
+      supportMessage:
+        type: string
+      transactionId:
+        type: string
+      data:
+        type: object
+        properties:
+          msn: 
+            type: string
+            minLength: 16
+            maxLength: 64
+            description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+            example: '5115314911298406'
+          contentToken:
+            type: string
+            minLength: 16
+            maxLength: 96
+            description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+            example: '81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058'
+          tokenState:
+            type: string
+            minLength: 1
+            maxLength: 64
+            description: The status of the token.
+            example: Pending
+          
+  refundRequest:
+    type: object
+    properties:
+      transactionId:
+        type: string
+        description: "Transaction id returned by the provider system."
+      originalPaymentRef:
+        type: string
+        minLength: 16
+        maxLength: 64
+        description: The MSN associated with the debitToken request that this refund is for
+        example: '5115314911297401'
+      originalDateTime:
+        type: string
+        minLength: 20
+        maxLength: 20
+        description: Date and Time the debit occured in the format 'YYYY-MM-DDTHh:Mm:SsZ' or 'YYYY-MM-DD Hh:Mm:SS'.
+        example: '2020-01-01 12:12:12'
+      totalAmount:
+        type: integer
+        minimum: 0
+        maximum: 999999
+        description: This is the total transaction amount
+        example: 1000
+      contentToken:
+        type: string
+        minLength: 16
+        maxLength: 96
+        description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+        example: '81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058'
+      contractingPartnerId:
+        type: string
+        minLength: 9
+        maxLength: 9
+        description: Contracting Partner Identifier as supplied by MTN Digital Department.
+        example: '911844857'
+      platformPartnerId:
+        type: string
+        minLength: 9
+        maxLength: 9
+        description: Platform Partner Identifier.
+        example: '911844857'
+      refundType : 
+        type : string
+        description : The type of refund that is being initiated by the carrier. This will help MTN to differentiate a partial and a full refund
+        enum : [Partial , Full]
+      currency : 
+        type : string
+        description : The currency for the transaction. This value can be hardcoded to "RANDS".
+        
+        
+  
+  refundResponse:
+    type: object
+    properties:
+      statusCode: 
+        type: string
+      statusMessage:
+        type: string
+      supportMessage:
+        type: string
+      transactionId:
+        type: string
+      data:
+        type: object
+        properties:
+           msn:
+            type: string
+        
+     
+
+  
+  ErrorBadReq:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+        example: 5000
+      statusMessage:
+        type: "string"
+        description: "Status description"
+        example: "Bad Request"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+        example: "Backend specific response"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."
+  
+        
+        
+  

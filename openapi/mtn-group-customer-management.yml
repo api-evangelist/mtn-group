@@ -1,0 +1,491 @@
+swagger: "2.0"
+
+info:
+  version: "v1.0"
+  title: MTN Customer Management API
+  description: An API to register MoMo on Tier 0 for BSS. Please refer to the reference guides https://developers.mtn.com/API-Reference-Guides and Response and Error Codes documents https://developers.mtn.com/ResponseCodes
+
+schemes:
+  - https
+
+host: "api.mtn.com"
+basePath: "/v1/customerManagement"
+
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+
+
+paths:
+
+  /momo/tier0/registration:
+    post:
+      description: "Registers customer on MoMo Tier 0."
+      summary: "MoMo Tier 0 Registration"
+      tags:
+        - "MoMo"
+      parameters:
+        - in: header
+          type: string
+          name: X-Authorization
+          description: "An authorization key"
+        - in: query
+          name: allowDuplicate
+          required: false
+          type: string
+        - in: header
+          name: targetSystem
+          required: false
+          type: string
+        - in: "body"
+          name: "body"
+          description: "Registration Request to be initiated on GSM Account"
+          required: true
+          schema:
+            $ref: '#/definitions/RegistrationRequestBody'
+      responses:
+        200:
+          description: "Registration Response. For a successful request, it will contain the transaction id and status of Registration."
+          schema:
+            $ref: "#/definitions/MomoRegistrationResponse"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/APIError"
+        409:
+          description: "Conflict. ID already exists as a subscriber"
+          schema:
+            $ref: "#/definitions/APIError"
+  /momo/tier0/{id}/link/account:
+    post:
+      description: "Link a newly created account to an existing one"
+      summary: "Link a newly created wallet to an existing extended account holder data"
+      produces:
+        - "application/json"
+      tags:
+        - "Link Accounts"
+      parameters:
+        - name: X-Authorization
+          in: header
+          type: string
+          description: An authorization key to be provided
+        - name: id
+          in: path
+          required: true
+          type: string
+          description: ID of an already existing extended account holder. ie. MSISDN
+
+        - name: transactionId
+          in: header
+          type: string
+          x-example: "xxxxxxx"
+
+        - name: targetSystem
+          in: header
+          x-example: "ECW"
+          type: string
+          required: false
+
+        - name: body
+          in: body
+          schema:
+            $ref: "#/definitions/LinkAccountData"
+      responses:
+        200:
+          description: "Registration Response. For a successful request, it will contain the transaction id and status of Registration."
+          schema:
+            $ref: "#/definitions/MomoRegistrationResponse"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/APIError"
+        409:
+          description: "Conflict. ID already exists as a subscriber"
+          schema:
+            $ref: "#/definitions/APIError"
+
+
+definitions:
+  LinkAccountData:
+    type: object
+    required:
+      - registrationDetails
+    properties:
+      registrationDetails:
+        type: object
+        description: Information of the account holder's secondary account to be created and linked to an existing account
+        $ref: "#/definitions/AccountHolderRegistrationData"
+      languageCode:
+        type: string
+        description: An optional valid language code
+      quoteId:
+        type: string
+        description: ID of the quote to use
+      additionInformationList:
+        type: array
+        items:
+          $ref: "#/definitions/AdditionalInformationListData"
+      docReferenceInformationList:
+        type: array
+        description: Contains reference information about a KYC document stored on an external document system
+        items:
+          $ref: "#/definitions/DocumentReferenceInformationListData"
+
+  AccountHolderRegistrationData:
+    type: object
+    required:
+      - msisdn
+      - username
+      - email
+    properties:
+      accountHolderId:
+        type: string
+        description: A uniquie identifier or an account number of the accounts to be linked
+        example: '0100002009300'
+
+      profileName:
+        type: string
+        description: A description of the account to be registered and linked, profile details
+      timeout:
+        type: number
+        description: A timeout in seconds
+        default: 30
+      bankDomainName:
+        type: string
+        description: Name of the bank eg. EcoBank
+        example: "EcoBank, AccessBank"
+
+
+  AdditionalInformationListData:
+    type: object
+    description: Any other information of the account holder
+    properties:
+      firstName:
+        type: string
+      lastName:
+        type: string
+      contactNumber:
+        type: string
+      otherName:
+        type: string
+        description: Other name of the account holder
+      residentialAddress:
+        type: string
+
+
+  RegistrationRequestBody:
+    type: "object"
+    required:
+      - "relatedParty"
+      - "individualIndentification"
+      - "contactMedium"
+      - "accountHolder"
+    properties:
+      relatedParty:
+        $ref: "#/definitions/RelatedParty"
+      individualIndentification:
+        $ref: '#/definitions/IndividualIdentification'
+      #      companyInformation:
+      #        $ref: "#/definitions/CompanyInformation"
+      #      guardianInformation:
+      #        $ref: "#/definitions/AdditionalInformationListData"
+      #      nextOfKinInformation:
+      #        $ref: "#/definitions/AdditionalInformationListData"
+      contactMedium:
+        $ref: '#/definitions/ContactMedium'
+      partyCharacteristic:
+        $ref: '#/definitions/Characteristic'
+  #      additionalInformationList:
+  #        type: array
+  #        items:
+  #          $ref: "#/definitions/AdditionalInformationListData"
+  #      documentReferenceInformationList:
+  #        type: array
+  #        items:
+  #          $ref: "#/definitions/DocumentReferenceInformationListData"
+
+  DocumentReferenceInformationListData:
+    type: object
+    properties:
+      documentReferenceNumber:
+        type: string
+      documentName:
+        type: string
+  RelatedParty:
+    required:
+      - customerMsisdn
+    type: object
+    properties:
+      customerMsisdn:
+        type: string
+        description: Unique msisdn to be registered for the customer.
+        example: 233559999781
+      msisdnVerificationCode:
+        type: string
+        maxLength: 64
+        description: An optional msisdn verification code for validating the account holder's msisdn
+
+    description: Related Entity reference. A related party defines party or party
+      role linked to a specific entity.
+
+  CompanyInformation:
+    type: object
+    description: All details associated with the company of the account holder
+    properties:
+      companyName:
+        type: string
+        description: Name of a company
+      companyAddress:
+        type: string
+        description: Address
+      companyType:
+        type: string
+        description: What the company does eg. SOFTWARE etc.
+
+  Characteristic:
+    required:
+      - name
+      - value
+    type: object
+    properties:
+      username:
+        type: string
+        description: a valid unique username of the account holder
+      email:
+        type: string
+        description: A valid unique email address of the account holder
+      emailVerificationCode:
+        type: string
+        maxLength: 64
+        description: OTP to validate the email address
+      languageCode:
+        type: string
+        description: An optional valid language code
+      alias:
+        type: string
+        description: An alias for the account holder
+      acceptedTCVersion:
+        type: string
+      quoteId:
+        type: string
+        description: Quote ID to use
+      parentAccountHolderId:
+        type: string
+        description: A valid identity associatd with a parent account holder
+      mlngInd:
+        type: string
+      regnAdrInd:
+        type: "boolean"
+        example: true
+      mnrInd:
+        type: "boolean"
+        example: true
+      profession:
+        type: string
+      clearingNumber:
+        type: string
+      securityQuestion:
+        type: string
+      securityQuestionAnswer:
+        type: string
+      bankAccountNumber:
+        type: string
+        description: A bank account number
+      bankDomainName:
+        type: string
+      profileName:
+        type: string
+        description: "The profile to be created for the customer during registration"
+        example: "MTNGH Minimum KYC Subscriber Profile"
+      externalId:
+        type: string
+      givenName:
+        type: string
+        description: First name of the individual
+        example: John
+      middleName:
+        type: string
+        description: Middles name or initial
+        example: K.
+      familyName:
+        type: string
+        description: Contains the non-chosen or inherited name. Also known as last
+          name in the Western context
+        example: Doe
+      fullName:
+        type: string
+        description: Full name flatten (first, middle, and last names)
+        example: John Doe
+      gender:
+        type: string
+        description: Gender
+        example: "MALE"
+        enum:
+          - "MALE"
+          - "FEMALE"
+      countryOfBirth:
+        type: string
+        description: Country where the individual was born
+        example: GH
+      cityOfBirth:
+        type: string
+        description: City where the individual was born
+        example: Accra
+      birthDate:
+        type: string
+        description: Birth date using format YYYY-MM-DD
+        format: date-time
+        example: "1987-01-14"
+      nationality:
+        type: string
+        description: Nationality
+        example: GH
+      familyNameSuffix:
+        type: string
+      title:
+        type: string
+        example: Mr
+      postalAddressName:
+        type: string
+      taxNumber:
+        type: string
+      taxRegion:
+        type: string
+      timeout:
+        type: string
+        example: "30"
+    description: Describes a given characteristic of an object xor entity through
+      a name/value pair.
+
+  IndividualIdentification:
+    type: object
+    properties:
+      individualId:
+        type: string
+        description: Unique alphanumeric string for the document used to identify the individual
+        example: G7888777
+      indentificationType:
+        type: string
+        enum: ['PASS','CPFA','SRSA','NRIN','OTHR','DRLC','SOCS','AREG','IDCD']
+        description: Identification type (passport, national identity card, drivers
+          license, social security number, birth certificate)
+      issuingAuthority:
+        type: string
+      issuingDate:
+        type: string
+        description: Date of the format yyyy-MM-dd
+        example: "2019-05-15"
+      expiryDate:
+        type: string
+        description: Date of the format yyyy-MM-dd
+        example: "2019-05-15"
+
+  ContactMedium:
+    type: object
+    properties:
+      mediumType:
+        type: string
+        description: Contact Medium Type
+        example: Postal
+      characteristic:
+        $ref: '#/definitions/ContactMediumCharacteristic'
+    description: Indicates the contact medium that could be used to contact the
+      party.
+
+  ContactMediumCharacteristic:
+    type: object
+    properties:
+      city:
+        type: string
+        description: City
+      stateOrProvince:
+        type: string
+        description: State or province
+      country:
+        type: string
+        description: Contact country
+        example: 'GH'
+      contactType:
+        type: string
+        description: 'Type of address'
+        enum: ['HOME','BIZZ']
+      name:
+        type: string
+        description: Address Name
+      town:
+        type: string
+        description: Town Name
+      street:
+        type: string
+        description: Street Name
+      postalCode:
+        type: string
+        description: Zip Code
+        example: 00233
+      addressLines:
+        type: array
+        description: First Address Line
+        items:
+          type: string
+    description: Indicates the contact medium that could be used to contact the
+      party.
+
+  MomoRegistrationResponse:
+    type: "object"
+    required:
+      - "accountHolderIdentity"
+      - "accountHolderIdentityType"
+      - "statusCode"
+      - "transactionId"
+    properties:
+      accountHolderIdentity:
+        type: "string"
+        description: "The ID of resource created"
+        example: "9230088"
+      accountHolderIdentityType:
+        type: "string"
+        description: "The type of ID for the resource created"
+        example: "ID"
+      statusCode:
+        type: "string"
+        description: "The status code for operation"
+        example: "0000"
+      transactionId:
+        type: string
+        description: "The transaction Id created for the request"
+        example: "A3344098765456"
+
+
+  APIError:
+    type: object
+    required:
+      - "statusMessage"
+      - "supportMessage"
+      - "transactionId"
+      - "timestamp"
+      - "path"
+      - "method"
+    properties:
+      statusMessage:
+        type: string
+      supportMessage:
+        type: string
+      transactionId:
+        type: string
+      timestamp:
+        type: string
+        example: "2020-08-19 09:09:09"
+      path:
+        type: string
+        description: "endpoint path used to make request"
+      method:
+        type: string
+        description: "HTTP Method used to make request"
+        example: GET

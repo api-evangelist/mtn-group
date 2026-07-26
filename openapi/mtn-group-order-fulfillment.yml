@@ -1,0 +1,243 @@
+swagger: '2.0'
+
+info:
+  version: '1.0.0'
+  title: Order Fulfillment API
+  description: >-
+    This API provides ability to digital channel to purchase different offers and make payment through Netbanking or Card Payments.
+
+host: api.mtn.com
+basePath: /v1
+schemes:
+  - https
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+securityDefinitions: 
+  APIKeyAuth:
+    type: apiKey
+    name: x-API-Key
+    in: header
+  
+security:
+  - APIKeyAuth: []
+
+tags:
+  - name: OrderFulfillment
+
+paths:
+  /orderfulfillment:
+    post:
+      operationId: buyOffer
+      summary: Provides ability to buy offer and make payment through Payment Gateway
+      description: Provides ability to buy offer and make payment through Payment Gateway
+      tags:
+        - OrderFulfillment
+      parameters:
+        - name: order
+          description: Describes the fields and attributes associated with order entity
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/Order'
+       
+      
+  
+      responses:
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/OrderResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error' 
+
+  
+definitions:
+  Order:
+    type: object
+    required:
+      - eligibilityCheckFlag
+      - extTransactionId
+      - channelName
+      - timestamp
+    properties:
+      customer:
+        $ref: '#/definitions/customerRef'
+      product:
+        $ref: '#/definitions/productRef'
+      
+      timestamp:
+        type: string
+        description: Timestamp of order generation
+        format: date-time
+      eligibilityCheckFlag:
+        type: boolean
+        description: Flag determines if eligibiity check has to be performed or not. If eligibilty check is required then value should passed as "true" otherwise "false".
+      extTransactionId:
+        type: string
+        description: Transaction Id of channel
+        example: FB123456
+      channelName:
+        type: string
+        description: Name of call intiating channel
+        example: FB
+        
+  customerRef:
+    type: object
+    required:
+      - customerId
+      - customerName
+    properties:
+      customerId:
+        type: string
+        description : Customer who is purchasing
+        example: 2349062059569
+      beneficiaryId: 
+        type: string
+        description: Id of beneficiary for whom Customer wants to purchase, if purchase is for self , this value need not be populated
+        example: 2349062059534
+      customerName : 
+        type: string
+        description: Customer name who is purchasing
+        example: Jack
+      customerEmail :
+        type: string
+        description: Contact email id of Customer who is purchasing
+        example: jack@mtn.com
+  productRef:
+    type: object
+    required:
+      - productId
+      - productType
+      - productPrice
+    properties:
+      productId:
+        type: string
+        description: Offer Id
+        example: NACT_NG_Combo_20
+      productName:
+        type: string
+        description: Offer Name
+        example: Data and Voice Bundle 20
+      productType:
+        type: string
+        description: Type of offers
+        enum:
+          - DataBundle
+          - AirtimeTopUp
+      productIsLoan:
+        type: boolean
+        description: A boolean to state if product is loaned. If loaned then "true" otherwise "false"
+      productCurrency:
+        type: string
+        description: Currency in which payment has to be made
+        example: "NGN"
+      productPrice:
+        type: number
+        description: Price of Product
+        example: 1000
+        
+  OrderResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+        example: "0000"
+      customerId:
+        type: string
+        description: CustomerId provided in the input
+        example: 2349062059569
+      statusMessage:
+        type: string
+        description: Description of the processing result. Forexample incase there was an error, this will have the message showing the error that happened
+        example: Success
+      timeStamp:
+        type: string
+        description: Payment API call timestamp
+        format: date-time
+      transactionId:
+            type: string
+            description: This is the same transactionId that is sent in the request
+            example: MTN12345678
+      extTransactionId:
+            type: string
+            description: Channel Transaction Id
+            example: FB123456
+      data:
+        type: object
+        properties:
+          PayPageLink:
+            type: string
+            description: Payment page redirection URL
+            example: "https://paymentpage.com/pay"
+ 
+  Error:
+    required:
+      - statusCode
+      - statusMessage
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: >-
+          This is the MADAPI Canonical Error Code (it is 4 characters long and
+          it is not the HTTP Status Code which is 3 characters long). Back-end
+          system errors are mapped to specific canonical error codes which are
+          returned. More information on these mappings can be found on the
+          MADAPI Confluence Page 'Response Codes'
+        example: '1000'
+      statusMessage:
+        type: string
+        description: >-
+          More details and corrective actions related to the error which can
+          be shown to a client
+      supportMessage:
+        type: string
+        description: >-
+          Internal message meant for consumers of the API to troubleshoot the
+          error (could possible include the back-end system error code in the
+          message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+      timestamp:
+        type: string
+        description: Timestamp of the error
+        format: date-time
+    
+    
+        
+ 
+ 
+ 
+        
+ 
+ 

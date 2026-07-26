@@ -1,0 +1,1275 @@
+openapi: 3.0.1
+info:
+  title: TMF621 Trouble Ticket Management  Aggregator
+  description: "TMF621 Trouble Ticket Management  Aggregator This service provides\
+    \ endpoint to fetch the ticket details with ticket id, create ticket, fetch list\
+    \ of tickets by customer id and update the existing tickets"
+  license:
+    name: MADAPI
+    url: https://developers.mtn.com/
+  version: V1
+servers:
+- url: http://localhost:8083
+  description: Generated server url
+paths:
+  /troubleTicket:
+    get:
+      tags:
+      - trouble-ticket-aggregator-controller
+      summary: This operation retrieves trouble ticket
+      description: Retrieve list of trouble ticket. It return a  list that has the
+        data filtered by provided parameters. It provide the pagination's as well
+        to retrieve the data in pages with required sizes.
+      operationId: listTickets
+      parameters:
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: x-country-code
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: customerId
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: publicIdentifier
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TroubleTicketResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+    post:
+      tags:
+      - trouble-ticket-aggregator-controller
+      summary: This operation Creates a trouble ticket
+      description: "This operation Creates a trouble ticket with provided details.\
+        \ It accepts the category, description. externalId, name, priority and other\
+        \ fields as well. After creation this returns the details of ticket as well."
+      operationId: createTicket
+      parameters:
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: x-country-code
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+  /troubleTicket/{id}:
+    get:
+      tags:
+      - trouble-ticket-aggregator-controller
+      summary: This operation retrieves a trouble ticket
+      description: Ticket details fetched by ticket ID. The provides the details of
+        existing ticket with required checks. If not present then it will throw the
+        required errors
+      operationId: viewTicket
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: fields
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: x-country-code
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+    patch:
+      tags:
+      - trouble-ticket-aggregator-controller
+      summary: This operation updates a trouble ticket
+      description: "This operation updates the status of a Ticket entity. Through\
+        \ this operation, an existing ticket can be update as per requirements. User\
+        \ with correct set of permission can update the ticket."
+      operationId: updateTicket
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: x-country-code
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTicketRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+  /incident/{id}:
+    patch:
+      tags:
+      - trouble-ticket-aggregator-controller
+      summary: This operation updates a trouble ticket category
+      description: "This operation updates the category of a trouble ticket. Through\
+        \ this operation, an existing ticket category can be update as per requirements"
+      operationId: updateIncidentCategory
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: x-country-code
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIncidentRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+  /troubleTicket/category:
+    get:
+      tags:
+      - trouble-ticket-aggregator-controller
+      summary: This operation retrieves a trouble ticket category and sub category
+      description: "This operation retrieves the category  of a trouble ticket. Through\
+        \ this operation, a ticket category and sub-category can be retrieved."
+      operationId: getTroubleTicketCategory
+      parameters:
+      - name: categoryType
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - CHANGE_TASK
+          - SC_TASK
+          - INCIDENT
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: subCategory
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: categoryStatus
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: ticketType
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: lob
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: field
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: x-country-code
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+  /incident/category:
+    get:
+      tags:
+      - trouble-ticket-aggregator-controller
+      summary: This operation retrieves a trouble ticket category and sub category
+      description: "This operation retrieves the category  of a trouble ticket. Through\
+        \ this operation, a ticket category and sub-category can be retrieved."
+      operationId: getIncidentCategory
+      parameters:
+      - name: categoryType
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - CHANGE_TASK
+          - SC_TASK
+          - INCIDENT
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: subCategory
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: categoryStatus
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: ticketType
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: lob
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: field
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: x-country-code
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ""
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+components:
+  schemas:
+    Attachments:
+      type: object
+      properties:
+        id:
+          type: string
+        validFor:
+          $ref: '#/components/schemas/ValidFor'
+        attachmentType:
+          type: string
+        content:
+          type: string
+        name:
+          type: string
+    Channel:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        role:
+          type: string
+        href:
+          type: string
+        '@schemaLocation':
+          type: string
+        '@referredType':
+          type: string
+        '@type':
+          type: string
+    CountryInformation:
+      type: object
+      properties:
+        country:
+          type: string
+        province:
+          type: string
+        city:
+          type: string
+    CreateRequest:
+      type: object
+      properties:
+        category:
+          type: string
+        description:
+          type: string
+        externalId:
+          type: string
+        name:
+          type: string
+        nodeId:
+          type: string
+        countryInformation:
+          $ref: '#/components/schemas/CountryInformation'
+        priority:
+          type: string
+        severity:
+          type: string
+        ticketType:
+          type: string
+        channel:
+          $ref: '#/components/schemas/Channel'
+        publicIdentifier:
+          type: string
+        attachment:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachments'
+        relatedEntity:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedEntity'
+    RelatedEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        name:
+          type: string
+        '@schemaLocation':
+          type: string
+        '@referredType':
+          type: string
+    ValidFor:
+      type: object
+      properties:
+        endDateTime:
+          type: string
+        startDateTime:
+          type: string
+    ContactMedium:
+      type: object
+      properties:
+        medium:
+          $ref: '#/components/schemas/Medium'
+        type:
+          type: string
+        role:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        preferred:
+          type: boolean
+    EngagedParty:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        '@referredType':
+          type: string
+        '@schemaLocation':
+          type: string
+    Medium:
+      type: object
+      properties:
+        type:
+          type: string
+        emailAddress:
+          type: string
+        verified:
+          type: boolean
+        number:
+          type: string
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+        author:
+          type: string
+        date:
+          type: string
+        '@type':
+          type: string
+    RelatedParty:
+      type: object
+      properties:
+        role:
+          type: string
+        id:
+          type: string
+        href:
+          type: string
+        name:
+          type: string
+        text:
+          type: string
+        contactMedium:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactMedium'
+        engagedParty:
+          $ref: '#/components/schemas/EngagedParty'
+        location:
+          type: string
+        '@referredType':
+          type: string
+        '@schemaLocation':
+          type: string
+    UpdateTicketRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        note:
+          $ref: '#/components/schemas/Note'
+        description:
+          type: string
+        name:
+          type: string
+        priority:
+          type: string
+        channel:
+          $ref: '#/components/schemas/Channel'
+        attachment:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachments'
+        relatedParty:
+          $ref: '#/components/schemas/RelatedParty'
+        statusChangeReason:
+          type: string
+    UpdateIncidentRequest:
+      type: object
+      properties:
+        statusChangeReason:
+          type: string
+        field:
+          type: string
+        categoryType:
+          type: string
+        description:
+          type: string
+        assignedTo:
+          type: string
+        requestedFor:
+          type: string
+    Assignee:
+      type: object
+      properties:
+        id:
+          type: string
+        assigned:
+          type: boolean
+    Assignees:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        '@schemaLocation':
+          type: string
+    CustomFields:
+      type: object
+      properties:
+        country:
+          type: string
+        province:
+          type: string
+        city:
+          type: string
+        name:
+          type: string
+    DCLMTroubleTicketAPIResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+        status:
+          type: string
+        productId:
+          type: array
+          items:
+            type: string
+        publicIdentifier:
+          type: array
+          items:
+            type: string
+        statusChange:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatusChange'
+        troubleTicketRelationship:
+          $ref: '#/components/schemas/TroubleTicketRelationship'
+        ticketRelationship:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketRelationship'
+        href:
+          type: string
+        ticketType:
+          type: string
+        externalId:
+          type: string
+        externalSystem:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExternalSystem'
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        relatedEntity:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedEntity'
+        attachment:
+          type: string
+        channel:
+          $ref: '#/components/schemas/Channel'
+        channels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Channel'
+        ticketActivity:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketActivity'
+        creationDate:
+          type: string
+        lastUpdate:
+          type: string
+        note:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
+        statusChangeReason:
+          type: string
+        customFields:
+          $ref: '#/components/schemas/CustomFields'
+        assignees:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assignees'
+        assignee:
+          $ref: '#/components/schemas/Assignee'
+        isRepeatedTicket:
+          type: boolean
+        customerId:
+          type: array
+          items:
+            type: string
+        rootCause:
+          type: string
+        isChild:
+          type: boolean
+        isSlaBreached:
+          type: boolean
+        workFlowRef:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkFlowRef'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Groups'
+        parentId:
+          type: string
+        subStatus:
+          type: string
+        accountId:
+          type: array
+          items:
+            type: string
+        postToRemedy:
+          type: string
+        expectedResolutionDate:
+          type: string
+        category:
+          type: string
+        loB:
+          type: string
+        countryInformation:
+          $ref: '#/components/schemas/CountryInformation'
+        '@baseType':
+          type: string
+        '@type':
+          type: string
+        '@schemaLocation':
+          type: string
+    ExternalSystem:
+      type: object
+      properties:
+        id:
+          type: string
+    Groups:
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+        href:
+          type: string
+        '@schemaLocation':
+          type: string
+    StatusChange:
+      type: object
+      properties:
+        status:
+          type: string
+        changeDate:
+          type: string
+        changeReason:
+          type: string
+        '@type':
+          type: string
+    TicketActivity:
+      type: object
+      properties:
+        author:
+          type: string
+        date:
+          type: string
+        text:
+          type: string
+        action:
+          type: string
+        note:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        assignedUser:
+          type: string
+        status:
+          type: string
+        previousComment:
+          type: string
+        '@type':
+          type: string
+    TicketRelationship:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        name:
+          type: string
+        relationshipType:
+          type: string
+        '@baseType':
+          type: string
+        '@schemaLocation':
+          type: string
+        '@type':
+          type: string
+    TroubleTicketRelationship:
+      type: object
+      properties:
+        name:
+          type: string
+    TroubleTicketResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+        status:
+          type: string
+        note:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
+        statusChange:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatusChange'
+        troubleTicketRelationship:
+          $ref: '#/components/schemas/TroubleTicketRelationship'
+        href:
+          type: string
+        ticketType:
+          type: string
+        externalId:
+          type: string
+        resolutionDate:
+          type: string
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        relatedEntity:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedEntity'
+        channel:
+          $ref: '#/components/schemas/Channel'
+        creationDate:
+          type: string
+        lastUpdate:
+          type: string
+        number:
+          type: string
+        resolved_date:
+          type: string
+        httpStatus:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        attachment:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachments'
+        resolution_comments:
+          type: string
+        statusChangeReason:
+          type: string
+        productId:
+          type: array
+          items:
+            type: string
+        publicIdentifier:
+          type: array
+          items:
+            type: string
+        externalSystem:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExternalSystem'
+        channels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Channel'
+        ticketActivity:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketActivity'
+        customFields:
+          $ref: '#/components/schemas/CustomFields'
+        assignees:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assignees'
+        assignee:
+          $ref: '#/components/schemas/Assignee'
+        isRepeatedTicket:
+          type: boolean
+        customerId:
+          type: array
+          items:
+            type: string
+        rootCause:
+          type: string
+        isChild:
+          type: boolean
+        isSlaBreached:
+          type: boolean
+        workFlowRef:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkFlowRef'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Groups'
+        parentId:
+          type: string
+        subStatus:
+          type: string
+        accountId:
+          type: array
+          items:
+            type: string
+        postToRemedy:
+          type: string
+        expectedResolutionDate:
+          type: string
+        category:
+          type: string
+        loB:
+          type: string
+        dclmTroubleTicketAPIResponseList:
+          type: array
+          items:
+            $ref: '#/components/schemas/DCLMTroubleTicketAPIResponse'
+        '@baseType':
+          type: string
+        '@type':
+          type: string
+        '@schemaLocation':
+          type: string
+    WorkFlowRef:
+      type: object
+      properties:
+        formId:
+          type: string
+        processId:
+          type: string
+        groupId:
+          type: string
+        taskInfoId:
+          type: string
+        formIdentity:
+          type: string
+        balkanGraphId:
+          type: string
+        workflowId:
+          type: string
+    BadRequestErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: "5000"
+        statusMessage:
+          type: string
+          example: INVALID_INPUT_PARAMETERS
+        supportMessage:
+          type: string
+          example: The input parameters provided are invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 400
+            series: CLIENT_ERROR
+            reason: Bad Request
+        timestamp:
+          type: string
+          example: 2025-08-05T20:57:21Z
+    UnauthorizedErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: "4000"
+        statusMessage:
+          type: string
+          example: Unauthorized
+        supportMessage:
+          type: string
+          example: The supplied authentication is invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 401
+            series: CLIENT_ERROR
+            reason: Unauthorized
+        timestamp:
+          type: string
+          example: 2025-08-05T20:57:21Z
+    ServerErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: "3001"
+        statusMessage:
+          type: string
+          example: INTERNAL_SERVER_ERROR
+        supportMessage:
+          type: string
+          example: An internal server error occurred and processing could not be completed.
+        httpStatus;:
+          type: object
+          example:
+            code: 500
+            series: SERVER_ERROR
+            reason: Internal Server Error
+        timestamp:
+          type: string
+          example: 2025-08-05T20:57:21Z

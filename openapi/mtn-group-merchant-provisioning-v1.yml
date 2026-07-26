@@ -1,0 +1,617 @@
+swagger: '2.0'
+info:
+  description: To enable merchants to manage purchases of subscribers 
+  version: "v1.0"
+  title: MTN Merchant Provisioning API
+
+schemes:
+  - https
+host: "api.mtn.com"
+basePath: "/v1/merchant"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/v1/oauth/access_token
+
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+
+paths:
+  /validate/{customerId}:
+    post:
+      tags:
+        - Validate Customer
+      summary: Validate the given Customer ID.
+      description: Used by the merchant to validate the Customer ID.
+      operationId: validateMsisdn
+      parameters:
+        - name: "targetSystem"
+          in: header
+          required: true
+          type: string
+          default: SAAE
+          enum:
+            - SAAE
+        - name: "customerId"
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ValidateCustomerRequest"
+          
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/ValidateCustomerResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+  
+  /purchase/{customerId}:
+    post:
+      tags:
+        - Purchase
+      summary: Used to purchase airtime/bundles.
+      description: Used to purchase airtime/bundles. In addition an Auto Top Up (isAutoTopUp) field has been introduced for Bundle or Airtime Recharges. When isAutoTopUp=true, paymentId must be set.
+      operationId: purchase
+      parameters:
+        - name: "targetSystem"
+          in: header
+          required: true
+          type: string
+          default: SAAE
+          enum:
+            - SAAE
+        - name: "customerId"
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/PurchaseCustomerRequest"
+          
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/ValidateCustomerResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+
+  /adviceReconcile/{merchantId}:
+    post:
+      tags:
+        - Advice Reconcile
+      summary: Used to purchase airtime/bundles.
+      description: Used to purchase airtime/bundles. In addition an Auto Top Up (isAutoTopUp) field has been introduced for Bundle or Airtime Recharges. When isAutoTopUp=true, paymentId must be set.
+      operationId: adviceReconcile
+      parameters:
+        - name: "targetSystem"
+          in: header
+          required: true
+          type: string
+          default: SAAE
+          enum:
+            - SAAE
+        - name: "merchantId"
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ReconRequest"
+          
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/ReconResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+  
+  /usageLimitAdjust/{merchantId}:
+    post:
+      tags:
+        - Usage Limit Adjust
+      summary: Used to Reserve, Commit or Abort merchant limit.
+      description: This implementation has been done for the auto top up service where a Merchant's Limit can be reserved (Holds the Limit), Committed (Committed as Success) and Aborted (Limit Rolled Back). If we don't receive a commit or abort within a transaction keep alive period, the request will be aborted which will result in the external party needing to repeat the reserve.
+      operationId: usageLimitAdjust
+      parameters:
+        - name: "targetSystem"
+          in: header
+          required: true
+          type: string
+          default: SAAE
+          enum:
+            - SAAE
+        - name: "merchantId"
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/usageLimitRequest"
+          
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: "#/definitions/usageLimitResponse"
+        '400':
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: "Customer not found"
+          schema:
+            $ref: "#/definitions/Error"
+        '405':
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+          
+
+definitions:
+  ValidateCustomerRequest:
+    type: object
+    properties:
+      merchantId:
+        type: string
+        minLength: 1
+        maxLength: 50
+        description: This field represents the merchant responsible for initiating the request.
+        example: '99999'
+      transactionId:
+        maxLength: 50
+        type: string
+        description: RSN is a unique request sequence number that can be used to tie up the request and response.
+        example: "4837617387438085"
+      timestamp:
+        description: The field denotes the date at which the request is done.
+        type: string
+        example: '20101126023515'
+      posType:
+        description: This field represents the point of sale identifier of the external application submitting the request.
+        enum:
+          - ATM
+          - CPP
+          - IVR
+          - SMS
+          - TestXML
+          - USSD
+          - WAP
+          - WEB
+          - WIG
+          - APP
+          - AgentAPP
+          - AgentUSSD
+          - AgentWEB
+        type: string
+        example: 'ATM'
+      merchantLocation:
+        description: This field represents the merchant’s location.
+        type: string
+        example: '14th avenue, Roodepoort' 
+      purchaseType:
+        description: Allowed Purchase types. This can either be Recharge, Voucher or Dynamic
+        type: string
+        enum: 
+          - Recharge 
+          - Voucher
+          - Dynamic
+      bundleID:
+        description: The virtual alias (Part number) from ERP.
+        type: string
+        example: 'DATA100MB' 
+      isAdvanced:
+        description: For XtraTime.
+        type: boolean
+        example: true
+        
+  ValidateCustomerResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        example: "0000"
+      statusMessage:
+        type: string
+        example: "Success"
+      transactionId:
+        type: string
+        description: Unique identifier of the transaction
+      data:
+        type: object
+        properties:
+          msn:
+            type: string
+            description: This field represents the message sequence number generated by the ASAP to track the submitted request at a later point in time.
+          merchantId:
+            type: string
+            minLength: 1
+            maxLength: 50
+            description: This field represents the merchant responsible for initiating the request.
+            example: '99999'
+          customerId:
+            type: string
+            description: Customer Identifier eg. MSISDN
+            
+  PurchaseCustomerRequest:
+    type: object
+    properties:
+      merchantId:
+        type: string
+        minLength: 1
+        maxLength: 50
+        description: This field represents the merchant responsible for initiating the request.
+        example: '99999'
+      transactionId:
+        maxLength: 50
+        type: string
+        description: RSN is a unique request sequence number that can be used to tie up the request and response.
+        example: "4837617387438085"
+      timestamp:
+        description: The field denotes the date at which the request is done.
+        type: string
+        example: '20101126023515'
+      posType:
+        description: This field represents the point of sale identifier of the external application submitting the request.
+        enum:
+          - ATM
+          - CPP
+          - IVR
+          - SMS
+          - TestXML
+          - USSD
+          - WAP
+          - WEB
+          - WIG
+          - APP
+          - AgentAPP
+          - AgentUSSD
+          - AgentWEB
+        type: string
+        example: 'ATM'
+      merchantLocation:
+        description: This field represents the merchant’s location.
+        type: string
+        example: '14th avenue, Roodepoort' 
+      purchaseType:
+        description: Allowed Purchase types. This can either be Recharge, Voucher or Dynamic
+        type: string
+        enum: 
+          - Recharge 
+          - Voucher
+          - Dynamic
+      bundleID:
+        description: The virtual alias (Part number) from ERP.
+        type: string
+        example: 'DATA100MB' 
+      isAdvanced:
+        description: For XtraTime.
+        type: boolean
+        example: true
+      amount:
+        description: 'This field denotes the amount that should be credited to the subscribers MSISDN. Note: The amount specified must be in cents.'
+        type: integer  
+      transactionDescription:
+        description: This field represents information about the transaction type. 
+        enum:
+          - AIRTIMELOAN
+          - AUTOAIRTIMELOAN
+          - VARIABLEVALUEVOUCHER
+        type: string
+        example: 'VARIABLEVALUEVOUCHER'
+      catalogueVersion:
+        type: integer
+        description: Version of the active catalogue on SAAE.
+        example: 1590739473
+      varOfferID:
+        description: This field represents the identifier of the product in the channel catalogue
+        type: string
+        example: '9257' 
+      varOfferVal:
+        description: Used in conjunction with varOfferValUOM to calculate “period” of a service benefit.
+        type: string
+        example: '1'
+      varOfferValUOM:
+        enum:
+          - Seconds
+          - Hours
+          - Days
+          - Weeks
+          - Months
+        type: string
+        example: 'Days'
+      offerType:
+        type: string
+        description: This field represents the type of the product in the channel catalogue
+      offerCategory:
+        description: This field represents the category of the offer.
+        type: string
+      offerSubCategory:
+        description: This field represents the sub category of the offer.
+        type: string
+      offerFreq:
+        description: This field represents the frequecny at which the bundle is provisioned.
+        type: string
+      offerRecCycle:
+        description: TThis field represents the cycles at which the bundle is provisioned.
+        type: string
+      isAutoTopUp:
+        description: This is a conditional field and is only applicable for purchaseType Recharge . This field will enable customers to automatically purchase frequency-based Bundles or Airtime
+        type: boolean
+        example: true
+      paymentId:
+        description: Mandatory when Auto Top up is true. The portal (online recharges) generates the product payment ID (PPID), which will be shared via SOA to SAAE to IBF.
+        type: string
+        example: '5454DERFD'
+      varServices:
+        type: array
+        items:
+            $ref: "#/definitions/value"
+
+  value:
+    type: object
+    properties:
+      serviceType:
+        description: Auto Top Up
+        type: boolean
+        example: true
+      uom:
+        type: string
+        description: Unit of measure
+        enum:
+          - MB/GB
+          - UNITS
+          - MINUTES
+          - SECONDS
+          - RANDS/CENTS
+        example: 'RANDS/CENTS'
+      value:
+        description: The value of the product
+        type: string
+        example: 'R16' 
+      effectiveRate:
+        description: The effective rate of the product. If value of “0” sent in, then default effective rates configured against “product” apply.
+        type: string
+        example: '0' 
+      validity:
+        description: Used in conjunction with VALIDITY_UOM to calculate “period” of a service benefit.
+        type: string
+        example: '1' 
+      validityUOM:
+        description: Unit of measure
+        enum:
+          - Seconds
+          - Hours
+          - Days
+          - Weeks
+          - Months
+        type: string
+        example: 'Days'
+              
+  ReconRequest:
+    type: object
+    properties:
+      transactionId:
+        maxLength: 50
+        type: string
+        description: RSN is a unique request sequence number that can be used to tie up the request and response.
+        example: "4837617387438085"
+      timestamp:
+        description: The field denotes the date at which the request is done.
+        type: string
+        example: '20101126023515'
+      reconDate:
+        description: This field represents the date for which reconciliation advice (usage) should be retrieved for the merchant ID specified.
+        type: string
+      
+  ReconResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        example: "0000"
+      statusMessage:
+        type: string
+        example: "Success"
+      transactionId:
+        type: string
+        description: Unique identifier of the transaction
+      data:
+        type: object
+        properties:
+          msn:
+            type: string
+            description: This field represents the message sequence number generated by the ASAP to track the submitted request at a later point in time.
+          merchantId:
+            type: string
+            minLength: 1
+            maxLength: 50
+            description: This field represents the merchant responsible for initiating the request.
+            example: '99999'
+          reconDate:
+            description: This field represents the date for which reconciliation advice (usage) should be retrieved for the merchant ID specified.
+            type: string
+          reconDateTotal:
+            description: This field represents the total usage for the merchant on the particular date specified.
+            type: string
+  
+  usageLimitRequest:
+    type: object
+    properties:
+      transactionId:
+        maxLength: 50
+        type: string
+        description: RSN is a unique request sequence number that can be used to tie up the request and response.
+        example: "4837617387438085"
+      timestamp:
+        description: The field denotes the date at which the request is done.
+        type: string
+        example: '20101126023515'
+      customerId:
+        type: string
+        description: Customer Identifier eg. MSISDN
+      amount:
+        description: 'This field denotes the amount that should be credited to the subscribers MSISDN. Note: The amount specified must be in cents.'
+        type: integer  
+      bundleID:
+        description: Identifier for the bundle.
+        type: string
+        example: 'DATA1G'
+      usageAdjust:
+        description: mode of adjustment
+        type: string
+        enum:
+          - Reserve
+          - Commit
+          - Abort
+      paymentId:
+        description: Mandatory when Auto Top up is true. The portal (online recharges) generates the product payment ID (PPID), which will be shared via SOA to SAAE to IBF.
+        type: string
+        example: '5454DERFD'
+        
+  usageLimitResponse:  
+    type: object
+    properties:
+      statusCode:
+        type: string
+        example: "0000"
+      statusMessage:
+        type: string
+        example: "Success"
+      transactionId:
+        type: string
+        description: Unique identifier of the transaction
+      data: 
+        type: object
+        properties:
+          reserveRefId:
+            type: string
+            description: This field represents the message sequence number generated by the ASAP to track the submitted request at a later point in time. SAAE considers this the same as MSN.
+      
+  Error:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      statusCode:
+        type: "string"
+        description: "Status code returned by provider system"
+      statusMessage:
+        type: "string"
+        description: "Status description"
+      supportMessage:
+        type: "string"
+        description: "More error details and corrective measures"
+      path:
+        type: "string"
+        description: "The path that caused the error"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      transactionId:
+        type: "string"
+        description: "Transaction id returned by the provider system."

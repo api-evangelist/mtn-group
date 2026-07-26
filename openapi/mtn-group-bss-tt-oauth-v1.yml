@@ -1,0 +1,128 @@
+swagger: '2.0'
+info:
+  title: Authentication APIs
+  description: |-
+    ## Authentication API
+  version: 4.0.0
+host: api.mtn.com
+basePath: /v1/bss-oauth
+schemes:
+  - https
+securityDefinitions:
+  ApiKey:
+    type: apiKey
+    name: x-api-key
+    in: header
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+tags:
+  - name: auth
+
+paths:
+  /oauth2/token:
+    post:
+      operationId: auth
+      summary: Sends an auth request
+      description: This operation sends an authorization request.
+      tags:
+        - auth
+      produces:
+        - application/x-www-form-urlencoded
+      parameters:
+        - name: credential
+          description: The ResourceOrder to be created
+          required: true
+          schema:
+            $ref: '#/definitions/Credential'
+          in: body
+      security:
+        - ApiKey: []
+      responses:
+        '200':
+          description: Created
+          schema:
+            $ref: '#/definitions/AuthResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  AuthResponse:
+    type: object
+    description: Authorization response
+    properties:
+      access_token:
+        type: string
+        example: 2d787d0e-1390-39d8-9fef-6a520cfe3cef
+      refresh_token:
+        type: string
+        example: 7b9fd751-ae7c-3284-a1c9-552429e73b15
+      scope:
+        type: string
+        example: openid
+      id_token:
+        type: string
+        example: xxxxxxxxx
+      token_type:
+        type: string
+        example: Bearer
+      expires_in:
+        type: number
+        example: 3600
+  Credential:
+    type: object
+    description: Authorization request
+    properties:
+      userName:
+        type: string
+        example: user
+      password:
+        type: string
+        example: 7b9fd751ae7c3284a1c9552429e73b15
+
+
+
+
+  Error:
+    description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+    type: object
+    required:
+      - code
+      - reason
+    properties:
+      code:
+        type: string
+        description: Application relevant detail, defined in the API or a common list.
+      reason:
+        type: string
+        description: Explanation of the reason for the error which can be shown to a client user.
+      message:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client user.
+      status:
+        type: string
+        description: HTTP Error code extension
+

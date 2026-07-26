@@ -1,0 +1,216 @@
+swagger: '2.0'
+info:
+  title: MTN G2M Product Offering API
+  description: >-
+    API to provide capability to manage Offering specification of  products. 
+  version: 1.0.0
+host: api.mtn.com
+basePath: /v1/g2m
+schemes:
+  - https
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/v1/oauth/access_token
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+paths:
+  /productOffering/deals:
+    get:
+      tags:
+        - productOffering
+      summary: Retrieve Deals
+      operationId: getDealsResponseUsingGET
+      parameters:
+        - in: query
+          name: buId
+          type: string
+        - in: query
+          name: dealId
+          type: string
+        - in: query
+          name: interactionDate
+          type: string
+        - in: query
+          name: interactionId
+          type: string
+        - in: query
+          name: opId
+          type: string
+        - in: query
+          name: productId
+          type: string
+        - in: query
+          name: serviceName
+          type: string
+        - in: query
+          name: sourceApplicationId
+          type: string
+     
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GetDealsResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error' 
+            
+definitions:
+  DealDevices:
+      type: object
+      properties:
+        subDealId:
+          type: string
+        deviceName:
+          type: string
+        deviceMRCWithVAT:
+          type: string
+        deviceMRCWithoutVAT:
+          type: string
+  Deals:
+      type: object
+      properties:
+        dealId:
+          type: string
+        dealType:
+          type: string
+        dealName:
+          type: string
+        contractTerm:
+          type: string
+        dealPriceWithVAT:
+          type: string
+        dealPriceWithoutVAT:
+          type: string
+        devices:
+          type: array
+          items:
+            $ref: '#/definitions/DealDevices'
+        pricePlan:
+          type: array
+          items:
+            $ref: '#/definitions/PricePlan'
+  
+  GetDealsResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+      statusMessage:
+        type: string
+      supportMessage:
+        type: string
+      data:
+        type: object
+        properties:
+          buID:
+            type: string
+          deals:
+            type: array
+            items:
+              $ref: '#/definitions/Deals'
+          interactionDate:
+            type: string
+            format: date-time
+          interactionDateComplete:
+            type: string
+            format: date-time
+          interactionID:
+            type: string
+          interationStatus:
+            type: string
+          opID:
+            type: string
+          products:
+            type: array
+            items:
+              $ref: '#/definitions/Products'
+          sourceApplicationID:
+            type: string
+          
+ 
+  
+  PricePlan:
+      type: object
+      properties:
+        subDealId:
+          type: string
+        pricePlan:
+          type: string
+        serviceMRCWithVAT:
+          type: string
+        serviceMRCWithoutVAT:
+          type: string
+        serviceType:
+          type: string
+  Products:
+      type: object
+      properties:
+        productid:
+          type: string
+        productName:
+          type: string
+        serviceMRC:
+          type: string
+        productType:
+          type: string
+  
+  Error:
+    type: "object"
+    title: "Error"
+    required:
+      - "status"
+      - "message"
+    properties:
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Time stamp of the error"
+      status:
+        type: "string"
+        description: "Status/Error code returned from the provider system"
+      error:
+        type: "string"
+        description: "Status/Error description"
+      message:
+        type: "string"
+        description: "More error details and corrective measures"
+      path:
+        type: "string"
+        description: "the path that caused the error"

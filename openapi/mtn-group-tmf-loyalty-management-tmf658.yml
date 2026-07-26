@@ -1,0 +1,489 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: LoyaltySwagger
+  description: The TMForum Loyalty API Specification as developed by Globetom
+host: api.mtn.com
+basePath: /tmf-api/loyaltyManagement/v1
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+ 
+  /loyaltyProgramMember:
+    post:
+      description: This operation creates a new loyalty program member.
+      tags:
+        - Loyalty Member
+      operationId: Create Member
+      produces:
+        - application/json
+      parameters:
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateLoyaltyMemberRef'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/CreateLoyaltyMemberRef'
+        '409':
+          description: Conflict - A loyalty transaction with the same identifier already exists.
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable Entity - Field rule violation or missing required attribute.
+          schema:
+            $ref: '#/definitions/Error'
+  /loyaltyProgramMember/{memberId}:
+    delete:
+      description: This operation deletes a loyalty program member.
+      tags:
+        - Loyalty Member
+      operationId: Delete Member
+      produces:
+        - application/json
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/LoyaltySuccessResponse'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+  /loyaltyMember/{memberId}/loyaltyBalance:
+    get:
+      description: This operation retrieves loyalty program member accounts balance. 
+      tags:
+        - Loyalty Balance
+      operationId: List Member Balances
+      produces:
+        - application/json
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+             $ref: '#/definitions/GetLoyaltyBalance'
+    patch:
+      description: This operation updates the attributes of a loyalty program member loyalty balance present in the request body and update another members/ point transfer loyalty balance.
+      tags:
+        - Loyalty Balance
+      operationId: Update Member Balance
+      produces:
+        - application/json
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          type: string
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/LoyaltyBalanceTransfer'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/LoyaltySuccessResponse'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable Entity - Field rule violation or missing required attribute.
+          schema:
+            $ref: '#/definitions/Error'
+  /loyaltyMember/{memberId}/loyaltyBurn:
+    get:
+      description: This operation retrieves a  loyalty burn transactions of a spesific programme member.Redemtion history
+      tags:
+        - Loyalty Burn
+      operationId: List Burn Transactions
+      produces:
+        - application/json
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          type: string
+        
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/LoyaltyTransactionRef'
+    post:
+      description: This operation creates a new loyalty burn transaction, Loyaty redemtion.
+      tags:
+        - Loyalty Burn
+      operationId: Burn Loyalty Balance
+      produces:
+        - application/json
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          type: string
+        - name: Body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateLoyaltyBurn'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/LoyaltyBurnCreateRef'
+        '409':
+          description: Conflict - A loyalty transaction with the same identifier already exists.
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Unprocessable Entity - Field rule violation or missing required attribute.
+          schema:
+            $ref: '#/definitions/Error'
+ 
+definitions:
+  ValidFor:
+    title: ValidFor
+    type: object
+    properties:
+      startDateTime:
+        type: string
+      endDateTime:
+        type: string
+    required:
+      - startDateTime
+  CreateLoyaltyBurn:
+    title: CreateLoyaltyBurn
+    type: object
+    properties:
+      redeemAllPoints:
+        type: boolean
+      loyaltyCatalogueItem:
+        $ref: '#/definitions/LoyaltyCatalogueItemRef'
+  CreateLoyaltyMemberRef:
+    title: CreateLoyaltyMember
+    type: object
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+      name:
+        type: string
+      validFor:
+        $ref: '#/definitions/ValidFor'
+      charecteristic:
+        type: array
+        items: 
+          $ref: '#/definitions/CharecteristicRef'
+      engageParty:
+        type: array
+        items:
+          $ref: '#/definitions/EngagedPartyRef'
+  GetLoyaltyBalance:
+    title: GetLoyaltyBalance
+    type: object
+    properties:
+      availablePoints:
+        type: string
+      listResponse:
+        type: array
+        items:
+              $ref: '#/definitions/LoyaltyBalance'
+  LoyaltyCatalogueItemRef:
+    title: LoyaltyCatalogueItem
+    type: object
+    properties:
+      id:
+        type: string
+      unit:
+        type: string
+        enum: [sms,voice,data]
+  LoyaltyBurnRef:
+    title: LoyaltyBurn
+    type: object
+    properties:
+      loyaltyBurnId:
+        type: string
+      availableBalance:
+        type: string
+      redeemedQuantity:
+        type: integer
+        format: int32
+      openingBalance:
+        type: number
+        format: double
+      closingBalance:
+        type: number
+        format: double
+      dateTime:
+        type: string
+        format: dateTime
+      description:
+        type: string
+  LoyaltyBurnCreateRef:
+    title: LoyaltyBurn
+    type: object
+    properties:
+      code: 
+        type: string
+      message: 
+        type: string
+      description: 
+        type: string
+      loyaltyBurnId:
+        type: string
+      availableBalance:
+        type: string
+      redeemedQuantity:
+        type: integer
+        format: int32
+      openingBalance:
+        type: number
+        format: double
+      closingBalance:
+        type: number
+        format: double
+      dateTime:
+        type: string
+        format: dateTime
+  LoyaltyBalance:
+    title: LoyaltyBalance
+    type: object
+    properties:
+      id:
+        type: string
+      
+      quantity:
+        $ref: '#/definitions/Quantity'
+      redeemQuantity:
+        $ref: '#/definitions/RedeemQuantity'
+      validFor:
+        $ref: '#/definitions/ValidFor'
+      loyaltyProgramMember:
+        $ref: '#/definitions/LoyaltyMemberLinkRef'
+      productSpecification:
+        $ref: '#/definitions/LoyaltyProgramProductSpecification'
+  LoyaltyBalanceTransfer:
+    title: LoyaltyBalanceTransfer
+    type: object
+    properties:
+      toLoyaltyProgrammeMember:
+        type: string
+      pointsToBeTransferred:
+        type: number
+  LoyaltySuccessResponse:
+    title: LoyaltyBalanceTransferResponse
+    required:
+      - code
+      - message
+    properties:
+      code:
+        description: An integer coding the error type. This is given to caller so he can translate them if required.
+        type: integer
+      message:
+        description: A short localized string that describes the error.
+        type: string
+      description:
+        description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
+        type: string
+  LoyaltyMemberLinkRef:
+    title: LoyaltyMemberLinkRef
+    type: object
+    properties:
+      id:
+        type: string
+      publicIdentifier:
+        type: string
+      href:
+        type: string
+  CharecteristicRef:
+    title: CharecteristicRef
+    type: object
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+  EngagedPartyRef:
+    title: EngagedPartyRef
+    type: object
+    properties:
+      id:
+        type: string
+      contactMedium:
+        type: array
+        items:
+          $ref: '#/definitions/ContactMediumRef'
+  ContactMediumRef:
+    title: ContactMediumRef
+    type: object
+    properties:
+      type:
+        type: string
+      medium: 
+        type: array
+        items:
+          $ref: '#/definitions/MediumRef'
+  MediumRef:
+    title: MediumRef
+    type: object
+    properties:
+      type:
+        type: string
+      value:
+        type: string
+  LoyaltyTransactionRef:
+    title: LoyaltyTransaction
+    type: object
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+      quantity:
+        type: integer
+        format: int32
+      openingBalance:
+        type: number
+        format: double
+      closingBalance:
+        type: number
+        format: double
+      createDateTime:
+        type: string
+        format: dateTime
+      modifiedDate: 
+        type: string
+        format: dateTime
+      dateTime:
+        type: string
+        format: dateTime
+      description:
+        type: string
+      type:
+        type: string
+      catalogueItem:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+      loyaltyProgramMember:
+        type: object
+        properties:
+          id:
+            type: string
+      loyaltyBalance:
+        type: array
+        items:
+          $ref: '#/definitions/LoyaltyBalanceRef'
+    required:
+      - id
+      - href
+      - quantity
+      - description
+      - openingBalance
+      - closingBalance
+      - dateTime
+  LoyaltyBalanceRef:
+    title: LoyaltyBalance
+    type: object
+    properties:
+      id:
+        type: string
+      quantity:
+        $ref: '#/definitions/Quantity'
+      redeemQuantity:
+        $ref: '#/definitions/RedeemQuantity'
+  Quantity:
+    title: Quantity
+    type: object
+    properties:
+      unit:
+        type: string
+      balance:
+        type: number
+        format: double
+    required:
+      - balance
+  RedeemQuantity:
+    title: Quantity
+    type: object
+    properties:
+      unit:
+        type: string
+      balance:
+        type: number
+        format: double
+    required:
+      - balance
+  LoyaltyProgramProductSpecification:
+    title: Specification
+    type: object
+    properties:
+      id:
+        type: string
+     
+    required:
+      - id
+  Error:
+    required:
+      - code
+      - message
+    properties:
+      code:
+        description: An integer coding the error type. This is given to caller so he can translate them if required.
+        type: integer
+      message:
+        description: A short localized string that describes the error.
+        type: string
+      description:
+        description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
+        type: string
+      infoURL:
+        description: (optional) A URL to online documentation that provides more information about the error.
+        type: string
+      details:
+        type: array
+        items:
+          $ref: '#/definitions/ErrorDetail'
+  ErrorDetail:
+    required:
+      - code
+      - message
+    properties:
+      code:
+        description: An integer coding the error type. This is given to caller so he can translate them if required.
+        type: integer
+      message:
+        description: A short localized string that describes the error.
+        type: string
+      description:
+        description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
+        type: string
+      infoURL:
+        description: (optional) A URL to online documentation that provides more information about the error.
+        type: string

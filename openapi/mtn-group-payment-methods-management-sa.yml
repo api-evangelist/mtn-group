@@ -1,0 +1,491 @@
+swagger: '2.0'
+info:
+  description: |-
+    A suite of apis for customer payment method details and its data type.
+
+    **07-July-21: ChangeID: 00000**
+    - Updated the response body for the /paymentMethod endpoint
+    
+    **06-December-21:**
+    - Added a new method for updating the payment method details, as below:
+      PUT /paymentMethod
+  
+  title: Payment Methods Management
+  version: "1.1"
+
+schemes:
+  - https
+host: "api.mtn.com"
+basePath: "/v1"
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/v1/oauth/access_token
+
+security:
+  - ApiKeyAuth: []
+  - OAuth2: []
+
+definitions:
+  PaymentMethodType:
+    description: Representation of a payment method
+    properties:
+      id:
+        type: string
+        description: Unique id of the payment method in the server
+      'type':
+        type: string
+        enum:
+          - bank
+          - bankCard
+          - tokenizedCard
+
+        description: Payment method type. The content of the details field depends on the value of this one
+      details:
+        type: object
+        properties:
+          tokenizedCard:
+            description: "List of tokenized cards"
+            type: array
+            items:
+              $ref: '#/definitions/TokenizedCard'
+          bank:
+            description: "List of tokenized cards"
+            type: array
+            items:
+              $ref: '#/definitions/Banks'
+
+    required:
+      - id
+      - 'type'
+      - details
+
+  TokenizedCard:
+    description: Representation of a tokenized card
+    properties:
+      brand:
+        type: string
+        example: "MASTERCARD"
+      value:
+        type: string
+        description: "This is the card tokenized string "
+        example: "FLdduzYEwOYwdEaC0D5z/vjc/iwQ/P8q3oAdAtvTTg4="
+      tokenType:
+        type: string
+        description: "This is an indicator whether it is a debit or credit card"
+        example: "DEBIT"
+      token:
+        type: string
+        description: "Masked card number"
+        example: "511111xxxxxx1118"
+      issuer:
+        type: string
+        description: "Card issuer"
+        example: "FISERV SOLUTIONS, LLC"
+      expiry:
+        type: string
+        description: "Expiry of a card"
+        example: "0423"
+      id: 
+        type: string
+        description: can be customer id associated with the token
+        example: '00039930433'
+      expired:
+        type: boolean
+        description: "Shows if the card is expired or not"
+        example: false
+      recurring:
+        type: boolean
+        description: "Shows if the card is reccuring or not"
+        example: false
+      date:
+        type: string
+        description: "a registration date associated with the token"
+        example: "2022-04-15T15:39:33.881Z"
+
+  Banks:
+    description: Representation of a tokenized card
+    properties:
+      bankName:
+        type: string
+        example: "Zenith"
+      accountNumber:
+        type: string
+        description: "bank account number"
+      bankAccountHolderName:
+        type: string
+        description: bankAccountHolderName
+        example: "LINDA HLATSHWAYO"
+      bankAccountType:
+        type: string
+        description: bankAccountType
+        example: "Savings"
+      bankBranchCode:
+        type: string
+        description: bankBranchCode
+        example: "051001"
+      value:
+        type: string
+        description: Account UID
+        example: "rEUcjfh+RQysxSJpuFtOddMTYA28G3GI="
+      issuer:
+        type: string
+        description: "Account issuer"
+        example: "Guarantee Trust Bank Plc"
+      logoUrl:
+        type: string
+        description: URL Pointing to the logo resource
+        example: "https://cdn.pay.mtn.com/bank/fcmb.png"
+      reccuring:
+        type: boolean
+        description: "Shows if the account is reccuring or not"
+        example: false
+      paymentDay:
+        type: string
+        format: date
+        description: "Payment date in YYYY-MM-DD"
+        example: "2022-02-22"
+
+  bankDetails:
+    type: object
+    description: Bank details of the customer. Mandatory if paymentMethod is Debit Order
+    required:
+      - accountHolderName
+      - bankAccountType
+      - bankName
+      - bankBranchCode
+      - bankAccountNumber
+              
+    properties:
+      accountHolderName:
+        type: string
+        description: Customer name as per the new bank account details.
+      bankAccountType:
+        type: string
+        description: Customer bank account type as per the new bank account details.
+        enum: 
+             - Cheque Current
+             - Savings
+             - Bond
+             - None
+             - Other
+             - Transmission
+      bankName:
+        type: string
+        description: Customer bank account name as per the new bank account details. 
+        enum:
+          - ABSA Bank
+          - Bank of Athens
+          - Bidvest Bank
+          - Capitec Bank
+          - FNB
+          - Investec Private Bank
+          - Nedbank
+          - SA Post Bank (Post Office)
+          - Standard Bank
+      bankBranchCode:
+        type: number
+        description: Bank branch code as per the new bank account details. 
+      bankAccountNumber:
+        type: string
+        description: Bank account number as per the new bank account details.
+  Error:
+    type: object
+    required:
+      - statusCode
+      - statusMessage
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '1000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      supportMessage:
+        type: string
+        description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2021-07-21T17:32:28Z'
+      path:
+        type: string
+        description: The path that caused the error
+        example: paymentMethod/Credit Card
+      method:
+        type: string
+        description: The HTTP method type that was used
+        example: PUT
+
+paths:
+  /paymentMethod:
+    get:
+      operationId: retrievePaymentMethods
+      produces:
+        - application/json
+      parameters:
+        - description: To retrieve methods of a specific type
+          enum:
+            - bankCard
+            - bank
+            - tokenizedCard
+          in: query
+          name: type
+          required: false
+          type: string
+        - description: Mobile number or unique identifier of the customer
+          in: query
+          name: customerId
+          required: false
+          type: string
+        - description: To retrieve methods from a specific related party
+          in: query
+          name: relatedParty.id
+          required: false
+          type: string
+          enum:
+            - Flutterwave
+            - CPG
+            - NXG_PG
+        - name: "x-country-code"
+          in: header
+          description: 'Country code for the target system'
+          type: string
+          required: false
+          x-example: 'NGA'
+        - name: "transactionId"
+          in: query
+          type: string
+          description:  "This is the transaction Id from the calling system. This is required if the relatedParty.id is CPG"
+        - name: "description"
+          in: query
+          type: string
+          description: Other information, can be a merchant identifier .ie. merchantId etc.
+          x-example: "1234908"
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: string
+                description: "This is the MADAPI Canonical response Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system response are mapped to specific canonical response codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'"
+              statusMessage:
+                type: string
+                description: "Status Message"
+                example: "Success"
+              transactionId:
+                type: string
+                description: "API generated Id to include for tracking requests"
+              data:
+                $ref: '#/definitions/PaymentMethodType'
+              _links:
+                type: object
+                properties:
+                  self:
+                    type: object
+                    properties:
+                      href:
+                        type: string
+                        example:  "https://api.mtn.com/tmf-api/paymentMethods/v1/paymentMethod"
+
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method not Allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      summary: Retrieve a list of payment methods
+      tags:
+        - payment methods
+  '/paymentMethod/{paymentMethodId}':
+    delete:
+      operationId: deletePaymentMethod
+      produces:
+        - application/json
+      parameters:
+        - name: paymentMethodId
+          in: path
+          description: id of the payment method to fetch
+          required: true
+          type: string
+        - description: To retrieve methods of a specific type
+          enum:
+            - bankCard
+            - bank
+            - tokenizedCard
+          in: query
+          name: type
+          required: false
+          type: string
+        - description: Mobile number or unique identifier of the customer
+          in: query
+          name: customerMsisdn
+          required: false
+          type: string
+        - description: Impacted party to fullfil the service. This shows which system layer to be called to fulfil the request
+          in: query
+          name: providerId
+          required: false
+          type: string
+        - name: "x-country-code"
+          in: header
+          description: 'Country code for the target system'
+          type: string
+          required: true
+          x-example: 'NGA'
+      responses:
+        '204':
+          description: Payment method deleted successfully
+        '400':
+          description: Invalid Token
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '405':
+          description: Method not Allowed
+        '500':
+          description: Internal Server Error
+      summary: Delete a payment method
+      tags:
+        - payment methods
+        
+    put:
+      operationId: updatePaymentMethod
+      produces:
+        - application/json
+      parameters:
+        - name: paymentMethodId
+          in: path
+          description: id of the payment method to update. Tells whether the customer billing type is 'Debit Order' or 'Credit Card' or 'Cash'. Currently 'Cash' is not supported.
+          required: true
+          type: string
+        - name: transactionId
+          description: Source system's unique transaction reference.
+          x-example: 06F4853F-0D4D-4FCF-B54D-FE32BE748581
+          in: header
+          required: false
+          type: string
+        - name: customerMsisdn
+          description: Mobile number or unique identifier of the customer
+          in: query
+          required: false
+          type: string
+        - name: providerId
+          description: Impacted party to fullfil the service. This shows which system layer to be called to fulfil the request
+          in: query
+          required: false
+          type: string
+        - name: billingAccountNumber
+          in: query
+          description: Billing Account Number on which the update has to be done
+          type: string
+          x-example: 'BA111117638'
+        - name: idType
+          in: query
+          description: identity type of the customer [RSAID,PASSPORT]
+          type: string
+          x-example: 'RSAID'
+        - name: idNumber
+          in: query
+          description: id number or the passport number of the customer
+          type: string
+          x-example: '8404271961084'
+        - name: paymentDay
+          in: query
+          description: Day of the month on which payment will be done against the customer bill. Possible values are between number 1 to 31
+          type: number
+          maxLength: 2
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bankDetails'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: string
+                description: "This is the MADAPI Canonical response Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system response are mapped to specific canonical response codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'"
+              statusMessage:
+                type: string
+                description: "Status Message"
+                example: "Success"
+              transactionId:
+                type: string
+                description: "API generated Id to include for tracking requests"
+              _links:
+                type: object
+                properties:
+                  self:
+                    type: object
+                    properties:
+                      href:
+                        type: string
+                        example:  "https://api.mtn.com/v1/paymentMethod/Credit Card"
+        '400':
+          description: Invalid Token
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method not Allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      summary: Update a payment method
+      tags:
+        - payment methods

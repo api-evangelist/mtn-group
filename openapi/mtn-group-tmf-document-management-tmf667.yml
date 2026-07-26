@@ -1,0 +1,307 @@
+swagger: '2.0'
+info:
+  title: Document Management
+  description: This is Swagger UI environment generated for the TMF Document Management specification
+  version: '1.0'
+host: mtn.com
+basePath: /tmf-api/documentManagement
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  
+  /document/{id}:
+ 
+    patch:
+      operationId: updateDocument
+      summary: Updates partially a 'Document' by Profile ID
+      tags:
+        - document
+      parameters:
+        - required: true
+          type: string
+          name: id
+          in: path
+          description: Identifier of the Profile Level
+        - required: true
+          type: string
+          name: profileType
+          in: query
+          description: Identifier of the Profile Type
+          enum:
+           - Service Level
+           - Account Level
+           - Customer Level
+           - Termination
+        - schema:
+            $ref: '#/definitions/Document_Update'
+          required: true
+          in: body
+          name: document
+          description: The Document to be updated
+      responses:
+        '201':
+          description: Updated
+          schema:
+            $ref: '#/definitions/Document'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+ 
+definitions:
+  Document:
+    type: object
+    description: Document is a tangible output from an activity
+    properties:
+      id:
+        type: string
+        description: Identifier of an instance of the document. Required to be unique within the document type.  Used in URIs as the identifier for specific instances of a type.
+      href:
+        type: string
+        description: The URI for the object itself.
+      type:
+        type: string
+        description: Name of the document type
+      name:
+        type: string
+        description: A string used to give a name to the document
+      description:
+        type: string
+        description: free-text description of the document
+      lifecycleState:
+        type: string
+        description: The life cycle state of the document.
+      version:
+        type: string
+        description: A particular form or variety of an artefact that is different from others or from the original. The form represents differences in properties that characterize an artefact, that are not enough to warrant creating a new artefact
+      creationDate:
+        type: string
+        format: date-time
+        description: The date and time the document was created. A date and time formatted in compliance with the ISO8601 standard must be used.
+      lastUpdate:
+        type: string
+        format: date-time
+        description: The date and time the document was last modified. A date and time formatted in compliance with the ISO8601 standard must be used.
+      characteristic:
+        type: array
+        items:
+          $ref: '#/definitions/DocumentCharacteristic'
+      relatedParty:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedPartyRef'
+      documentSpecification:
+        $ref: '#/definitions/DocumentSpecification'
+      binaryAttachment:
+        type: array
+        items:
+          $ref: '#/definitions/Attachment'
+      category:
+        type: array
+        items:
+          $ref: '#/definitions/CategoryRef'
+      documentRelationship:
+        type: array
+        items:
+          $ref: '#/definitions/DocumentRelationship'
+      relatedObject:
+        $ref: '#/definitions/RelatedObject'
+  Document_Update:
+    type: object
+    description: |-
+      Document is a tangible output from an activity
+      Skipped properties: id,href,id,href
+    properties:
+     
+      documentType:
+        type: string
+        description: Name of the document type
+        enum:
+         - POID
+         - POA
+      documentName:
+        type: string
+        description: A string used to give a name to the document
+        enum:
+         - National ID
+         - Passport
+         - Payam Letter
+      description:
+        type: string
+        description: free-text description of the document
+      requestType:
+        type: string
+        description: type of of request linked to the document, eg. registration request
+      partyInteractionId:
+        type: string
+        description: ID of party related to the document eg P1143
+      dmsReferenceNumber:
+        type: string
+        description: DMS reference number of the document
+      lifecycleState:
+        type: string
+        description: The life cycle state of the document.
+        enum:
+          - Received
+          - Verified
+          - Rejected
+          - Unindexed
+      
+      
+      documentRelationship:
+        type: array
+        items:
+          $ref: '#/definitions/DocumentRelationship'
+     
+  DocumentCharacteristic:
+    type: object
+    description: is a list of name value pairs that define the document characteristics.
+    properties:
+      name:
+        type: string
+        description: name of the characteristic (such as description)
+      value:
+        type: string
+  RelatedPartyRef:
+    type: object
+    description: RelatedParty reference. A related party defines party or party role linked to a specific entity.
+    properties:
+      id:
+        type: string
+        description: Unique identifier of a related party
+      href:
+        type: string
+        description: Reference of the related party, could be a party reference or a party role reference
+      role:
+        type: string
+        description: Role of the related party.
+      name:
+        type: string
+        description: Name of the related party
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: Validity period of the related party
+  DocumentSpecification:
+    type: object
+    description: A document specification reference
+    properties:
+      id:
+        type: string
+        description: Indentifier of the DocumentSpecification
+      name:
+        type: string
+        description: a String. Name of the DocumentSpecification
+      version:
+        type: string
+        description: A string, a version of the DocumentSpecification.
+      href:
+        type: string
+        description: The URI for the object itself.
+      URL:
+        type: string
+        description: URL of the Document Specification
+  Attachment:
+    type: object
+    description: Complements the description of an element (for instance a product) through video, pictures...
+    properties:
+      description:
+        type: string
+        description: A narrative text describing the content of the attachment
+      href:
+        type: string
+        description: Reference of the attachment
+      id:
+        type: string
+        description: Unique identifier of the attachment
+      type:
+        type: string
+        description: Attachment type such as video, picture
+      url:
+        type: string
+        description: Uniform Resource Locator, is a web page address (a subset of URI)
+  CategoryRef:
+    type: object
+    description: Category reference. The category resource is used to group product offerings, service and resource candidates in logical containers. Categories can contain other categories and/or product offerings, resource or service candidates.
+    properties:
+      id:
+        type: string
+        description: Unique reference of the category
+      href:
+        type: string
+        description: Unique reference of the category
+      version:
+        type: string
+        description: Category version
+      name:
+        type: string
+        description: Name of the category
+  DocumentRelationship:
+    type: object
+    description: Another document that is related to the current document;
+    properties:
+      type:
+        type: string
+        description: 'a string, Type of relationship: e.g "related"'
+      documentRef:
+        $ref: '#/definitions/DocumentRef'
+  RelatedObject:
+    type: object
+    description: Defines objects linked with trouble ticket.
+    properties:
+      involvement:
+        type: string
+        description: Consequence of the ticket on the related object (for instance disputed, adjusted...)
+      reference:
+        type: string
+        description: Reference of object
+  TimePeriod:
+    type: object
+    description: A base / value business entity used to represent a period of time between two timepoints.
+    properties:
+      startDateTime:
+        type: string
+        format: date-time
+        description: An instant of time, starting at the TimePeriod
+      endDateTime:
+        type: string
+        format: date-time
+        description: An instant of time, ending at the TimePeriod.
+  DocumentRef:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Identifier of the document in DCLM.
+      href:
+        type: string
+        description: The URI for the object itself.
+  
+  Error:
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        description: An integer coding the error type. This is given to caller so he can translate them if required.
+      message:
+        type: string
+        description: A short localized string that describes the error.
+      description:
+        type: string
+        description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
+      infoURL:
+        type: string
+        description: (optional) A URL to online documentation that provides more information about the error.

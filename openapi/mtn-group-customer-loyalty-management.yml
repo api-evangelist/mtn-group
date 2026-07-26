@@ -1,0 +1,283 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: Customer Loyalty Management API
+  description: |-
+    An API to manage customer loyalty operations. Can also be used by 3rd-party partners (3PP) to get a customer's loyalty products and rewards
+    **04-Oct-21 ChangeID:  0000000000235**
+      -Branched off from the original TMF document.
+host: api.mtn.com
+basePath: /v1/loyaltyManagement
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+security:
+  - ApiKeyAuth: []
+paths:
+
+  /loyaltyProgramMember/{memberId}/loyaltyProgramProduct:
+    get:
+      description: >-
+        This operation is used to retrieve the loyalty program member’s loyalty program products.
+      tags:
+        - Loyalty Program Product
+      operationId: List Products
+      produces:
+        - application/json
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          type: string
+        - name: subcriberEmail
+          in: query
+          type: string
+        - name: subscriberName
+          in: query
+          type: string
+        - name: band
+          in: query
+          type: string
+        - name: targetSystem
+          in: query
+          type: string
+          required: true
+          enum: [MEDESSY]
+
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: string
+                description: "This is the MADAPI Canonical response Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system response are mapped to specific canonical response codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'"
+              statusMessage:
+                type: string
+                description: "Status Message"
+              transactionId:
+                type: string
+                description: "API generated Id to include for tracing requests"
+              data:
+                type: object
+                properties:
+                  productCategories:
+                    type: array
+                    items:
+                      $ref: "#/definitions/ProductProgramCategoriesResponseData"
+              _links:
+                type: object
+                properties:
+                  self:
+                    type: string
+                    example: "https://api.mtn.com/v1/loyaltymanagement/loyaltyProgramMember/23464618463/loyaltyProgramProduct"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+
+      security: []
+
+
+  /loyaltyProgramMember/{memberId}/loyaltyProgramProduct/{programProductId}:
+    get:
+      description: >-
+        This operation is used to retrieve the loyalty member's merchants based on the categories the member is eligible for
+      tags:
+        - Loyalty Program Product
+      operationId: Get Product
+      produces:
+        - application/json
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          type: string
+        - name: programProductId
+          in: path
+          required: true
+          type: string
+        - name: band
+          in: query
+          type: string
+        - name: targetSystem
+          in: query
+          type: string
+          required: true
+          enum: [MEDESSY]
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: string
+                description: "This is the MADAPI Canonical response Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system response are mapped to specific canonical response codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'"
+              statusMessage:
+                type: string
+                description: "Status Message"
+              transactionId:
+                type: string
+                description: "API generated Id to include for tracing requests"
+              data:
+                type: object
+                properties:
+                  merchants:
+                    type: array
+                    items:
+                      $ref: "#/definitions/ProductProgramRef"
+              _links:
+                type: object
+                properties:
+                  self:
+                    type: string
+                    example: "https://api.mtn.com/v1/loyaltymanagement/loyaltyProgramMember/23464618463/loyaltyProgramProduct"
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+      security: []
+
+definitions:
+  CreateLoyaltyBalance:
+    title: CreateLoyaltyBalance
+    type: object
+    properties:
+      quantity:
+        $ref: '#/definitions/Quantity'
+    required:
+      - quantity
+
+  LoyaltyAccountCreate:
+    title: LoyaltyAccountCreate
+    type: object
+    properties:
+      id:
+        type: string
+      loyaltyBalance:
+        $ref: '#/definitions/CreateLoyaltyBalance'
+
+  ProductProgramCategoriesResponseData:
+    title: ProductProgramUpdate
+    type: object
+    properties:
+      name:
+        type: string
+      id:
+        type: string
+      description:
+        type: string
+      productStatus:
+        type: string
+      characteristics:
+        type: array
+        items:
+          $ref: '#/definitions/ProductCharacteristics'
+
+  ProductProgramRef:
+    title: ProductProgram
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      productStatus:
+        type: string
+      productSpecId:
+        type: string
+      accountId:
+        type: string
+      image:
+        type: string
+      imageUrl:
+        type: string
+      loyaltyAccount:
+        $ref: '#/definitions/LoyaltyAccountCreate'
+      characteristics:
+        type: array
+        items:
+          $ref: '#/definitions/ProductCharacteristics'
+    required:
+      - name
+      - productSpecId
+  ProductCharacteristics:
+    title: ProductLinkRef
+    type: object
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+
+
+  Quantity:
+    title: Quantity
+    type: object
+    properties:
+      unit:
+        type: string
+      balance:
+        type: number
+        format: double
+    required:
+      - unit
+      - balance
+
+  Error:
+    type: object
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '1000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      supportMessage:
+        type: string
+        description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp of the error
+        example: "2019-08-23T07:29:25.593+0000"
+

@@ -1,0 +1,290 @@
+swagger: '2.0'
+info:
+  title: Communication Management API TMF-681
+  description: >-
+    This is Swagger UI environment generated for the TMF Communication
+    Management specification
+  version: 4.0.0
+host: serverRoot
+basePath: /tmf-api/communicationManagement/v4/
+schemes:
+  - https
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+tags:
+  - name: communicationMessage
+  - name: events subscription
+paths:
+  /communicationMessage:
+    post:
+      operationId: createCommunicationMessage
+      summary: Creates a CommunicationMessage
+      description: This operation creates a CommunicationMessage entity.
+      tags:
+        - communicationMessage
+      parameters:
+        - name: transactionId
+          in: header
+          type: string
+          description: A transactionId for tracking purposes
+        - name: sourceIdentifier
+          in: query
+          type: string
+          description: Source System
+        - name: communicationMessage
+          description: The CommunicationMessage to be created
+          required: true
+          schema:
+            $ref: '#/definitions/CommunicationMessage_Create'
+          in: body
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SendEmail_Response'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/APIError'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/APIError'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/APIError'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/APIError'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/APIError'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/APIError'
+definitions:
+  Any: {}
+  Attachment:
+    type: object
+    description: >-
+      Complements the description of an element (for instance a product) through
+      video, pictures...
+    properties:
+      id:
+        type: string
+        description: Unique identifier for this particular attachment
+      content:
+        type: string
+        description: >-
+          The actual contents of the attachment object, if embedded, encoded as
+          base64
+      url:
+        type: string
+        description: Uniform Resource Locator, is a web page address (a subset of URI)
+      name:
+        type: string
+        description: The name of the attachment    
+      attachmentType:
+        type: string
+        description: Attachment type such as video, picture
+      mimeType:
+        type: string
+        description: >-
+          Attachment mime type such as extension file for video, picture and
+          document
+  Characteristic:
+    type: object
+    description: >-
+      Describes a given characteristic of an object or entity through a
+      name/value pair.
+    required:
+      - name
+      - value
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the characteristic
+      name:
+        type: string
+        description: Name of the characteristic
+      valueType:
+        type: string
+        description: Data type of the value of the characteristic
+  CommunicationMessage:
+    type: object
+    description: >-
+      Communication message means a notification approach in the format of a
+      message which can be dispatched (sent) to the certain user by the system
+      with the content which can be felt and understood by the recipient. The
+      user can be either a final customer or a customer service agent. The
+      message can reach the customer in different interaction channels,
+      including: email, short message, mobile app notification (push).
+    properties:
+      id:
+        type: string
+        description: Unique identifier of Communication Message
+      characteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+        description: Any additional characteristic(s) of this message
+  CommunicationMessage_Create:
+    type: object
+    description: >-
+      Communication message means a notification approach in the format of a
+      message which can be dispatched (sent) to the certain user by the system
+      with the content which can be felt and understood by the recipient. The
+      user can be either a final customer or a customer service agent. The
+      message can reach the customer in different interaction channels,
+      including: email, short message, mobile app notification (push).
+
+      Skipped properties: id,href
+    required:
+      - content
+      - receiver
+      - sender
+      - messageType
+    properties:
+      content:
+        type: string
+        description: The content of the communication message
+      description:
+        type: string
+        description: Description for the whole object
+      sendTime:
+        type: string
+        format: date-time
+        description: The time of sending communication message
+      sendTimeComplete:
+        type: string
+        format: date-time
+        description: The time of completion of sending communication message
+      useCaseId:
+        type: string
+        description: Use case ID for UNE
+      subUseCaseId:
+        type: string
+        description: Sub use case ID for UNE
+      attachment:
+        type: array
+        items:
+          $ref: '#/definitions/Attachment'
+        description: Any attachment associated with this message
+      characteristic:
+        type: array
+        items:
+          $ref: '#/definitions/Characteristic'
+        description: Any additional characteristic(s) of this message
+      receiver:
+        type: array
+        items:
+          $ref: '#/definitions/Receiver'
+        minItems: 1
+        description: The receiver(s) of this message
+      sender:
+        $ref: '#/definitions/Sender'
+      state:
+        $ref: '#/definitions/CommunicationMessageStateType'
+        description: Status of communication message
+      '@baseType':
+        type: string
+        description: When sub-classing, this defines the super-class
+      '@schemaLocation':
+        type: string
+        format: uri
+        description: >-
+          A URI to a JSON-Schema file that defines additional attributes and
+          relationships
+      '@type':
+        type: string
+        description: When sub-classing, this defines the sub-class entity name
+  CommunicationMessageStateType:
+    type: string
+    description: Communication message state type
+    enum:
+      - initial
+      - inProgress
+      - completed
+      - cancelled
+      - failed
+  Receiver:
+    type: object
+    description: Receivers of the communication message.
+    properties:
+      email:
+        type: string
+        description: Receiver address of email, if the communication type is email.
+      appUserId:
+        type: string
+        description: ID of the mobile app user
+  Sender:
+    type: object
+    description: Sender of the communication message.
+    properties:
+      id:
+        type: string
+        description: ID of the sender
+      name:
+        type: string
+        description: Name of the sender
+  APIError:
+    type: object
+    required:
+      - "statusMessage"
+      - "supportMessage"
+      - "transactionId"
+      - "timestamp"
+      - "path"
+      - "method"
+    properties:
+      statusMessage:
+        type: string
+      supportMessage:
+        type: string
+      transactionId:
+        type: string
+      timestamp:
+        type: string
+        example: "2020-08-19 09:09:09"
+      path:
+        type: string
+        description: "endpoint path used to make request"
+      method:
+        type: string
+        description: "HTTP Method used to make request"
+        example: GET/POST/PATCH
+  CommunicationMessage_Create_Response:
+   type: object
+   properties:
+      statusCode:
+        type: string
+        example: '0000'
+      statusMessage:
+        type: string
+        example: 'success'
+      data:
+        $ref: '#/definitions/CommunicationMessage'
+  SendEmail_Response:
+    type: object
+    properties:
+      statusCode:
+        type: "integer"
+        description: Status code from target system to indicate transaction status
+      statusMessage:
+        type: "string"
+        description: Status message from target system to indicate transaction status.
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+      data:
+        type: object
+        properties:
+          emailIdReference:
+            type: string
+            description: Reference number for Email from UNE

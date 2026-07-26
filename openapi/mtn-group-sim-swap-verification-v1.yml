@@ -1,0 +1,312 @@
+swagger: "2.0"
+info:
+  title: SIM Swap Verification API
+  version: '0.1'
+  description: |-
+    The SIM Swap Verification API provides information about an MSISDN's sim-swap details.  
+    ## Supported Operations 
+    1. Get last SIM Swap date of a phone Number.
+    
+
+host: api.mtn.com
+basePath: "/v1/mobile/phoneNumbers"
+schemes:
+  - https
+securityDefinitions: 
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: 'https://api.mtn.com/v1/oauth/access_token?grant_type=client_credentials'
+security:
+  - OAuth2: []
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+
+paths:
+  '/{phoneNumber}/simswap-date':
+    get:
+      tags:
+        - SIM Swap API
+      summary: Retrieve sim-swap date.
+      description: >-
+        Retrieve last sim-swap date from network operator of phoneNumber as
+        identified by customerId (customer's MSISDN).
+      parameters:
+        - name: phoneNumber
+          in: path
+          description: >-
+            phoneNumber represented as
+            International  ITU-T E.164.
+          required: true
+          type: string
+        - name: transactionId
+          in: header
+          required: true
+          description: >-
+            transactionId
+          type: string
+        - name: partnerId
+          in: query
+          description: >-
+            partnerId
+          type: string
+        - name: prefLang
+          in: query
+          description: >-
+            prefLang
+          type: string
+        - name: requesterId
+          in: query
+          description: >-
+            requesterId
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/simswapResponse'
+          headers:
+            transactionId:
+              type: string
+              description: "Client generated Id to include for tracing requests"
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error400'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error401'
+        '403':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error403'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error404'
+        '405':
+          description: Method No Allowed
+          schema:
+            $ref: "#/definitions/Error405"
+        '408':
+          description: Time out
+          schema:
+            $ref: "#/definitions/Error408"
+        '415':
+          description: Not acceptable
+          schema:
+            $ref: "#/definitions/Error415"
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error500"
+        '503':
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error500"
+            
+    
+definitions:
+
+  simswapResponse:
+    required:
+      - customerId
+      - data
+      - statusCode
+      - statusMessage
+    type: object
+    properties:
+      statusCode:
+        type: string
+        enum: ["0000","1022"]
+        description: >
+            HTTP error code extension:
+             * `0000` - Success Response when sim swap is performed
+             * `1022` - When No Simswap is performed
+        example: '0000'
+      statusMessage:
+        type: string
+        description: Message.
+        example: Successful
+      customerId:
+        type: string
+        description: MSISDN of the customer provided in the input as customerId
+        example: '256789999781'
+      transactionId:
+        type: string
+        description: transaction ID From the backend provider system for tracing.
+        example: 232TXYZ-212
+      data:
+        $ref: '#/definitions/simswapData'
+  
+  simswapData:
+    type: object
+    properties:
+      lastSimSwapDate:
+        type: string
+        description: >-
+          The date and time when the last sim swap performed on the SIM of the
+          customerId provided represented as an ISO 8601:2004 [ISO8601 2004]
+          YYYY-MM-DDTHH:MM:SSZ format. If the date cannot be determined, the
+          value will be an empty string
+        example: '2020-04-20T15:22:11+03:00'
+
+  Error400:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: "5000"
+        statusMessage:
+          type: string
+          description: "Invalid Parameters"
+          example: "The input parameters provided are invalid"
+        SupportMessage:
+          type: string
+          description: "Detailed error Message"
+          example: "Unsupported input, please enter a valid 'msisdn' value"
+          enum:
+            - "Unsupported input, please enter a valid 'msisdn' value."
+            - "Invalid country code"
+        transactionId:
+          type: string
+          description: "Id for tracing."
+          example: "fg545f-cf4gg4fd55-fdg85hg6"
+          
+  Error401:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: "4000"
+        statusMessage:
+          type: string
+          description: "Short description of the error"
+          example: "Unauthorised"
+        supportMessage:
+          type: string
+          description: "Longer description of the error"
+          example: "Please verify token environment or access token or API key"
+        transactionId:
+          type: string
+          description: "Id for tracing."
+          example: "fg545f-cf4gg4fd55-fdg85hg6"
+  Error403:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: "6000"
+        statusMessage:
+          type: string
+          description: "Short description of the error"
+          example: "Forbidden"
+        supportMessage:
+          type: string
+          description: "Longer description of the error"
+          example: "Please verify token environment or access token or API key"
+        transactionId:
+          type: string
+          description: "Id for tracing."
+          example: "fg545f-cf4gg4fd55-fdg85hg6"
+  Error404:
+    type: object
+    description: "phoneNumber not found"
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+        example: "1000"
+      statusMessage:
+        type: string
+        example: "phoneNumber not found."
+      supportMessage:
+        type: string
+        example: "Queried phoneNumber could not be found"
+      transactionId:
+        type: string
+        description: "Id for tracing."
+        example: "fg545f-cf4gg4fd55-fdg85hg6"
+  Error405:
+    type: object
+    description: "Method not Allowed"
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+        example: "4001"
+      statusMessage:
+        type: string
+        example: "Not Allowed"
+      supportMessage:
+        type: string
+        example: "Method Not Allowed"
+      transactionId:
+        type: string
+        description: "Id for tracing."
+        example: "fg545f-cf4gg4fd55-fdg85hg6"
+  Error408:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+        example: "3003"
+      statusMessage:
+        type: string
+        description:  "The request timed out."
+        example: "Timeout"
+      supportMessage:
+        type: string
+        description: "The server took too long to respond."
+        example: "Request timed out"
+      transactionId:
+        type: string
+        description: "Id for tracing."
+        example: "fg545f-cf4gg4fd55-fdg85hg6"
+  Error415:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+        example: "5000"
+      statusMessage:
+        type: string
+        description: "Short description of the error"
+        example: "Unsupported Media Type"
+      supportMessage:
+        type: string
+        description: "Longer description of the error"
+        example: "Unsupported Media Type. It should be application/json"
+      transactionId:
+        type: string
+        description: "Id for tracing."
+        example: "fg545f-cf4gg4fd55-fdg85hg6"
+  Error500:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: HTTP error code extension
+        example: "3001"
+      statusMessage:
+        type: string
+        description: "Internal Server Error"
+        example: "Internal Server Error"
+      supportMessage:
+        type: string
+        description: "Error"
+        example: "Internal Server Error"
+      transactionId:
+        type: string
+        description: "Id for tracing."
+        example: "fg545f-cf4gg4fd55-fdg85hg6"

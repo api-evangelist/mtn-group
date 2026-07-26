@@ -1,0 +1,1878 @@
+swagger: "2.0"
+
+info:
+  version: "v1.0.1"
+  title: MTN Customer Score API
+  description: This API is used to determine the customer's score through an activities performed within a period of time.
+schemes:
+  - https
+host: "api.mtn.com"
+basePath: "/v1"
+
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+securityDefinitions:
+  ApiKeyAuth:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+
+paths:
+
+  '/customers/{customerId}/score':
+    get:
+      tags:
+        - customers
+      summary: Get Customer score.
+      security:
+        - ApiKeyAuth : []
+      description: This Endpoint is used to determine the customer's score through an activities performed within a period of time.
+      operationId: getCustomerScore
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: "customerId"
+          in: "path"
+          type: "string"
+          description: "ID of the customer. It could be MSISDN, email address, or any other customer identifier"
+          required: true
+        - name: "transactionId"
+          in: "header"
+          type: "string"
+          description: "Client generated Id to include for tracing requests, so that the API can easily trace the HTTP request all the way from a client to MTNs backend processes (via our proxies). Each time a request is made to an MTN API the client should include a unique request reference in the HTTP Header. The value must be between 5 and 20 characters, and consist of ASCII letters, digits. Invalid or blank IDs will be ignored and replaced with generated ones. MTN may use this to detect duplicate transactions from the client, but this functionality is not always guaranteed, so clients must make their own efforts to prevent duplicate transactions. MTN will also log the transactionId in order to assist with debugging and to correlate transactions processed by the API to requests from the client."
+          required: false
+        - name: "type"
+          description: "Score Type"
+          in: "query"
+          type: string
+          x-example: "Loyalty"
+          enum:
+            - Loyalty
+            - Eligibility
+            - Credit
+            - Merged_Credit
+            - Merged_Credit_Bio
+          required: true
+        - name: "startDate"
+          description: "Start Date"
+          in: "query"
+          type: string
+          x-example: "20200401"
+          required: false
+        - name: "endDate"
+          description: "End Date"
+          in: "query"
+          type: string
+          x-example: "20200430"
+          required: false
+        - name: "reportId"
+          description: "This identifies the type in which the score report should be sent"
+          in: "query"
+          type: string
+          required: false
+        - name: "idNumber"
+          description: "This is the customer's bank verification number"
+          in: "query"
+          type: string
+          required: false
+        - name: "fullName"
+          description: "This is the customer's full name"
+          in: "query"
+          type: string
+          required: false
+        - name: "dob"
+          description: "Customer's date of birth. format `'YYYY-MM-DD'`"
+          in: "query"
+          type: string
+          required: false
+        - name: targetSystem
+          in: query
+          type: string
+          enum: [DAAS,CRC]
+        - name: userId
+          in: query
+          type: string
+        - name: x-country-code
+          in: header
+          type: string
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: string
+                description: "Status Code"
+              statusMessage:
+                type: string
+                description: "Status Message"
+              transactionId:
+                type: string
+                description: "API generated Id to include for tracing requests"
+              sequenceNo:
+                type: string
+                description: "This is the MADAPI auto generated reference for tracing purposes"
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    firstScore:
+                      description: "first Score"
+                      type: string
+                      example: "9232"
+                    summaryAttributes:
+                      description: "Summary Attribute"
+                      type: string
+                      example: "Been a customer for a period between 0.8410958904109589 and 1.8331506849315027 years, purchased airtime between 41.0 and 53.0 times, last transaction done within 159.0 and 161.0 days, spent amounts between 9300.0 and 13200.0 in the network"
+                    loyaltyScore:
+                      description: "Loyalty Score"
+                      type: string
+                      example: "434.99999999999994"
+                    scoreClass:
+                      description: "Score Class"
+                      type: string
+                      example: "4"
+                    month:
+                      description: "Month"
+                      type: string
+                      example: "202004"
+                    MSISDN:
+                      description: "Customer Id"
+                      type: string
+                      example: 2348064816493
+                    amount:
+                      description: "Amount"
+                      type: integer
+                      example: 5000.0
+                    HasProlongation:
+                      description: "True if client has AirTime Debt false else false"
+                      type: boolean
+                      example: True
+                    SimDuration:
+                      description: "Customer's Age on network in days "
+                      type: integer
+                      example: 360
+              _links:
+                type: object
+                properties:
+                  self:
+                    type: object
+                    properties:
+                      href:
+                        type: string
+                        example: "https://api.mtn.com/v1/customers/2348076891321/score"
+
+
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+
+  '/customers/{customerId}/score/creditinfo':
+    post:
+      tags:
+        - customers
+      operationId: credit-info
+      summary: Sends Credit Information to CRC
+      description: This operation helps to send credit information to the backend
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          x-example: 2349859843
+          type: string
+        - name: requestType
+          in: header
+          required: true
+          x-example: individual
+          type: string
+          enum:
+            - individual
+            - corporate
+            - credit
+            - guarantor
+            - principal
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreditInfoRequest'
+
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: string
+                example: "0000"
+              statusMessage:
+                type: string
+                example: "Success"
+              transactionId:
+                type: string
+                example: '020039300293993002'
+              sequenceNo:
+                type: string
+                description: "This is the MADAPI auto generated reference for tracing purposes"
+        '400':
+          description: Bad Request
+          schema:
+            allOf:
+              - properties:
+                  statusCode:
+                    type: string
+                    description: "MADAPI canonical code for success"
+                    example: '5000'
+              - $ref: '#/definitions/ErrorResponseBody'
+        '401':
+          description: Unauthorized
+          schema:
+            allOf:
+              - properties:
+                  statusCode:
+                    type: string
+                    description: "MADAPI canonical code for success"
+                    example: '4000'
+              - $ref: '#/definitions/ErrorResponseBody'
+        '403':
+          description: Forbidden
+          schema:
+            allOf:
+              - properties:
+                  statusCode:
+                    type: string
+                    description: "MADAPI canonical code for success"
+                    example: '4001'
+              - $ref: '#/definitions/ErrorResponseBody'
+        '404':
+          description: Customer Not Found
+          schema:
+            allOf:
+              - properties:
+                  statusCode:
+                    type: string
+                    description: "MADAPI canonical code for success"
+                    example: '1000'
+              - $ref: '#/definitions/ErrorResponseBody'
+        '405':
+          description: Method Not allowed
+          schema:
+            allOf:
+              - properties:
+                  statusCode:
+                    type: string
+                    description: "MADAPI canonical code for success"
+                    example: '3000'
+              - $ref: '#/definitions/ErrorResponseBody'
+
+        '409':
+          description: Conflict
+          schema:
+            allOf:
+              - properties:
+                  statusCode:
+                    type: string
+                    description: "MADAPI canonical code for success"
+                    example: '1000'
+              - $ref: '#/definitions/ErrorResponseBody'
+
+        '500':
+          description: Internal Server Error
+          schema:
+            allOf:
+              - properties:
+                  statusCode:
+                    type: string
+                    description: "MADAPI canonical code for success"
+                    example: '3000'
+              - $ref: '#/definitions/ErrorResponseBody'
+
+
+  '/customers/{customerId}/score/creditreport':
+    get:
+      operationId: retrieve credit score report
+      summary: retrieve credit score report for an individual and coorporate entity
+      description: >-
+        This operation retrieves a credit score report for an individual and coorporate entity. This can be a nano, classic or a basic individual or cooporate report
+      tags:
+        - Reporting
+      parameters:
+        - required: true
+          type: string
+          name: customerId
+          in: path
+          description: Identifier of the Individual. This could be msisdn number with country code or an organisation business ID for a corporate report
+        - type: string
+          required: false
+          in: header
+          name: "transactionId"
+          description: 'Client generated Id to include for tracing requests.'
+          x-example: '6f0bece6-7df3-4da4-af02-5e7f16e5e6fc'
+
+        - type: string
+          required: false
+          in: query
+          name: countryCode
+          description: "Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)"
+          enum:
+            - "NGA"
+
+        - type: string
+          required: false
+          in: query
+          name: idType
+          description: This should be the type of ID. For eaxmple- passport, national identity card,refugee under document etc.
+        - type: string
+          required: false
+          in: query
+          name: idValue
+          description: Value of the 'idType'
+        - name: customerCode
+          required: false
+          type: string
+          in: query
+        - type: string
+          required: false
+          in: query
+          name: calllbackUrl
+          description: URL that will receive final results for async processing
+        - name: referenceNumber
+          type: string
+          in: query
+          description: Reference number that is used when merging multiple facilities
+        - name: facilityId
+          in: query
+          type: string
+        - name: facilityList
+          type: array
+          description: This is a comma separated list of the different failities to be merged
+          in: query
+          items:
+            type: string
+        - name: requestType
+          description:  identifier to know if the request is for an individual, corporate or a merge request
+          in: query
+          type: string
+          enum: [individual, corporate, merge_request]
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ScoreReportResponse'
+
+        '201':
+          description: Accepted
+          schema:
+            description: The request has been accepted for processing, but the processing has not been completed.
+            properties:
+              statusCode:
+                type: string
+                description: HTTP error code extension
+                example: "0000"
+              statusMessage:
+                type: string
+                description: "Status codoe description"
+                example: "Request has been received and you will receive results on the callback URL"
+              transactionId:
+                type: string
+                example: MTN123456
+                description: Id provided in the input
+              _links:
+                type: object
+                properties:
+                  self:
+                    type: object
+                    properties:
+                      href:
+                        type: string
+                        example: "https://api.mtn.com/v1/customers/2348076891321/credit-report"
+
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Customer Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '415':
+          description: Unsupported Media Type
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  ScoreReportResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '0000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+      sequenceNo:
+        type: string
+        description: "This is the MADAPI auto generated reference for tracing purposes"
+      data:
+        $ref: '#/definitions/ReportData'
+
+  businessInfo:
+    type: object
+    properties:
+      Id:
+        type: string
+        example: 4567890
+      name:
+        type: string
+        example: "MikeMulti Print"
+      type:
+        type: string
+        example: ""
+      category:
+        type: string
+        example: ""
+      dateOfIncorporation:
+        type: string
+        example: ""
+      customerId:
+        type: string
+        example: 2016110014
+      branchCode:
+        type: string
+        example: "01"
+      contactMedium:
+        type: array
+        items:
+          type: object
+          properties:
+            addressOne:
+              type: string
+              example: "45 Apata Street, By Shipeolu Street, Onipanu Lagos"
+            addressTwo:
+              type: string
+              example: ""
+            lga:
+              type: string
+              example: ""
+            state:
+              type: string
+              example: ""
+            country:
+              type: string
+              example: "Nigeria"
+            preferred:
+              type: boolean
+              example: true
+
+  guarantorInfo:
+    type: object
+    properties:
+      corporateName:
+        type: string
+        example: "Modum Industries LTD"
+      bizID:
+        type: string
+        example: ""
+      lastName:
+        type: string
+        example: "Theodore"
+      firstname:
+        type: string
+        example: ""
+      middleName:
+        type: string
+        example: "Mark"
+      date:
+        type: string
+        example: "2020/12/01"
+      gender:
+        type: string
+        example: "Male"
+      nationalID:
+        type: string
+        example: ""
+      passportNo:
+        type: string
+        example: ""
+      driversLicence:
+        type: string
+        example: "AWE23516273"
+      BVN:
+        type: string
+        example: "22233344466"
+      otherID:
+        type: string
+        example: ""
+      addressOne:
+        type: string
+        example: "Lagos"
+      addressTwo:
+        type: string
+        example: ""
+      lga:
+        type: string
+        example: ""
+      state:
+        type: string
+        example: "Nigeria"
+      country:
+        type: string
+        example: ""
+      phoneNumber:
+        type: string
+        example: ""
+      emailAddress:
+        type: string
+        example: "tester@gmail.com"
+  creditInfo:
+    type: object
+    properties:
+      dateOfLoan:
+        type: string
+        example: "31/08/2020"
+      creditLimit:
+        type: string
+        example:  3600000
+      availedLimit:
+        type: string
+        example:  5000000
+      outstandingBalance:
+        type: string
+        example: 0
+      installmentAmount:
+        type: string
+        example: ""
+      currency:
+        type: string
+        example: "Naira"
+      daysInArrears:
+        type: string
+        example: 0
+      overDueAmount:
+        type: string
+        example: 0
+      loanType:
+        type: string
+        example: "Commercial Overdraft"
+      loanTenor:
+        type: string
+        example: ""
+      repaymentFrequency:
+        type: string
+        example: ""
+      lastPaymentDate:
+        type: string
+        example: ""
+      lastPaymentAmount:
+        type: string
+        example: ""
+      maturityDate:
+        type: string
+        example: "31/08/2021"
+      loanClassification:
+        type: string
+        example: "Performing"
+      legalChallengeStatus:
+        type: string
+        example: ""
+      litigationDate:
+        type: string
+        example: ""
+      consentStatus:
+        type: string
+        example: ""
+      loanSecurityStatus:
+        type: string
+        example: "NO"
+      collateralType:
+        type: string
+        example: ""
+      collateralDetails:
+        type: string
+        example: ""
+      previousAccountNumber:
+        type: string
+        example: ""
+      previousName:
+        type: string
+        example: ""
+      previousCustomerId:
+        type: string
+        example: ""
+      previousBranchCode:
+        type: string
+        example: ""
+  principalInfo:
+    type: object
+    properties:
+      lastName :
+        type: string
+        example: "Michael"
+      firstName :
+        type: string
+        example: "Ewa"
+      middleName :
+        type: string
+        example: ""
+      dateOfBirth :
+        type: string
+        example: "01/01/1900"
+      gender :
+        type: string
+        example: "Male"
+      addressOne :
+        type: string
+        example: "Suite 6, 45 Apata Street, By Ship..."
+      addressTwo :
+        type: string
+        example: ""
+      lga :
+        type: string
+        example: ""
+      state :
+        type: string
+        example: ""
+      country :
+        type: string
+        example: "Nigeria"
+      nationalId :
+        type: string
+        example: ""
+      driversLicence :
+        type: string
+        example: ""
+      BVN :
+        type: string
+        example: ""
+      passportNo :
+        type: string
+        example: ""
+      phoneNumber :
+        type: string
+        example: ""
+      email :
+        type: string
+        example: ""
+      designation :
+        type: string
+        example: "CEO"
+
+  CreditInfoRequest:
+    type: object
+    properties:
+      creditInfo:
+        type: array
+        items:
+          type: object
+          properties:
+            customerId:
+              type: string
+              example: "22220066989"
+              description: ""
+            branchCode:
+              type: string
+              example: "NGHOBS01"
+              description: ""
+            lastName:
+              type: string
+              example: "NWANKWO"
+              description: ""
+            firstName:
+              type: string
+              example: "VINCENT"
+              description: ""
+            middleName:
+              type: string
+              example: "OLUWAFIKAYOMI"
+              description: ""
+            dateOfBirth:
+              type: string
+              example: "15/02/1970"
+              description: ""
+            nationalIdentityNumber:
+              type: string
+              example: "NULL"
+              description: ""
+            driversLicense:
+              type: string
+              example: "NULL"
+              description: ""
+            BVN:
+              type: string
+              example: ""
+              description: ""
+            passportNo:
+              type: string
+              example: "NULL"
+              description: ""
+            gender:
+              type: string
+              example: "Male"
+              description: ""
+            nationality:
+              type: string
+              example: "NG"
+              description: ""
+            maritalStatus:
+              type: string
+              example: "Married"
+              description: ""
+            phoneNumberOne:
+              type: string
+              example: "8023314144"
+              description: ""
+            primaryAddressOne:
+              type: string
+              example: "30 EZEAGU STREET, OJO ROAD"
+              description: ""
+            primaryAddressTwo:
+              type: string
+              example: "AJEGUNLE, APAPA, LAGOS "
+              description: ""
+            countryLgaOne:
+              type: string
+              example: "LAGOS"
+              description: ""
+            countryStateOne:
+              type: string
+              example: "LAGOS"
+              description: ""
+            countryOne:
+              type: string
+              example: "NG"
+              description: ""
+            employmentStatus:
+              type: string
+              example: "E"
+              description: ""
+            occupation:
+              type: string
+              example: "NULL"
+              description: ""
+            businessCategory:
+              type: string
+              example: ""
+              description: ""
+            businessSector:
+              type: string
+              example: "NULL"
+              description: ""
+            BorrowerType:
+              type: string
+              example: "I"
+              description: ""
+            otherID:
+              type: string
+              example: "NULL"
+              description: ""
+            taxID:
+              type: string
+              example: "NULL"
+              description: ""
+            pictureFilePath:
+              type: string
+              example: ""
+              description: ""
+            emailAddress:
+              type: string
+              example: "VINCHUKSNWANKWO@YAHOO.COM"
+              description: ""
+            employerName:
+              type: string
+              example: "C & I LEASING"
+              description: ""
+            employerAddressOne:
+              type: string
+              example: "NULL"
+              description: ""
+            employerAddressTwo:
+              type: string
+              example: "NULL"
+              description: ""
+            employerLga:
+              type: string
+              example: "NULL"
+              description: ""
+            employerState:
+              type: string
+              example: "NULL"
+              description: ""
+            employerCountry:
+              type: string
+              example: "Eti Osa"
+              description: ""
+            title:
+              type: string
+              example: "NULL"
+              description: ""
+            placeOfBirth:
+              type: string
+              example: ""
+              description: ""
+            phoneNumberTwo:
+              type: string
+              example: "NULL"
+              description: ""
+            phoneNumberThree:
+              type: string
+              example: "2350000000000"
+              description: ""
+            secondaryAddressOne:
+              type: string
+              example: ""
+              description: ""
+            secondaryAddressTwo:
+              type: string
+              example: ""
+              description: ""
+            secondaryAddressLga:
+              type: string
+              example: ""
+              description: ""
+            secondaryAddressState:
+              type: string
+              example: ""
+              description: ""
+            secondaryAddressCountry:
+              type: string
+              example: ""
+              description: ""
+            spousesLastName:
+              type: string
+              example: ""
+              description: ""
+            spousesFirstName:
+              type: string
+              example: ""
+              description: ""
+            spousesMiddleName:
+              type: string
+              example: ""
+              description: ""
+            businessInfo:
+              type: object
+              $ref: "#/definitions/businessInfo"
+            guarantorInfo:
+              type: array
+              items:
+                $ref: "#/definitions/guarantorInfo"
+            creditInfo:
+              type: object
+              $ref: "#/definitions/creditInfo"
+            principalInfo:
+              type: array
+              items:
+                $ref: "#/definitions/principalInfo"
+            loanStatus:
+              type: string
+              example: ""
+              description: ""
+            guaranteeType:
+              type: string
+              example: ""
+              description: ""
+            accountNumber:
+              type: string
+              example: ""
+              description: ""
+            accountStatus:
+              type: string
+              example: ""
+              description: ""
+            accountStatusDate:
+              type: string
+              example: ""
+              description: ""
+            taxId:
+              type: string
+              example: " "
+              description: ""
+
+  ReportData:
+    type: "object"
+    properties:
+      referenceNumber:
+        type: string
+        description: This is the consumer reference number that is is returned when multiple facilities are returned
+      AddressHistory:
+        type: array
+        items:
+          type: object
+          properties:
+            ADDRESS:
+              type: string
+            ADDR_TYPE:
+              type: string
+            DATE_REPORTED:
+              type: string
+            SNO:
+              type: string
+      Amount_OD_BucketCURR1:
+        type: object
+        properties:
+          Amount_OD_BucketCURR1:
+            type: array
+            items:
+              type: object
+              properties:
+                Apr19:
+                  type: string
+                  format: nullable
+                Aug19:
+                  type: string
+                  format: nullable
+                Jul19:
+                  type: string
+                  format: nullable
+                Jun19:
+                  type: string
+                  format: nullable
+                May19:
+                  type: string
+                  format: nullable
+                Sep19:
+                  type: string
+                  format: nullable
+                TYPE:
+                  type: string
+          Credit_Utilization_TrendCURR1:
+            type: array
+            items:
+              type: object
+              properties:
+                Type:
+                  type: string
+                Values:
+                  type: integer
+                  format: int32
+      Amount_OD_BucketCURR2:
+        type: object
+      Amount_OD_BucketCURR3:
+        type: object
+      Amount_OD_BucketCURR4:
+        type: object
+      Amount_OD_BucketCURR5:
+        type: object
+      CONSUMER_RELATION:
+        type: string
+        format: nullable
+      CREDIT_MICRO_SUMMARY:
+        type: object
+        format: nullable
+        properties:
+          CURRENCY:
+            type: object
+            properties:
+              BUREAU_CURRENCY:
+                type: string
+              CURRENCY_CODE:
+                type: string
+              DUESUMMARY:
+                type: array
+                items:
+                  $ref: '#/definitions/SummaryOverdue'
+              LAST_REPORTED_DATE:
+                type: string
+                example: '30-APR-2021'
+              REPORTDATE:
+                type: object
+                properties:
+                  BUREAU_CURRENCY:
+                    type: string
+                    example: 'NGN'
+                  LAST_REPORTED_DATE:
+                    type: string
+                    example: '30-APR-2021'
+              SUMMARY:
+                type: array
+                items:
+                  $ref: '#/definitions/Summary'
+      CREDIT_NANO_SUMMARY:
+        type: string
+        format: nullable
+      CREDIT_SCORE_DETAILS:
+        type: object
+        properties:
+          CREDIT_SCORE_SUMMARY:
+            type: object
+            properties:
+              CREDIT_RATING:
+                type: string
+              CREDIT_SCORE:
+                type: integer
+                format: int32
+              REASON_CODE1:
+                type: string
+              REASON_CODE2:
+                type: string
+              REASON_CODE3:
+                type: string
+              REASON_CODE4:
+                type: string
+      ClassificationInsType:
+        type: array
+        items:
+          type: object
+          properties:
+            AMOUNT_OVERDUE:
+              type: string
+            APPROVED_CREDIT_SANCTIONED:
+              type: string
+            CURRENCY:
+              type: string
+            ClassificationInsType:
+              type: string
+              format: nullable
+            INSTITUTION_TYPE:
+              type: string
+            LEGAL_FLAG:
+              type: string
+            NO_OF_ACCOUNTS:
+              type: string
+            OUSTANDING_BALANCE:
+              type: string
+      ClassificationProdType:
+        type: array
+        items:
+          type: object
+          properties:
+            AMOUNT_OVERDUE:
+              type: string
+            CURRENCY:
+              type: string
+            ClassificationProdType:
+              type: string
+              format: nullable
+            NO_ACC_LAST_SIX_MON:
+              type: string
+            NO_OF_ACCOUNTS:
+              type: string
+            PRODUCT_TYPE:
+              type: string
+            RECENT_OVERDUE_DATE:
+              type: string
+              format: nullable
+            SANCTIONED_AMOUNT:
+              type: string
+            TOTAL_OUTSTANDING_BALANCE:
+              type: string
+      ClosedAccounts:
+        type: object
+        properties:
+          ClosedAccounts:
+            type: object
+            properties:
+              ACCOUNT_STATUS:
+                type: string
+              CF_CLOSING_DATE:
+                type: string
+              CREDIT_FACILITY_TYPE:
+                type: string
+              CURRENCY:
+                type: string
+              INSTITUTION_NAME:
+                type: string
+              LEGAL_ACTION_STATUS:
+                type: string
+              SANCTION_AMOUNT:
+                type: string
+              SNO:
+                type: string
+      ConsCommDetails:
+        type: object
+        properties:
+          ConsCommDetails_ID:
+            type: array
+            items:
+              type: object
+              properties:
+                EXPIRY_DATE:
+                  type: string
+                  format: nullable
+                IDENTIFIERNUMBER:
+                  type: string
+                IDENTIFIER_NUMBER:
+                  type: string
+                ID_TYPE:
+                  type: string
+          ConsCommDetails_Subject:
+            type: object
+            properties:
+              ADDRESS:
+                type: string
+              APPLICATIONVIABILITYSCORE:
+                type: string
+              DATE_OF_BIRTH:
+                type: string
+              DATE_OF_BIRTH_M:
+                type: string
+                format: date
+              GENDER:
+                type: string
+              NAME:
+                type: string
+              NATIONALITY:
+                type: string
+              PHONE_NO1:
+                type: string
+              PHONE_NO2:
+                type: string
+
+      ConsumerMergerDetails:
+        type: object
+        properties:
+          ConsumerMergerDetails:
+            type: object
+            format: nullable
+            properties:
+              DATE_OF_REGISTRATION:
+                type: string
+              DOR:
+                type: string
+                example: '01-Jan-1991'
+              NAME:
+                type: string
+                example: 'HEAD OF SERVICE PAYMENT OF OUTST'
+              PRIORITY:
+                type: string
+                example: 'Primary'
+              SN:
+                type: integer
+                example: 1
+
+      ContactHistory:
+        type: array
+        items:
+          type: object
+          properties:
+            CONTACT_TYPE:
+              type: string
+            DATE_REPORTED:
+              type: string
+            DETAILS:
+              type: string
+            SNO:
+              type: string
+
+      CreditDisputeDetails:
+        type: object
+        format: nullable
+      ExposureRelatedCompanies:
+        type: object
+        properties:
+          ExposureRelatedCompanies:
+            type: object
+            format: nullable
+
+      CreditFacilityHistory24:
+        type: array
+        items:
+          type: object
+          properties:
+            ACCOUNT_NUMBER:
+              type: string
+            ACC_OPEN_DISB_DT:
+              type: string
+            AMOUNT_OVERDUE_CAL:
+              type: string
+            AMOUNT_WRITTEN_OFF:
+              type: object
+            ASSET_CLASSIFICATION_CAL:
+              type: string
+            CURRENCY:
+              type: string
+            CURRENCY_VALUE:
+              type: string
+            CURRENT_BALANCE_CAL:
+              type: string
+            DATE_REPORTED:
+              type: string
+              format: date-time
+            DATE_REPORTED_AGE:
+              type: string
+            DPD120:
+              type: object
+            DPD150:
+              type: object
+            DPD180:
+              type: object
+            DPD180P:
+              type: object
+            DPD30:
+              type: object
+            DPD60:
+              type: object
+            DPD90:
+              type: object
+            EXPECT_NXT_INSTALLMENT_AMT:
+              type: object
+            ExposureGuarantors:
+              type: string
+              format: nullable
+            IFF_TYPE:
+              type: string
+            INSTITUTION_NAME:
+              type: string
+            LASTREPAYAMT_DT_CAL:
+              type: string
+            LOAN_STATUS:
+              type: string
+            LOAN_TYPE:
+              type: string
+            LOAN_TYPE_VALUE:
+              type: string
+            MATURITY_DT:
+              type: string
+            MONTH1:
+              type: string
+              example: 'OK'
+            MONTH10:
+              type: string
+              example: 'OK'
+            MONTH11:
+              type: string
+              example: 'OK'
+            MONTH12:
+              type: string
+              example: 'OK'
+            MONTH13:
+              type: string
+              example: 'OK'
+            MONTH14:
+              type: string
+              example: 'OK'
+            MONTH15:
+              type: string
+              example: 'OK'
+            MONTH16:
+              type: string
+              example: 'OK'
+            MONTH17:
+              type: string
+              example: 'OK'
+            MONTH18:
+              type: string
+              example: 'OK'
+            MONTH19:
+              type: string
+              example: 'OK'
+            MONTH2:
+              type: string
+              example: 'OK'
+            MONTH20:
+              type: string
+              example: 'OK'
+            MONTH21:
+              type: string
+              example: 'OK'
+            MONTH22:
+              type: string
+              example: 'OK'
+            MONTH23:
+              type: string
+              example: 'OK'
+            MONTH24:
+              type: string
+              example: 'OK'
+            MONTH3:
+              type: string
+              example: 'OK'
+            MONTH4:
+              type: string
+              example: 'OK'
+            MONTH5:
+              type: string
+              example: 'OK'
+            MONTH6:
+              type: string
+              example: 'OK'
+            MONTH7:
+              type: string
+              example: 'OK'
+            MONTH8:
+              type: string
+              example: 'OK'
+            MONTH9:
+              type: string
+              example: 'OK'
+            MONTH_1:
+              type: string
+              example: 'Apr-21'
+            MONTH_10:
+              type: string
+            MONTH_11:
+              type: string
+            MONTH_12:
+              type: string
+            MONTH_13:
+              type: string
+            MONTH_14:
+              type: string
+            MONTH_15:
+              type: string
+            MONTH_16:
+              type: string
+            MONTH_17:
+              type: string
+            MONTH_18:
+              type: string
+            MONTH_19:
+              type: string
+            MONTH_2:
+              type: string
+            MONTH_20:
+              type: string
+            MONTH_21:
+              type: string
+            MONTH_22:
+              type: string
+            MONTH_23:
+              type: string
+            MONTH_24:
+              type: string
+            MONTH_3:
+              type: string
+            MONTH_4:
+              type: string
+            MONTH_5:
+              type: string
+            MONTH_6:
+              type: string
+            MONTH_7:
+              type: string
+            MONTH_8:
+              type: string
+            MONTH_9:
+              type: string
+            NUMBER_OF_INSTALLMENTS:
+              type: string
+            NUM_OF_DAYS_IN_ARREARS_CAL:
+              type: string
+            OWNERSHIP_INDICATOR:
+              type: string
+            RANKING:
+              type: string
+            REASON_CODE:
+              type: string
+            REASON_CODE_VALUE:
+              type: string
+            REPAYMENT_FREQUENCY:
+              type: string
+            REPORTED_DT_TEXT:
+              type: string
+            RESTRUCTREASON:
+              type: object
+            RESTRUCT_DT:
+              type: object
+            SANCTIONED_AMOUNT_CAL:
+              type: string
+            SECURITY_COVERAGE:
+              type: string
+            SECURITY_VALUE:
+              type: string
+            SIN:
+              type: string
+            SNO:
+              type: string
+            S_NO:
+              type: string
+            TYPE:
+              type: string
+            TYPE_Basic_RPT:
+              type: string
+            UNIQUE_ROOT_ID:
+              type: string
+
+      CreditProfileOverview:
+        type: array
+        items:
+          type: object
+          properties:
+            INDICATOR:
+              type: string
+            INDICATOR_TYPE:
+              type: string
+            VALUE:
+              type: string
+
+      CreditProfileSummaryCURR1:
+        type: array
+        items:
+          type: object
+          properties:
+            Apr19:
+              type: string
+              format: nullable
+            Aug19:
+              type: string
+              format: nullable
+            Jul19:
+              type: string
+              format: nullable
+            Jun19:
+              type: string
+              format: nullable
+            May19:
+              type: string
+              format: nullable
+            Sep19:
+              type: string
+              format: nullable
+            TYPE:
+              type: string
+
+      CreditProfileSummaryCURR2:
+        type: array
+        items:
+          type: object
+
+
+      CreditProfileSummaryCURR3:
+        type: array
+        items:
+          type: object
+
+      CreditProfileSummaryCURR4:
+        type: array
+        items:
+          type: object
+
+      CreditProfileSummaryCURR5:
+        type: array
+        items:
+          type: object
+
+      DMMDisputeSection:
+        type: object
+        properties:
+          DMMDisputeSection:
+            type: string
+            format: nullable
+
+      DODishonoredChequeDetails:
+        type: array
+        items:
+          type: object
+
+      DOJointHolderDetails:
+        type: object
+        properties:
+          DOJointHolderDetails:
+            type: string
+            format: nullable
+      DOLitigationDetails:
+        type: array
+        items:
+          type: object
+
+      DisclaimerDetails:
+        type: object
+
+      EmploymentHistory:
+        type: object
+        properties:
+          EmploymentHistory:
+            type: object
+            properties:
+              ADDRESS:
+                type: string
+                format: nullable
+              DATE_REPORTED:
+                type: string
+              EMPLOYER_NAME:
+                type: string
+                format: nullable
+              EMP_EXP_MONTH:
+                type: string
+                format: nullable
+              POSITION:
+                type: string
+                format: nullable
+              SNO:
+                type: string
+
+      GuaranteedLoanDetails:
+        type: array
+        items:
+          type: object
+
+      InquiryHistoryDetails:
+        type: array
+        items:
+          type: object
+          properties:
+            FACILITY_TYPE:
+              type: string
+            INQUIRY_DATE:
+              type: string
+            INSTITUTION_TYPE:
+              type: string
+            SNO:
+              type: string
+
+      Inquiry_Product:
+        type: array
+        items:
+          type: object
+          properties:
+            BANK:
+              type: string
+            MICRO:
+              type: string
+            MORTGAGE:
+              type: string
+            NBFC:
+              type: string
+            OTHER:
+              type: string
+            PRODUCT_TYPE:
+              type: string
+            TOTAL:
+              type: string
+
+      LegendDetails:
+        type: object
+
+      MFCREDIT_MICRO_SUMMARY:
+        type: string
+        format: nullable
+
+      MFCREDIT_NANO_SUMMARY:
+        type: string
+        format: nullable
+
+      MGCREDIT_MICRO_SUMMARY:
+        type: string
+        format: nullable
+
+      MGCREDIT_NANO_SUMMARY:
+        type: string
+        format: nullable
+
+      MIC_CONSUMER_PROFILE:
+        type: string
+        format: nullable
+
+      NANO_CONSUMER_PROFILE:
+        type: string
+        format: nullable
+
+      RelatedToDetails:
+        type: object
+        properties:
+          RelatedToDetails:
+            type: string
+            format: nullable
+
+      ReportDetail:
+        type: object
+        properties:
+          ReportDetailBVN:
+            type: string
+            format: nullable
+
+      ReportDetailAcc:
+        type: object
+        properties:
+          ReportDetailAcc:
+            type: string
+            format: nullable
+
+      ReportDetailBVN:
+        type: object
+        properties:
+          ReportDetailBVN:
+            type: object
+            properties:
+              BVN_NUMBER:
+                type: integer
+                format: int64
+              CIR_NUMBER:
+                type: string
+              DATE_OF_BIRTH:
+                type: string
+                format: nullable
+              DATE_OF_BIRTH_M:
+                type: string
+                format: nullable
+              GENDER:
+                type: string
+                format: nullable
+              INSTITUTION_NAME:
+                type: string
+              NAME:
+                type: string
+                format: nullable
+              REPORT_ORDER_DATE:
+                type: string
+              REPORT_ORDER_DATE_M:
+                type: string
+                format: nullable
+              SEARCH_CONFIDENCE_SCORE:
+                type: string
+
+      ReportDetailMob:
+        type: object
+        properties:
+          ReportDetailMob:
+            type: string
+            format: nullable
+
+      ReportDetailsSIR:
+        type: object
+
+      SecurityDetails:
+        type: array
+        items:
+          type: object
+
+      SummaryOfPerformance:
+        type: array
+        items:
+          type: object
+          properties:
+            ACCOUNT_BALANCE:
+              type: string
+            APPROVED_AMOUNT:
+              type: string
+            DATA_PRDR_ID:
+              type: string
+            DISHONORED_CHEQUES_COUNT:
+              type: string
+            FACILITIES_COUNT:
+              type: string
+            INSTITUTION_NAME:
+              type: string
+            NONPERFORMING_FACILITY:
+              type: string
+            OVERDUE_AMOUNT:
+              type: string
+            PERFORMING_FACILITY:
+              type: string
+
+      HEADER:
+        type: object
+        properties:
+          REPORTHEADER:
+            type: object
+            properties:
+              MAILTO:
+                type: string
+              PRODUCTNAME:
+                type: string
+              REASON:
+                type: object
+              REPORTDATE:
+                type: string
+              REPORTORDERNUMBER:
+                type: string
+              USERID:
+                type: string
+
+          RESPONSETYPE:
+            type: object
+            properties:
+              CODE:
+                type: string
+              DESCRIPTION:
+                type: string
+
+          SEARCHCRITERIA:
+            type: object
+            properties:
+              BRANCHCODE:
+                type: string
+                format: nullable
+              BVN_NO:
+                type: string
+              CFACCOUNTNUMBER:
+                type: string
+                format: nullable
+              DATEOFBIRTH:
+                type: string
+                format: nullable
+              GENDER:
+                type: string
+                format: nullable
+              NAME:
+                type: string
+                format: nullable
+              TELEPHONE_NO:
+                type: string
+                format: nullable
+
+          SEARCHRESULTLIST:
+            type: object
+            properties:
+              SEARCHRESULTITEM:
+                type: object
+                properties:
+                  ADDRESSES:
+                    type: object
+                  BUREAUID:
+                    type: string
+                  CONFIDENCESCORE:
+                    type: string
+                  IDENTIFIERS:
+                    type: object
+                  NAME:
+                    type: string
+                  SURROGATES:
+                    type: object
+
+      REQUESTID:
+        type: string
+
+  SummaryOverdue:
+    type: object
+    properties:
+      BUREAU_CURRENCY:
+        type: string
+        example: "NGN"
+      HEADINGTEXT:
+        type: string
+      MAX_NUM_DAYS_DUE:
+        type: string
+      NO_OF_DELINQCREDITFACILITIES:
+        type: string
+      NO_OF_DELINQCREDITFACILITIESSpecified:
+        type: boolean
+      OWNERSHIP_TYPE:
+        type: string
+      TOT_DUE:
+        type: string
+      TOT_DUESpecified:
+        type: boolean
+
+  Summary:
+    type: object
+    properties:
+      BUREAU_CURRENCY:
+        type: string
+        example: "NGN"
+      HEADINGTEXT:
+        type: string
+      NO_OF_OPENEDCREDITFACILITIES:
+        type: string
+      OWNERSHIP_TYPE:
+        type: string
+      SANCTIONED_AMOUNT:
+        type: string
+      NO_OF_OPENEDCREDITFACILITIESSpecified:
+        type: boolean
+      TOTAL_NO_OF_CREDITFACILITIES:
+        type: string
+      TOTAL_NO_OF_CREDITGRANTORS:
+        type: string
+      TOTAL_OUTSTANDING:
+        type: string
+
+  ErrorResponseBody:
+    type: object
+    description: 'An response body that defines the structure of an error'
+    properties:
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      supportMessage:
+        type: string
+        description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2020-08-01T12:34'
+      sequenceNo:
+        type: string
+        description: "This is the MADAPI auto generated reference for tracing purposes"
+      _links:
+        type: object
+        properties:
+          self:
+            type: object
+            properties:
+              href:
+                type: string
+                example: 'https://api.mtn.com/v1/customers/2348024008124/score'
+
+  Error:
+    type: object
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '1000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      supportMessage:
+        type: string
+        description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2020-08-01T12:34'
+      sequenceNo:
+        type: string
+        description: "This is the MADAPI auto generated reference for tracing purposes"
+      _links:
+        type: object
+        properties:
+          self:
+            type: object
+            properties:
+              href:
+                type: string
+                example: 'https://api.mtn.com/v1/customers/2348024008124/score'

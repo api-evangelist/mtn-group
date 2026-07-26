@@ -1,0 +1,204 @@
+openapi: 3.0.1
+info:
+  title: Mobile Advertisement
+  description: "This service provides comprehensive mobile advertisement management\
+    \ capabilities for MTN operations including ad targeting, content delivery, campaign\
+    \ management, and performance analytics. The service integrates with various advertising\
+    \ platforms to provide personalized ad experiences across the MTN ecosystem."
+  license:
+    name: MADAPI
+    url: https://developers.mtn.com/
+  version: 3.0.0 - Last updated date:2026-07-15 18:21:13
+servers:
+- url: https://api.mtn.com/v1
+  description: Production Server
+security:
+- OAuth2: []
+tags:
+- name: Mobile Ads Service
+paths:
+  /customers/{customerId}:
+    post:
+      tags:
+      - Mobile Ads Service
+      summary: Fetch Adverts
+      description: "This operation helps to fetch mobile ads for the customer based\
+        \ on their preferences and location, supporting personalized advertising and\
+        \ targeted content delivery for enhanced user experience.,"
+      operationId: MobileAdService_post_fetchAdverts_customerscustomerId
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: AdsRequest
+              type: object
+              properties:
+                notificationType:
+                  title: NotificationType
+                  type: object
+                portalId:
+                  type: string
+                preMessage:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                title: MobileAdResponse
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  statusMessage:
+                    type: string
+                  transactionId:
+                    type: string
+        "400":
+          description: "Bad request. Invalid request parameters, missing required\
+            \ fields, or validation errors."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        "401":
+          description: "Unauthorized. Invalid or missing authorization credentials,\
+            \ insufficient permissions, or authentication failure."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        "403":
+          description: Forbidden. Access denied. The request is valid but the server
+            refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        "404":
+          description: Not found. The requested resource was not found or does not
+            exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        "500":
+          description: "Internal server error. Unexpected system failure, database\
+            \ connectivity issues, or external service integration problems."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        "502":
+          description: Bad gateway. The server acting as a gateway received an invalid
+            response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        "503":
+          description: Service unavailable. The server is temporarily unable to handle
+            the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+components:
+  schemas:
+    com_mtn_aggregator_models_request_AdsRequest:
+      title: AdsRequest
+      type: object
+      properties:
+        notificationType:
+          title: NotificationType
+          type: object
+        portalId:
+          type: string
+        preMessage:
+          type: string
+    com_mtn_aggregator_enums_NotificationType:
+      title: NotificationType
+      type: object
+    com_mtn_system_models_response_MobileAdResponse:
+      title: MobileAdResponse
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        transactionId:
+          type: string
+    APIError:
+      title: APIError
+      required:
+      - statusCode
+      - statusMessage
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Error status code
+          example: "400"
+        statusMessage:
+          type: string
+          description: Human-readable error message
+          example: Bad request. Invalid parameters provided.
+        supportMessage:
+          type: string
+          description: Technical support message or error code for troubleshooting
+          example: VALIDATION_ERROR
+        transactionId:
+          type: string
+          description: Transaction identifier for tracking and correlation
+          example: "1234567890"
+        sequenceNo:
+          type: string
+          description: Sequence number for request tracking
+          example: "20250115120000001"
+        timestamp:
+          type: string
+          description: Error timestamp in ISO 8601 format
+          format: date-time
+          example: 2025-01-15T12:00:00Z
+        path:
+          type: string
+          description: API endpoint path where the error occurred
+          example: /api/v1/resource
+        method:
+          type: string
+          description: HTTP method of the request that caused the error
+          example: POST
+        downstreamStatusCode:
+          type: string
+          description: Downstream service error code if applicable
+      description: Generic MADAPI error response structure
+      example:
+        statusCode: "400"
+        statusMessage: "Bad request. Invalid request parameters, missing required\
+          \ fields, or validation errors."
+        supportMessage: API_ERROR
+        transactionId: "1234567890"
+        sequenceNo: "20250115120000001"
+        timestamp: 2025-01-15T12:00:00Z
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token
+          scopes: {}
+    Bearer:
+      type: http
+      description: Bearer token received from OAuth2.0 authentication with the MADAPI
+      scheme: bearer
+      bearerFormat: JWT

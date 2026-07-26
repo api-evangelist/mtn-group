@@ -1,0 +1,644 @@
+swagger: '2.0'
+info:
+  description: To facilitate notifications. Allows 3PPs to register and have notifications processed to them from the applicable backends.
+  version: "v2.0"
+  title: Notifications API
+schemes:
+  - https
+host: "api.mtn.com"
+basePath: "/v2"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+securityDefinitions:
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.mtn.com/v1/oauth/access_token
+
+security:
+  - OAuth2: []
+
+tags:
+  - name: Notifications
+    description: Send Notifications
+  - name: Registration
+    description: Registration, update and delete Notifications
+paths:
+  "/notification/register/3PP":
+    post:
+      tags:
+        - Registration
+      summary: Register/Update 3PP for notification.
+      description: Register/Update 3PP for notification.
+      operationId: register3PPNotificationDetailsUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+
+      parameters:
+        - in: header
+          name: transactionId
+          description: "A unique identifier for the transaction"
+          type: string
+        - in: body
+          name: RegisterNotificationRequest
+          description: This is the request used for notification registration.
+          required: true
+          schema:
+            $ref: "#/definitions/RegisterNotificationRequest"
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: "#/definitions/RegisterNotificationResponse"
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        '409':
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        '500' :
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+      deprecated: false
+  "/notification/register/3PP/{id}":
+    get:
+      tags:
+        - Registration
+      summary: Get 3PP notification details by id.
+      description: Get 3PP notification details by id.
+      operationId: get3PPNotificationDetailsByIdUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - in: header
+          name: transactionId
+          description: "A unique identifier for the transaction"
+          type: string
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: "#/definitions/DeleteNotificationSubscriptionResponse"
+        '400':
+          description: Bad request
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        '500' :
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+      deprecated: false
+    delete:
+      tags:
+        - Registration
+      summary: Delete 3PP Notification registration by id.
+      description: Delete 3PP notification registration by id.
+      operationId: delete3PPNotificationDetailsByIDUsingDELETE
+      produces:
+        - "*/*"
+      parameters:
+        - in: header
+          name: transactionId
+          description: "A unique identifier for the transaction"
+          type: string
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: "#/definitions/DeleteNotificationSubscriptionResponse"
+        '400':
+          description: Bad request
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        '409':
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        '500' :
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+      deprecated: false
+  "/notification/3PP/{id}":
+    post:
+      tags:
+        - Notifications
+      summary: Send notification to 3PP by id.
+      description: Send notification to 3PP by id.
+      operationId: notification3PPByIdUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: transactionId
+          description: "A unique identifier for the transaction"
+          type: string
+        - in: body
+          name: NotificationData
+          description: The request expected to trigger a notification
+          required: true
+          schema:
+            "$ref": "#/definitions/NotificationData"
+        - name: id
+          in: path
+          description: id that needs to be included as generated by MADAPI upon Registration
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: "#/definitions/SendNotificationResponse"
+        '400':
+          description: Bad request
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+      deprecated: false
+
+  "/notification/register/3PP/{targetSystem}/{code}/{notificationType}":
+    get:
+      tags:
+        - Registration
+      summary: Get 3PP Notification details by target system, code and notification type.
+      description: Get 3PP Notification details by name, code and notification type.
+      operationId: get3PPNotificationDetailsByNameAndCodeAndNotificationTypeUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: notificationType
+          in: path
+          description: notificationType
+          required: true
+          type: string
+        - name: code
+          in: path
+          description: code
+          required: true
+          type: string
+        - name: targetSystem
+          in: path
+          description: Target System
+          required: true
+          type: string
+        - name: transactionId
+          in: header
+          description: Internal use only
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: "#/definitions/DeleteNotificationSubscriptionResponse"
+        '400':
+          description: Bad request
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        '409':
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        '500' :
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+      deprecated: false
+    delete:
+      tags:
+        - Registration
+      summary: Delete 3PP Notification registration by target system, code and notification type.
+      description: Delete 3PP notification registration by name, code and notification type.
+      operationId: delete3PPNotificationDetailsByNameAndCodeAndNotificationTypeUsingDELETE
+      produces:
+        - "*/*"
+      parameters:
+        - name: notificationType
+          in: path
+          description: notificationtype
+          required: true
+          type: string
+        - name: code
+          in: path
+          description: code
+          required: true
+          type: string
+        - name: targetSystem
+          in: path
+          description: Target System
+          required: true
+          type: string
+        - name: transactionId
+          in: header
+          description: Internal use only
+          type: string
+        - name: x-country-code
+          in: header
+          description: Internal use only
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: "#/definitions/DeleteNotificationSubscriptionResponse"
+        '400':
+          description: Bad request
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        '409':
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        '500' :
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+      deprecated: false
+
+  "/notification/3PP/{targetSystem}/{code}/{notificationType}":
+    post:
+      tags:
+        - Notifications
+      summary: Send notification to 3PP by name, code and notification type.
+      description: Send notificaion to 3PP by name, code and notification type.
+      operationId: notification3PPByNameAndCodeAndnotificonTypeUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - application/json
+
+      parameters:
+        - name: notificationType
+          in: path
+          description: notificationType
+          required: true
+          type: string
+        - name: code
+          in: path
+          description: code
+          required: true
+          type: string
+        - name: targetSystem
+          in: path
+          description: Target System
+          required: true
+          type: string
+        - in: header
+          name: transactionId
+          description: "A unique identifier for the transaction"
+          type: string
+        - in: body
+          name: NotificationData
+          description: The request expected to trigger a notification
+          required: true
+          schema:
+            "$ref": "#/definitions/NotificationData"
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: "#/definitions/SendNotificationResponse"
+        '400':
+          description: Bad request
+          schema:
+            $ref: "#/definitions/Error"
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        '403':
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        '404':
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+      deprecated: false
+
+definitions:
+  NotificationData:
+    description: The model expected to trigger a notification
+    type: object
+    properties:
+      data:
+        description: The data to be send as the notification. This must be a valid JSON request
+        type: object
+      deliveryReportUrl:
+        description: The delivery report url. The status/report of the notification delivery is send to this url. It expects an object of the type definitions/DeliveryReportRequest. Ex. ```{"statusCode":"","statusMessage":"","transationId":"","sequenceNo":""}```. The response is of type definitions/DeliveryReportResponse. Ex. ```{"statusCode":"","statusMessage":""}```
+        type: string
+        example: "http://deliveryreporturl.com.ng"
+
+
+  RegisterNotificationRequest:
+    description: This is the model expected for notification registration request.
+    type: object
+    properties:
+      notificationType:
+        type: string
+      notificationUrl:
+        type: string
+      targetSystem:
+        type: string
+      code:
+        type: string
+
+  Error:
+    type: object
+    description: Generic MADAPI error response
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '1000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      supportMessage:
+        type: string
+        description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: 'cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4'
+      sequenceNo:
+        type: string
+        description: This is a unique transaction Identifier returned to the client
+        example: '90dba2e7-676b-45c7-b4a0-9e82eb975596'
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2020-08-01T12:34'
+      path:
+        type: string
+        description: The path that caused the error
+        example: '/subscribers/27831234567'
+      method:
+        type: string
+        description: The HTTP method type that was used
+        example: 'GET'
+
+  RegisterNotificationResponse:
+    type: object
+    description: This is the response expected for a notification registration request.
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '1000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: 'cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4'
+      sequenceNo:
+        type: string
+        description: This is a unique transaction Identifier returned to the client
+        example: '12345'
+      id:
+        type: string
+        description: The id generated upon registration for notifications and to be used upon processing actual notifications
+        example: c5f80cb8-dc8b-11ea-87d0-0242ac130003
+      links:
+        type: object
+        properties:
+          href:
+            type: string
+            example: https://host:port/v1/
+            description: Hyperlink to access the Notification  created.
+
+  DeleteNotificationSubscriptionResponse:
+    type: object
+    description: The response for deleting a notification subscription
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '0000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: 'cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4'
+      sequenceNo:
+        type: string
+        description: This is a unique transaction Identifier returned to the client
+        example: '12345'
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred
+        example: '2020-08-01T12:34'
+      data:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Id that gets generated
+            example: 'Rec1'
+          targetSystem:
+            type: string
+            description: The intended system that will receive the notification
+            example: 'AYO'
+          code:
+            type: string
+            description: Code generated
+            example: 'FZ-32-SFSG-1'
+          notificationURL:
+            type: string
+            description: The URL that will receive the notifications
+            example: 'https://ayowebapi-team2.mmiholdings.co.za/api/v1/madapi/rechargenotification'
+          notificationType:
+            type: string
+            description: The method used
+            example: 'PUT'
+          countryCode:
+            type: string
+            example: 'ZA'
+          createdAt:
+            type: string
+            format: date-time
+            description: Date and time the request is created
+            example: '2020-08-01T12:34:400Z'
+          modifiedAt:
+            type: string
+            format: date-time
+            description: Date and time the request was modified
+            example: '2020-08-01T12:34:400Z'
+          registrationStatus:
+            type: string
+            description: Status of the registration
+            example: 'Deleted'
+
+  SendNotificationResponse:
+    type: object
+    description: The response expected after triggering a notification
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '0000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: 'cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4'
+      sequenceNo:
+        type: string
+        description: This is a unique transaction Identifier returned to the client
+        example: '12345'
+
+  DeliveryReportRequest:
+    type: object
+    description: This the request send to the delivery report url received in the send notification urls. It is used to notify the status of a notification to the party triggering a notification.
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '0000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+        example: 'cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4'
+      sequenceNo:
+        type: string
+        description: This is a unique transaction Identifier returned to the client
+        example: '12345'
+
+  DeliveryReportResponse:
+    type: object
+    description: This the response expected from the delivery report url received in the send notification request.
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '0000'
+      status:
+        type: string
+        description: The final status of the nofification delivery
+
+  NotificationResponse:
+    type: object
+    description: This the response expected when the notification is delivered.
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long).
+        example: '0000'

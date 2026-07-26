@@ -1,0 +1,317 @@
+swagger: '2.0'
+info:
+  description: This API facilitate loan in advance for an MTN customer.
+  version: '2.0'
+  title: MTN Customer Loan API
+
+host: "api.mtn.com"
+basePath: "/v2"
+tags:
+  - name: Customers
+    
+paths:
+  
+  '/customers/{customerId}/loans/advance':
+    post:
+      tags:
+        - Customers
+      summary: Gets a loan advance.
+      description: Get a loan advance for an MTN customer.
+      operationId: getLoanAdvance
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: "customerId"
+          in: "path"
+          type: "string"
+          description: "ID of the customer. It could be MSISDN, email address, or any other customer identifier"
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+           $ref:  '#/definitions/LoanProvisioningDetails'
+      
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/LoanAdvanceResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+      
+      
+  '/customers/{customerId}/loans/advance/status':
+    get:
+      tags:
+        - Customers
+      summary: Gets loan advance status.
+      description: Get a loan advance status for an MTN customer.
+      operationId: getLoanAdvanceStatus
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: "customerId"
+          in: "path"
+          type: "string"
+          description: "ID of the customer. It could be MSISDN, email address, or any other customer identifier"
+          required: true
+        - name: "transactionId"
+          in: "header"
+          type: "string"
+          description: "The transaction Id used in making the loan advance request"
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/LoanStatusResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+      
+      
+  '/customers/{customerId}/loans/eligibleBundle':
+    get:
+      tags:
+        - Customers
+      summary: Retrieves the list of eligible loan.
+      description: Retrieves loan eligibility status of an MTN customer.
+      operationId: checkLoanEligibility
+      produces:
+        - application/json
+      parameters:
+        - name: "customerId"
+          in: "path"
+          type: "string"
+          description: "ID of the customer. It could be MSISDN, email address, or any other customer identifier"
+          required: true
+        - name: type
+          in: query
+          type: string
+          required: false
+          description: "Specify the type of eligibility to check for. Returns all if none is specified."
+          enum:
+            - AIRTIME
+            - DATA
+            - VOICE
+            - SMS
+            - ALL
+          default: "ALL"
+       
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/EligibilityResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+      
+
+definitions:
+
+  EligibilityResponse:
+    title: Eligibility
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: "Status Code"
+      statusMessage: 
+        type: string
+        description: "Status Message"
+      transactionId:
+        type: string
+        description: "API generated Id to include for tracing requests"
+      eligibilityStatus:
+        
+        type: string
+        enum:
+          - ELIGIBLE
+          - NE_LOAN
+          - NE_TCL_REACHED
+          - NOT_ELIGIBLE
+          - HAS_LOAN_BALANCE
+          - HAS_QUEUED_REQUEST
+          - QUALIFIED_BUT_HAS_REACHED_MAXIMUM_LANDABLE_AMOUNT
+          - INVALID_SUBSCRIBER_NUMBER
+          - MISSING_PARAMETERS
+      eligible:
+        type: array
+        items:
+          $ref: '#/definitions/LoanEligibilityTypes'
+      _links:
+        type: object
+        properties:
+          self:
+            type: string
+            example: "https://api.mtn.com/v1/customers/2348076891321/loans/eligibleBungles"
+    
+    
+    
+    
+  LoanStatusResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+        description: "Status Code"
+      statusMessage: 
+        type: string
+        description: "Status Message"
+      transactionId:
+        type: string
+        description: "Client or API generated Id to include for tracing requests"
+      data:
+        type: object
+        properties:
+          status:
+            type: string
+            enum:
+              - COMPLETED
+              - FAILED
+              - INITED
+              - PARTIAL_EXECUTED
+          timestamp:
+            type: string
+            description: "Execution timestamp. example 1519980450143"
+      _links:
+        type: object
+        properties:
+          self:
+            type: string
+            example: "https://api.mtn.com/v1/customers/2348076891321/loans/advance/status"
+
+    
+    
+    
+  LoanAdvanceResponse:
+    type: object
+    properties:
+      statusCode:
+        type: string
+      statusMessage: 
+        type: string
+        description: "Status Message"
+      transactionId:
+        type: string
+        description: "API generated Id to include for tracing requests"
+      loanDetails:
+        $ref: '#/definitions/LoanProvisioningDetails'
+      _links:
+        type: object
+        properties:
+          self:
+            type: string
+            example: "https://api.mtn.com/v1/customers/2348076891321/loans/advance"
+        
+  Error:
+    type: object
+    required:
+      - "statusCode"
+      - "statusMessage"
+    properties:
+      statusCode:
+        type: string
+        description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        example: '1000'
+      statusMessage:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client
+      supportMessage:
+        type: string
+        description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+      transactionId:
+        type: string
+        description: This is the same transactionId that is sent in the request
+      timestamp:
+        type: string
+        format: date-time
+        description: Timestamp that the error occurred 
+        example: '2020-08-01T12:34'
+      path:
+        type: string
+        description: The path that caused the error
+        example: '/loans/2348024008124/...'
+  LoanEligibilityTypes:
+    type: object
+    properties:
+      eligibilityType:
+        type: string
+        enum: [Airtime,Data,Voice]
+      bundles:
+        type: array
+        items:
+          $ref: '#/definitions/Amount'
+  
+  Amount:
+    type: object
+    properties:
+      bundleName:
+        type: string
+        description: "Name of eligible loan bundle"
+        
+      bundleValue:
+        type: string
+        description: "Name of eligible loan bundle value"
+      validity:
+        type: string
+        enum: [DAILY,WEEKLY,MONTHLY,HOURLY]
+      amount:
+        type: number
+        description: "Price of loan bundle"
+        
+  LoanProvisioningDetails:
+    type: object
+    properties:
+      
+      bundleName:
+        type: string
+        description: "Name of eligible loan bundle value"
+      bundleValue:
+        type: string
+        description: "Name of eligible loan bundle value"
+      amount:
+        type: number
+        description: "Price of loan bundle"
+      bundleType:
+        type: string
+        enum: [DAILY,WEEKLY,MONTHLY,HOURLY]
+      
+   
