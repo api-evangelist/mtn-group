@@ -1,0 +1,301 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MTN Customer KYC Verification API",
+    "version": "1.0.2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Customer KYC",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Verify multiple customer kyc information by submitting an array of only msisdn or BVNs as a query params",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/customers",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "targetSystem",
+                "value": ""
+              },
+              {
+                "name": "bvns",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "This endpoint is responsible for handling the verification of multiple kyc information by sending an array of unique identifiers i.e MSISDN, BVN only"
+        },
+        {
+          "info": {
+            "name": "Verify multiple customer kyc information by submitting an array of customer information",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/customers",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "targetSystem",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "requestType",
+                "value": "",
+                "type": "query",
+                "description": "The type of request to be made ie. whether it's a Face match or fingerprint verification,  Required to be passed when targetSystem is NIBSS"
+              },
+              {
+                "name": "verificationType",
+                "value": "",
+                "type": "query",
+                "description": "Defines the type of verification 3PP wants to perform base on the passed payload ie. Whether it's a finger print, fingerprint with date of birth verification etc.  Required to be passed when targetSystem is NIBSS"
+              }
+            ]
+          },
+          "docs": "This endpoint is responsible for handling the verification of multiple customers by passing an array of customers data."
+        },
+        {
+          "info": {
+            "name": "Verify if customer MSISDN is active on either the bank or MTN",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/customers/:customerId",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "customer MSISDN that is to be confirmed"
+              },
+              {
+                "name": "transactionId",
+                "value": "",
+                "type": "query",
+                "description": "transactionId for tracking purposes"
+              },
+              {
+                "name": "verificationType",
+                "value": "",
+                "type": "query",
+                "description": "Verification Type."
+              },
+              {
+                "name": "targetSystem",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "externalCode",
+                "value": "",
+                "type": "query",
+                "description": "This can be the bank's short code"
+              },
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query",
+                "description": "An optional parameter, together with endDate, allows developers to specify a time range by which to query customer data on. If you want to request data for 2 months, then start date will need to set to 2 months prior to today, and endDate to todays date. If this is not set, the date range will be defaulted to 6 months"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query",
+                "description": "An optional parameter, together with startDate, allows developers to specify a time range by which to query customer data on. If you want to request data for 2 months, then start date will need to set to 2 months prior to today, and endDate to todays date. If this is not set, the date range will be defaulted to 6 months"
+              }
+            ]
+          },
+          "docs": "This endpoint is to enable a 3PP confirm if a mobile number is active on the bank and to get a hashed mobile number"
+        },
+        {
+          "info": {
+            "name": "Verify mtn customer kyc information against 3PP customer kyc information",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/customers/:customerId",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "ID of the customer. It could be MSISDN, email address, or any other customer identifier. if customerId is msisdn, then the format must be E.123"
+              },
+              {
+                "name": "isConsentVerified",
+                "value": "",
+                "type": "query",
+                "description": "This will indicate that the customer consent has been acquired by the partner for KYC verification. For the request to be executed, this field should be set to TRUE if the consent validation has been successfully processed by the partner"
+              },
+              {
+                "name": "targetSystem",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "This endpoint is to enable trusted partners verify customer's KYC information passed in the request body. The verification logic will be carried out at the process layer where each KYC attributes will be validated to be TRUE or FALSE based on their matching record on the network downstream system"
+        },
+        {
+          "info": {
+            "name": "Verify mtn customer kyc information against 3PP customer kyc information",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/customers/:customerId/kycScore",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "ID of the customer. It could be MSISDN, email address, or any other customer identifier. if customerId is msisdn, then the format must be E.123"
+              }
+            ]
+          },
+          "docs": "This endpoint is to enable trusted partners to verify customer's KYC information passed in the request body. The verification logic will be carried out where each KYC attributes will be validated and given a percentage score (between 0 - 100) based on their matching record on the network downstream system"
+        },
+        {
+          "info": {
+            "name": "Verify mtn customer kyc information against 3PP customer kyc information",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/customers/:customerId/nameScore",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "ID of the customer. It could be MSISDN, email address, or any other customer identifier. if customerId is msisdn, then the format must be E.123"
+              }
+            ]
+          },
+          "docs": "This endpoint is to enable trusted partners to verify customer's KYC information passed in the request body. The verification logic will be carried out where each KYC attributes will be validated and given a percentage score (between 0 - 100) based on their matching record on the network downstream system"
+        },
+        {
+          "info": {
+            "name": "Verify mtn customer kyc information against 3PP customer kyc information",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/customers/:customerId/addressScore",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "ID of the customer. It could be MSISDN, email address, or any other customer identifier. if customerId is msisdn, then the format must be E.123"
+              }
+            ]
+          },
+          "docs": "This endpoint is to enable trusted partners to verify customer's KYC information passed in the request body. The verification logic will be carried out where each KYC attributes will be validated and given a percentage score (between 0 - 100) based on their matching record on the network downstream system"
+        },
+        {
+          "info": {
+            "name": "Verify customer kyc information by uploading customer biometric data",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/customers/:customerId/biometric/verify",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "targetSystem",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "ID of the customer. It could be MSISDN, email address, or any other customer identifier. if customerId is msisdn, then the format must be E.123"
+              },
+              {
+                "name": "requestType",
+                "value": "",
+                "type": "query",
+                "description": "The type of request to be made ie. whether it's a Face match or fingerprint verification,  Required to be passed when targetSystem is NIBSS"
+              },
+              {
+                "name": "verificationType",
+                "value": "",
+                "type": "query",
+                "description": "Defines the type of verification 3PP wants to perform base on the passed payload ie. Whether it's a finger print, fingerprint with date of birth verification etc.  Required to be passed when targetSystem is NIBSS"
+              }
+            ]
+          },
+          "docs": "This endpoint is to enable trusted partners verify customer's KYC information by passing customer biometric details"
+        },
+        {
+          "info": {
+            "name": "Get Identity Status by Customer ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/biometric-roc/customers/identityStatus",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "POST to query identity enrollment status by Customer ID"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

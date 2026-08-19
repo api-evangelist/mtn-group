@@ -1,0 +1,104 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Short Message Service (SMS) API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Sending SMS",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "This operation is used to send an outbound SMS message to the provided recipients.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/messages/sms/outbound"
+          },
+          "docs": "This interface is used to send an SMS to the specified receiverAddress."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Subscribing for Mobile Originating and Delivery Receipts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create subscription to register a serviceCode, callback url and a delivery report url for mobile originating and Delivery Receipts.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/messages/sms/subscription",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "This is the interface used to register callbackUrl (For Mobile originating Messages ) and deliveryReportUrl (for Delivery Receipts ) for a shortCode/serviceCode/senderAddress."
+        },
+        {
+          "info": {
+            "name": "Update a subscription information based on an already existing subscriptionId.",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/messages/sms/subscription/:subscriptionId",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "subscriptionId",
+                "value": "",
+                "type": "path",
+                "description": "This is the subscription Id that was returned on the initial subscription request."
+              }
+            ]
+          },
+          "docs": "Patch or update an existing subscription based on the subscriptionId , The subscriptionId is generated at the point of registering a short code for Mobile originating messages or Delivery Receipts with the /messages/sms/subscription endpoint above."
+        },
+        {
+          "info": {
+            "name": "Delete subscription or registration details based on the provided subscriptionId.",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/messages/sms/subscription/:subscriptionId",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "subscriptionId",
+                "value": "",
+                "type": "path",
+                "description": "It is the id that is generated at the point of subscription with the messages/sms/subscription   endpoint  "
+              }
+            ]
+          },
+          "docs": "This interface will stop our systems from sending Mobile originating messages and Delivery status reports to the provided delivery report and callback urls for a configured serviceCode."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

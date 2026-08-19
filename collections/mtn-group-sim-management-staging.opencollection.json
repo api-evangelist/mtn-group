@@ -1,0 +1,424 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Sim Management",
+    "version": "3.0.0 - Last updated date:2026-07-15 18:20:11"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "https://api.mtn.com/v1/oauth/access_token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "NumberRecycleService",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve Customer Registration Status by specifying the 'customerId'.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/customers/recycleStatus",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "This operation retrieves the current registration status of a customer based on their unique 'customerId', providing essential details about their service activation and account information."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "SimManagementService",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "provide the functionality of starter pack registration",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/customers/registration",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "x-country-code",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "registrationType",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "This operation facilitates the registration of new starter packs for customers, ensuring that all necessary details are captured and processed securely and efficiently for service activation."
+        },
+        {
+          "info": {
+            "name": "Retrieve available Resources.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/customers/sim/resourcePool",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "x-country-code",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "numberOfRec",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pattern",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "resourceType",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "This operation retrieves a pool of available resources, such as MSISDNs, allowing a customer who needs a new connection to select a desired number from the returned list based on their preferences."
+        },
+        {
+          "info": {
+            "name": "Reserve a resource such as an MSISDN",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/customers/:customerId/sim/resourcePool/reserve",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "x-country-code",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Reserve a resource such as an MSISDN so that it cannot be retrieved in the operation for retrieving available resources (MSISDN's)"
+        },
+        {
+          "info": {
+            "name": "verify sim Recycle status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/customers/:customerId/simRecycle/verifyStatus",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "senderId",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "This operation allows customers to verify the status of their SIM recycle request, providing a confirmation of whether the recycling process has been successfully completed or if it is still in progress."
+        },
+        {
+          "info": {
+            "name": "Initiate the SIM swap process",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.mtn.com/v1/customers/:customerId/simSwap",
+            "headers": [
+              {
+                "name": "targetSystem",
+                "value": ""
+              },
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "x-country-code",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "This operation initiates the SIM swap procedure for a customer, allowing them to transfer their existing mobile number to a new SIM card while maintaining their service."
+        },
+        {
+          "info": {
+            "name": "Get sim details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/customers/:customerId/simSwap/details",
+            "headers": [
+              {
+                "name": "targetSystem",
+                "value": ""
+              },
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "x-country-code",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "This operation retrieves detailed information about a customer's SIM card, including its current status, associated services, and other relevant technical specifications."
+        },
+        {
+          "info": {
+            "name": "Get sim swap eligibility",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/customers/:customerId/simSwap/eligibility",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "x-country-code",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "This operation determines if a customer is eligible for a SIM swap based on various criteria such as account status, identification, and regulatory requirements."
+        },
+        {
+          "info": {
+            "name": "Get next Authentication (Q&A)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/customers/:customerId/simSwap/nextAuthentication",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "This operation retrieves the next authentication question for a given customer, enabling a secure question-and-answer verification process during SIM swap requests."
+        },
+        {
+          "info": {
+            "name": "Get sim swap status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/customers/:customerId/simSwap/status",
+            "headers": [
+              {
+                "name": "targetSystem",
+                "value": ""
+              },
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "prefLang",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "requesterId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "xChanelId",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "This operation allows customers to retrieve the current status of their SIM swap request, providing real-time updates on the progress and completion of the process."
+        },
+        {
+          "info": {
+            "name": "validate sim-swap status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/customers/:customerId/simSwap/validateStatus",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "senderId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "This operation validates the current status of a SIM swap request, ensuring all prerequisites are met and the process is proceeding as expected within the specified timeframe."
+        },
+        {
+          "info": {
+            "name": "verify sim-swap status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/customers/:customerId/simSwap/verifyStatus",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "senderId",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "This operation allows customers to verify the status of their SIM swap request, providing a confirmation of whether the swap has been successfully completed or if it is still in progress."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

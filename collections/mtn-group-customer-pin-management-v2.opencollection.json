@@ -1,0 +1,384 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Customer PIN Management API",
+    "version": "1.0.2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "PIN",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "To validate Pin  Details  user will enter (customerId, secret, channel, transId) Attributes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/customer/:customerId/pin",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              },
+              {
+                "name": "secret",
+                "value": ""
+              },
+              {
+                "name": "channel",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "Customer id will be act as serviceNumber and it can Customer's msisdn, serviceId, accountId, or invoiceId."
+              }
+            ]
+          },
+          "docs": "To validate Pin Details, user must enter the MSISDN/Service Number of Customer, the PIN number, channel id. Finally the user will enter the Unique Trans ID as per below format yyyymmddhhmmss<UniqueSequenceNumber> i.e 20200711123459104"
+        },
+        {
+          "info": {
+            "name": "To create Pin customer will provide mandatory(customerId, secret, alternateNumber, securityQuestion, tncDetails,channel,transId) attributes. Also will provide emailID as optional input",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/customer/:customerId/pin",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              },
+              {
+                "name": "secret",
+                "value": ""
+              },
+              {
+                "name": "repeatedSecret",
+                "value": ""
+              },
+              {
+                "name": "emailID",
+                "value": ""
+              },
+              {
+                "name": "alternateNumber",
+                "value": ""
+              },
+              {
+                "name": "tncDetails",
+                "value": ""
+              },
+              {
+                "name": "channel",
+                "value": ""
+              },
+              {
+                "name": "X-Authorization",
+                "value": ""
+              },
+              {
+                "name": "description",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "Customer id will be act as serviceNumber and it can Customer's msisdn, serviceId, accountId, or invoiceId."
+              },
+              {
+                "name": "targetSystem",
+                "value": "",
+                "type": "query",
+                "description": "The backend system expected to fulfil the request"
+              },
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "A currency"
+              },
+              {
+                "name": "invitationCode",
+                "value": "",
+                "type": "query",
+                "description": "An invitation code associated with the PIN creation"
+              },
+              {
+                "name": "segment",
+                "value": "",
+                "type": "query",
+                "description": "This is the type of customer doing the transaction. This can be customer, agent or admin"
+              },
+              {
+                "name": "idType",
+                "value": "",
+                "type": "query",
+                "description": "Type of the customerId in the path."
+              }
+            ]
+          },
+          "docs": "create Pin Details, user must enter the MSISDN/Service Number of Customer, the PIN number, alternate mobile Number , Answer for the Security Question and valid channel id. Finally the user will enter the Unique Trans ID as per below format yyyymmddhhmmss<UniqueSequenceNumber> i.e 20200711123459103"
+        },
+        {
+          "info": {
+            "name": "To change Pin  Details user will enter (customerId, operationType, currentSecret, newSecret,channel,transId) Attributes",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/customer/:customerId/pin",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              },
+              {
+                "name": "currentSecret",
+                "value": ""
+              },
+              {
+                "name": "repeatedSecret",
+                "value": ""
+              },
+              {
+                "name": "newSecret",
+                "value": ""
+              },
+              {
+                "name": "securityAnswer",
+                "value": ""
+              },
+              {
+                "name": "channel",
+                "value": ""
+              },
+              {
+                "name": "X-Authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "Customer id will be act as serviceNumber and it can Customer's msisdn, serviceId, accountId, or invoiceId."
+              },
+              {
+                "name": "targetSystem",
+                "value": "",
+                "type": "query",
+                "description": "The backend system expected to fulfil the request"
+              },
+              {
+                "name": "segment",
+                "value": "",
+                "type": "query",
+                "description": "This is the type of customer doing the transaction. This can be customer, agent or admin"
+              },
+              {
+                "name": "idType",
+                "value": "",
+                "type": "query",
+                "description": "Type of the customerId in the path."
+              },
+              {
+                "name": "requestType",
+                "value": "",
+                "type": "query",
+                "description": "The type of operation being performed in the change"
+              }
+            ]
+          },
+          "docs": "To change Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User has to enter the 'current Secret/PIN' and 'New Secret/PIN'. User will enter Security Answer selected during first time Secret/PIN Creation. Finally the user will enter the 'channel id' & 'Unique Trans ID as per below format yyyymmddhhmmss<UniqueSequenceNumber> i.e 20200711123459105"
+        },
+        {
+          "info": {
+            "name": "To reset Pin  Details user will enter (customerId, operationType, validateAnswers, motherName,dateOfBirth,stateOfOrigin,channel,transId) Attributes",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/customer/:customerId/pin",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              },
+              {
+                "name": "validateAnswers",
+                "value": ""
+              },
+              {
+                "name": "channel",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "Customer id will be act as serviceNumber and it can Customer's msisdn, serviceId, accountId, or invoiceId."
+              },
+              {
+                "name": "motherName",
+                "value": "",
+                "type": "query",
+                "description": "Mothers maiden name"
+              },
+              {
+                "name": "dateOfBirth",
+                "value": "",
+                "type": "query",
+                "description": "Date of Birth in format YYYY-MM-DD"
+              },
+              {
+                "name": "stateOfOrigin",
+                "value": "",
+                "type": "query",
+                "description": "State of Origin code"
+              },
+              {
+                "name": "idNumber",
+                "value": "",
+                "type": "query",
+                "description": "Customer ID"
+              },
+              {
+                "name": "description",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "targetSystem",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "To reset Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User has to enter the Y-indicates validate security answer, N-indicates no validation for Validate Answers'. User will enter Mothers maiden name also will enter the Date of Birth in format YYYY-MM-DD and State of Origin code. Finally the user will enter the 'channel id' & 'Unique Trans ID as per below format yyyymmddhhmmss<UniqueSequenceNumber> i.e 20200711123459105"
+        },
+        {
+          "info": {
+            "name": "To get Pin profile Details user will enter (customerId, operationType,securityQuestion,securityAnswer,channel) Attributes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/customer/:customerId/pinProfile",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "Customer id will be act as serviceNumber and it can Customer's msisdn, serviceId, accountId, or invoiceId."
+              },
+              {
+                "name": "channel",
+                "value": "",
+                "type": "query",
+                "description": "channel"
+              },
+              {
+                "name": "operationType",
+                "value": "",
+                "type": "query",
+                "description": "Specify the operation of the request"
+              }
+            ]
+          },
+          "docs": "To get Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User will enter Security Answer to be updated. Finally the user will enter the 'channel id'"
+        },
+        {
+          "info": {
+            "name": "To change Pin  Details user will enter (customerId, operationType,securityQuestion,securityAnswer,channel,emailID,tncDetails) Attributes",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/customer/:customerId/pinProfile",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              },
+              {
+                "name": "emailID",
+                "value": ""
+              },
+              {
+                "name": "tncDetails",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "Customer id will be act as serviceNumber and it can Customer's msisdn, serviceId, accountId, or invoiceId."
+              },
+              {
+                "name": "channel",
+                "value": "",
+                "type": "query",
+                "description": "channel"
+              },
+              {
+                "name": "operationType",
+                "value": "",
+                "type": "query",
+                "description": "Specify the operation of the request"
+              }
+            ]
+          },
+          "docs": "To change Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User will enter Security Answer to be updated. Finally the user will enter the 'channel id'"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

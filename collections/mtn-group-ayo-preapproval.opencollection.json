@@ -1,0 +1,168 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consent Validation API",
+    "version": "2.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Consent Validation",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Provides an easy way for double opt-in to their traditional channel applications like USSD.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/consent/:msisdn",
+            "params": [
+              {
+                "name": "msisdn",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Confirms next action based on subscriber consent mostly for traditional channels."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Create Customer PreApproval",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Provides the ability to create a customer PreApproval Request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/consent/preapproval",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "X-Authorization",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "Manages Customer PreApproval information by specifying the from and to 'customerIds'. For most solution the to and from customer id's will be the same. This functionality is used when the preapprovals are used to preapprove future debit transaction between different parties."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Cancel Customer PreApproval",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Provides the ability to cancel an existing customer PreApproval Request(s)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/consent/cancelPreapproval",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "X-Authorization",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "Manages existing Customer PreApproval information by been able to cancel a single or multiple preapprovals (this is based on what request parameters are sent)."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "OTP",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Generate OTP and send to the customer's registered Id",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/consent/:customerId/generateotp",
+            "headers": [
+              {
+                "name": "X-Authorization",
+                "value": ""
+              },
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "id for the Customer; if id is msisdn, format must be E.123"
+              }
+            ]
+          },
+          "docs": "Generate OTP and send it to the customer's Id"
+        },
+        {
+          "info": {
+            "name": "Validates the OTP sent to the subscriber from the generateotp request call",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/consent/:customerId/verifyotp",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "id for the Customer; if id is msisdn, format must be E.123"
+              },
+              {
+                "name": "otpKey",
+                "value": "",
+                "type": "query",
+                "description": "Unique identifier for the OTP that was originally sent. This is the value used in the \"requestOTP\" method."
+              },
+              {
+                "name": "otp",
+                "value": "",
+                "type": "query",
+                "description": "OTP as recieved on the SMS or Email Id"
+              }
+            ]
+          },
+          "docs": "Validates the OTP sent to the subscriber. Once the otp has been verified, it will return invalid for subsequent calls."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

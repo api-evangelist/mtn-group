@@ -1,0 +1,142 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Customer Kyc Consent",
+    "version": "2.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "https://api.mtn.com/v1/oauth/access_token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Callback",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "The user consent information posted here as a callback from consent application",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/callback",
+            "headers": [
+              {
+                "name": "clientCallbackUrl",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "The user consent information posted here as a callback from consent application. This endpoint for Consent Callback with consent id. Customer id and callback data required"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Kyc",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Endpoint for KYC with Consent.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/:customerId",
+            "headers": [
+              {
+                "name": "countryCode",
+                "value": ""
+              },
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "isConsentPreApproved",
+                "value": ""
+              },
+              {
+                "name": "isMaskedResponse",
+                "value": ""
+              },
+              {
+                "name": "partnerCallbackUrl",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "lob",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "idType",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "fields",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Endpoint for KYC with Consent - This endpoint initiate Kyc With ConsentRequest. This accept customer id, channel, callback url, expiry time and company name"
+        },
+        {
+          "info": {
+            "name": "Consent By MSIDN - Customer id",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/consents",
+            "headers": [
+              {
+                "name": "countryCode",
+                "value": ""
+              },
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Customer KYC Consent Endpoint :  - This endpoint fetch the consent details by customer id and msidn. This required msidn, country code and other details"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

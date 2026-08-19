@@ -1,0 +1,78 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MTN Messaging USSD API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Accessible to 3PP",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "The 3PP subscribes/registers to receive USSD MO-generated messages via MADAPI",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/messages/ussd/subscription"
+          },
+          "docs": "This function enables 3PP to subscribe to receive MO-generated messages from MADAPI."
+        },
+        {
+          "info": {
+            "name": "The 3PP unsubscribes/de-registers from receiving/sending USSD MO/MT messages via MADAPI",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/messages/ussd/subscription/:subscriptionId",
+            "params": [
+              {
+                "name": "subscriptionId",
+                "value": "",
+                "type": "path",
+                "description": "It is the subscriptionId that is used to delete existing USSD subscription ."
+              }
+            ]
+          },
+          "docs": "This function enables 3PP to unsubscribe from receiving MO-generated messages from MADAPI."
+        },
+        {
+          "info": {
+            "name": "The 3PP sends USSD MT Message to mobile subscriber through MADAPI",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/messages/ussd/outbound"
+          },
+          "docs": "This function is used to send/push USSD MT Message to USSDGW for 3PPs with subscription on MADAPI."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Accessible to USSD Gateway",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "The USSDGW sends USSD MO-generated message to 3PP through MADAPI",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/messages/ussd/inbound"
+          },
+          "docs": "This function sends USSD MO-generated message to a 3PP with subscription on MADAPI."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

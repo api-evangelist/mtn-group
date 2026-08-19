@@ -1,0 +1,116 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "TMF676 Payment Management",
+    "version": "3.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "https://api.mtn.com/v1/oauth/access_token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "TMF676 Payment Management Aggregator",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve OTT tax status details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/payment",
+            "headers": [
+              {
+                "name": "clientTransactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "ottTaxStatus",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Fetches the OTT tax status details for a specific customer from the configured CIS system, forwarding the request to downstream services while preserving the optional transaction identifier."
+        },
+        {
+          "info": {
+            "name": "Process customer payment via MoMo",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/payment",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Initiates a customer payment using MTN MoMo channels, generating or reusing a transaction reference, logging the full request payload, and delegating downstream payment execution with comprehensive response auditing."
+        },
+        {
+          "info": {
+            "name": "Get transaction details by identifier",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/payment/:id",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "requestType",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Retrieves detailed information for a specific payment transaction, invoking downstream services with a generated correlation identifier and capturing the full service response for auditability and traceability."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

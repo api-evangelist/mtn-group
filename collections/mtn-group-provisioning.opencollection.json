@@ -1,0 +1,158 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Api Documentation Unified Balance",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "VAS Services",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "This is used to provision Variable VAS servcies.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/v2/offer-provision"
+          },
+          "docs": "This service is used to provision variable VAS bundles.This version of the service does the variable provisiong along with the promotions that are combined with the rewards and enables notification to the target channel. This service will also have the recurrence of the offers that are configured on Neon that will be provisioned."
+        },
+        {
+          "info": {
+            "name": "Provision VAS services (applicable to prepaid and postpaid customers).",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/v2/vas"
+          },
+          "docs": "Function used to provision a VAS service on a customer's account.  This version of the service does the provisoning for autorenew and micro bundles; it also aligns the interface to the current CAMEL case standard being followed."
+        },
+        {
+          "info": {
+            "name": "Returns a list of applicable VAS services for subscribers.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/v9/vas",
+            "params": [
+              {
+                "name": "transactionId",
+                "value": "",
+                "type": "query",
+                "description": "Unique ID for the transaction."
+              },
+              {
+                "name": "sourceIdentifier",
+                "value": "",
+                "type": "query",
+                "description": "This field denotes the channel that is initiating request to SOA., ex-'Online, USSD, MyMTNApp'"
+              },
+              {
+                "name": "vasType",
+                "value": "",
+                "type": "query",
+                "description": "This parameter indicates the type of vas  that is requested It can be set to \"Personalised\", \"Standard\", \"Combined\", \"Augmented\".Personalised flag returns Only personalised offers object. Standard flag only returns the standard VAS offers.Combined flag returns VAS list has both the standard VAS and personalised offers.  Augmented flag returns personalised and standard objects in the VAS list.In this scenario though, the standard offers in the \"VAS list\" are replaced by personalised ones if they exist.Combined flag returns the standard XDR offers and also the CVM upsell offers. The upsell bundles of Neon will be returned for all vasTypes in  a different array of myMTNOffers"
+              },
+              {
+                "name": "msisdn",
+                "value": "",
+                "type": "query",
+                "description": "The MSISDN in international format."
+              },
+              {
+                "name": "pricePlanId",
+                "value": "",
+                "type": "query",
+                "description": "The priceplan ID associated to the MSISDN entered above. Bundles that are not applicable to this price plan are excluded from the response based on this parameter and also bundles only applicable for the price plan is returned."
+              },
+              {
+                "name": "subscriberType",
+                "value": "",
+                "type": "query",
+                "description": "The subscriber type associated to the MSISDN entered above.  The field can be one of the following values: 'Converged','Prepaid', 'MVNO', 'Contract', 'Hybrid', 'EBU', 'FTTH' .The Neon offers will be returned irrespective of the subtye "
+              },
+              {
+                "name": "channel",
+                "value": "",
+                "type": "query",
+                "description": "This parameter indicates which channel the response is for.  This is so that a requesting system can get bundles that are specific to its platform.  For example, there maybe some bundles that are only applicable to the App or the IVR.  This flag can currently be set to one of the following values: \"All\", \"IVR\", \"App\", \"USSD\", \"Portal\""
+              },
+              {
+                "name": "platformType",
+                "value": "",
+                "type": "query",
+                "description": "This flag correlates to the allPlatforms flag in the response.  In essence, its a ‘Flag’ indicating which platform the bundles is being requested for. \"All\" - Indicates that all bundles should be returned.  ‘Self Service’ - Indicates the bundles are being requested for self-service platforms ‘Assisted Sales’ - Indicates the bundles are being requested for assisted sales channels ‘CSR Only’ - Indicates the bundles are being requested for CSR agents and ‘Agents’ - Indicates the bundles are being requested for physical stores.  So if for example the channel is a \"Portal\" and this flag has been set to \"Self Service\" all bundles that have the allPlatforms flag set to \"Yes\" shall be returned, and then only the \"Self Service\" bundles shall be returned and not for example the CSR specific ones"
+              },
+              {
+                "name": "bundleType",
+                "value": "",
+                "type": "query",
+                "description": "This parameter is optional.  If it is passed through, the response will only return bundles of the type specified here.  If its not passed through, all bundle types are returned by default.  Currently the parameter .pass the values using pipe delimeter e.g Data|voice|SMS etc can be set to one of the following: SMS, Voice, Data, Social, Mixed, Digital or All. Neon offers will be returned irrespective of the bearer type"
+              },
+              {
+                "name": "bundleCategory",
+                "value": "",
+                "type": "query",
+                "description": "This parameter defines what type of bundles to be displayed to the subscriber. This is mandatory if vasType is Combined or Upsell. The values are Daily, Weekly,Monthly .To accept value All since we are interested in all bundles This can be set to All "
+              },
+              {
+                "name": "purchaseMedium",
+                "value": "",
+                "type": "query",
+                "description": "When passed in input ,helps to return only the matched bundles.Suppose if user tries to buy via Airtime this parameter takes value as 'Airtime' and  those applicable bundles are returned.Allowed values 'Card','Airtime','Momo','Loyalty' and                           'All'."
+              },
+              {
+                "name": "bundleState",
+                "value": "",
+                "type": "query",
+                "description": "When passed in input ,helps to return only the 'Active' or 'Inactive' or 'All' the bundles . Allowed values 'Active' , 'Inactive' and 'All'."
+              },
+              {
+                "name": "topSeller",
+                "value": "",
+                "type": "query",
+                "description": "When set to 'Yes' output contains both the top selling and regular bundles. When set to 'No' the output contains only the regular bundles. When set to 'All' returns both the top selling and regular bundles .Allowed values 'Yes','No','All' type: string"
+              },
+              {
+                "name": "chargingSystemIndicator",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Returns a list of applicable VAS services for a customer to provision on their account. Current source systems is IBF and SAAE for this i.e. you can do \"Card\" and \"Airtime\" purchases. In this version additional feilds have been added to support simple, complex and extreme cards for the UI/UX i.e. to cater for different naming standards, and to return the SAAE ID where configured.V9 Vas service retruns standard VAS , top selling and personalised."
+        },
+        {
+          "info": {
+            "name": "This is used to provision Variable VAS servcies.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/v4/variable-vas"
+          },
+          "docs": "This service is used to provision variable VAS bundles.This version of the service does the variable provisiong along with the promotions that are combined with the rewards and enables notification to the target channel. This service will also have the recurrence of the offers that are configured on Neon that will be provisioned."
+        },
+        {
+          "info": {
+            "name": "This is used to provision Variable VAS servcies.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/v5/variable-vas"
+          },
+          "docs": "This service is used to provision variable VAS bundles.This version of the service does the variable provisiong along with the promotions that are combined with the rewards and enables notification to the target channel. This service will also have the recurrence of the offers that are configured on Neon that will be provisioned."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

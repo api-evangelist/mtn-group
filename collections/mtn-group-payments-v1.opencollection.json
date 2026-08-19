@@ -1,0 +1,638 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Payments v1",
+    "version": "3.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "https://api.mtn.com/v1/oauth/access_token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Payment",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Provides the ability for a consumer to generate a payment link for account payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/payment-link",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              },
+              {
+                "name": "targetSystem",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "offerMenuId",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Provides the ability for a consumer to get the payment link for the requesting MSISDN so as to enable the customer to make payment to the service providers."
+        },
+        {
+          "info": {
+            "name": "Generate payment agreement (Promise to Pay)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/payment-agreement",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Provides the ability for a consumer to generate a payment agreement (Promise to Pay). This endpoint allows customers to set up payment promise agreements with service providers, enabling deferred payment arrangements and payment scheduling functionality. It handles the creation of payment agreements with appropriate validation, terms and conditions, and integration with payment processing systems."
+        },
+        {
+          "info": {
+            "name": "Reverse payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/reverse-payment",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "authorizationData",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Provides the ability for a consumer to reverse a payment transaction and all of it's potential sub-transactions. This endpoint processes payment reversals including validation of reversal requests, authorization checks, balance verification, and execution of reverse transactions. It handles complete transaction rollback including all associated sub-transactions, updates account balances, triggers notifications, and maintains comprehensive audit trails for reversal operations."
+        },
+        {
+          "info": {
+            "name": "Process payment to service providers",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/payments",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              },
+              {
+                "name": "authorizationData",
+                "value": ""
+              },
+              {
+                "name": "channelId",
+                "value": ""
+              },
+              {
+                "name": "spPartnerName",
+                "value": ""
+              },
+              {
+                "name": "autoRenew",
+                "value": ""
+              },
+              {
+                "name": "x-origin-channelid",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "prefLang",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Provides the ability for a consumer to make a payment to service providers. This endpoint processes payment transactions including validation of payment requests, authorization checks, balance verification, and transaction execution. It supports various payment types including direct payments, merchant payments, and service provider transfers with comprehensive error handling and transaction status reporting."
+        },
+        {
+          "info": {
+            "name": "Process merchant payment transactions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/merchant-payment",
+            "headers": [
+              {
+                "name": "x-country-code",
+                "value": ""
+              },
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "authorizationData",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "operationType",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Processes payment transactions for merchant services including validation of merchant payment requests, authorization checks, balance verification, and transaction execution. This endpoint supports various merchant payment types including direct merchant payments, service provider transfers, and merchant refunds with comprehensive error handling, transaction status reporting, and audit trail maintenance. Handles complex merchant payment workflows including multi-currency support, fee calculation"
+        },
+        {
+          "info": {
+            "name": "Get payment transaction status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/:correlatorId/transactionStatus",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "targetSystem",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              },
+              {
+                "name": "authorizationData",
+                "value": ""
+              },
+              {
+                "name": "languageCode",
+                "value": ""
+              },
+              {
+                "name": "x-origin-channelid",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "correlatorId",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "amount",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "paymentType",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "description",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Provides the status of a Payment Transaction to service providers. This endpoint enables querying the current status of payment transactions including pending, completed, failed, or cancelled states. It returns comprehensive transaction information including transaction details, status history, error messages if applicable, and associated metadata for tracking and reconciliation purposes."
+        },
+        {
+          "info": {
+            "name": "Update payment status to processed",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/status/:transactionid",
+            "params": [
+              {
+                "name": "transactionid",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Updates the payment status from pending to processed for completed transactions. This endpoint is used to mark payment transactions as successfully processed in the system database. It performs status validation, updates the payment record with processed status, timestamps the completion, and maintains audit trail information for transaction lifecycle management and reconciliation purposes."
+        },
+        {
+          "info": {
+            "name": "Get payment by transactionId",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/details/:transactionid",
+            "params": [
+              {
+                "name": "transactionid",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns the payment object as saved in the database without the actual request json. This endpoint retrieves complete payment transaction details from the database using the transaction identifier. It returns payment information including transaction status, amounts, timestamps, customer details, and service provider information for transaction lookup and reconciliation purposes."
+        },
+        {
+          "info": {
+            "name": "Calculate payment transfer fees",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/fee",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              },
+              {
+                "name": "authorizationData",
+                "value": ""
+              },
+              {
+                "name": "autoRenew",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Provides the ability for a consumer to check a payment transfer fee charged by service providers. This endpoint calculates and returns the applicable fees for payment transactions based on transaction amount, payment type, service provider, and customer tier. It supports fee estimation for various payment scenarios including merchant payments, peer-to-peer transfers, and service provider transactions with detailed fee breakdown information."
+        },
+        {
+          "info": {
+            "name": "Get a list of payments made on a reference or by a customer id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/:id/history",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              },
+              {
+                "name": "authorizationData",
+                "value": ""
+              },
+              {
+                "name": "x-origin-channelid",
+                "value": ""
+              },
+              {
+                "name": "x-target-system",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "segment",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageNumber",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "requestType",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "nodeId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "startTime",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "registrationChannel",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "queryType",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "traceId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "serviceId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "serviceType",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get a list of payments made on a reference or by a customer id. This endpoint retrieves payment transaction history filtered by customer identifier or payment reference. It returns comprehensive payment lists including transaction details, status information, amounts, timestamps, and associated metadata. Supports pagination and filtering options for efficient data retrieval and transaction analysis."
+        },
+        {
+          "info": {
+            "name": "Get eligibilty status.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/payment-agreement/eligibility",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "billingAccountNumber",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Provides the ability for a consumer to check the eligibility status for payment agreement. This endpoint evaluates customer eligibility for payment agreement services including promise-to-pay agreements and payment plans. It performs eligibility checks based on customer account status, payment history, creditworthiness, billing account information, and service provider requirements, returning detailed eligibility assessment results."
+        },
+        {
+          "info": {
+            "name": "reverse payment history",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/reverse-payment/:id",
+            "headers": [
+              {
+                "name": "correlatorId",
+                "value": ""
+              },
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "authorizationData",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Provides the ability for a consumer to get a reverse payment details. This endpoint retrieves detailed information about specific reverse payment transactions using transaction identifiers. It returns comprehensive reverse payment details including original transaction information, reversal amounts, status, timestamps, customer information, and associated metadata for detailed transaction analysis and reconciliation purposes."
+        },
+        {
+          "info": {
+            "name": "Get reverse payment transaction history",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.mtn.com/v1/reverse-payment/history",
+            "headers": [
+              {
+                "name": "customerId",
+                "value": ""
+              },
+              {
+                "name": "correlatorId",
+                "value": ""
+              },
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "transactionstatus",
+                "value": ""
+              },
+              {
+                "name": "authorizationData",
+                "value": ""
+              },
+              {
+                "name": "countryCode",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "transactiontype",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "amount",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "nodeId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "otherFri",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "posMsisdn",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "quoteId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageNo",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Retrieves comprehensive history of reverse payment transactions for a specific customer. This endpoint processes requests for reverse payment history including validation of customer credentials, transaction filtering by date ranges, status filtering, and pagination support. It handles complex reverse payment queries including multi-system integration, transaction type filtering, and comprehensive audit trail retrieval for detailed transaction analysis and reconciliation purposes."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Consent",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Process user consent via USSD for payment authorization",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/payments/ussd/consent",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Receives and processes user consent for payment transactions through USSD channels. This endpoint handles consent validation, consent status updates, payment authorization workflows, and maintains comprehensive consent audit trails. Supports various consent types including payment authorization, service subscription consent, and data processing consent with robust validation, security checks, and integration with payment processing systems for seamless transaction execution."
+        },
+        {
+          "info": {
+            "name": "User consent via SMS",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.mtn.com/v1/payments/sms/consent",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Receives user consent for a payment request via sms. This endpoint processes consent confirmation received through SMS channels for payment transactions. It validates consent requests, updates consent status, triggers payment processing workflows, and maintains consent audit trails. Supports various consent types including payment authorization, service subscription consent, and data processing consent with comprehensive validation and security checks."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

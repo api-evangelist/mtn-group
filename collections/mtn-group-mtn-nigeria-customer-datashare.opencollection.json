@@ -1,0 +1,435 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Customer Data Share API",
+    "version": "1.7.1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Provider",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Add consumer msidsn to share data",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/providers/:providerMsisdn",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "providerMsisdn",
+                "value": "",
+                "type": "path",
+                "description": "Provider Msisdn.The format must be E.123"
+              }
+            ]
+          },
+          "docs": "Allows a provider to add a customer to use their internet share bundle"
+        },
+        {
+          "info": {
+            "name": "Update datashare limits and Suspend/Unsuspend number",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/providers/:providerMsisdn",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "providerMsisdn",
+                "value": "",
+                "type": "path",
+                "description": "Provider Msisdn.The format must be E.123"
+              }
+            ]
+          },
+          "docs": "Allows a provider to adjust consumer limits"
+        },
+        {
+          "info": {
+            "name": "Deactivates Internet sharing for a provider/consumer msisdn or removes consumer msisdns from the provider msisdn",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/providers/:providerMsisdn",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "providerMsisdn",
+                "value": "",
+                "type": "path",
+                "description": "Provider Msisdn. This is the msisdn that has the active Internet Share Bundle. The format must be E.123"
+              },
+              {
+                "name": "consumerMsisdn",
+                "value": "",
+                "type": "query",
+                "description": "The msisdn that is to be stopped from using the Internet Share bundle on the provider msisdn. The format must be E.123. Use this if you'd like to remove only one consumer from sharing the provider internet share bundle"
+              },
+              {
+                "name": "removeConsumers",
+                "value": "",
+                "type": "query",
+                "description": "set this variable to the keyword ALL if you would like to remove all consumers sharing the provider internet share bundle"
+              },
+              {
+                "name": "nodeId",
+                "value": "",
+                "type": "query",
+                "description": "This is the partner's identifier. For CIS this will be the iname"
+              },
+              {
+                "name": "input",
+                "value": "",
+                "type": "query",
+                "description": "This is additional input from the 3pp. For CIS, this is the product code"
+              },
+              {
+                "name": "targetSystem",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Allows a provider to leave data sharing or to remove a customer and hence stop them from using their internet share bundle"
+        },
+        {
+          "info": {
+            "name": "Retrieve all consumer MSISDNs linked to the provider msisdn",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/providers/:providerMsisdn/activate",
+            "params": [
+              {
+                "name": "providerMsisdn",
+                "value": "",
+                "type": "path",
+                "description": "Provider Msisdn. The format must be E.123"
+              },
+              {
+                "name": "clientTransactionId",
+                "value": "",
+                "type": "query",
+                "description": "3pp transaction Id"
+              },
+              {
+                "name": "partnerId",
+                "value": "",
+                "type": "query",
+                "description": "This is the iname value of the partner"
+              },
+              {
+                "name": "action",
+                "value": "",
+                "type": "query",
+                "description": "This is the expected backend action. VIEW_FAMILY_PACK_CONSUMERS when viewing consumers and VIEW_FAMILY_PACK_PROVIDER when viewing providers"
+              },
+              {
+                "name": "viewType",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "productId",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Provides the ability to retrieve all consumers that are sharing the internet share bundle with the provider"
+        },
+        {
+          "info": {
+            "name": "Activate data sharing plan",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/providers/:providerMsisdn/activate",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "providerMsisdn",
+                "value": "",
+                "type": "path",
+                "description": "Provider Msisdn.The format must be E.123"
+              }
+            ]
+          },
+          "docs": "Allows a provider to activate data sharing bundle"
+        },
+        {
+          "info": {
+            "name": "Check if a number is a provider",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/providers/:providerMsisdn/eligibility",
+            "params": [
+              {
+                "name": "providerMsisdn",
+                "value": "",
+                "type": "path",
+                "description": "Provider Msisdn.The format must be E.123"
+              },
+              {
+                "name": "clientTransactionId",
+                "value": "",
+                "type": "query",
+                "description": "3pp transaction Id"
+              },
+              {
+                "name": "partnerId",
+                "value": "",
+                "type": "query",
+                "description": "This is the iname value of the partner"
+              },
+              {
+                "name": "action",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "productId",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Allows a 3pp to check if a number is a provider or not"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Customer",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve Receivers' MSISDN",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/customers/:senderMsisdn",
+            "params": [
+              {
+                "name": "senderMsisdn",
+                "value": "",
+                "type": "path",
+                "description": "Source Msisdn. The format must be E.123"
+              }
+            ]
+          },
+          "docs": "Provides the ability to retrieve all registered receiver's msisdn."
+        },
+        {
+          "info": {
+            "name": "Share Data",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/customers/:senderMsisdn",
+            "params": [
+              {
+                "name": "senderMsisdn",
+                "value": "",
+                "type": "path",
+                "description": "Source Msisdn. The format must be E.123"
+              },
+              {
+                "name": "productcode",
+                "value": "",
+                "type": "query",
+                "description": "The product code e.g NACT_NG_others_1"
+              }
+            ]
+          },
+          "docs": "Provides the ability to share data with customer."
+        },
+        {
+          "info": {
+            "name": "Update Receiver's information",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/customers/:senderMsisdn",
+            "params": [
+              {
+                "name": "senderMsisdn",
+                "value": "",
+                "type": "path",
+                "description": "Source Msisdn. The format must be E.123"
+              }
+            ]
+          },
+          "docs": "Provides the ability to update the receiver's msisdn and sharable data amount."
+        },
+        {
+          "info": {
+            "name": "Remove Receiver's Msisdn",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/customers/:senderMsisdn",
+            "params": [
+              {
+                "name": "senderMsisdn",
+                "value": "",
+                "type": "path",
+                "description": "Source Msisdn. The format must be E.123"
+              },
+              {
+                "name": "receiverMsisdn",
+                "value": "",
+                "type": "query",
+                "description": "The beneficiary msisdn. The format must be E.123"
+              }
+            ]
+          },
+          "docs": "Provides the ability for removing receiver's msisdn."
+        },
+        {
+          "info": {
+            "name": "Get analytic information of your data usage",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/customers/:customerId/analytics",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "Customer Msisdn. E.123 e.g 2349062058464"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Select the type of query to get"
+              },
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query",
+                "description": "Filter the response data by start date"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query",
+                "description": "Filter the response data by end date"
+              },
+              {
+                "name": "pageNum",
+                "value": "",
+                "type": "query",
+                "description": "Filter the response data by page number"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query",
+                "description": "Filter the response data by page size"
+              }
+            ]
+          },
+          "docs": "Get analytic information of your data usage and list of beneficiaries enjoying from the data."
+        },
+        {
+          "info": {
+            "name": "Get GDS summary your data usage",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/customers/:customerId/summary",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "Customer Msisdn. E.123 e.g 2349062058464"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Select the type of query to get"
+              },
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query",
+                "description": "Filter the response data by start date"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query",
+                "description": "Filter the response data by end date"
+              },
+              {
+                "name": "pageNum",
+                "value": "",
+                "type": "query",
+                "description": "Filter the response data by page number"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query",
+                "description": "Filter the response data by page size"
+              },
+              {
+                "name": "summaryPeriod",
+                "value": "",
+                "type": "query",
+                "description": "Shall be mandatory for provider and beneficiary type"
+              }
+            ]
+          },
+          "docs": "Get group data share summary for your dta usage."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,132 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "ServiceNow - Remedy Incident synchronisation",
+    "version": "v1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Track ticket",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Query ticket details based on msisdn",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/incident",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "query",
+                "description": "MSISDN of the customer"
+              },
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query",
+                "description": "This is the start date against which a search for the specified ticket number will be made e.g 20201101"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query",
+                "description": "This is the end date against which a search for the specified ticket number will be made e.g 20201130"
+              },
+              {
+                "name": "targetSystem",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "numberOfTickets",
+                "value": "",
+                "type": "query",
+                "description": "This is the number of tickets to be fetched from backend system. If not passed then default configured number of tickets will be returned from backend."
+              }
+            ]
+          },
+          "docs": "Fetch a ticket's details using the msisdn"
+        },
+        {
+          "info": {
+            "name": "Query ticket details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/incident/:ticketId",
+            "params": [
+              {
+                "name": "ticketId",
+                "value": "",
+                "type": "path",
+                "description": "This is the ticket Id received in the response when creating a ticket"
+              },
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query",
+                "description": "This is the start date against which a search for the specified ticket number will be made e.g 20201101"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query",
+                "description": "This is the end date against which a search for the specified ticket number will be made e.g 20201130"
+              },
+              {
+                "name": "targetSystem",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "query",
+                "description": "MSISDN of the customer"
+              }
+            ]
+          },
+          "docs": "Fetch a ticket's details using the ticket Id"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Incident ticket",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create a new ticket",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/incident"
+          },
+          "docs": "Create a new ticket by specifying the 'originIncidentNumber'."
+        },
+        {
+          "info": {
+            "name": "Modify an existing ticket",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/incident"
+          },
+          "docs": "This call is used to update a ticket that already exists by using the 'targetIncidentNumber'."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

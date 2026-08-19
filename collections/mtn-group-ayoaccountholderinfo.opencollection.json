@@ -1,0 +1,187 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MTN Accountholders API",
+    "version": "v1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "status",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "View accountholder's profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/accountholders/:id",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "x-authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "ID value of the Accountholder i.e. MSISDN - the format must be E.123"
+              },
+              {
+                "name": "includeoffnet",
+                "value": "",
+                "type": "query",
+                "description": "Indicates whether to include offnet data in the response"
+              },
+              {
+                "name": "targetSystem",
+                "value": "",
+                "type": "query",
+                "description": "The target system or the backend system"
+              },
+              {
+                "name": "validationType",
+                "value": "",
+                "type": "query",
+                "description": "Enum of types of validations to be passed"
+              },
+              {
+                "name": "segment",
+                "value": "",
+                "type": "query",
+                "description": "This is the type of customer doing the transaction. This can be [agent , admin, merchant,subscriber]"
+              },
+              {
+                "name": "idType",
+                "value": "",
+                "type": "query",
+                "description": "Type of the customerId in the path."
+              },
+              {
+                "name": "nodeId",
+                "value": "",
+                "type": "query",
+                "description": "Node making the request"
+              },
+              {
+                "name": "channel",
+                "value": "",
+                "type": "query",
+                "description": "Channel identifier"
+              }
+            ]
+          },
+          "docs": "Retrieves the acountholder's profile of a MTN customer."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Validate an Individual's Account Status",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Validate an accountholder's account status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/accountholders/:id/validate",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "X-Authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "ID value of the Accountholder i.e. MSISDN - the format must be E.123, resource or accountholderid can be passed if targetSystem is EWP"
+              },
+              {
+                "name": "accountNumber",
+                "value": "",
+                "type": "query",
+                "description": "An optional customer account number"
+              },
+              {
+                "name": "channelId",
+                "value": "",
+                "type": "query",
+                "description": "Channel code or ID"
+              },
+              {
+                "name": "targetSystem",
+                "value": "",
+                "type": "query",
+                "description": "The target system or the backend system"
+              },
+              {
+                "name": "validationType",
+                "value": "",
+                "type": "query",
+                "description": "The action or type of validation the API call is suppose to undertake."
+              }
+            ]
+          },
+          "docs": "Validates the account status of a MoMo customer. By supplying the customer's id to validate, MADAPI will send the reques tto the backend system and map the response back to a boolean which will indicate whether the customer is a valid MoMo customer on ECW"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Verify a Partner's FInancial Resources",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Verify an accountholder's financial resource information.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/accountholders/:id/verify",
+            "headers": [
+              {
+                "name": "transactionId",
+                "value": ""
+              },
+              {
+                "name": "X-Authorization",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "ID value of the Accountholder in the Service Provider Systemi.e. MSISDN - the format must be E.123 - as this operation is typically used to link financial resources, the liset of accountholder id's in the input model, will be verified against this partner id."
+              }
+            ]
+          },
+          "docs": "Verifies an accountholder's (or list of accountholders) financial resource information.This is typically called before linking an accountholder to a specific resource in the consuming system. The response will return a boolean to indicate whether an accountholder and service resource is valid (true) in the service provider system. The extension variable is an open field where any additional information that needs to flow between the consumer and target system, can be specified."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
