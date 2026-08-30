@@ -1,0 +1,204 @@
+openapi: 3.2.0
+info:
+  description: Api Documentation
+  version: '1.0'
+  title: Documentation Subscriber Type API
+  termsOfService: urn:tos
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://za.api.mtn.com/customermanagement
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Subscriber Type
+paths:
+  /v1/subscriberType:
+    get:
+      tags:
+      - Subscriber Type
+      summary: This API is used to know whether the customer is available in legacy or Siyakhula
+      operationId: subscriberType
+      parameters:
+      - name: transactionId
+        in: header
+        description: Unique ID for the transaction.
+        required: false
+        schema:
+          type: string
+      - name: sourceIdentifier
+        in: query
+        description: Identifies the source system which integrates with API.
+        required: true
+        schema:
+          type: string
+          maxLength: 50
+      - name: msisdn
+        in: query
+        description: MSISDN which needs to be identified if its available in legacy or Siyakhula . Number should be in international format i.e 27832227009.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Subscriber Type Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/subscriberTypeResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+components:
+  schemas:
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        links:
+          type: array
+          items:
+            properties:
+              rel:
+                type: string
+              href:
+                type: string
+    subscriberTypeResponse:
+      allOf:
+      - required:
+        - statusCode
+        - statusMessage
+        - transactionId
+        - result
+        - subscriptionType
+      properties:
+        statusCode:
+          type: string
+          description: The status code of the transaction
+        statusMessage:
+          type: string
+          description: Describes the status of transaction. Success or Failed.
+        supportMessage:
+          type: string
+          description: Support  message for the transaction. Indicates failure reason in case of failed transactions.
+        transactionId:
+          type: string
+          description: Unique identifier for every request to API. Mapped from input request.
+        subscriptionType:
+          type: string
+          description: Subscription type.  It can be one of the following, PREPAID, HYBRID, CONTRACT, CONVERGED, FTTH, or MVNO
+        result:
+          type: string
+          description: Tells whether the customer is a legacy or Siyakhula customer. E.g., SIYAKHULA SUBSCRIBER ,LEGACY SUBSCRIBER
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+    Error500:
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3001'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: method used by MADAPI to get the response
+    Error404:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        error:
+          type: string
+          description: error message
+          example: Not found
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

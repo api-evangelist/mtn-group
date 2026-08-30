@@ -1,0 +1,178 @@
+openapi: 3.2.0
+info:
+  version: v1.0
+  title: MTN Retailer Productivity Tracking Productivity Report API
+  description: An API to enable MTN retailers track their productivity KPI's over a period of time. Please refer to the reference guides https://developers.mtn.com/API-Reference-Guides and Response and Error Codes documents https://developers.mtn.com/ResponseCodes
+servers:
+- url: https://api.mtn.com/v1
+tags:
+- name: Productivity Report
+paths:
+  /analytics/rpt/{id}/productivity:
+    get:
+      summary: Retrieve details of retailer's productivity over a period of time
+      description: Returns a list of productivity metrics. The report type query parameter must be provided when making a request
+      tags:
+      - Productivity Report
+      parameters:
+      - name: id
+        in: path
+        description: A unique identifier used to identify a customer it could be msisdn, userid or kitTag
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: reportType
+        required: true
+        description: A required query parameter used to determine the The report Type to be returned e.g sim-swap
+        schema:
+          type: string
+          enum:
+          - four-g-upgrade
+          - sim-swap
+          - d2r-transactions
+          - data-vend
+          - mfs-transactions
+          - vtu-transactions
+          - gross-connection
+          - sim-registration
+          - momo-registration
+      - name: startDate
+        in: query
+        description: An optional parameter, together with endDate, allows developers to specify a time range by which to query customer data on. If you want to request data for 2 months, then start date will need to be set to 2 months prior to today, and endDate to todays date. If this is not set, the date range will be defaulted to 6 months date format is YYYY-MM-DD e.g 2019-06-24
+        schema:
+          type: string
+          format: date
+      - name: endDate
+        in: query
+        description: An optional parameter, together with endDate, allows developers to specify a time range by which to query customer data on. If you want to request data for 2 months, then start date will need to be set to 2 months prior to today, and endDate to todays date. If this is not set, the date range will be defaulted to 6 months date format is YYYY-MM-DD e.g 2019-06-24
+        schema:
+          type: string
+          format: date
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reportWrapper'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    reportWrapper:
+      type: object
+      required:
+      - _link
+      properties:
+        data:
+          type: object
+          required:
+          - report
+          properties:
+            report:
+              type: array
+              items:
+                $ref: '#/components/schemas/metric'
+        _link:
+          type: object
+          $ref: '#/components/schemas/hateoasLinks'
+    metricValue:
+      required:
+      - type
+      type: object
+      description: Values for any given metric
+      properties:
+        type:
+          type: string
+          description: The type of the metric value
+          example: amount
+          enum:
+          - amount
+          - count
+        value:
+          type: number
+          description: The metric value could be double or integer
+          example: 4
+    metric:
+      type: object
+      properties:
+        metric:
+          type: string
+          description: The name of the report metric
+          example: total4GMigration
+        metricValue:
+          type: object
+          description: Report metric values
+          example: 5
+          $ref: '#/components/schemas/metricValue'
+    hateoasLinks:
+      type: object
+      required:
+      - self
+      properties:
+        self:
+          type: object
+          required:
+          - href
+          description: ''
+          properties:
+            href:
+              type: string
+              description: The HAETOS link referring to this object
+              example: https://api.mtn.com/v1/analytics/sra_mohabd/productivity
+    Error:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+          example: 2020-04-02T07:29:25.593+0000”
+        status:
+          type: string
+          description: HTTP Status code
+          example: '404'
+        error:
+          type: string
+          description: HTTP Status description
+          example: Not Found
+        message:
+          type: string
+          description: More error details and corrective measures
+          example: No message available
+        path:
+          type: string
+          description: ''
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header

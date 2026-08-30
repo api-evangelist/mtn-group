@@ -1,0 +1,443 @@
+openapi: 3.2.0
+info:
+  title: Content Push API
+  version: '0.1'
+  description: 'The API provides a target system with data content to be pushed via a channel to a customer.
+
+    ## Supported Actions
+
+    1. SendSms.
+
+
+    **Supported OpCo''s:** MTN Uganda, MTN Ghana, MTN SA'
+servers:
+- url: https://api.mtn.com/v1
+security:
+- apiKey: []
+- OAuth2: []
+tags:
+- name: Content Push
+paths:
+  /contents/pushes:
+    post:
+      tags:
+      - Content Push
+      summary: Push content to CPs customers
+      description: Pushes content to CPs via a target system.
+      parameters:
+      - name: action
+        in: header
+        description: Example sendSms.
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: transaction ID for tracing purposes
+        required: false
+        schema:
+          type: string
+      - name: x-country-code
+        in: header
+        description: ISO Country Code
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        description: Target system to forward push the content to CP
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendSmsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/sendSmsRequest'
+        description: Target system to forward push the content to CP
+        required: true
+  /wig/push:
+    post:
+      tags:
+      - Content Push
+      summary: WIG Push to customers via Invigo
+      description: WIG Push content to customer via Invigo
+      parameters:
+      - name: transactionId
+        in: header
+        description: transaction ID for tracing purposes
+        required: false
+        schema:
+          type: string
+      - name: sourceIdentifier
+        in: query
+        description: Source systme of the request
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wigPushResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error405'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/wigPushRequest'
+        description: Target system to forward push the content to Customer
+        required: true
+components:
+  schemas:
+    Error400:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+          example: '2023-10-25T09:52:55.166+00:00'
+        status:
+          type: string
+          description: Text explaining the reason for the error
+          example: '400'
+        error:
+          type: string
+          example: Bad Request
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: ''
+          example: /customers/1234567890321/identityStatus
+    Error404:
+      properties:
+        fault:
+          properties:
+            faultstring:
+              type: string
+              description: ''
+              example: 'Unable to identify proxy for host: southafrica and url: /v1o/kycVerification/customers/1234567890123333/identityStatus'
+            detail:
+              properties:
+                errorcode:
+                  type: string
+                  description: ''
+                  example: messaging.adaptors.http.flow.ApplicationNotFound
+    wigPushRequest:
+      type: object
+      required:
+      - msisdn
+      properties:
+        msisdn:
+          type: string
+          description: Mobile number of the customer.
+          example: '9614454422'
+        command:
+          type: string
+          description: Invigo command for WIG Push
+          example: SIM_ADV
+        wml:
+          type: string
+          description: This is for the source system that wants to use the push feature with wml data
+        params:
+          type: array
+          items:
+            type: object
+            properties:
+              advid:
+                example: '3'
+                type: string
+                description: unique id
+    wigPushResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Transaction processed succesfully
+        supportMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Success
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        data:
+          type: object
+          properties:
+            backendTranssactionId:
+              type: string
+              description: backend generated transaction id
+              example: '2134432'
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+          example: oauth.v2.InvalidApiKey
+    sendSmsResponse:
+      required:
+      - data
+      - statusCode
+      - statusMessage
+      - transactionId
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '0000'
+        statusMessage:
+          type: string
+          description: Message.
+          example: Send Sms is in progress
+        transactionId:
+          type: string
+          description: MSISDN of the customer provided in the input as customerId
+          example: 0987777896789999781
+    Error403:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '6000'
+        statusMessage:
+          type: string
+          description: Short description of the error
+          example: Forbidden
+        supportMessage:
+          type: string
+          description: Longer description of the error
+          example: Please verify token environment or access token or API key
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+    Error500:
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3010'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: method used by MADAPI to get the response
+    sendSmsRequest:
+      required:
+      - customerId
+      - channel
+      - subscriptionId
+      - contentProviderId
+      - messageContent
+      type: object
+      properties:
+        customerId:
+          type: string
+          description: HTTP error code extension
+          example: '233545678981'
+        channel:
+          type: string
+          description: Message.
+          example: SMS
+        subscriptionId:
+          type: string
+          description: CP's subscribed product Id
+        contentProviderId:
+          type: string
+          description: Content Provider Id
+        messageContent:
+          type: string
+          description: Content to be pushed to customer
+        linkId:
+          type: string
+          description: Link ID
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). More information on these mappings can be found at https://developers.mtn.com/getting-started/response-and-error-codes
+          example: '3001'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /subscriber/256789999781/simswap-date
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: POST
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

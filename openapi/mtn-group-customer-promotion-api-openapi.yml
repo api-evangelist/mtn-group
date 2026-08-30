@@ -1,0 +1,675 @@
+openapi: 3.2.0
+info:
+  title: Placeholder Customer Promotion API
+  description: API Documentation
+  version: '0.1'
+servers:
+- url: https://za.api.mtn.com/customerPromotion/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Customer Promotion
+paths:
+  /tbd/promo:
+    get:
+      summary: some function here
+      description: promotion description
+      tags:
+      - Customer Promotion
+      responses:
+        '200':
+          description: Success
+  /eligibilityCheck/{msisdn}:
+    get:
+      tags:
+      - Customer Promotion
+      summary: ELigibility check of customer.
+      description: ELigibility check for recharge and Win campaign. This API is used to retreive customer profile.
+      operationId: getUserProfile
+      parameters:
+      - name: transactionId
+        in: header
+        description: Unique ID for the transaction.
+        required: true
+        schema:
+          type: string
+      - name: sourceIdentifier
+        in: query
+        description: This field denotes the channel that is initiating request to SOA like USSD, MyMTNApp
+        required: true
+        schema:
+          type: string
+      - name: msisdn
+        in: path
+        description: MSISDN of the customer whose eligibility check needs to be done
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Eligibility check success Response
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/eligibilityCheckResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorised
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error415'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /optin:
+    post:
+      summary: This API is used to optin users on campaigns
+      tags:
+      - Customer Promotion
+      parameters:
+      - name: transactionId
+        in: header
+        description: Unique ID for the transaction.
+        required: true
+        schema:
+          type: string
+      - name: sourceIdentifier
+        in: query
+        description: This field denotes the channel that is initiating request to SOA like USSD, MyMTNApp
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success response for optin
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/optinResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error415'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error500'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/optinRequest'
+        description: Request parameters for customer Opt-In
+        required: true
+components:
+  schemas:
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 5000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+    optinRequest:
+      allOf:
+      - required:
+        - msisdn
+        properties:
+          optin:
+            type: boolean
+            description: this is true or false for user optin.
+            example: true
+          campaign:
+            type: string
+            description: Identifies the campaign you would like to optin or optout to.
+            example: RECHARGE_AND_WIN
+          msisdn:
+            description: MSISDN of the customer who wants to redeem their reward. This will be cross-checked against the play id as pre provision safety measure
+            type: string
+            example: 27605220405
+    RechargeOptions:
+      required:
+      - optin
+      - nextRechargeBefore
+      properties:
+        optin:
+          type: boolean
+          example: true
+        nextRechargeBefore:
+          format: date-time
+    balanceType:
+      required:
+      - type
+      - balance
+      properties:
+        type:
+          type: string
+          enum:
+          - DAILY
+          - LOYALTY_SPEND_1
+          - LOYALTY_SPEND_2
+          - LOYALTY_SPEND_3
+          - LIVE_DRAW
+          description: Type of the balance that the customer is having in their profile
+        balance:
+          type: integer
+          description: The amount of plays available
+      description: "status:\n * `DAILY` - Daily plays awarded\n * `LOYALTY_SPEND_1` - plays awarded for loyalty points redeptions of less than 50 points\n * `LOYALTY_SPEND_2` - plays awarded for loyalty points redeptions of less than 250 points\n * `LOYALTY_SPEND_3` - plays awarded for loyalty points redeptions of more than 250 points\n * `LIVE_DRAW` - Plays awarded for visiting the draw announcement page during the live announcement window\n"
+    reward:
+      properties:
+        redeemId:
+          type: string
+          example: '922625'
+          description: The redeem id of the reward
+        pool:
+          type: string
+          example: UNCONDITIONAL_GIFT
+          description: The pool of the reward
+        category:
+          type: string
+          example: Grocery
+          description: The category of the reward
+        subCategory:
+          type: string
+          example: Checkers
+          description: The subcategory of the reward
+        shortDescription:
+          type: string
+          example: ''
+          description: The short description of the reward
+        description:
+          type: string
+          example: R5000 CHECKERS VOUCHER
+          description: The description of the reward
+        properties:
+          type: object
+          properties:
+            type:
+              type: string
+              example: VOUCHERCHECKERS
+              description: The type of the reward
+            value:
+              type: integer
+              example: 5000
+              description: The value of the reward
+            valueUnit:
+              type: string
+              example: R
+              description: The unit of the reward value
+            validity:
+              type: integer
+              example: 60
+              description: The validity of the reward
+            validityUnit:
+              type: string
+              example: Days
+              description: The unit of the reward validity
+            valueCents:
+              type: integer
+              example: 0
+              description: The cost of redeeming the reward in cents
+            valueFormatted:
+              type: string
+              example: R0
+              description: The formatted cost of redeeming the reward
+            discount:
+              type: string
+              example: 100%
+              description: The discount applied to the reward
+        awardedAt:
+          type: string
+          format: date-time
+          example: '2023-11-07T07:00:23.559Z'
+          description: The time when the reward was awarded
+        redeemed:
+          type: boolean
+          example: false
+          description: Whether the reward has been redeemed or not
+        redeemedAt:
+          type: string
+          format: date-time
+          example: ''
+          description: The time when the reward was redeemed
+        expired:
+          type: boolean
+          example: true
+          description: Whether the reward has expired or not
+        expiresAt:
+          type: string
+          format: date-time
+          example: '2023-11-07T07:00:40.339Z'
+          description: The time when the reward expires
+        source:
+          type: string
+          example: GIFT
+          description: The source of the reward
+      description: "source:\n * `DAILY` - A prize won when playing the game using daily plays\n * `LOYALTY_SPEND_1` - A prize won when playing the game using low value loyalty spend plays\n * `LOYALTY_SPEND_2` - A prize won when playing the game using medium value loyalty spend plays\n * `LOYALTY_SPEND_3` - A prize won when playing the game using high value loyalty spend plays\n * `LIVE_DRAW` - A prize won when playing the game made available during the announcement window\n * `GIFT` - A reward gifted to the user via the gigting endpoint\n * `DRAW` - A prize in the weekly/monthly draw\n"
+    Recharges:
+      required:
+      - SOID
+      - price
+      - location
+      - date
+      properties:
+        SOID:
+          type: string
+          example: '1234'
+        price:
+          type: string
+          example: '49'
+        location:
+          type: string
+          example: Randburg
+        date:
+          type: string
+          format: date-time
+    reward1:
+      properties:
+        redeemId:
+          type: string
+          example: '922625'
+          description: The redeem id of the reward
+        pool:
+          type: string
+          example: UNCONDITIONAL_GIFT
+          description: The pool of the reward
+        category:
+          type: string
+          example: Grocery
+          description: The category of the reward
+        subCategory:
+          type: string
+          example: Checkers
+          description: The subcategory of the reward
+        shortDescription:
+          type: string
+          example: ''
+          description: The short description of the reward
+        description:
+          type: string
+          example: R5000 CHECKERS VOUCHER
+          description: The description of the reward
+        properties:
+          type: object
+          properties:
+            type:
+              type: string
+              example: VOUCHERCHECKERS
+              description: The type of the reward
+            value:
+              type: integer
+              example: 5000
+              description: The value of the reward
+            valueUnit:
+              type: string
+              example: R
+              description: The unit of the reward value
+            validity:
+              type: integer
+              example: 60
+              description: The validity of the reward
+            validityUnit:
+              type: string
+              example: Days
+              description: The unit of the reward validity
+            valueCents:
+              type: integer
+              example: 0
+              description: The cost of redeeming the reward in cents
+            valueFormatted:
+              type: string
+              example: R0
+              description: The formatted cost of redeeming the reward
+            discount:
+              type: string
+              example: 100%
+              description: The discount applied to the reward
+        awardedAt:
+          type: string
+          format: date-time
+          example: '2023-11-07T07:00:23.559Z'
+          description: The time when the reward was awarded
+        redeemed:
+          type: boolean
+          example: false
+          description: Whether the reward has been redeemed or not
+        redeemedAt:
+          type: string
+          format: date-time
+          example: ''
+          description: The time when the reward was redeemed
+        expired:
+          type: boolean
+          example: true
+          description: Whether the reward has expired or not
+        expiresAt:
+          type: string
+          format: date-time
+          example: '2023-11-07T07:00:40.339Z'
+          description: The time when the reward expires
+        source:
+          type: string
+          example: GIFT
+          description: The source of the reward
+      description: "source:\n * `DAILY` - A prize won when playing the game using daily plays\n * `LOYALTY_SPEND_1` - A prize won when playing the game using low value loyalty spend plays\n * `LOYALTY_SPEND_2` - A prize won when playing the game using medium value loyalty spend plays\n * `LOYALTY_SPEND_3` - A prize won when playing the game using high value loyalty spend plays\n * `LIVE_DRAW` - A prize won when playing the game made available during the announcement window\n * `GIFT` - A reward gifted to the user via the gigting endpoint\n * `DRAW` - A prize in the weekly/monthly draw     \n"
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+    optinResponse:
+      allOf:
+      - required:
+        - statusCode
+        - statusMessage
+        - transactionId
+        - supportMessage
+        properties:
+          statusCode:
+            type: string
+            description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+            example: '0000'
+            maxLength: 30
+          statusMessage:
+            type: string
+            description: More details and corrective actions related to the error which can be shown to a client. Success for 200.
+          supportMessage:
+            type: string
+            description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+          transactionId:
+            type: string
+            description: Unique reference number
+            example: '100000172429605'
+    Error415:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 415
+        error:
+          type: string
+          description: error message
+          example: Unsupported Media Type
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    eligibilityCheckResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes',
+          example: '0000'
+          maxLength: 30
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client. Success for 200.
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: Unique reference number
+          example: '100000172429605'
+        balances:
+          type: array
+          items:
+            $ref: '#/components/schemas/balanceType'
+          description: '''The amount of plays the user has available per game type. Balances expire daily at 12AM (midnight) The balance is redeemed by using the play endpoint to win a prize. Plays are not transferable between MSISDNs or game types''  '
+        wallet:
+          type: array
+          items:
+            $ref: '#/components/schemas/category1'
+          description: "The user's rewards wallet that contains a collection of awarded prizes/gifts by category (redeemed and non-redeemed).\nThese rewards may come from various sources, e.g. playing one of the games, gift campaigns or prizes won in the live draw \nRewards are not transferable between MSISDNs.\nOrdered by awardedAt in descending order.   \n"
+        draws:
+          type: array
+          items:
+            $ref: '#/components/schemas/Draw'
+          description: "A breakdown of draws, past and present that shows the number of entries a customer has aquired per draw.\nIf the user has won a prize in one of the respective draws, the details pertaining to the prize awarded are included \nA maximum of three draws will be shown, ordered by entriesOpenAt in descending order.\n"
+        history:
+          $ref: '#/components/schemas/History'
+        rechargeOptions:
+          $ref: '#/components/schemas/RechargeOptions'
+        recharges:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recharges'
+          description: 'A breakdown of draws, past and present that shows the number of entries a customer has aquired per draw.
+
+            If the user has won a prize in one of the respective draws, the details pertaining to the prize awarded are included
+
+            A maximum of three draws will be shown, ordered by entriesOpenAt in descending order.
+
+            '
+    Error500:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: string
+          description: status code from backend
+          example: '500'
+        error:
+          type: string
+          description: Type of error
+          example: Internal Server Error
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        path:
+          type: string
+          description: The path that caused the error
+    LogHistory:
+      properties:
+        recharge:
+          type: string
+          description: The time of recharge transaction
+          format: date-time
+        bundle:
+          type: string
+          example: BUY-1-500MB-1D-R500
+        value:
+          type: integer
+          format: int32
+          description: The value will be returned cents from Infinity and will be convered to Rand
+          example: 500
+        valueUom:
+          type: string
+          format: Rand
+          description: The unit of measure of the value
+          example: Rand
+    History:
+      required:
+      - anniversary
+      - lastRecharges
+      - firstRecharge
+      - log
+      properties:
+        anniversary:
+          type: string
+          format: date-time
+        lastRecharges:
+          type: string
+          format: date-time
+        firstRecharge:
+          type: string
+          format: date-time
+        log:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogHistory'
+    Draw:
+      required:
+      - entries
+      - drawStatus
+      - entriesOpenAt
+      - entriesCloseAt
+      - announcementStartAt
+      - announcementEndAt
+      properties:
+        entries:
+          type: integer
+          format: int32
+          description: 'The number of entries that have been awarded to the customer in question (Only applicalbe to draws shown in customer profile)
+
+            '
+        winner:
+          type: boolean
+          description: 'Whether the customer in question has won a pize in the draw (Only applicalbe to draws shown in customer profile)
+
+            '
+        drawStatus:
+          type: string
+          enum:
+          - OPEN
+          - CLOSED
+          - LIVE
+        entriesOpenAt:
+          type: string
+          format: date-time
+          description: This field defines the time when the draws open for entries
+        entriesCloseAt:
+          type: string
+          format: date-time
+          description: When the draw no longer accepts entries
+        announcementStartAt:
+          type: string
+          format: date-time
+          description: When the live draw starts
+        announcementEndAt:
+          type: string
+          format: date-time
+          description: When the live draw ends
+        prizes:
+          type: array
+          description: 'A list of prizes that pertain to the draw
+
+
+            Draws shown in customer profile will only show prizes that pertain to the customer in question
+
+            '
+          items:
+            required:
+            - msisdn
+            - reward
+            properties:
+              msisdn:
+                type: string
+                description: The msisdn of the winner of the prize. The value will be in international format i.e., 27867583465 [MQ] - Is the msisdn of the customer querying the service or the prize winner? [SOA] This is the winner
+              reward:
+                $ref: '#/components/schemas/reward'
+      description: "drawStatus:\n * `OPEN` - The draw is accepting entries\n * `CLOSED` - The draw is no longer accepting entries\n * `LIVE` - The draw winners are being announced     \n"
+    category1:
+      $ref: '#/components/schemas/reward1'
+    Error404:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        error:
+          type: string
+          description: error message
+          example: Not found
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

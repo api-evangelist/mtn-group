@@ -1,0 +1,365 @@
+openapi: 3.2.0
+info:
+  description: Api Documentation
+  version: '1.0'
+  title: Documentation Subscriber Attributes Controller API
+  termsOfService: urn:tos
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://za.api.mtn.com/subscriberdetails
+tags:
+- name: subscriber-attributes-controller
+  description: Subscriber Attributes Controller
+paths:
+  /v2/subscriber-attributes:
+    get:
+      tags:
+      - subscriber-attributes-controller
+      summary: Retrieves Subscriber Attributes V2 Details.
+      description: Retrieves the v2/subscriber-attributes of a MTN customer.
+      operationId: getSubscriberAttributeV2UsingGET
+      parameters:
+      - name: msisdn
+        in: query
+        description: msisdn
+        required: true
+        schema:
+          type: string
+      - name: sourceIdentifier
+        in: query
+        description: sourceIdentifier
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: query
+        description: transactionId
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriberAttributeV2Response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriberAttributeV2error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriberAttributeV2error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriberAttributeV2error'
+      deprecated: false
+  /v3/subscriber-attributes:
+    get:
+      tags:
+      - subscriber-attributes-controller
+      summary: Retrieves Subscriber Attributes V3 Details.
+      description: Retrieves the v3/subscriber-attributes of a MTN customer.
+      operationId: getSubscriberAttributeV3UsingGET
+      parameters:
+      - name: msisdn
+        in: query
+        description: msisdn
+        required: true
+        schema:
+          type: string
+      - name: sourceIdentifier
+        in: query
+        description: sourceIdentifier
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: query
+        description: transactionId
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriberAttributeV3Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error405'
+      deprecated: false
+components:
+  schemas:
+    Error400:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '5000'
+        statusMessage:
+          type: string
+          description: 5000-The input parameters provided are invalid
+          example: Bad Request
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+        links:
+          type: array
+          items:
+            type: string
+            description: details of error
+    SubscriberAttributeV2error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the error occured.
+          example: 2018-05-01T00:00
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: PATCH
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error401:
+      properties:
+        error:
+          type: string
+          description: error message from target system to indicate transaction status.
+          example: missing_authorization
+        error_description:
+          type: string
+          description: detailed error message from target system to indicate transaction status.
+          example: Missing Authorization header
+    Error403:
+      properties:
+        error:
+          type: string
+          description: error message from target system to indicate transaction status.
+          example: access_denied
+        error_description:
+          type: string
+          description: detailed error message from target system to indicate transaction status.
+          example: Unauthorized
+    SubscriberAttributeV2Response:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          enum:
+          - '200'
+          - '400'
+          - '401'
+          - '404'
+          - '405'
+          - '500'
+          - '503'
+          - '101'
+          - '201'
+          - '202'
+          - '3001'
+          - '203'
+          - '2000'
+          - '999'
+          - '3005'
+          - '5000'
+          - '0001'
+          - '0002'
+          - '1000'
+          - '3000'
+          - '2006'
+          - '1012'
+          - '1002'
+          - '1003'
+          - '1001'
+          - '3003'
+          - '1013'
+          - '3007'
+          - '4001'
+          - '1005'
+          - '1007'
+          - '6001'
+          - '3325'
+          - '3326'
+          - '3327'
+          - '4003'
+          - '3014'
+          - '3009'
+          - '4015'
+        statusMessage:
+          type: string
+        subscriberType:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        dataOobUnbarCorporateLiable:
+          type: string
+        dataOobUnbarIndividualLiable:
+          type: string
+        dataOobbarCorporateLiable:
+          type: string
+        dataOobbarIndividualLiable:
+          type: string
+        hasAutoRenew:
+          type: string
+        hasMicroBundle:
+          type: string
+        isGovt:
+          type: string
+        isLegacy:
+          type: string
+        isValid:
+          type: string
+        smsoobUnbarCorporateLiable:
+          type: string
+        smsoobUnbarIndividualLiable:
+          type: string
+        smsoobbarCorporateLiable:
+          type: string
+        smsoobbarIndividualLiable:
+          type: string
+        voiceOobUnbarIndividualLiable:
+          type: string
+        voiceOobbarIndividualLiable:
+          type: string
+        voiceoobbarCorporateLiable:
+          type: string
+        voicoobbarCorporateLiable:
+          type: string
+      title: SubscriberAttributeV2Response
+    SubscriberAttributeV3Response:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Status code from IBF
+          example: '200'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: success
+        supportMessage:
+          type: string
+          description: detailed message
+          example: Transaction passed successfully
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        wowBonusFlag:
+          type: string
+          description: Inficates the Bonus flag with True or False
+        sharpSharpFlag:
+          type: string
+          description: Inficates the Sharp Sharp flag with True or False
+        links:
+          type: array
+          description: extra details
+          items:
+            type: string
+      title: SubscriberAttributeV3Response
+    Error404:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        error:
+          type: string
+          description: error message
+          example: Not found
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error

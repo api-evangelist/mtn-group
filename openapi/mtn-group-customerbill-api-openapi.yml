@@ -1,0 +1,1460 @@
+openapi: 3.2.0
+info:
+  title: Mtn Group Customer Bill API
+  version: '1.0'
+  description: 'Operations tagged customerBill across 2 of this provider''s published API definitions: mtn-group-mtn-customer-bill-management.yml, mtn-group-tmf-customer-bill-management.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.mtn.com/v1
+- url: https://serverRoot/tmf-api/customerBillManagement/v4/
+tags:
+- name: customerBill
+paths:
+  /customerBill:
+    get:
+      tags:
+      - customerBill
+      summary: List or find CustomerBills
+      description: Retrieves list of paid and unpaid bill details.
+      operationId: listCustomerBill
+      parameters:
+      - name: transactionId
+        in: header
+        required: false
+        description: Client generated Id to include for tracing requests.
+        x-example: 6f0bece6-7df3-4da4-af02-5e7f16e5e6fc
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        required: false
+        description: Provider system name.
+        x-example: ZSmart
+        schema:
+          type: string
+          enum:
+          - ZSmart
+          - CLM
+          - DCBS
+          - CS
+      - name: countryCode
+        in: header
+        description: Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)
+        required: false
+        schema:
+          type: string
+      - name: customerType
+        in: query
+        description: This parameter will be used to query the bill information at Service level or Account level or Invoice Level. 1 refers to Service level, 2 refers to Account level and 3 refers to Invoice Level.
+        required: true
+        schema:
+          type: integer
+          enum:
+          - 1
+          - 2
+          - 3
+      - name: customerId
+        in: query
+        description: Value of 'customerType'
+        required: true
+        schema:
+          type: string
+      - name: queryType
+        in: query
+        required: true
+        description: This will be used to make the specific request. Either the request will be for unpaid bill or paid bill or complete bill. In case of 'unpaidBill', customer bill information along with due amount detail , related party and bill cycle information will be returned. In case of 'paidBill', applied payment information along with unpaid bill details will be returned. In case of 'completeBill', all other information like billing account,financial,taxItem,billDocument etc. will be returned along with paid and unpaid bill details.
+        schema:
+          type: string
+          enum:
+          - unpaidBill
+          - paidBill
+          - completeBill
+      - name: offset
+        description: Requested index for start of resources to be provided in response
+        required: false
+        in: query
+        schema:
+          type: integer
+      - name: limit
+        description: Requested number of resources to be provided in response
+        required: false
+        in: query
+        schema:
+          type: integer
+      - name: billingFlag
+        in: query
+        description: 'This field contains three segments, like 000 or 100 etc.First segment means if include unbilled amount for current month, second segment means if include credit limit and third segment means if include deposit. 1 refers to ''include'' and 0 refers to ''Not include''. Default value will be 0 '
+        schema:
+          type: string
+          default: '000'
+      - name: startDate
+        in: query
+        description: 'Start date of bill information requested for. Date type format: yyyy-mm-dd'
+        schema:
+          type: string
+      - name: endDate
+        in: query
+        description: 'End date of bill information requested for. Date type format: yyyy-mm-dd'
+        schema:
+          type: string
+      - name: billingCycleId
+        in: query
+        description: Billing cycle ID
+        schema:
+          type: string
+      - name: custom
+        in: query
+        description: Reserve for future use. Can hold the additional filter criteria.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerBill_Complete'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v1
+  /customerBill/{id}:
+    get:
+      tags:
+      - customerBill
+      summary: Retrieves a CustomerBill by ID
+      description: Provides the ability for a consumer to retrieve list of unpaid bill amount, advance payment amount and total due amount
+      operationId: getCustomerBillById
+      parameters:
+      - name: id
+        required: true
+        in: path
+        description: This can be Customer's masisdn with countrycode or Account Number or Invoice Number. Example - 23712345678
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        description: Client generated Id to include for tracing requests.
+        x-example: 6f0bece6-7df3-4da4-af02-5e7f16e5e6fc
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        required: false
+        description: Provider system name.
+        x-example: ZSmart
+        schema:
+          type: string
+          enum:
+          - ZSmart
+          - CLM
+          - DCBS
+          - CS
+      - name: countryCode
+        in: header
+        description: Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)
+        required: false
+        schema:
+          type: string
+      - name: customerType
+        in: query
+        description: 'This parameter will be used to query the bill information at Service level or Account level or Invoice Level. 1 refers to Service level, 2 refers to Account level and 3 refers to Invoice Level '
+        required: true
+        schema:
+          type: integer
+          enum:
+          - 1
+          - 2
+          - 3
+      - name: queryType
+        in: query
+        required: true
+        description: This will be used to make the specific request. Either the request will be for unpaid bill or paid bill or complete bill. In case of 'unpaidBill', customer bill information along with due amount detail , related party and bill cycle information will be returned. In case of 'paidBill', applied payment information along with unpaid bill details will be returned. In case of 'completeBill', all other information like billing account,financial,taxItem,billDocument etc. will be returned along with paid and unpaid bill details.
+        schema:
+          type: string
+          enum:
+          - unpaidBill
+          - paidBill
+          - completeBill
+      - name: billingFlag
+        in: query
+        description: 'This field contains three segments, like 000 or 100 etc.First segment means if include unbilled amount for current month, second segment means if include credit limit and third segment means if include deposit. 1 refers to ''include'' and 0 refers to ''Not include''. Default value will be 0 '
+        schema:
+          type: string
+          default: '000'
+      - name: startDate
+        in: query
+        description: 'Start date of bill information requested for. Date type format: yyyy-mm-dd'
+        schema:
+          type: string
+      - name: endDate
+        in: query
+        description: 'End date of bill information requested for. Date type format: yyyy-mm-dd'
+        schema:
+          type: string
+      - name: billingCycleId
+        in: query
+        description: Billing cycle ID
+        schema:
+          type: string
+      - name: custom
+        in: query
+        description: Reserve for future use. Can hold the additional filter criteria.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerBill_ID'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    patch:
+      tags:
+      - customerBill
+      summary: Updates partially a CustomerBill
+      description: Provides the ability for a consumer to update postpaid bill balance
+      operationId: updateCustomerBill
+      parameters:
+      - name: id
+        in: path
+        description: Unique id of the customer it could be service / account id
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: The transaction reference id to be passed by the 3pp for a particular transaction. This will be used for reconciliation
+        required: false
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        description: Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)
+        required: false
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        required: false
+        description: Provider system name.
+        x-example: ZSmart
+        schema:
+          type: string
+          enum:
+          - ZSmart
+          - CLM
+          - DCBS
+          - CS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerBill_Update'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerBill_Payment'
+        description: Payment Details
+        required: true
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v1
+components:
+  schemas:
+    CustomerBill_Complete:
+      required:
+      - resultCode
+      - resultDescription
+      - data
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            resultCode:
+              type: string
+              description: Result code. Example- '0000'
+            resultDescription:
+              type: string
+              description: Result message. Example- 'Successfully processed'
+            transactionId:
+              type: string
+              description: Transaction id returned by the provider system.
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerBill'
+            properties:
+              relatedParty:
+                type: object
+                $ref: '#/components/schemas/RelatedParty'
+              billCycle:
+                type: object
+                $ref: '#/components/schemas/BillCycle'
+              appliedPayment:
+                $ref: '#/components/schemas/AppliedPayment'
+              billDocument:
+                $ref: '#/components/schemas/BillDocument'
+              billingAccount:
+                $ref: '#/components/schemas/BillingAccount'
+              financialAccount:
+                $ref: '#/components/schemas/FinancialAccount'
+              taxItem:
+                $ref: '#/components/schemas/TaxItem'
+    RelatedParty:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          customerType:
+            type: string
+            description: Type of customer. Example-Individual or Corporate etc.
+          customerName:
+            type: string
+          href:
+            type: string
+            description: Hyperlink reference
+    AppliedPayment:
+      description: Payment associated with the bill. There may be a partial payment, then there should be several applied payments available. On the other hand, more than one bill could be payed by one payment
+      type: object
+      properties:
+        idType:
+          type: string
+          description: Identifier of the level against which bill has been paid.
+          example: Account Number
+        id:
+          type: string
+          description: Value of 'idType'
+          example: '45632145'
+        totalPaidAmount:
+          description: Total amount paid. This should be summation of amounts paid against multiple bill number (aka invoice number)
+          type: object
+          $ref: '#/components/schemas/Money'
+        payment:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/PaymentRef'
+    CustomerBill_ID:
+      required:
+      - result
+      - data
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            resultCode:
+              type: string
+              description: Result code. Example- '0000'
+            resultDescription:
+              type: string
+              description: Result message. Example- 'Successfully processed'
+            transactionId:
+              type: string
+              description: Transaction id returned by the provider system.
+        data:
+          type: object
+          $ref: '#/components/schemas/CustomerBill'
+          properties:
+            relatedParty:
+              type: object
+              $ref: '#/components/schemas/RelatedParty'
+            billCycle:
+              type: object
+              $ref: '#/components/schemas/BillCycle'
+            appliedPayment:
+              type: object
+              $ref: '#/components/schemas/AppliedPayment'
+            billDocument:
+              $ref: '#/components/schemas/BillDocument'
+            billingAccount:
+              $ref: '#/components/schemas/BillingAccount'
+            financialAccount:
+              $ref: '#/components/schemas/FinancialAccount'
+            taxItem:
+              $ref: '#/components/schemas/TaxItem'
+    ATM:
+      description: Detailed information of the  ATM through which bill payment has done.
+      properties:
+        bankName:
+          type: string
+          description: Name or Code of the bank.
+        branchCode:
+          type: string
+          description: Branch code.
+        atmCode:
+          type: string
+          description: ATM center code.
+      required:
+      - atmCode
+    Bank:
+      description: Detailed information of the  Bank through which bill payment has done.
+      properties:
+        bankName:
+          type: string
+          description: Name of the bank.
+        bankCode:
+          type: string
+          description: Code of the bank.
+        branchCode:
+          type: string
+          description: Branch code or Bank Code in case branch code is not available.
+        paymentMode:
+          type: string
+          description: It can be EFT, Internet Banking,Cash
+          enum:
+          - Transfer
+          - EFT
+          - Cash
+          - Autodebit
+          - InternetBanking
+      required:
+      - branchCode
+      - paymentMode
+    CustomerBill_Payment:
+      type: object
+      $ref: '#/components/schemas/AppliedPayment'
+    TokenizedCard:
+      description: Detailed information for a stored tokenized card.
+      properties:
+        brand:
+          type: string
+          description: Card brand. Might be used for display purposes.
+        type:
+          type: string
+          description: Card type. Might be used for display purposes.
+        lastFourDigits:
+          type: string
+          description: Last four digits of the credit card. Might be used for display purposes.
+        tokenType:
+          type: string
+          description: Token type. e.g emv.
+        token:
+          type: string
+          description: The token itself.
+        issuer:
+          type: string
+          description: Whoever issued the token.
+    DueDetail:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier. It can be customer id or account id or invoice number etc.
+          description:
+            type: string
+            description: Description of the due detail
+          validFor:
+            $ref: '#/components/schemas/TimePeriod'
+          dueDate:
+            type: string
+            format: date-time
+          unpaidAmount:
+            $ref: '#/components/schemas/Money'
+            description: Unpaid bill amount.
+          advanceAmount:
+            $ref: '#/components/schemas/Money'
+            description: Advance payment of the customer.
+          taxExcludedAmount:
+            $ref: '#/components/schemas/Money'
+            description: Tax exempted amount.
+          taxIncludedAmount:
+            $ref: '#/components/schemas/Money'
+            description: Taxable amount.
+          totalDueAmount:
+            $ref: '#/components/schemas/Money'
+            description: total payable amount,i.e. unpaidAmount plus advance amount after taxable amount
+    PaymentRef:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier
+        paymentRef:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reference'
+        billNumber:
+          type: string
+        transactionDate:
+          type: string
+          description: format- 'yyyy-mm-dd'
+          example: '2020-07-24'
+        paidAmount:
+          type: object
+          $ref: '#/components/schemas/Money'
+        paymentMethod:
+          type: object
+          $ref: '#/components/schemas/PaymentMethodRef'
+      required:
+      - referenceId
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        status:
+          type: string
+          description: Status code returned by provider system
+        error:
+          type: string
+          description: Status description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+    FinancialAccount:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Name of the related entity
+          id:
+            type: string
+            description: unique identifier
+          href:
+            type: string
+            description: Hyperlink reference
+          type:
+            type: string
+            description: The actual type of the target instance when needed for disambiguation.
+    PaymentMethodRef:
+      type: object
+      description: Reference or value of the method used for payment.
+      properties:
+        name:
+          type: string
+          description: Friendly name assigned to the payment method.
+          example: Manual Boost for RWC
+        description:
+          type: string
+          description: Description of the associated payment method.
+          example: Manual Boost for RWC
+        type:
+          $ref: '#/components/schemas/PaymentMethodTypeEnum'
+        details:
+          $ref: '#/components/schemas/PaymentMethodTypeDetails'
+    TimePeriod:
+      type: object
+      properties:
+        startDate:
+          type: string
+        endDate:
+          type: string
+    Cash:
+      description: Detailed information of the  service center/shop where bill paid through cash
+      properties:
+        centerName:
+          type: string
+          description: Name  of the service center where bill paid.
+        centerCode:
+          type: string
+          description: Code of the service center where bill paid.
+      required:
+      - centerCode
+    BankCard:
+      description: Detailed information for a bank card.
+      properties:
+        brand:
+          type: string
+          description: Card brand. e.g. Visa, MasterCard, AmericanExpress.
+          example: Visa
+        type:
+          type: string
+          description: Type of card. e.g. Credit, Debit.
+          example: Credit
+        cardNumber:
+          type: string
+          description: Credit card number.
+          example: xxxx xxxx xxx xxx
+        expirationDate:
+          type: string
+          format: date-time
+          description: Expiration date of the card.
+          example: 10/2020
+        cvv:
+          type: string
+          description: Security Code of the card. e.g. CCV, CCV2.
+          example: '123'
+        lastFourDigits:
+          type: string
+          description: Last four digits of the credit card.
+          example: '1234'
+        nameOnCard:
+          type: string
+          description: Name on the card.
+          example: Bruce Wayne
+        bank:
+          type: string
+          description: Bank that issued the card.
+          example: Bank of Gotham
+    BillingAccount:
+      type: array
+      items:
+        type: object
+        properties:
+          accountType':
+            type: string
+            description: The actual type of the target instance when needed for disambiguation
+          accountId:
+            type: string
+          accountname:
+            type: string
+          href:
+            type: string
+    BillCycle:
+      type: array
+      items:
+        type: object
+        properties:
+          href:
+            type: string
+          billingCycleId:
+            type: string
+            description: Billing cycle ID.
+          billingName:
+            type: string
+          billingType:
+            type: string
+            description: Type of billing.
+          startDate:
+            type: string
+            description: format- 'yyyy-mm-dd'
+          endDate:
+            type: string
+            description: format- 'yyyy-mm-dd'`
+          creditLimit:
+            $ref: '#/components/schemas/CreditLimit'
+    Cheque:
+      description: Detailed information of cheque.
+      properties:
+        chequeNumber:
+          type: string
+          description: Cheque Number
+        issueDate:
+          type: string
+          description: Issue date of the cheque.
+        expiryDate:
+          type: string
+          description: Expiry date of the cheque
+        accountNumber:
+          type: string
+        bankCode:
+          type: string
+          description: Code of the bank.
+      required:
+      - chequeNumber
+    TaxItem:
+      type: array
+      items:
+        type: object
+        properties:
+          taxAmount:
+            $ref: '#/components/schemas/Money'
+          taxCategory:
+            type: string
+          taxRate:
+            type: string
+          type:
+            type: string
+    PaymentMethodTypeDetails:
+      type: object
+      description: Definition of the payment method. Its content depends on the type field.
+      properties:
+        bank:
+          $ref: '#/components/schemas/Bank'
+        cash:
+          $ref: '#/components/schemas/Cash'
+        atm:
+          $ref: '#/components/schemas/ATM'
+        cheque:
+          $ref: '#/components/schemas/Cheque'
+        bankCard:
+          $ref: '#/components/schemas/BankCard'
+        tokenizedCard:
+          $ref: '#/components/schemas/TokenizedCard'
+    CustomerBill_Update:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      - data
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          type: object
+          properties:
+            idType:
+              type: string
+              description: This field refers the information against which bill has been paid, i.e. Account Number or Invoice Number or Service Number or Bill Number etc.
+              example: Account Number
+            id:
+              type: string
+              description: Value of the chosen 'idType'
+              example: '4567123'
+            paymentRef:
+              type: array
+              items:
+                $ref: '#/components/schemas/Reference'
+            amountPaid:
+              $ref: '#/components/schemas/Money'
+            advancePayment:
+              $ref: '#/components/schemas/Money'
+    BillDocument:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier for this particular attachment
+          description:
+            type: string
+            description: A narrative text describing the content of the attachment
+          href:
+            type: string
+            description: URI for this Attachment
+          attachmentType:
+            type: string
+            description: Attachment type such as video, picture
+          content:
+            type: string
+            description: The actual contents of the attachment object, if embedded, encoded as base64
+          mimeType:
+            type: string
+            description: Attachment mime type such as extension file for video, picture and document
+          size:
+            type: string
+            description: The size of the attachment
+          validFor:
+            type: string
+            description: The period of time for which the attachment is valid
+          '@referredType':
+            type: string
+            description: The actual type of the target instance when needed for disambiguation
+    Money:
+      required:
+      - amount
+      - unit
+      type: object
+      properties:
+        amount:
+          type: string
+        unit:
+          type: string
+    PaymentMethodTypeEnum:
+      type: string
+      title: PaymentMethodTypeEnum
+      enum:
+      - Bank
+      - Cash
+      - Cheque
+      - ATM
+      - BankCard
+      - TokenizedCard
+    CustomerBill:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the bill. It can be account number or service number or invoice number etc. Service number must be of format countrcode + msisdn, example- 250786456732
+        href:
+          type: string
+        billType:
+          type: string
+          description: Identifier of the bill type. Example -'Customer Bill'
+        billNo:
+          type: string
+          description: Bill reference known by the customer or the party and displayed on the bill. Could be different from the id.
+        billDate:
+          type: string
+          description: Bill date, external customer view (in consequence - different to the production date of the bill).
+        category:
+          type: string
+          enum:
+          - normal
+          - duplicate
+          - interim
+          - last
+          - trail customer
+          - credit note
+          description: Category of the bill produced - normal, duplicate, interim, last, trial customer or credit note for example
+        billRunType:
+          type: string
+          enum:
+          - onCycle
+          - offCycle
+          description: onCycle (a bill can be created as a result of a cycle run) or offCycle (a bill can be created as a result of other events such as customer request or account close)
+        lastUpdate:
+          type: string
+          format: date-time
+          description: Date of bill last update.
+        nextBillDate:
+          type: string
+          format: date-time
+          description: Approximate date of the next bill production given for information (only used/meaningful for on cycle / regular bills)
+        paymentDueDate:
+          type: string
+          format: date-time
+          description: Date at which the amount due should have been paid.
+        state:
+          type: string
+          description: Status of the bill.
+        amountDue:
+          $ref: '#/components/schemas/Money'
+          description: A base / value business entity used to represent money
+        amountDueDetail:
+          $ref: '#/components/schemas/DueDetail'
+          description: Detail of the due amount.
+    Reference:
+      type: object
+      properties:
+        referenceId:
+          type: string
+          description: Holds reference value . It can be payment reference number or slip number or transcation number etc.
+          example: PAY-9876
+        referenceType:
+          type: string
+          description: Holds reference type . It can be 'PaymentRef' or 'Slip Number' or 'RefTransactionNum' etc.
+          example: PaymentRefNum
+        referenceName:
+          description: Holds reference name.
+          example: csp-bill
+      required:
+      - referenceId
+      - referenceType
+    CreditLimit:
+      type: array
+      items:
+        type: object
+        properties:
+          idType:
+            type: string
+            description: Credit limit object flag. Whether this  is for Account or for Subscriber
+          id:
+            type: string
+            description: Credit limit Object value
+          creditLimitType:
+            type: string
+            description: Credit limit type
+          creditLimitName:
+            type: string
+            description: Credit limit type name
+          creditLimit:
+            type: string
+            description: Credit limit value of customer
+          effectiveDate:
+            type: string
+            description: Effective date，Date type format:yyyy-mm-dd
+          expiryDate:
+            type: string
+            description: Expire date，Date type format:yyyy-mm-dd
+    PaymentMethodRef_2:
+      type: object
+      description: PaymentMethod reference. A payment method defines a specific mean of payment (e.g direct debit).
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the payment mean
+        href:
+          type: string
+          description: Reference of the payment mean
+        name:
+          type: string
+          description: Name of the payment mean
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    AppliedPayment_2:
+      type: object
+      description: The applied payment is the result of lettering process. It enables to assign automatically or manually part of incoming payment amount to a bill.
+      properties:
+        appliedAmount:
+          $ref: '#/components/schemas/Money_2'
+        payment:
+          $ref: '#/components/schemas/PaymentRef_2'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    TimePeriod_2:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          type: string
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+    AttachmentRefOrValue:
+      type: object
+      description: An attachment by value or by reference. For AttachmentRefOrValue, the attribute type,schemaLocation and referredType are related to the contained entity and not to AttchmentRefOrValue itself
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this particular attachment
+        href:
+          type: string
+          description: URI for this Attachment
+        attachmentType:
+          type: string
+          description: Attachment type such as video, picture
+        content:
+          type: string
+          description: The actual contents of the attachment object, if embedded, encoded as base64
+        description:
+          type: string
+          description: A narrative text describing the content of the attachment
+        mimeType:
+          type: string
+          description: Attachment mime type such as extension file for video, picture and document
+        name:
+          type: string
+          description: The name of the attachment
+        url:
+          type: string
+          description: Uniform Resource Locator, is a web page address (a subset of URI)
+        size:
+          $ref: '#/components/schemas/Quantity'
+          description: The size of the attachment.
+        validFor:
+          $ref: '#/components/schemas/TimePeriod_2'
+          description: The period of time for which the attachment is valid
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    TaxItem_2:
+      type: object
+      description: A tax item is created for each tax rate and tax type used in the bill.
+      properties:
+        taxCategory:
+          type: string
+          description: Tax category
+        taxRate:
+          type: number
+          format: float
+          description: Applied rate of the tax
+        taxAmount:
+          $ref: '#/components/schemas/Money_2'
+          description: Amount of tax expressed in the given currency
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Quantity:
+      type: object
+      description: An amount in a given unit
+      properties:
+        amount:
+          default: 1
+          type: number
+          format: float
+          description: Numeric value in a given unit
+        units:
+          type: string
+          description: Unit
+    BillingAccountRef:
+      type: object
+      description: Reference to the billing account in case of not billed item.
+      properties:
+        id:
+          type: string
+          description: Unique-Identifier for this <123>
+        href:
+          type: string
+          description: URL serving as reference for the <xyz> resource
+        name:
+          type: string
+          description: Name of the Billingaccount
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    CustomerBill_Update_2:
+      type: object
+      description: 'The billing account receives all charges (recurring, one time and usage) of the offers and products assigned to it during order process. Periodically according to billing cycle specifications attached to the billing account or as a result of an event, a customer bill (aka invoice) is produced. This customer bill concerns different related parties which play a role on it : for example, a customer bill is produced by an operator, is sent to a bill receiver and has to be paid by a payer.
+
+        A payment method could be assigned to the customer bill to build the call of payment. Lettering process enables to assign automatically or manually incoming amount from payments to customer bills (payment items).
+
+        A tax item is created for each tax rate used in the customer bill.
+
+        The financial account represents a financial entity which records all customer’s accounting events : payment amount are recorded as credit and invoices amount are recorded as debit. It gives the customer overall balance (account balance).
+
+        The customer bill is linked to one or more documents that can be downloaded via a provided url.
+
+        Skipped properties: id,href,amountDue,appliedPayment,billDate,billDocument,billNo,billingAccount,billingPeriod,category,financialAccount,lastUpdate,nextBillDate,paymentDueDate,paymentMethod,relatedParty,remainingAmount,runType,taxExcludedAmount,taxIncludedAmount,taxItem'
+      properties:
+        state:
+          $ref: '#/components/schemas/stateValue'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Money_2:
+      type: object
+      description: A base / value business entity used to represent money
+      properties:
+        unit:
+          type: string
+          description: Currency (ISO4217 norm uses 3 letters to define the currency)
+        value:
+          type: number
+          format: float
+          description: A positive floating point number
+    RelatedPartyRef:
+      type: object
+      description: RelatedParty reference. A related party defines party or party role linked to a specific entity.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related party
+        href:
+          type: string
+          description: Reference of the related party, could be a party reference or a party role reference
+        name:
+          type: string
+          description: Name of the related party
+        role:
+          type: string
+          description: Role of the related party.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    AccountBalance:
+      type: object
+      description: Balances linked to the account
+      required:
+      - amount
+      - balanceType
+      - validFor
+      properties:
+        balanceType:
+          type: string
+          description: 'Type of the balance : deposit balance, disputed balance, loyalty balance, receivable balance...'
+        amount:
+          $ref: '#/components/schemas/Money_2'
+          description: Balance amount
+        validFor:
+          $ref: '#/components/schemas/TimePeriod_2'
+          description: Balance validity period
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    FinancialAccountRef:
+      type: object
+      description: AccountReceivable reference. An account of money owed by a party to another entity in exchange for goods or services that have been delivered or used. An account receivable aggregates the amounts of one or more party accounts (billing or settlement) owned by a given party.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the account
+        href:
+          type: string
+          description: Unique reference of the account
+        name:
+          type: string
+          description: Name of the account
+        accountBalance:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountBalance'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    stateValue:
+      type: string
+      description: ''
+      enum:
+      - new
+      - onHold
+      - validated
+      - sent
+      - partiallyPaid
+      - settled
+    PaymentRef_2:
+      type: object
+      description: If an immediate payment has been done at the product order submission, the payment information are captured and stored (as a reference) in the order.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: A name for the payment
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    CustomerBill_2:
+      type: object
+      description: 'The billing account receives all charges (recurring, one time and usage) of the offers and products assigned to it during order process. Periodically according to billing cycle specifications attached to the billing account or as a result of an event, a customer bill (aka invoice) is produced. This customer bill concerns different related parties which play a role on it : for example, a customer bill is produced by an operator, is sent to a bill receiver and has to be paid by a payer.
+
+        A payment method could be assigned to the customer bill to build the call of payment. Lettering process enables to assign automatically or manually incoming amount from payments to customer bills (payment items).
+
+        A tax item is created for each tax rate used in the customer bill.
+
+        The financial account represents a financial entity which records all customer’s accounting events : payment amount are recorded as credit and invoices amount are recorded as debit. It gives the customer overall balance (account balance).
+
+        The customer bill is linked to one or more documents that can be downloaded via a provided url.'
+      properties:
+        id:
+          type: string
+          description: Unique identifier of he bill
+        href:
+          type: string
+          description: Bill unique reference
+        billDate:
+          type: string
+          format: date-time
+          description: Bill date
+        billNo:
+          type: string
+          description: Bill reference known by the customer or the party and displayed on the bill. Could be different from the id
+        category:
+          type: string
+          description: 'Category of the bill produced : normal, duplicate, interim, last, trial customer or credit note for example'
+        lastUpdate:
+          type: string
+          format: date-time
+          description: Date of bill last update
+        nextBillDate:
+          type: string
+          format: date-time
+          description: ). Approximate date of  the next bill production given for information (only used for onCycle bill)
+        paymentDueDate:
+          type: string
+          format: date-time
+          description: Date at which the amount due should have been paid
+        runType:
+          type: string
+          description: onCycle (a bill can be created as a result of a cycle run) or offCycle (a bill can be created as a result of other events such as customer request or account close)
+        amountDue:
+          $ref: '#/components/schemas/Money_2'
+        appliedPayment:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppliedPayment_2'
+        billDocument:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachmentRefOrValue'
+        billingAccount:
+          $ref: '#/components/schemas/BillingAccountRef'
+        billingPeriod:
+          $ref: '#/components/schemas/TimePeriod_2'
+        financialAccount:
+          $ref: '#/components/schemas/FinancialAccountRef'
+        paymentMethod:
+          $ref: '#/components/schemas/PaymentMethodRef_2'
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedPartyRef'
+        remainingAmount:
+          $ref: '#/components/schemas/Money_2'
+        state:
+          $ref: '#/components/schemas/stateValue'
+        taxExcludedAmount:
+          $ref: '#/components/schemas/Money_2'
+        taxIncludedAmount:
+          $ref: '#/components/schemas/Money_2'
+        taxItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxItem_2'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Error_2:
+      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+      type: object
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token
+x-refined-from:
+- mtn-group-mtn-customer-bill-management.yml
+- mtn-group-tmf-customer-bill-management.yml

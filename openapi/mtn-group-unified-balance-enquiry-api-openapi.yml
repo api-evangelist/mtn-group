@@ -1,0 +1,270 @@
+openapi: 3.2.0
+info:
+  description: Api Documentation
+  version: '1.0'
+  title: Documentation Unified Balance Unified Balance Enquiry API
+  termsOfService: urn:tos
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://za.api.mtn.com/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Unified Balance Enquiry
+paths:
+  /balances:
+    get:
+      tags:
+      - Unified Balance Enquiry
+      summary: This API gives the Summary balance i.e., shared balances and personal balances of the customer from IBF. It also returns the XtraTime usage and lonable amount details.
+      operationId: summaryBalance
+      parameters:
+      - name: transactionId
+        in: query
+        description: Transaction ID for the command being executed.
+        required: true
+        schema:
+          type: string
+      - name: sourceIdentifier
+        in: query
+        description: Channel name of the source system.
+        required: true
+        schema:
+          type: string
+      - name: msisdn
+        in: query
+        description: MSISDN in international format i.e. 27832227009
+        required: true
+        schema:
+          type: string
+      - name: balanceType
+        in: query
+        description: 'Indicates the summary balance type that is required.  By default all is returned for all non prepaid subscribers and for prepaid subscribers usage limit will not be returned. The service will be enhanced in future to return the YB and MoMo balances as well. The filter can currently be set to one of the following: "ALL", "Airtime", "Data","Voice","SMS","Usage Limit", "Xtratime"'
+        schema:
+          type: string
+      responses:
+        200:
+          description: getBalances response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getBalancesResponse'
+        400:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authentication information is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    getBalancesResponse:
+      allOf:
+      - required:
+        - subscriberType
+        - pricePlanId
+        - pricePlanDescription
+        - pricePlanActivationDate
+        - summaryBalanceList
+        - statusCode
+        - statusMessage
+        - supportMessage
+        - transactionId
+        - customerSegment
+        - activationDate
+        type: object
+        properties:
+          statusCode:
+            type: integer
+            description: The status code of the transaction.0 for success and 1 for any technical failure. The status code will be mapped as per the backend error codes for any business failure.
+            format: int32
+            example: 0
+          statusMessage:
+            type: string
+            description: Message of the transaction. Either Success or Failure.
+          supportMessage:
+            type: string
+            description: Support message for the transaction. Indicates failure reason in case of failed transactions.
+          transactionId:
+            type: string
+            description: Unique identifier for every request to SOA. Mapped from input request.
+          subscriberType:
+            type: string
+            description: Line subscriber type. It can be one of the following, PREPAID, HYBRID, CONTRACT, CONVERGED, FTTH, or MVNO
+          activationDate:
+            type: string
+            description: User's account activation date.
+          customerSegment:
+            type: string
+            description: customer's account segment.
+            example: CBU, EBU.
+          pricePlanId:
+            type: string
+            description: The priceplan ID associated to the MSISDN which was queried.
+          pricePlanDescription:
+            type: string
+            description: The description of the price plan associated with priceplan id.
+          pricePlanActivationDate:
+            type: string
+            description: Activation date of the price plan mentioned.
+          xtraTimeDetails:
+            description: This array will give the usage value i.e., the xtraTime loan taken. It also gives the lonable amount and service fee. This array will not be retuned in case the XtraTime consent is false.
+            type: array
+            items:
+              required:
+              - usedValue
+              - usedValueUOM
+              - loanableAmount
+              - lonableAmountUOM
+              - serviceFee
+              - serviceFeeUOM
+              type: object
+              properties:
+                usedValue:
+                  type: number
+                  description: Gives the details of the XtraTime loan already taken.
+                usedValueUOM:
+                  type: string
+                  description: Indicates the unit of measure of the usage value for the dedicated account.
+                loanableAmount:
+                  type: integer
+                  description: Maximum amount of xtraTime loan that the user will be eligibile for. This value is fetched from MODE.
+                lonableAmountUOM:
+                  type: integer
+                  description: The unit of measure for the maximum amount of xtraTime loan that the user will be eligible.
+                serviceFee:
+                  type: number
+                  description: Maximum service fee for the xtraTime loan.
+                serviceFeeUOM:
+                  type: number
+                  description: The unit if measure for the maximum service fee for the xtraTime loan.
+          summaryBalanceList:
+            type: array
+            items:
+              required:
+              - wallet
+              type: object
+              properties:
+                wallet:
+                  type: string
+                  description: Gives the type of wallet. It can be one of the following, Personal, MadeToShare Master, EnterpriseSharing, MadeToShare Member.
+                threshold:
+                  type: array
+                  description: This array returns the threshold details only in case of made to share master.
+                  items:
+                    required:
+                    - thresholdValue
+                    - thresholdType
+                    - thresholdUOM
+                    type: object
+                    properties:
+                      thresholdValue:
+                        type: string
+                        description: Indicates the threshold value. Made to share Group's upper limit.
+                      thresholdType:
+                        type: string
+                        description: Indicates the Threshold type. i.e Data, Voice.
+                      thresholdUOM:
+                        type: string
+                        description: Indicates the unit of measure for the threshold. Sample values are bytes for data, minutes for Voice.
+                usage:
+                  type: array
+                  description: This array returns the usage details of the made to share master only.
+                  items:
+                    required:
+                    - usageValue
+                    - usageType
+                    - usageUOM
+                    type: object
+                    properties:
+                      usageValue:
+                        type: string
+                        description: Indicates the usage value of the Master.
+                      usageType:
+                        type: string
+                        description: Indicates the usage type. i.e Data, Voice.
+                      usageUOM:
+                        type: string
+                        description: Indicates the unit of measure for the usage. Sample values are bytes for data, minutes for Voice.
+                balances:
+                  type: array
+                  items:
+                    required:
+                    - balanceUOM
+                    - balanceType
+                    - balanceValue
+                    type: object
+                    properties:
+                      balanceUOM:
+                        type: string
+                        description: Indicates the unit of measure for the balance time. Sample values are Rands for Airtime, bytes for data, minutes for Voice.
+                      balanceType:
+                        type: string
+                        description: Indicates the summary balance type. i.e Data, Airtime, Voice, SMS, Usage.
+                      balanceValue:
+                        type: number
+                        description: Indicates the summary balance value. Ex - 251:37 for minites, 35939676160 bytes for data and balance for Usage
+                error:
+                  description: Will returned only if there is error in retruning the balances . In this case balances tag will not be returned.
+                  required:
+                  - errorCode
+                  - errorMessage
+                  type: object
+                  properties:
+                    errorCode:
+                      type: integer
+                      description: Error code.
+                    errorMessage:
+                      type: string
+                      description: Description of the error.
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      - transactionId
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the error occured.
+          example: 2018-05-01T00:00
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

@@ -1,0 +1,188 @@
+openapi: 3.2.0
+info:
+  version: v1.0
+  title: MTN Customer Management Link Accounts API
+  description: An API to register MoMo on Tier 0 for BSS. Please refer to the reference guides https://developers.mtn.com/API-Reference-Guides and Response and Error Codes documents https://developers.mtn.com/ResponseCodes
+servers:
+- url: https://api.mtn.com/v1/customerManagement
+tags:
+- name: Link Accounts
+paths:
+  /momo/tier0/{id}/link/account:
+    post:
+      description: Link a newly created account to an existing one
+      summary: Link a newly created wallet to an existing extended account holder data
+      tags:
+      - Link Accounts
+      parameters:
+      - name: X-Authorization
+        in: header
+        description: An authorization key to be provided
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: ID of an already existing extended account holder. ie. MSISDN
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        x-example: xxxxxxx
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        x-example: ECW
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Registration Response. For a successful request, it will contain the transaction id and status of Registration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MomoRegistrationResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        409:
+          description: Conflict. ID already exists as a subscriber
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkAccountData'
+components:
+  schemas:
+    AccountHolderRegistrationData:
+      type: object
+      required:
+      - msisdn
+      - username
+      - email
+      properties:
+        accountHolderId:
+          type: string
+          description: A uniquie identifier or an account number of the accounts to be linked
+          example: 0100002009300
+        profileName:
+          type: string
+          description: A description of the account to be registered and linked, profile details
+        timeout:
+          type: number
+          description: A timeout in seconds
+          default: 30
+        bankDomainName:
+          type: string
+          description: Name of the bank eg. EcoBank
+          example: EcoBank, AccessBank
+    APIError:
+      type: object
+      required:
+      - statusMessage
+      - supportMessage
+      - transactionId
+      - timestamp
+      - path
+      - method
+      properties:
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        timestamp:
+          type: string
+          example: '2020-08-19 09:09:09'
+        path:
+          type: string
+          description: endpoint path used to make request
+        method:
+          type: string
+          description: HTTP Method used to make request
+          example: GET
+    MomoRegistrationResponse:
+      type: object
+      required:
+      - accountHolderIdentity
+      - accountHolderIdentityType
+      - statusCode
+      - transactionId
+      properties:
+        accountHolderIdentity:
+          type: string
+          description: The ID of resource created
+          example: '9230088'
+        accountHolderIdentityType:
+          type: string
+          description: The type of ID for the resource created
+          example: ID
+        statusCode:
+          type: string
+          description: The status code for operation
+          example: '0000'
+        transactionId:
+          type: string
+          description: The transaction Id created for the request
+          example: A3344098765456
+    DocumentReferenceInformationListData:
+      type: object
+      properties:
+        documentReferenceNumber:
+          type: string
+        documentName:
+          type: string
+    LinkAccountData:
+      type: object
+      required:
+      - registrationDetails
+      properties:
+        registrationDetails:
+          type: object
+          description: Information of the account holder's secondary account to be created and linked to an existing account
+          $ref: '#/components/schemas/AccountHolderRegistrationData'
+        languageCode:
+          type: string
+          description: An optional valid language code
+        quoteId:
+          type: string
+          description: ID of the quote to use
+        additionInformationList:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalInformationListData'
+        docReferenceInformationList:
+          type: array
+          description: Contains reference information about a KYC document stored on an external document system
+          items:
+            $ref: '#/components/schemas/DocumentReferenceInformationListData'
+    AdditionalInformationListData:
+      type: object
+      description: Any other information of the account holder
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        contactNumber:
+          type: string
+        otherName:
+          type: string
+          description: Other name of the account holder
+        residentialAddress:
+          type: string
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header

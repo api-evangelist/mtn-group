@@ -1,0 +1,409 @@
+openapi: 3.2.0
+info:
+  description: API to provision,configure and activate Resource Functions
+  version: '1.0'
+  title: Resource Configuration Resource Function API
+servers:
+- url: https://api.mtn.com/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: ResourceFunction
+paths:
+  /resourceFunction:
+    post:
+      tags:
+      - ResourceFunction
+      operationId: ResourceFunctionCreate
+      summary: ResourceFunctionCreate
+      description: Create a new Resource Function. A resource function could be composite or atomic
+      deprecated: false
+      parameters:
+      - required: false
+        in: header
+        name: transactionId
+        description: Client generated Id to include for tracing requests.
+        x-example: 6f0bece6-7df3-4da4-af02-5e7f16e5e6fc
+        schema:
+          type: string
+      - required: false
+        in: header
+        name: targetSystem
+        description: Provider system name.
+        x-example: ZSmart
+        schema:
+          type: string
+          enum:
+          - ADC
+      - required: false
+        in: header
+        name: countryCode
+        description: Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        '206':
+          description: Partial Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceFunction'
+        required: true
+components:
+  schemas:
+    FeatureGroup:
+      type: object
+      properties:
+        name:
+          type: string
+          description: ' This is the name for the feature group'
+        listOfCharacteristics:
+          type: array
+          description: ' This is a list of  Resource Characteristics for a particular feature '
+          items:
+            $ref: '#/components/schemas/Characteristic'
+        listOfFeatures:
+          type: array
+          description: ' This is a list of  features for a particular feature group '
+          items:
+            $ref: '#/components/schemas/Feature'
+      required:
+      - name
+      - listOfCharacteristics
+      - listOfFeatures
+      example:
+        name: Filtering
+    RelatedParty:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        role:
+          type: string
+      required:
+      - href
+      - role
+      example:
+        id: '1234'
+        href: http://serverlocation:port/partyManagement/partyRole/1234
+        role: Admin
+    Connectivity:
+      type: object
+      properties:
+        source:
+          $ref: '#/components/schemas/ResourceFunctionRef'
+        target:
+          $ref: '#/components/schemas/ResourceFunctionRef'
+        relationship:
+          type: string
+      required:
+      - source
+      - target
+      - relationship
+      example:
+        source: http://serverlocation:port/resourceFunction/6789
+        target: http://serverlocation:port/resourceFunction/1234
+        relationship: ConnectsTo
+    ResourceFunction:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Identifier of the network service instance. Required to be unique. Used in URIs as the identifier of the service (for modify or delete use cases)
+          example: '17898'
+        href:
+          type: string
+          description: URI for the Resource Function. This is set by the provider of the API
+          example: http://serverlocation:port/resourceFunction/17898
+        name:
+          type: string
+          description: User friendly moniker for the Resource Function
+          example: CDN Cluster
+        description:
+          type: string
+          description: A description of the Resource Function (What does it provide)
+          example: CDN capability spread across multiple geographies
+        type:
+          type: string
+          description: A type of the Resource Function as specified by the provider of the API
+          example: Content Delivery
+        version:
+          type: string
+          description: A version of the Resource Function as specified by the provider of the API
+          example: '1.2'
+        role:
+          type: string
+          description: Role of the Resource Function. Used when Resource Function is a component of a composite Resource Function and the exact role of the service within the composite is not clear from descriptor/location.
+          example: Backup Media Store
+        location:
+          type: object
+          description: Location at which Resource Function is required
+          properties:
+            id:
+              type: string
+              description: A unique id for location
+            href:
+              type: string
+              description: URI for the location
+          required:
+          - href
+          example:
+            href: http://serverlocation:port/location/4980
+            id: '4980'
+        autoModification:
+          type: string
+          description: List of the kinds of auto-modifications that are applied to a given network service e.g what can be scaled
+          enum:
+          - scaleStorage
+          - scaleUpInterface
+        priority:
+          type: integer
+          format: int64
+          description: Priority of the Resource Function. Decides what happens in a contention scenario
+          example: '2'
+        state:
+          type: string
+          description: Provides the stage at which the resource function has been instantiated. This is a compound state defined in TR255
+          enum:
+          - planning
+          - installing
+          - operating
+          - retiring
+        subState:
+          type: string
+          description: Provides the usage sub-state information for the resource function. The value is dependent on the value of State. Please refer to section 3.2.7 of TR255 for details.
+        schedule:
+          type: array
+          description: ' This is a reference to a schedule. Allows consumers to schedule modifications to the service at certain times'
+          items:
+            $ref: '#/components/schemas/ScheduleRef'
+        sap:
+          type: array
+          description: ' The service access points available on the resource function '
+          items:
+            $ref: '#/components/schemas/SAPRef'
+        resourceFunctionSpecification:
+          type: object
+          description: ' Pointer to the resource specification that will be used to create this resource function '
+          $ref: '#/components/schemas/ResourceFunctionSpecification'
+        characteristic:
+          type: array
+          description: ' List of resource characteristics. This is based on the resource specification '
+          items:
+            $ref: '#/components/schemas/Characteristic'
+        feature:
+          type: array
+          description: ' List of features requested. This is based on the resource specification '
+          items:
+            $ref: '#/components/schemas/Feature'
+        featureGroup:
+          type: array
+          description: ' List of feature groups. This is based on the resource specification '
+          items:
+            $ref: '#/components/schemas/FeatureGroup'
+        supportingResourceFunction:
+          type: array
+          description: ' This is a list of composite and atomic resource functions from which this resource function is composed. These are all the vertices of the graph. '
+          items:
+            $ref: '#/components/schemas/ResourceFunction'
+        connectivity:
+          type: array
+          description: ' These are the edges of the graph and provide details of how the resource functions listed in supportingResourceFunction are connected together '
+          items:
+            $ref: '#/components/schemas/Connectivity'
+        relatedParty:
+          type: array
+          description: ' List of party objects related to this resource function. This can be used to (for example) indicate the consumer that owns the RF or a management entity responsible the RF. '
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+      required:
+      - resourceFunctionSpecification
+    ResourceFunctionSpecification:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+      required:
+      - id
+      example:
+        id: RS-6789
+        href: http://serverlocation:port/resourceSpecification/RS-6789
+    SAPRef:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+      required:
+      - href
+      example:
+        id: SAP-49876
+        href: http://serverlocation:port/resourceFunction/SAP-49876
+    ResourceFunctionRef:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+      required:
+      - href
+      example:
+        id: RF-6789
+        href: http://serverlocation:port/resourceSpecification/RF-6789
+    Characteristic:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+      - name
+      - value
+      example:
+        name: bandwidth
+        value: 100MB
+    Feature:
+      type: object
+      properties:
+        name:
+          type: string
+          description: ' This is the name for the feature'
+        listOfCharacteristics:
+          type: array
+          description: ' This is a list of  Resource Characteristics for a particular feature '
+          items:
+            $ref: '#/components/schemas/Characteristic'
+      required:
+      - name
+      - listOfCharacteristics
+      example:
+        name: Tarpit
+    ScheduleRef:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        ResourceFunctionConfig:
+          $ref: '#/components/schemas/ResourceFunction'
+      required:
+      - href
+      - ResourceFunctionConfig
+      example:
+        id: SCH-78906
+        href: http://serverlocation:port/resourceSpecification/SCH-78906
+    Result:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      - data
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          $ref: '#/components/schemas/ResourceFunction'
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        status:
+          type: string
+          description: Status code
+        error:
+          type: string
+          description: Status description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

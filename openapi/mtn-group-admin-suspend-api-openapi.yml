@@ -1,0 +1,83 @@
+openapi: 3.2.0
+info:
+  version: v1.0
+  title: Customer Management - COE Admin Suspend API
+  description: An API to Create customers,create admin users,activate/deactivate,disable Sims.
+servers:
+- url: https://coe.api.mtn.com/customerManagement/v1
+tags:
+- name: Admin Suspend
+paths:
+  /sim/admin/suspend/{iccid}:
+    patch:
+      operationId: to disable a sim
+      summary: To disable a sim
+      description: This operation disable a sim.
+      tags:
+      - Admin Suspend
+      parameters:
+      - name: iccid
+        in: path
+        description: Portfolio ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin_Suspend_Response'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Admin_Suspend'
+        description: Fraud Suspension
+        required: true
+components:
+  schemas:
+    Any: {}
+    Admin_Suspend_Response:
+      type: object
+      description: 'Skipped properties: id,href'
+      required:
+      - engagedParty
+      - name
+      properties:
+        serviceCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceCharacteristic'
+          description: Describes the characteristic of a customer.
+    Admin_Suspend:
+      type: object
+      description: 'Skipped properties: id,href'
+      required:
+      - engagedParty
+      - name
+      properties:
+        serviceCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceCharacteristic'
+          description: Describes the characteristic of a customer.
+    ServiceCharacteristic:
+      required:
+      - name
+      - value
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the characteristic
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header

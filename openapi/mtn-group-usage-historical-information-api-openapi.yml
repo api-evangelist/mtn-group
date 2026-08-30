@@ -1,0 +1,475 @@
+openapi: 3.2.0
+info:
+  version: 1.0.0
+  title: Customer Identification Usage Historical Information API
+  description: "The Customer Identification API provides information about a customer and their historical usage events on voice, data, SMS, Roaming etc. Information can be retrieved by stating the date range for the period the API consumer is interested in. It will return date and time on which a specific event occurred on a customer's MSISDN as queried by the API consumer\n### Supported Operations\n\n  1. **Recharge and Usage Historical Information**\n      - **subscriberUsage:** Data, Voice, SMS call events\n            records\n      - **roamingUsage**: Data, Voice, SMS call events\n            records for Roaming\n      - **rechargeHistory:** Airtime Recharge Events\n      - **daUsageHistory:** Dedicated Account Balance usage\n      - **mainAccountUsage:** Events that used the Main Airtime\n      - **accountAdjustments:** Bucket Balance adjustment events that\n      happened on MA and DA's\n      - **internetUsageDetails:** Detailed Data usage events\n      - **validateKYC**: Validates whether msisdn and NIN values provided match or don't match\n \n  2. **Xtratime**\n      - View Loan Details: gets the list of open loans and their data for a subscriber of Xtratime product\n      - View Transaction Detail:  used to get a list of the history for loans (Advance/Recoveries) for a subscriber of xtratime product.\n      - Customer Eligibility: used to retrieve the list of denomination identifiers i.e. loan bands for which the subscriber is eligible at the time of the request.\n      - Customer Profile: used to retrieve the credit limit and balances list of the customer\n      \n  3. **Customer Information**\n      - Query Customer Data: Returns kyc and summary statistics on usage data for a subscriber msisdn. **Note, depending on the priviledges assigned to a 3PP all/less data is returned.**\n      - Query Merchant Data: Returns kyc and summary statistics on usage data for a momopay merchant msisdn. **Note, depending on the priviledges assigned to a 3PP all/less data is returned.**"
+  contact:
+    email: developer-support@mtn.com
+    name: MTN API Support
+servers:
+- url: https://api.mtn.com/v1/customerIdentification/
+security: []
+tags:
+- name: Usage Historical Information
+paths:
+  /customer:
+    get:
+      description: Get Usage, Roaming, Recharge History, Customer Profile or Eligibility status of a customer, identified by an MSISDN
+      summary: Get Usage, Roaming, Recharge History, Customer Profile or Eligibility status of a customer, identified by an MSISDN
+      tags:
+      - Usage Historical Information
+      operationId: GetUsage,Roaming,RechargeHistory,CustomerProfileorEligibilitystatusofacustomer,identifiedbyanMSISDN
+      deprecated: false
+      parameters:
+      - name: customerId
+        in: query
+        required: true
+        description: MSISDN of the customer
+        schema:
+          type: number
+          format: double
+      - name: partnerId
+        in: query
+        required: true
+        description: Unique identifier of the system from which the request for customer information is coming. This is to be assigned by the back-end provider system
+        schema:
+          type: number
+          format: double
+      - name: operationName
+        in: query
+        required: true
+        description: 'Name assigned to the task to be performed. Below are the possible values;
+
+          - **subscriberUsage:** Data, Voice, SMS call events records
+
+          - **roamingUsage:** Data, Voice, SMS call events records for Roaming
+
+          - **rechargeHistory:** Airtime Recharge History
+
+          - **daUsageHistory:** Dedicated Account Balance usage
+
+          - **mainAccountUsage:** Events that used the Main Airtime
+
+          - **accountAdjustments:** Bucket Balance adjustment events that
+
+          happened on MA and DA''s
+
+          - **internetUsageDetails:** Detailed Data usage events
+
+          - **viewloandetailsCVAS:** gets the list of open loans and their data for a subscriber of Xtratime product
+
+          - **viewtrxdetailsCVAS:** used to get a list of the history for loans (Advance/Recoveries) for a subscriber of xtratime product.
+
+          - **checkEligibilityCVAS:** used to retrieve the list of denomination identifiers i.e. loan bands for which the subscriber is eligible at the time of the request.
+
+          - **checkProfileCVAS:** used to retrieve the credit limit and balances list of the customer
+
+          - **validateKYC:** confirm NIN and MSISDN are a match/no-match'
+        schema:
+          type: string
+          enum:
+          - subscriberUsage
+          - roamingUsage
+          - rechargeHistory
+          - daUsageHistory
+          - mainAccountUsage
+          - accountAdjustments
+          - internetUsageDetails
+          - viewloandetailsCVAS
+          - viewtrxdetailsCVAS
+          - checkEligibilityCVAS
+          - checkProfileCVAS
+          - validateKYC
+      - name: IdNumber
+        in: query
+        required: false
+        description: NIN of the msisdn for which a match or no match is required . It is only applicable and mandatory if the operationName is set to validateKYC.
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        required: false
+        description: 'Start Date from which information is required. Format; YYYYMMDD
+
+
+          *Only applicable and mandatory when **operationName** = subscriberUsage, roamingUsage, rechargeHistory, daUsageHistory, mainAccountUsage, accountAdjustments, internetUsageDetails*'
+        schema:
+          type: number
+          format: double
+      - name: endDate
+        in: query
+        required: false
+        description: 'End Date to which information is required. Format; YYYYMMDD
+
+
+          *Only applicable when **operationName** = subscriberUsage, roamingUsage, rechargeHistory, daUsageHistory, mainAccountUsage, accountAdjustments, internetUsageDetails*'
+        schema:
+          type: number
+          format: double
+      - name: status
+        in: query
+        required: false
+        description: 'Status of the loan
+
+
+          *Only applicable when **operationName** = viewloandetailsCVAS*'
+        schema:
+          type: string
+          enum:
+          - open
+          - closed
+      - name: offset
+        in: query
+        required: false
+        description: 'Indicates the max number of loan transaction to return. This is a limiter and can not exceed the project maximum.
+
+
+          *Only applicable when **operationName** = viewtrxdetailsCVAS*'
+        schema:
+          type: number
+          format: double
+      - name: cvasBandName
+        in: query
+        required: false
+        description: 'Specifies a specific loan band against which eligibility is checked.
+
+
+          *Only applicable when **operationName** = checkEligibilityCVAS*'
+        schema:
+          type: string
+      - name: cvasBandGroup
+        in: query
+        required: false
+        description: 'Specifies the loan bands of the group against which eligibility is checked.
+
+
+          *Only applicable when **operationName** = checkEligibilityCVAS*'
+        schema:
+          type: number
+          format: double
+      - name: responseType
+        in: query
+        required: false
+        description: 'Specifies the level of information to return.
+
+
+          *Only applicable when **operationName** = checkEligibilityCVAS*
+
+          - B stands for "Basic". Returns Eligibility status only
+
+          - E stands for "Extend". Returns Eligibility status and the list of eligible bands.'
+        schema:
+          type: string
+          enum:
+          - B
+          - E
+          default: E
+      - name: eligibilityCheck
+        in: query
+        required: false
+        description: 'Specifies the eligibility rules to run.
+
+
+          *Only applicable when **operationName** = checkEligibilityCVAS*
+
+          - B stands for "Basic". Without IN interaction
+
+          - E stands for "Extend". With complete eligibility rules'
+        schema:
+          type: string
+          enum:
+          - B
+          - E
+          default: E
+      - name: usageType
+        in: query
+        required: false
+        description: 'Specifies the type of usage to be fetched.
+
+
+          *Only applicable when **operationName** = subscriberUsage*.'
+        schema:
+          type: string
+          enum:
+          - ALL
+          - VOICE
+          - SMS
+          - DATA
+          default: ALL
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                default: ''
+              example:
+                APIStatus:
+                  msisdn: '242068021197'
+                  requestId: '4940324720466238117'
+                  dateRange:
+                  - '20210614'
+                  - '20210614'
+                  maxRecs: 5
+                  numRecs: 5
+                  pageNum: 1
+                  submittedTime: 2021-08-19 15:19:49.142000
+                  duration: 83
+                  statusCode: 200
+                  statusMsg: OK
+                  APIData:
+                  - duration: 1
+                    charge_duration: 1
+                    timestamp: 20200922212007+0300
+                    description: SMS
+                    call_type: ONNET
+                    date_key: 20200922
+                    called_msisdn: '256800205353'
+                    amount: '0.000000'
+                    service_class: '31'
+                    offer_desc: ''
+                    timestamp_v: 1600809607000
+                    unit: M
+                    call_direction: OUTGOING
+                    call_reference_no: ''
+                    da_id: '20'
+                    discount_amt: ''
+                    da_balance_before_amt: '200'
+                    package_cd: P1000
+                    base_station_id: 629 10 121 11014
+                    ma_balance_before_amt: '0.013333'
+                    da_balance_after_amt: '0'
+                    da_id_description: BUNDLE
+                    bytes_sent_qty: ''
+                    da_value_amt: '200'
+                    call_reference_number: '3976963048'
+                    discount_cd: ''
+                    currency_cd: XAF
+                    event_subtype_cd: '0'
+                    source_system_cd: CCN
+                    apn_cd: ''
+                    event_cd: VOICE
+                    discount_pct: '0'
+                    event_subtype_desc_txt: null
+                    served_msisdn_nr: '242068021197'
+                    subscriber_type: PREPAID
+                    called_numbner: '65938200'
+                    bytes_received_qty: ''
+                    ma_balance_after_amt: '0.013333'
+                  - recharge_value_after: 900
+                    timestamp: 20210610090705
+                    date_key: 20210610
+                    recharge_type: RCG_MMT_AIR_MOBILE_MONEY
+                    recharge_value_before: 0
+                    transaction_id: '1282815489'
+                    recharge_amount: 900
+                    timestamp_v: 1599233410000
+                    recharge_channel: EXTEVDS|EVDSMOMO
+                    re_method: ''
+                    base_station_id: ''
+                    re_tax: ''
+                    re_denomination: '900.0'
+                    re_bundle: DIY_BONUS
+                    re_msisdn_nsk: '242066223438'
+                    service_id: '3'
+                    re_account: DA_ID_253
+                    re_validity: '5'
+                  - duration: 16
+                    description: VOICE
+                    call_type: VOICE
+                    date_key: 20200916
+                    called_msisdn: '256758130545'
+                    call_date: '2020-09-16 13:47:28'
+                    main_bal_after: 7936
+                    service_class: MTN Call Per Second
+                    call_cost: 64
+                    main_bal_before: 8000
+                    timestamp_v: 1600228800000
+                    charge_unit: M
+                  - origtransactionid: '12345'
+                    balance_before: '0.014687'
+                    node_id: USSDug
+                    date_key: 20210818
+                    call_date: 20210818191922
+                    balance_after: '500.014687'
+                    change: '-500.0'
+                    timestamp_v: 1600255847000
+                    node: madapiST
+                    m2u_receiver: ''
+                    service_id: '242065933826'
+                    event_subtype_cd: Credit
+                    adj_account: MASTER
+                    adj_validity: ''
+                    adj_acct_source: ERS1A
+                    adj_tran_type: ERS1A
+                    m2u_sender: ''
+                  - imei: '911563554605990'
+                    hour_enrich: 9
+                    date_key: 20200916
+                    application_v: DNS
+                    egn_sub_protocol_v: dns
+                    data_usage_type: 2
+                    egn_sub_protocol_id_n: 79
+                    downlink_traffic: 6148
+                    uplink_traffic: 3018
+                    total_traffic: 9166
+                    timestamp_v: 1600228800000
+                    apn: internet
+                    imsi: 641101909028494
+                  - call_direction: I
+                    package_cd: P1000
+                    package_description: MTN FREE~1.0
+                    event_unit_cd: XAF
+                    call_duration_qty: '24'
+                    country: Congo
+                    served_imsi_nr: null
+                    bytes_sent_qty: 0
+                    date_key: 20210812
+                    sdr_charge_amt: '0'
+                    other_nr: '242055286670'
+                    cdr_ts: '2021-08-12 07:33:39.0'
+                    event_value_amt: '1240000'
+                    msisdn_nsk: '242066173079'
+                    event_desc_txt: VOICE
+                    currency_cd: XAF
+                    source_system_cd: PM RATED
+                    event_subtype_cd: ''
+                    event_cd: '0'
+                    event_subtype_desc_txt: ''
+                    conversion_rate: '0'
+                    event_dt: '20210812'
+                    bytes_received_qty: '0'
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+              example:
+                response:
+                  errorCode: '1103'
+                  errorDescription: Invalid parameter value. The name of the parameter will be provided
+                  msisdn: '22977777'
+                  when: 1519980424641
+                  status: ERROR
+                loanList: []
+                operationList: null
+                APIData:
+                  status: NO_MATCH
+                  create_dt: 20220324
+                  submission_time: 20220324 08:41:01
+                  request_id: e8f39b6a46364875a4a89730e3925bc4
+                  response_time_sec: '0.0417'
+        '401':
+          description: Unauthorized
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+        '403':
+          description: Forbidden
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+        '404':
+          description: Not Found
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+        '500':
+          description: Internal Server Error
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+      security:
+      - ApiKeyAuth: []
+components:
+  schemas:
+    APIStatus:
+      title: APIStatus
+      type: object
+      properties:
+        msisdn:
+          description: MSISDN of the customer whose information has been returned
+          example: '256789999781'
+          type: string
+        requestId:
+          description: internally generated transaction Id from the backend
+          example: '4993609756309740126'
+          type: string
+        dateRange:
+          description: Date range of the returned information
+          type: array
+          items:
+            $ref: '#/components/schemas/DateRange'
+        maxRecs:
+          description: Maximum number of records available for the given date range
+          type: integer
+          format: int32
+        numRecs:
+          description: Number of records returned. 0 for no records returned.
+          type: number
+          format: double
+        pageNum:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/PageNum'
+          - description: Maximum number of records that can be returned in a single response
+        submittedTime:
+          description: Date time stamp when the request for information was made
+          example: 2020-09-01 17:08:38.549000
+          type: string
+        duration:
+          description: Duration taken to process the request in milliseconds
+          type: number
+          format: double
+        statusCode:
+          description: Response status code
+          example: 200
+          type: number
+          format: double
+        statusMsg:
+          description: Description for the response status code
+          example: OK
+          type: string
+    DateRange:
+      title: DateRange
+      type: object
+      properties:
+        startdate:
+          description: Format; YYYYMMDD
+          type: string
+        enddate:
+          description: Format; YYYYMMDD
+          type: string
+    PageNum:
+      title: PageNum
+      description: Maximum number of records that can be returned in a single response
+      type: integer
+      format: int32
+      enum:
+      - 50
+    customerUsage:
+      title: customerUsage
+      type: object
+      properties:
+        APIStatus:
+          $ref: '#/components/schemas/APIStatus'
+        APIData:
+          description: Detailed information returned about the subscriber
+          type: array
+          items: {}
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header

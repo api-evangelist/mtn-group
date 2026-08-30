@@ -1,0 +1,2022 @@
+openapi: 3.2.0
+info:
+  description: The Customer KYC(Know Your Client) Verification API will validate the 3PP Customer KYC information with MTN Customer KYC information
+  version: 1.0.2
+  title: MTN Verification Customer KYC API
+servers:
+- url: https://api.mtn.com/v1/kycVerification/
+security:
+- ApiKeyAuth: []
+- basicAuth: []
+tags:
+- name: Customer KYC
+paths:
+  /customers:
+    get:
+      tags:
+      - Customer KYC
+      summary: Verify multiple customer kyc information by submitting an array of only msisdn or BVNs as a query params
+      description: This endpoint is responsible for handling the verification of multiple kyc information by sending an array of unique identifiers i.e MSISDN, BVN only
+      parameters:
+      - name: transactionId
+        in: header
+        x-example: e938-300949-394999-39993
+        description: A transactionId for tracking purposes
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        x-example: NIBSS
+        description: Target System
+        schema:
+          type: string
+      - in: header
+        name: bvns
+        description: An array list of all the bvns to get customer details from
+        x-example: '[BVN123455,BVN3409394]'
+        schema:
+          type: array
+          items:
+            type: string
+            x-example: BVN123455,BVN3409394
+      responses:
+        '200':
+          description: Callback Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerVerificationKYCMultiResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '5000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4001'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '1000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+    post:
+      tags:
+      - Customer KYC
+      summary: Verify multiple customer kyc information by submitting an array of customer information
+      description: This endpoint is responsible for handling the verification of multiple customers by passing an array of customers data.
+      parameters:
+      - name: transactionId
+        in: header
+        x-example: e938-300949-394999-39993
+        description: A transactionId for tracking purposes
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        x-example: NIBSS
+        description: Target System
+        schema:
+          type: string
+      - name: requestType
+        in: query
+        description: The type of request to be made ie. whether it's a Face match or fingerprint verification,  Required to be passed when targetSystem is NIBSS
+        required: false
+        schema:
+          type: string
+          enum:
+          - FACE_MATCH
+          - FINGERPRINT_MATCH
+      - name: verificationType
+        in: query
+        required: false
+        description: Defines the type of verification 3PP wants to perform base on the passed payload ie. Whether it's a finger print, fingerprint with date of birth verification etc.  Required to be passed when targetSystem is NIBSS
+        schema:
+          type: string
+          enum:
+          - FINGERPRINT
+          - FINGERPRINT_DOB
+      responses:
+        '200':
+          description: Callback Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerVerificationKYCMultiResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '5000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4001'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '1000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerKYCVerificationMultipleRequest'
+        description: The request body to be sent to the backend
+  /customers/{customerId}:
+    post:
+      tags:
+      - Customer KYC
+      summary: Verify mtn customer kyc information against 3PP customer kyc information
+      description: This endpoint is to enable trusted partners verify customer's KYC information passed in the request body. The verification logic will be carried out at the process layer where each KYC attributes will be validated to be TRUE or FALSE based on their matching record on the network downstream system
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if customerId is msisdn, then the format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: isConsentVerified
+        in: query
+        description: This will indicate that the customer consent has been acquired by the partner for KYC verification. For the request to be executed, this field should be set to TRUE if the consent validation has been successfully processed by the partner
+        required: true
+        schema:
+          type: boolean
+          enum:
+          - false
+          - true
+      - in: header
+        name: transactionId
+        required: false
+        description: A unique ID for tracking a particular transaction, optional and to be generated if not passed by the API caller
+        x-example: c125d1e7-843f-410f-9252-71a55ec7cb92
+        schema:
+          type: string
+      - in: query
+        name: targetSystem
+        schema:
+          type: string
+          enum:
+          - DAAS
+          - CLM
+          - BANK_BILLING
+          - CLM_REST
+          - BIOSMART
+      responses:
+        '200':
+          description: Callback Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KYCVerificationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '5000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4001'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '1000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BasicKYCRequestData'
+        description: Request body
+        required: true
+    get:
+      security:
+      - basicAuth: []
+      tags:
+      - Customer KYC
+      summary: Verify if customer MSISDN is active on either the bank or MTN
+      description: This endpoint is to enable a 3PP confirm if a mobile number is active on the bank and to get a hashed mobile number
+      parameters:
+      - name: customerId
+        in: path
+        description: customer MSISDN that is to be confirmed
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: query
+        description: transactionId for tracking purposes
+        schema:
+          type: string
+      - name: verificationType
+        in: query
+        description: Verification Type.
+        schema:
+          type: string
+          enum:
+          - BANK
+          - HASHCODE
+          - EVALIDATOR
+          - WinBack
+          - VALENTINE_PROMO
+      - name: targetSystem
+        in: query
+        schema:
+          type: string
+          enum:
+          - DAAS
+          - CLM
+          - BANK_BILLING
+          - CLM_REST
+          - NIBSS
+      - name: externalCode
+        in: query
+        description: This can be the bank's short code
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        description: An optional parameter, together with endDate, allows developers to specify a time range by which to query customer data on. If you want to request data for 2 months, then start date will need to set to 2 months prior to today, and endDate to todays date. If this is not set, the date range will be defaulted to 6 months
+        schema:
+          type: string
+      - name: endDate
+        in: query
+        description: An optional parameter, together with startDate, allows developers to specify a time range by which to query customer data on. If you want to request data for 2 months, then start date will need to set to 2 months prior to today, and endDate to todays date. If this is not set, the date range will be defaulted to 6 months
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful verification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerVerificationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '5000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4001'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '1000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+  /customers/{customerId}/kycScore:
+    post:
+      tags:
+      - Customer KYC
+      summary: Verify mtn customer kyc information against 3PP customer kyc information
+      description: This endpoint is to enable trusted partners to verify customer's KYC information passed in the request body. The verification logic will be carried out where each KYC attributes will be validated and given a percentage score (between 0 - 100) based on their matching record on the network downstream system
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if customerId is msisdn, then the format must be E.123
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: transactionId
+        required: false
+        description: A unique ID for tracking a particular transaction, optional and to be generated if not passed by the API caller
+        x-example: c125d1e7-843f-410f-9252-71a55ec7cb92
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Callback Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KYCVerificationScoreResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '5000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4001'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '1000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KYCRequestDataScore'
+        description: Request body
+        required: true
+  /customers/{customerId}/nameScore:
+    post:
+      tags:
+      - Customer KYC
+      summary: Verify mtn customer kyc information against 3PP customer kyc information
+      description: This endpoint is to enable trusted partners to verify customer's KYC information passed in the request body. The verification logic will be carried out where each KYC attributes will be validated and given a percentage score (between 0 - 100) based on their matching record on the network downstream system
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if customerId is msisdn, then the format must be E.123
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: transactionId
+        required: false
+        description: A unique ID for tracking a particular transaction, optional and to be generated if not passed by the API caller
+        x-example: c125d1e7-843f-410f-9252-71a55ec7cb92
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Callback Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KYCNameVerificationScoreResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '5000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4001'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '1000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4001'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KYCNameRequestDataScore'
+        description: Request body
+        required: true
+  /customers/{customerId}/addressScore:
+    post:
+      tags:
+      - Customer KYC
+      summary: Verify mtn customer kyc information against 3PP customer kyc information
+      description: This endpoint is to enable trusted partners to verify customer's KYC information passed in the request body. The verification logic will be carried out where each KYC attributes will be validated and given a percentage score (between 0 - 100) based on their matching record on the network downstream system
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if customerId is msisdn, then the format must be E.123
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: transactionId
+        required: false
+        description: A unique ID for tracking a particular transaction, optional and to be generated if not passed by the API caller
+        x-example: c125d1e7-843f-410f-9252-71a55ec7cb92
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Callback Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KYCAddressVerificationScoreResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '5000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4001'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '1000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4001'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KYCAddressRequestDataScore'
+        description: Request body
+        required: true
+  /customers/{customerId}/biometric/verify:
+    post:
+      tags:
+      - Customer KYC
+      summary: Verify customer kyc information by uploading customer biometric data
+      description: This endpoint is to enable trusted partners verify customer's KYC information by passing customer biometric details
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if customerId is msisdn, then the format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Transaction Id for tracking purposes
+        required: false
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        description: Target system
+        required: false
+        x-example: BIOSMART, NIBSS
+        schema:
+          type: string
+      - name: requestType
+        in: query
+        description: The type of request to be made ie. whether it's a Face match or fingerprint verification,  Required to be passed when targetSystem is NIBSS
+        required: false
+        schema:
+          type: string
+          enum:
+          - FINGERPRINT_MATCH
+      - name: verificationType
+        in: query
+        required: false
+        description: Defines the type of verification 3PP wants to perform base on the passed payload ie. Whether it's a finger print, fingerprint with date of birth verification etc.  Required to be passed when targetSystem is NIBSS
+        schema:
+          type: string
+          enum:
+          - FINGERPRINT_PHONENUMBER
+      responses:
+        '200':
+          description: Callback Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BIOMetricResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '5000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4001'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '1000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorPayload'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FaceMatchingRequest'
+        description: Request body
+        required: true
+  /biometric-roc/customers/identityStatus:
+    post:
+      tags:
+      - Customer KYC
+      summary: Get Identity Status by Customer ID
+      description: POST to query identity enrollment status by Customer ID
+      parameters:
+      - name: transactionId
+        in: header
+        description: Transaction Id for tracking purposes
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Identity status response from ROC Enroll
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/identityStatusResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/identityStatusRequest'
+        required: true
+components:
+  schemas:
+    Error400:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+          example: '2023-10-25T09:52:55.166+00:00'
+        status:
+          type: string
+          description: Text explaining the reason for the error
+          example: '400'
+        error:
+          type: string
+          example: Bad Request
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: ''
+          example: /customers/1234567890321/identityStatus
+    ErrorPayload:
+      type: object
+      properties:
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cbd4772b-d1cf-5905-be9d-7a04adedf5b2
+        path:
+          type: string
+          description: API url path to which the call was made to
+          example: /customers
+        method:
+          type: string
+          description: HTTP verb or method associated with the called API endpoint
+          example: GET
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+          example: 2019-08-23T07:29:25.593+0000
+    FaceMatchingRequest:
+      description: Request for biometric matching
+      type: object
+      properties:
+        email:
+          type: string
+          example: example@email.com
+        binaryAttachment:
+          type: array
+          items:
+            properties:
+              id:
+                type: string
+                description: Unique identifier for this particular attachment, a nist_impression_type when verification is biometric with a face image or fingerprint
+              attachmentType:
+                type: string
+                description: Attachment type such as video, picture
+              content:
+                type: string
+                description: A narrative text describing the content of the attachment
+              mimeType:
+                type: string
+                description: Attachment mime type such as extension file for video, picture and document
+              name:
+                type: string
+                description: The name of the attachment
+              status:
+                type: string
+                example: Successful
+              description:
+                type: string
+                description: A narrative text describing the content of the attachment, it can also be the POSITION value if attached document is fingerprint
+        uploadId:
+          type: string
+          description: A customer PIN reference, passed if targetSystem is BIOSMART
+        description:
+          type: string
+          description: A defined use case, it's required if targetSystem is BIOSMART
+          example: BU
+        deviceId:
+          type: string
+          description: A unique device identifier, passed if targetSystem is BIOSMART
+          example: xxxxxxxxxxxx
+        serialNumber:
+          type: string
+          description: A serial number identifier to be sent with the request
+        correlationId:
+          type: string
+          description: A Unique ID, a reference number generated with a pattern that uniquely identifies a specific request/transaction
+    BVNVerificationResponseData:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Status code of the verified BVN
+          example: '00'
+        customerId:
+          type: string
+          description: CustomerId provided in the input
+          example: BVN-9938884
+        firstName:
+          type: string
+          example: Joe
+          description: Customer first name
+        lastName:
+          type: string
+          example: Doe
+          description: Customer last name
+        otherNames:
+          type: string
+          example: Den
+          description: Customer other names
+        email:
+          type: string
+          example: example@example.com
+          description: Email address of the customer or the agent
+        dateOfBirth:
+          type: string
+          format: date
+          example: '1980-02-14'
+          description: Date of Birth to be in date format. format ISO 8601
+        gender:
+          type: string
+          example: M
+          enum:
+          - M
+          - F
+        stateOfOrigin:
+          type: string
+          example: EK
+        lgaOfOrigin:
+          type: string
+          example: EK20
+        stateOfResidence:
+          type: string
+          example: LA
+        lgaOfResidence:
+          type: string
+          example: LA02
+        nationality:
+          type: string
+          example: Nigerian
+        phoneNumber:
+          type: string
+          example: 0234568543
+        alternativePhoneNumber:
+          type: string
+          example: '9062058602'
+        maritalStatus:
+          type: string
+          example: M
+          enum:
+          - M
+          - S
+        registrationDate:
+          type: string
+          example: 16-Nov-2014
+        enrollmentBank:
+          type: string
+          example: AccessBank
+        enrollmentBranch:
+          type: string
+          example: LEKI
+        watchListed:
+          type: string
+          example: 'NO'
+        status:
+          type: string
+          description: Indicates the validity of a customer account
+          example: VALID
+    MsisdnVerificationData:
+      type: object
+      properties:
+        verificationStatus:
+          type: string
+          example: Active
+          description: This is an indicator for whether the mobile number is active on the bank or not.
+          enum:
+          - Active
+          - Inactive
+        verificationStatus2:
+          type: string
+          example: Active
+          description: This is primarily used to check the status of the beneficiary for valentine gifting usecase in Nigeria. It is `true` if the supplied customerId can be a beneficiary
+          enum:
+          - Active
+          - Inactive
+        hashedMsisdn:
+          type: string
+          description: This is the hashed mobile number corresponding to the customerId sent in the request
+        attemptCount:
+          type: number
+          description: This represents the number of attempts when retrieving the POK number
+          example: 2
+        details:
+          $ref: '#/components/schemas/KYCVerificationResponseData'
+    BasicKYCRequestData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier associated with the customer
+          example: 0399948893822
+        firstName:
+          type: string
+          example: Joe
+          description: Customer first name
+        lastName:
+          type: string
+          example: Doe
+          description: Customer last name
+        otherNames:
+          type: string
+          example: Den
+          description: Customer other names
+        email:
+          type: string
+          example: example@example.com
+          description: Email address of the customer or the agent
+        dateOfBirth:
+          type: string
+          format: date
+          example: '1980-02-14'
+          description: Date of Birth to be in date format. format ISO 8601
+        gender:
+          type: string
+          example: M
+          enum:
+          - M
+          - F
+        stateOfOrigin:
+          type: string
+          example: EK
+        lgaOfOrigin:
+          type: string
+          example: EK20
+        stateOfResidence:
+          type: string
+          example: LA
+        lgaOfResidence:
+          type: string
+          example: LA02
+        nationality:
+          type: string
+          example: Nigerian
+        alternativePhoneNumber:
+          type: string
+          example: '9062058602'
+        maritalStatus:
+          type: string
+          example: M
+          enum:
+          - M
+          - S
+          - D
+    KYCVerificationResponseData:
+      type: object
+      properties:
+        firstName:
+          type: boolean
+          example: true
+          description: A TRUE or FALSE Value to show if the requested attribute matches our data
+        lastName:
+          type: boolean
+          example: true
+        otherNames:
+          type: boolean
+          example: true
+        dateOfBirth:
+          type: boolean
+          example: true
+        gender:
+          type: boolean
+          example: true
+        stateOfOrigin:
+          type: boolean
+          example: true
+        lgaOfOrigin:
+          type: boolean
+          example: true
+        stateOfResidence:
+          type: boolean
+          example: true
+        lgaOfResidence:
+          type: boolean
+          example: true
+        nationality:
+          type: boolean
+          example: true
+        phoneNumber:
+          type: string
+          example: 02348598422
+        alternativePhoneNumber:
+          type: boolean
+          example: true
+        maritalStatus:
+          type: boolean
+          example: true
+        registrationDate:
+          type: string
+          example: 16-Nov-2014
+        enrollmentBank:
+          type: string
+          example: AccessBank
+        enrollmentBranch:
+          type: string
+          example: LEKI
+        watchListed:
+          type: string
+          example: 'NO'
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+          example: oauth.v2.InvalidApiKey
+    KYCAddressVerificationScoreResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request has been Processed Successfully
+        customerId:
+          type: string
+          example: 2348064816499
+          description: CustomerId provided in the input
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        data:
+          $ref: '#/components/schemas/KYCAddressVerificationScoreResponseData'
+    KYCNameRequestDataScore:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: Joe
+          description: Customer first name
+        lastName:
+          type: string
+          example: Doe
+          description: Customer last name
+        phoneNumber:
+          type: string
+          description: Customer's phone number
+          example: 0399948893822
+    CustomerKYCVerificationMultipleRequest:
+      type: object
+      properties:
+        bvns:
+          type: array
+          items:
+            $ref: '#/components/schemas/BasicKYCRequestData'
+        binaryAttachment:
+          $ref: '#/components/schemas/BinaryAttachmentData'
+        deviceId:
+          type: string
+          description: A device id
+    identityStatusRequest:
+      type: object
+      properties:
+        customerId:
+          type: string
+          description: Unique Customer ID used during enrollment
+        agentId:
+          type: string
+          description: ID of the agent triggering the request
+        channelId:
+          type: string
+          description: Channel Id
+    KYCNameVerificationScoreResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request has been Processed Successfully
+        customerId:
+          type: string
+          example: 2348064816499
+          description: CustomerId provided in the input
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        data:
+          $ref: '#/components/schemas/KYCNameVerificationScoreResponseData'
+    KYCRequestDataScore:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: Joe
+          description: Customer first name
+        lastName:
+          type: string
+          example: Doe
+          description: Customer last name
+        phoneNumber:
+          type: string
+          description: Customer's phone number
+          example: 0399948893822
+        emailAddress:
+          type: string
+          example: example@example.com
+          description: Email address of the customer or the agent
+        nationalIdNumber:
+          type: string
+          description: Customer's National ID Number
+          example: 123456789
+        streetAddress:
+          type: string
+          example: 1st Park Avenue, Mzansi, Johannesburg
+          description: Customer's street address
+        city:
+          type: string
+          example: Johannesburg
+          description: Customer's city
+        postCode:
+          type: string
+          example: 20200
+          description: Customer's postal code
+        country:
+          type: string
+          example: South Africa
+          description: Customer's country
+    FaceMatchingResponse:
+      description: Response object
+      type: object
+      properties:
+        id:
+          type: string
+          example: 2340399993094
+          description: A unique identifier for a customer, either a bvn, msisdn etc.
+        dateOfBirth:
+          type: string
+          example: 23-Apr-1985
+          description: A date of birth associated with the customer whose verification has been done
+        score:
+          type: number
+          example: 100
+          description: Total validation score for face matching if targetSystem is BIOSMART
+        confidenceValidationScore:
+          type: number
+          example: 100.0
+          description: Confidence validation score for face matching
+        confidenceMinRange:
+          type: number
+          example: 23.0
+          description: Face matching validation minimum validation range
+        confidenceMaxRange:
+          type: number
+          example: 45.0
+          description: Face matching validation maximum validation range
+        matchDescription:
+          type: string
+          example: MATCH_FOUND
+          description: Whether a match was found or not
+        matchTime:
+          type: string
+        matchThreshold:
+          type: number
+          example: 57.0
+    KYCVerificationResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request has been Processed Successfully
+        customerId:
+          type: string
+          example: 2348064816499
+          description: CustomerId provided in the input
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        sequenceNo:
+          type: string
+          description: A unique trace id associated with every requests made by 3PPs
+          example: '12345'
+        data:
+          $ref: '#/components/schemas/KYCVerificationResponseData'
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/kycVerification/customers/2348064736482
+    KYCVerificationScoreResponseData:
+      type: object
+      properties:
+        firstName:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        lastName:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        phoneNumber:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        emailAddress:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        nationalIdNumber:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        streetAddress:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        city:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        postCode:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        country:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+    CustomerVerificationKYCMultiResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request has been Processed Successfully
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        sequenceNo:
+          type: string
+          description: A unique trace id associated with every requests made by 3PPs
+          example: '12345'
+        data:
+          $ref: '#/components/schemas/CustomerVerificationKYCMultiResponseData'
+    KYCNameVerificationScoreResponseData:
+      type: object
+      properties:
+        firstName:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        lastName:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        phoneNumber:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+    identityStatusResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes',
+          example: '0000'
+          maxLength: 30
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client. Success for 200. Mapped from REASON from backend. mapped from staus from backend.
+          enum:
+          - success, failed
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: Unique Id sent with the request
+        data:
+          type: object
+          properties:
+            customerId:
+              type: string
+              description: Unique Customer ID used during enrollment
+              example: '8606165224086'
+            customerStatus:
+              type: string
+              enum:
+              - NotEnrolled
+              - EnrolledValid
+              - EnrolledInvalid
+              - EnrolledError
+              - EnrolledExpired
+              example: NotEnrolled
+            externalStatus:
+              type: string
+              enum:
+              - DHAOffline
+              - DHAOnline
+              - DHAOnlineC2Pass
+              - DHAOnlineC3Pass
+              example: DHAOnlineC3Pass
+            modality:
+              type: string
+              enum:
+              - face
+              - finger
+              example: face
+            enrollmentId:
+              type: string
+              description: Unique ID of enrollment
+              example: 6527c968e681c3aef989ff0c
+            enrollmentTimestamp:
+              type: string
+              description: Timestamp of the original enrollment
+              example: '2023-10-12T10:24:40.966Z'
+            agentId:
+              type: string
+              description: Agent ID provided during enrollment for audit purposes
+            channelId:
+              type: string
+              description: Channel ID provided during enrollment for audit purposes
+            lastVerifiedId:
+              type: string
+              description: Unique ID of last verification transaction for audit purposes
+            lastVerifiedtimestamp:
+              type: string
+              description: Timestamp of the most recent re-authentication
+            lastVerifiedagentId:
+              type: string
+              description: Agent ID provided during verification for audit purposes
+            lastVerifiedchannelId:
+              type: string
+              description: Channel ID provided during verification for audit purposes
+    CustomerVerificationResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request has been Processed Successfully
+        customerId:
+          type: string
+          description: CustomerId provided in the input
+          example: '2348064816499'
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        sequenceNo:
+          type: string
+          description: A unique trace id associated with every requests made by 3PPs
+          example: '12345'
+        data:
+          $ref: '#/components/schemas/MsisdnVerificationData'
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/cusomers/2348064736482
+    KYCVerificationScoreResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request has been Processed Successfully
+        customerId:
+          type: string
+          example: 2348064816499
+          description: CustomerId provided in the input
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        data:
+          $ref: '#/components/schemas/KYCVerificationScoreResponseData'
+    KYCAddressRequestDataScore:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          description: Customer's phone number
+          example: 0399948893822
+        streetAddress:
+          type: string
+          example: 1st Park Avenue, Mzansi, Johannesburg
+          description: Customer's street address
+        city:
+          type: string
+          example: Johannesburg
+          description: Customer's city
+        postCode:
+          type: string
+          example: 20200
+          description: Customer's postal code
+        country:
+          type: string
+          example: South Africa
+          description: Customer's country
+    BinaryAttachmentData:
+      type: array
+      items:
+        properties:
+          id:
+            type: string
+            description: Unique identifier for this particular attachment, a nist_impression_type when verification is biometric with a face image or fingerprint
+          attachmentType:
+            type: string
+            description: Attachment type such as video, picture
+          content:
+            type: string
+            description: A narrative text describing the content of the attachment
+          mimeType:
+            type: string
+            description: Attachment mime type such as extension file for video, picture and document
+          name:
+            type: string
+            description: The name of the attachment
+          status:
+            type: string
+            example: Successful
+          description:
+            type: string
+            description: A narrative text describing the content of the attachment, it can also be the POSITION value if attached document is fingerprint
+    KYCAddressVerificationScoreResponseData:
+      type: object
+      properties:
+        phoneNumber:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        streetAddress:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        city:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        postCode:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        country:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+    CustomerVerificationKYCMultiResponseData:
+      type: object
+      properties:
+        bvnDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/BVNVerificationResponseData'
+    BIOMetricResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request has been Processed Successfully
+        customerId:
+          type: string
+          example: 2348064816499
+          description: CustomerId provided in the input
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        sequenceNo:
+          type: string
+          description: A unique trace id associated with every requests made by 3PPs
+          example: '12345'
+        data:
+          $ref: '#/components/schemas/FaceMatchingResponse'
+    Error404:
+      properties:
+        fault:
+          properties:
+            faultstring:
+              type: string
+              description: ''
+              example: 'Unable to identify proxy for host: southafrica and url: /v1o/kycVerification/customers/1234567890123333/identityStatus'
+            detail:
+              properties:
+                errorcode:
+                  type: string
+                  description: ''
+                  example: messaging.adaptors.http.flow.ApplicationNotFound
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header

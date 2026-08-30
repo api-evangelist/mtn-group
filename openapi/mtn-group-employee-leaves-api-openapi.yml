@@ -1,0 +1,248 @@
+openapi: 3.2.0
+info:
+  description: Api Documentation
+  version: '1.0'
+  title: Leave Balance Employee Leaves API
+servers:
+- url: https://za.api.mtn.com/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Employee Leaves
+paths:
+  /employee/leaveBalance:
+    get:
+      tags:
+      - Employee Leaves
+      summary: Returns leave balance of the employee
+      description: Returns leave balance of the employee with Employee Id.
+      operationId: getLeave Balance
+      parameters:
+      - name: transactionId
+        in: query
+        description: Unique ID for the transaction.
+        required: true
+        schema:
+          type: string
+      - name: sourceIdentifier
+        in: query
+        description: This field denotes the channel that is initiating request to SOA like USSD, MyMTNApp
+        required: false
+        schema:
+          type: string
+      - name: emailId
+        in: query
+        description: Email id of the Employee
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Leave Balance Response
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/leaveBalanceResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorised
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error415'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error500'
+components:
+  schemas:
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 5000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+    Error415:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 415
+        error:
+          type: string
+          description: error message
+          example: Unsupported Media Type
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error500:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: string
+          description: status code from backend
+          example: '500'
+        error:
+          type: string
+          description: Type of error
+          example: Internal Server Error
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        path:
+          type: string
+          description: The path that caused the error
+    leaveBalanceResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes',
+          example: '0000'
+          maxLength: 30
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client. Success for 200.
+          example: There was an error processing your request
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+          example: ''
+        transactionId:
+          type: string
+          description: Unique reference number
+          example: '100000172429605'
+        data:
+          type: array
+          description: list of response from HCM
+          items:
+            type: object
+            properties:
+              personId:
+                type: string
+                description: person Id of the employee
+              assignmentId:
+                type: string
+                description: Assignment of the Id
+              assignmentName:
+                type: string
+                description: name of the assignment
+                example: E471388-2
+              planId:
+                type: string
+                description: Plan Id
+              leaveCategory:
+                type: string
+                description: type of leave
+                example: Sick Leave ZA
+              leaveBalance:
+                type: string
+                description: leave balance calculated as per balanceDate
+                example: '31.0'
+              balanceDate:
+                type: string
+                description: Leave balance calculated till this date
+                example: '2023-10-04'
+              unit:
+                type: string
+                description: detail of unit for leave balance
+                example: Days
+              formattedLeaveBalance:
+                type: string
+                description: This is the actual leave balance formatted
+                example: 31 Days
+    Error404:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        error:
+          type: string
+          description: error message
+          example: Not found
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

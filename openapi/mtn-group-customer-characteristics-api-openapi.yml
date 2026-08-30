@@ -1,0 +1,191 @@
+openapi: 3.2.0
+info:
+  version: v1.11
+  title: MTN Customer Profiles Customer Characteristics API
+  description: An API to retrieve the profile of an MTN customer. Please refer to the reference guides https://developers.mtn.com/API-Reference-Guides and Response and Error Codes documents https://developers.mtn.com/ResponseCodes
+servers:
+- url: https://api.mtn.com/v2
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Customer Characteristics
+paths:
+  /customers/{customerId}/set-lang:
+    put:
+      description: Sets the Customer’s Language Preference
+      summary: Sets the Customer’s Language Preference
+      tags:
+      - Customer Characteristics
+      parameters:
+      - in: path
+        name: customerId
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: transactionId
+        description: Transaction Id as sent by the 3PP
+        schema:
+          type: string
+      - in: query
+        name: lang
+        description: 'The preferred language.
+
+          * SA Example:ZULU,ENGLISH,SESOTHO,XHOSA,TSONGA,AFRIKAANS.
+
+          * NG Examples: ARA,DUT,FRE,HAU,IBO,ND1,ND2,ND3,ND4,ND5,ND6,ND7,OTH,YOR,en-US,CPE
+
+          '
+        schema:
+          type: string
+      - in: query
+        name: customerIdType
+        description: The preferred language.
+        schema:
+          type: string
+          enum:
+          - NIN
+          - MSISDN
+      responses:
+        200:
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSetLangResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '415':
+          description: Unsopported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+components:
+  schemas:
+    CustomerSetLangResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request Successfully processed
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+          example: '85499086'
+        customerId:
+          type: string
+          example: '234806589013'
+        transactionReference:
+          type: string
+          example: '20220202134228'
+        data:
+          $ref: '#/components/schemas/setLang'
+        _links:
+          type: string
+          description: The link to retrieve the Upgrade Eligibility for a customer.
+          $ref: '#/components/schemas/links'
+    links:
+      type: object
+      properties:
+        self:
+          type: object
+          properties:
+            href:
+              type: string
+              example: https://api.mtn.com/v1/<path>
+    ErrorNew:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+          example: 2019-08-23T07:29:25.593+0000
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/<path>
+    setLang:
+      type: object
+      properties:
+        lang:
+          type: string
+          example: AFRIKAANS
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

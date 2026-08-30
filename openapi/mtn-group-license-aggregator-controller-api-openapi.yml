@@ -1,0 +1,385 @@
+openapi: 3.2.0
+info:
+  title: service-activation-aggregator License Aggregator Controller API
+  description: Service Activation and Configuration API goal is to provide the ability to activate and configure Service. This API features Monitor pattern allowing to manage service configuration/activation asynchronous request (server side will provide monitor as POST/PATCH response).
+  license:
+    name: MADAPI
+    url: https://developers.mtn.com/
+  version: 1.0.0
+servers:
+- url: https://api.mtn.com/
+  description: Generated server url
+tags:
+- name: license-aggregator-controller
+paths:
+  /service/license:
+    post:
+      tags:
+      - license-aggregator-controller
+      summary: Create a new license for a specified target system.
+      description: Validates the license request, sets its type, and delegates creation to the service layer with structured response.
+      operationId: createLicense
+      parameters:
+      - name: targetSystem
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: extTransactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LicenseRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+  /service/license/{id}:
+    get:
+      tags:
+      - license-aggregator-controller
+      summary: Retrieve license details using ID
+      description: This gets the license information based on the provided ID and ID type, with optional target system and transaction ID.
+      operationId: esetGetLicense
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: idType
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: extTransactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+    patch:
+      tags:
+      - license-aggregator-controller
+      summary: Update license details for a given ID
+      description: This handles license updates by validating the request data, logging the transaction, and invoking service logic by ID.
+      operationId: updateLicense
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: x-origin-channelid
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: extTransactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-country-code
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LicenseRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+components:
+  schemas:
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+        hreflang:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        deprecation:
+          type: string
+        profile:
+          type: string
+        name:
+          type: string
+        templated:
+          type: boolean
+    RelatedParty:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        phoneNumber:
+          type: string
+        email:
+          type: string
+        '@referredType':
+          type: string
+    Validity:
+      type: object
+      properties:
+        validityType:
+          type: integer
+          format: int32
+        expirationDate:
+          type: string
+    Links:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Link'
+    Payment:
+      type: object
+      properties:
+        paymentType:
+          type: string
+        billingInterval:
+          type: string
+        invoicingInterval:
+          type: integer
+          format: int32
+        invoicingType:
+          type: string
+    ServerErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '3001'
+        statusMessage:
+          type: string
+          example: INTERNAL_SERVER_ERROR
+        supportMessage:
+          type: string
+          example: An internal server error occurred and processing could not be completed.
+        httpStatus;:
+          type: array
+          example:
+            code: 500
+            series: SERVER_ERROR
+            reason: Internal Server Error
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    RelatedEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        '@referredType':
+          type: string
+    APIResponse:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/Links'
+    ServiceOrderItem:
+      type: object
+      properties:
+        itemId:
+          type: string
+        serviceOrderId:
+          type: string
+        itemAction:
+          type: string
+        payment:
+          $ref: '#/components/schemas/Payment'
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+    LicenseRequest:
+      type: object
+      properties:
+        idType:
+          type: string
+        endDate:
+          type: string
+          format: date-time
+        startDate:
+          type: string
+          format: date-time
+        serviceOrderItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceOrderItem'
+        relatedEntity:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedEntity'
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        note:
+          $ref: '#/components/schemas/Note'
+        quantity:
+          type: integer
+          format: int32
+        dealCode:
+          type: string
+        type:
+          type: string
+        id:
+          type: string
+        status:
+          type: string
+        category:
+          type: string
+        validity:
+          $ref: '#/components/schemas/Validity'
+        serviceType:
+          type: string
+        name:
+          type: string
+    UnauthorizedErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '4000'
+        statusMessage:
+          type: string
+          example: Unauthorized
+        supportMessage:
+          type: string
+          example: The supplied authentication is invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 401
+            series: CLIENT_ERROR
+            reason: Unauthorized
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    BadRequestErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '5000'
+        statusMessage:
+          type: string
+          example: INVALID_INPUT_PARAMETERS
+        supportMessage:
+          type: string
+          example: The input parameters provided are invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 400
+            series: CLIENT_ERROR
+            reason: Bad Request
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00

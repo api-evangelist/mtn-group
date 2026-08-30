@@ -1,0 +1,234 @@
+openapi: 3.2.0
+info:
+  description: This API manages tasks for an MTN customer
+  version: 1.0.0
+  title: MTN Customer Account Management Party Account API
+  contact:
+    email: developer-support@mtn.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://api.mtn.com/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: partyAccount
+paths:
+  /partyAccount/{id}:
+    get:
+      operationId: retrievePartyAccount
+      summary: Retrieves a PartyAccount by ID
+      description: This operation retrieves a PartyAccount entity. Attribute selection is enabled for all first level attributes.
+      tags:
+      - partyAccount
+      parameters:
+      - name: id
+        description: Identifier of the PartyAccount
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: idType
+        in: query
+        required: false
+        description: id type eg. SAID
+        schema:
+          type: string
+      - name: fields
+        description: Comma-separated properties to provide in response
+        required: false
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartyAccount'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    MsisdnDetails:
+      type: object
+      properties:
+        handsetValue:
+          type: string
+          example: 98211.645
+        billingAccountStatus:
+          type: string
+          example: Active
+        customerId:
+          type: string
+          example: 27657457103
+        handsetMRC:
+          type: string
+          example: 3300.15
+        simOnlyIndicator:
+          type: string
+          example: ''
+        connectionDate:
+          type: string
+          example: ''
+        contractTerm:
+          type: string
+          example: 1
+        contractTermLeft:
+          type: string
+          example: -4.2
+        spul:
+          type: string
+          example: 0.99
+        billingAccountNumber:
+          type: string
+          example: BA112436327
+        serviceMRC:
+          type: string
+          example: 178
+        assetDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssetDetails'
+    AssetDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - Service Class
+          - Video Streaming
+          - PricePlan
+          - INCLUSIVE
+          - Service VAS
+          - Youtube
+          - SIM
+          - Promotion
+        productName:
+          type: string
+          example: Mobile Product
+        serialNumber:
+          type: string
+          example: 27657457103
+    PartyAccountData:
+      type: object
+      properties:
+        availableCreditLimit:
+          type: string
+          example: 171.01
+        accountNumber:
+          type: string
+          example: CA112436325
+        creditLimit:
+          type: string
+          example: 350
+        accountStatus:
+          type: string
+          example: Active
+        msisdnCount:
+          type: string
+          example: 1
+        msisdnDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/MsisdnDetails'
+    PartyAccount:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        data:
+          $ref: '#/components/schemas/PartyAccountData'
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /loans/2348024008124/...
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

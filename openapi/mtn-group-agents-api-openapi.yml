@@ -1,0 +1,646 @@
+openapi: 3.2.0
+info:
+  version: v1.0
+  title: MTN Agent Profile Agents API
+  description: An API to retrieve the profile of an MTN field agent. Please refer to the reference guides https://developers.mtn.com/getting-started and Response and Error Codes documents https://developers.mtn.com/getting-started/response-and-error-codes
+servers:
+- url: https://api.mtn.com/v1/agents
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: agents
+paths:
+  /{agentId}:
+    get:
+      description: Retrieves the profile of a MTN field agent.
+      summary: View agent profile
+      tags:
+      - agents
+      parameters:
+      - in: path
+        name: agentId
+        description: ID of the agent. It could be MSISDN, email address, or any other agent identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Filter for parts of the agent profile to be returned. Use comma-separated values
+        x-example: agentKyc,agentPlans,activityReport
+        schema:
+          type: string
+      - name: X-Authorization
+        in: header
+        description: SSO Bearer token received from OAuth2.0 authentication with the backend system
+        x-example: eyJhbGciOiJ.IUzI1NiIsIn.R5cCI6IkpXVCJ9
+        schema:
+          type: string
+      responses:
+        200:
+          description: Agent Profile object. For a successful request, it will contain all the agent's details. If the agent does not have any requested data, then it will be null.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        207:
+          description: If there was an error retrieving some part of the request, then the successful request will be shown, and the remaining failed objects will be be excluded. E.g. if there was an error retrieving Balance information, then the balance object will be empty
+          content:
+            Multi-Status Response, showing valid Locations data, but plan object is null:
+              example: "\"location\": {\n  \"data\": {\n    \"country\": \"ZA\",\n    \"operator\": \"MTN\"\n  },\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://api.mtn.com/agents/27832000046/locations\"\n    }\n  }\n} \"plan\": {\n  \"data\": null,\n   \"_links\": {\n    \"self\": {\n        \"href\": \"http://api.mtn.com/agents/27832000046/plans\"\n      }\n    }\n}\n"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDefault'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDefault'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDefault'
+        404:
+          description: Agent not found
+          content:
+            The data object/envelope will be null:
+              example: "{\n  \"data\": null\n}\n"
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /{customerId}/agentFlag:
+    get:
+      summary: To know if any given customer Id (MSISDN) is registered as an MTN field Agent or not
+      description: To know if any given customer Id (MSISDN) is registered as an MTN field Agent or not
+      tags:
+      - agents
+      parameters:
+      - in: path
+        name: customerId
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: X-Authorization
+        in: header
+        description: SSO Bearer token received from OAuth2.0 authentication with the backend system
+        x-example: eyJhbGciOiJ.IUzI1NiIsIn.R5cCI6IkpXVCJ9
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/agentFLAG'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDefault'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDefault'
+        404:
+          description: Agent not found
+          content:
+            The data object/envelope will be null:
+              example: "{\n  \"data\": null\n}\n"
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /{agentId}/devices:
+    patch:
+      summary: Update device information of a registered MTN Agent
+      description: Update device information of a registered MTN Agent. E.g. Updating the IMEI the Agent's assigned Point-of-Sale device
+      tags:
+      - agents
+      parameters:
+      - in: path
+        name: agentId
+        description: ID of the agent. It could be MSISDN, email address, or any other agent identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Client generated request Id.
+        schema:
+          type: string
+      - name: X-Authorization
+        in: header
+        description: SSO Bearer token received from OAuth2.0 authentication with the backend system
+        x-example: eyJhbGciOiJ.IUzI1NiIsIn.R5cCI6IkpXVCJ9
+        schema:
+          type: string
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    statusCode:
+                      type: string
+                      description: Response status code. 0000 for success
+                    transactionId:
+                      type: string
+                      description: Response transaction Id from the backend
+                - $ref: '#/components/schemas/Devices'
+                - type: object
+                  properties:
+                    geoTag:
+                      $ref: '#/components/schemas/geoTagging'
+                - type: object
+                  properties:
+                    _links:
+                      $ref: '#/components/schemas/AgentLinks'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Agent not found
+          content:
+            The data object/envelope will be null:
+              example: "{\n  \"data\": null\n}\n"
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/Devices'
+              - type: object
+                properties:
+                  geoTag:
+                    $ref: '#/components/schemas/geoTagging'
+        description: Device Information
+  /{agentId}/tracking/:
+    post:
+      operationId: addAppInstallationConfirmationDetails
+      summary: submit app installation confirmation details to the API.
+      description: This endpoint is used to submit app installation confirmation details to the API.
+      tags:
+      - agents
+      parameters:
+      - in: path
+        name: agentId
+        description: ID of the agent. It could be MSISDN, email address, or any other agent identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/installationConfirmationDetailsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/installationConfirmationDetailsRequest'
+        description: Client generated Id to include for tracing requests.
+        required: true
+components:
+  schemas:
+    installationConfirmationDetailsResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+    Agent:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Canonical response code. '0000' for success response
+          example: '0000'
+        agentId:
+          type: string
+          example: '2568810000034'
+        agentKyc:
+          type: array
+          items:
+            $ref: '#/components/schemas/AGENTKYC'
+        agentPlans:
+          type: object
+          $ref: '#/components/schemas/AGENTPLANS'
+        activityReport:
+          type: object
+          $ref: '#/components/schemas/ACTIVITYREPORT'
+        _link:
+          type: object
+          allOf:
+          - description: The link to retrieve the Agent KYC details.
+          - $ref: '#/components/schemas/AgentLinks'
+    ErrorDefault:
+      properties:
+        error:
+          type: string
+        error_description:
+          type: string
+    Amount:
+      type: object
+      required:
+      - value
+      - type
+      - unit
+      description: The amount details for a wallet.
+      properties:
+        type:
+          type: string
+          description: This is the type of the wallet value.
+          enum:
+          - CURRENCY
+          - DATA
+          - MINUTES
+          - SMS
+        value:
+          type: string
+          description: This is the value of a balance wallet.
+          example: 76923
+        unit:
+          type: string
+          description: This is the unit of the wallet value.
+          enum:
+          - UGX
+          - ZAR
+          - NGN
+          - GB
+          - MB
+          - MINUTES
+          - SMS
+          - FCFA
+    AGENTPLANS:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            balance:
+              type: array
+              description: The account balance details of an agent
+              items:
+                properties:
+                  balanceType:
+                    type: string
+                    description: Identifies the type of balance. An agent plan may have multiple types of balances for different usage, for example, AgentCommission, voice, SMS, and game services.
+                    example: AgentCommission
+                  category:
+                    type: string
+                    description: Identifies the category of the balance type.
+                    example: AgentCommission
+                  balanceDetail:
+                    $ref: '#/components/schemas/BalanceDetail'
+                  wallets:
+                    type: array
+                    description: The different wallets used to compute the active and unused values of this balance.
+                    items:
+                      $ref: '#/components/schemas/Wallet'
+    BalanceDetail:
+      type: object
+      required:
+      - type
+      - activeValue
+      - activeUnit
+      description: The details for a balance type.
+      properties:
+        type:
+          type: string
+          description: This is the type of the value.
+          enum:
+          - CURRENCY
+          - DATA
+          - MINUTES
+          - SMS
+        activeValue:
+          type: string
+          description: This is the aggregated formatted active value of a balance type.
+          example: '136271'
+        activeUnit:
+          type: string
+          description: This is the unit of the aggregated active value.
+          enum:
+          - UGX
+          - ZAR
+          - NGN
+          - GB
+          - MB
+          - MINUTES
+          - SMS
+    agentFLAG:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        message:
+          type: string
+          description: Response description from the backend system
+          example: Yello, Requestor should be an agent.
+        transactionId:
+          type: string
+          description: Response Id from the backend
+        agentId:
+          type: string
+          description: ID of the agent. It could be MSISDN, email address, or any other agent identifier. if id is msisdn, format must be E.123
+          example: '256789999781'
+        data:
+          type: object
+          properties:
+            isAgent:
+              type: boolean
+              example: false
+        _links:
+          allOf:
+          - description: Links used to access the agent information
+          - $ref: '#/components/schemas/AgentLinks'
+    AGENTKYC:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            agentId:
+              type: string
+              description: Unique identifier for the Agent
+              example: DEALER789
+            role:
+              type: string
+              description: Role of the Agent in the agent's hierarchy
+              enum:
+              - Agent
+              - MasterDealer
+              - HandlerDealer
+            type:
+              type: string
+              description: Type of the agent
+              example: RICA
+            status:
+              type: string
+              description: Current status of the agent
+              enum:
+              - Active
+              - Suspended
+              - Blocked
+            imei:
+              type: string
+              description: IMEI of the handset that is assigned to the Agent
+              example: 123456789876543
+            registrationDate:
+              type: string
+              format: date-time
+              description: Date and time when the Agent was created. Should be in ISO 8601
+            firstName:
+              type: string
+            middleName:
+              type: string
+            lastName:
+              type: string
+    Wallet:
+      type: object
+      required:
+      - name
+      - amount
+      description: Contributing wallets to the aggregated balance
+      properties:
+        name:
+          type: string
+          description: The name of a wallet account. E.g. registrationCommission, simswapCommission
+          example: registrationCommission
+        amount:
+          $ref: '#/components/schemas/Amount'
+    ACTIVITYREPORT:
+      type: object
+      properties:
+        firstCallActivationCount:
+          type: integer
+          description: Number of new customers registered by the agent that have done their first voice call
+          example: 110
+        firstRechargeActivationCount:
+          type: integer
+          description: Number of new customers registered by the agent that have done their first airtime recharge
+          example: 90
+    AgentLinks:
+      type: object
+      required:
+      - self
+      properties:
+        self:
+          type: object
+          required:
+          - href
+          description: ''
+          properties:
+            href:
+              type: string
+              description: ''
+              example: https://api.mtn.com/v1/agents/256779999781
+    geoTagging:
+      type: object
+      properties:
+        regLocationLat:
+          type: number
+          format: double
+          description: Latitude value of the place where the agent KYC capture has taken place
+          example: 3.225225225225225
+        regLocationLong:
+          type: number
+          format: double
+          description: Longitude value of the place where the agent KYC capture has taken place
+          example: 30.913829549623536
+        cellGlobalId:
+          type: string
+          pattern: ^\d{3}-\d{2}-\d-\w$
+          description: Full Cell Global Identity in the format MCC-MNC-LAC-CellId
+          example: 641-10-2321-6b1c
+        kycCaptureDateTime:
+          type: string
+          format: date-time
+          description: datetime when the agent KYC capture/update happened, using IETC-RFC-3339 format
+    installationConfirmationDetailsRequest:
+      type: object
+      required:
+      - appCode
+      - installerCode
+      - msisdn
+      - imei
+      properties:
+        appCode:
+          type: string
+        msisdn:
+          type: string
+        imei:
+          type: string
+        phoneOSVersion:
+          type: string
+        imsi:
+          type: string
+        sourceChannel:
+          type: string
+        deviceLocation:
+          type: string
+    Error:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+        status:
+          type: string
+          description: Text explaining the reason for the error
+        error:
+          type: string
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: ''
+    Devices:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            devices:
+              type: array
+              items:
+                properties:
+                  IMEI:
+                    type: string
+                    description: Last known IMEI. Unique identifier of Mobile Device used by the MSISDN
+                    example: '990000862471854'
+                  timePeriods:
+                    type: object
+                    properties:
+                      startDateTime:
+                        type: string
+                        format: date-time
+                      endDateTime:
+                        type: string
+                        format: date-time
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

@@ -1,0 +1,253 @@
+openapi: 3.2.0
+info:
+  description: To register services and activate services content tokens
+  version: v1.0
+  title: Customer Billing Token Debit API
+servers:
+- url: https://api.mtn.com/v1/customer
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Debit
+paths:
+  /bill/debit:
+    post:
+      tags:
+      - Debit
+      summary: Debit Token Service
+      description: Debit token request is used to initiate billing for DCB active tokens with VATDetails. This version also accept optional parameter offerDetails and these offeDetails are fowarded to COM for pbundle provisioning.
+      parameters:
+      - name: targetSystem
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - Pantheon
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/debitResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/debitRequest'
+        required: true
+components:
+  schemas:
+    VATDetails:
+      type: object
+      properties:
+        VATProvider:
+          type: string
+          minLength: 1
+          description: VAT Provider.
+          example: MTN
+        amount:
+          type: integer
+          minimum: 0
+          maximum: 999999
+          description: This field represents the amount in cents.
+          example: 1500
+        VATSupply:
+          type: string
+          description: VAT Supply.
+          enum:
+          - Y
+          - N
+    debitRequest:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          minLength: 9
+          maxLength: 36
+          description: Unique transaction identifier. It is advised that the client system use the methods defined in [RFC4122](https://tools.ietf.org/html/rfc4122) to generate this value.
+          example: '123456768'
+        contractingPartnerId:
+          type: string
+          minLength: 9
+          maxLength: 9
+          description: Contracting Partner Identifier as supplied by MTN Digital Department.
+          example: '911844857'
+        platformPartnerId:
+          type: string
+          minLength: 9
+          maxLength: 9
+          description: Platform Partner Identifier.
+          example: '911844857'
+        contentToken:
+          type: string
+          minLength: 16
+          maxLength: 96
+          description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+          example: 81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058
+        debitAmount:
+          type: integer
+          minimum: 0
+          maximum: 999999
+          description: This field represents the amount to debited in cents.
+          example: 1500
+        contentTypeId:
+          type: string
+          minLength: 3
+          maxLength: 3
+          description: Content type identifier. Default to 100 for DCB Google.
+          example: '100'
+        contentId:
+          type: string
+          minLength: 1
+          maxLength: 35
+          description: Content identifier.
+          example: '001'
+        contentDescription:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Description of content charged for.
+          example: Games
+        partnerDisplayName:
+          type: string
+          minLength: 1
+          maxLength: 25
+          description: Content provider name.
+          example: Google
+        VATDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/VATDetails'
+          example:
+          - VATProvider: MTN
+            amount: 1000
+            VATSupply: Y
+          - VATProvider: Partner
+            amount: 500
+            VATSupply: Y
+        offerDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/offerDetails'
+    debitResponse:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            msn:
+              type: string
+              minLength: 16
+              maxLength: 64
+              description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+              example: '5115314911298406'
+            orderRef:
+              type: string
+              minLength: 1
+              description: This field is the payment reference of the transaction being queried.
+              example: '1236457'
+            timestamp:
+              type: string
+              format: date-time
+              description: Time stamp of the error
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+        statusMessage:
+          type: string
+          description: Status description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    offerDetails:
+      type: object
+      properties:
+        offerId:
+          type: string
+          minLength: 1
+          description: Offer Identification
+          example: 12345
+        offerInfo:
+          type: string
+          minLength: 1
+          description: Offer Description
+          example: 1 GB ShowmaxBundle
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

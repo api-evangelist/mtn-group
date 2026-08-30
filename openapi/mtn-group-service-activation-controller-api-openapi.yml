@@ -1,0 +1,222 @@
+openapi: 3.2.0
+info:
+  title: service-activation-aggregator Service Activation Controller API
+  description: Service Activation and Configuration API goal is to provide the ability to activate and configure Service. This API features Monitor pattern allowing to manage service configuration/activation asynchronous request (server side will provide monitor as POST/PATCH response).
+  license:
+    name: MADAPI
+    url: https://developers.mtn.com/
+  version: 1.0.0
+servers:
+- url: https://api.mtn.com/
+  description: Generated server url
+tags:
+- name: service-activation-controller
+paths:
+  /service/{id}:
+    get:
+      tags:
+      - service-activation-controller
+      summary: Retrieves a Service by ID
+      description: This endpoint retrieves the status of a service by its ID. It supports various query parameters to filter the response.
+      operationId: retrieveStatus
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: servicePlan
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: targetSystem
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: queryType
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: idType
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: x-origin-channelid
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-country-code
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+    put:
+      tags:
+      - service-activation-controller
+      summary: Updates the status of a Service
+      description: This endpoint updates the status of a service by its ID using the provided request body. It supports various headers.
+      operationId: updateStatus
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActHLRfresh'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+components:
+  schemas:
+    ServerErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '3001'
+        statusMessage:
+          type: string
+          example: INTERNAL_SERVER_ERROR
+        supportMessage:
+          type: string
+          example: An internal server error occurred and processing could not be completed.
+        httpStatus;:
+          type: array
+          example:
+            code: 500
+            series: SERVER_ERROR
+            reason: Internal Server Error
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    BadRequestErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '5000'
+        statusMessage:
+          type: string
+          example: INVALID_INPUT_PARAMETERS
+        supportMessage:
+          type: string
+          example: The input parameters provided are invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 400
+            series: CLIENT_ERROR
+            reason: Bad Request
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    ActHLRfresh:
+      type: object
+      properties:
+        serviceType:
+          type: string
+        servicePlan:
+          type: string
+    UnauthorizedErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '4000'
+        statusMessage:
+          type: string
+          example: Unauthorized
+        supportMessage:
+          type: string
+          example: The supplied authentication is invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 401
+            series: CLIENT_ERROR
+            reason: Unauthorized
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00

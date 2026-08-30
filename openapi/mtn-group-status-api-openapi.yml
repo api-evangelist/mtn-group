@@ -1,0 +1,645 @@
+openapi: 3.2.0
+info:
+  title: Mtn Group Status API
+  version: '1.0'
+  description: 'Operations tagged status across 2 of this provider''s published API definitions: mtn-group-ayoaccountholderinfo.yml, mtn-group-customer-billing-token-v1.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.mtn.com/v1
+- url: https://api.mtn.com/v1/customer
+tags:
+- name: status
+paths:
+  /accountholders/{id}:
+    get:
+      tags:
+      - status
+      summary: View accountholder's profile
+      description: Retrieves the acountholder's profile of a MTN customer.
+      parameters:
+      - name: id
+        in: path
+        description: ID value of the Accountholder i.e. MSISDN - the format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        description: Transaction ID
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: includeoffnet
+        description: Indicates whether to include offnet data in the response
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: x-authorization
+        in: header
+        description: Encrypted ECW credentials
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: query
+        description: The target system or the backend system
+        x-example: EWP
+        schema:
+          type: string
+      - name: validationType
+        in: query
+        description: Enum of types of validations to be passed
+        schema:
+          type: string
+          enum:
+          - CHECK_ELIGIBILITY
+          - MOMO
+          - NextGen_PaymentGateway
+      - name: segment
+        in: query
+        required: false
+        description: This is the type of customer doing the transaction. This can be [agent , admin, merchant,subscriber]
+        x-example: subscriber
+        schema:
+          type: string
+          enum:
+          - subscriber
+          - admin
+          - agent
+          - merchant
+      - name: idType
+        in: query
+        required: false
+        description: Type of the customerId in the path.
+        schema:
+          type: string
+          enum:
+          - MSISDN
+          - USER
+      - name: nodeId
+        in: query
+        description: Node making the request
+        x-example: Comviva
+        schema:
+          type: string
+      - name: channel
+        x-example: MyMTNAPP
+        in: query
+        required: false
+        description: Channel identifier
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountholderProfile'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v1
+  /bill/transactionStatus:
+    get:
+      tags:
+      - status
+      summary: Query transaction status
+      description: Query the transaction status for refunds, order and debit transactions.
+      parameters:
+      - name: targetSystem
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - Pantheon
+      - name: type
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: contractingPartnerId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: originTransactionID
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: paymentRef
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: orderRef
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/transStatResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v1/customer
+  /bill/tokenStatus:
+    get:
+      tags:
+      - status
+      summary: Query token status
+      description: Query the status of registered token
+      parameters:
+      - name: targetSystem
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - Pantheon
+      - name: transactionId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: contractingPartnerId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: platformPartnerId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: contentToken
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tokenStatResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v1/customer
+components:
+  schemas:
+    ParentAttributes:
+      type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          description: Name of the characteristic
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
+    AccountholderProfile:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+        statusMessage:
+          type: string
+          description: Message of the transaction. Either Success or Failure.
+        transactionId:
+          type: string
+          description: Unique identifier for every request to the backend. Mapped from input request.
+          example: 5345345
+        customerId:
+          type: string
+          example: MTN123456
+          description: Id provided in the input, could be an MSISDN or an account id that was used in getting the info.
+        sequenceNo:
+          type: string
+          description: A unique id used in tracing all requests
+          example: 12345
+        data:
+          $ref: '#/components/schemas/data'
+        _links:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links'
+    AccountholderProfileResponse__links:
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links_self'
+      description: Relevant links to the Accoutholder Profile.
+    data:
+      type: object
+      properties:
+        identity:
+          type: array
+          description: The account holder's list of identity values. eg. Internal identity code associated with the account holder
+          items:
+            type: object
+            properties:
+              idType:
+                type: string
+                description: A valid identity type associated with the account holder.
+                example: MSISDN
+                enum:
+                - ALIAS
+                - EMAIL
+                - EXT
+                - ID
+                - MSISDN
+                - MPOS
+                - USER
+              idValue:
+                type: string
+                description: A valid identity value associated with the account holder. eg. ID:470007/ID. etc
+                example: '22546370829'
+        offnet:
+          type: boolean
+          description: Indicates whether the record is for an offnet customer.
+          example: 'false'
+        firstName:
+          type: string
+          description: The account holder's first name.
+          example: John
+        lastName:
+          type: string
+          description: The account holder's last name or surname.
+          example: Doe
+        profileName:
+          type: string
+          description: The account holder's profile name.
+          example: Mobile Money User Profile
+        employeeId:
+          type: string
+          description: The account holder's employee Id.
+        fris:
+          type: array
+          description: The default Financial Resource Identifiers, if any, of the account holder, and their associated currencies
+          items:
+            type: object
+            properties:
+              friType:
+                type: string
+                description: Defined FRI Type
+                example: MSISDN, ALIAS, BANK, etc
+              currency:
+                type: object
+                description: The currency of the FRI.
+                properties:
+                  code:
+                    type: string
+                    description: The currency, as an ISO 4217 formatted string.
+                    example: XOF
+        loyaltyPointsAccountFri:
+          type: string
+          description: The loyalty points account FRI of the account holder.
+          example: FRI:1040249/MM
+        acceptedtc:
+          type: array
+          description: The version of the terms and conditions that the account holder has accepted.
+          items:
+            type: object
+            properties:
+              acceptedtcversion:
+                type: string
+                description: The account holder's accepted tc version.
+                example: v2
+              dateTime:
+                type: string
+                format: date-time
+                description: The account holder's accepted tc date.
+                example: 2018-05-01T00:00
+        accountholderStatus:
+          type: string
+          description: Status of the currently queried account holder
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - BLOCKED
+          - CLOSED
+          - CREATED
+          - REGISTERED
+          - REGISTERED_BLOCKED
+          - REGISTERED_CLOSED
+        bankDomainName:
+          type: string
+          description: The account holder's bank domain name.
+          example: MFS
+        homeChargingRegionName:
+          type: string
+          description: The account holder's home charging region name.
+        accountholderType:
+          type: string
+          description: Account holder Type.
+        hasParent:
+          type: boolean
+          description: Indicates if the account holder has a parent
+          example: 'false'
+        parentAttributes:
+          type: array
+          description: Parent attributes
+          items:
+            $ref: '#/components/schemas/ParentAttributes'
+        languageCode:
+          type: object
+          description: The language code of the account holder.
+          properties:
+            code:
+              type: string
+    Any: {}
+    AccountholderProfileResponse__links_self:
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://host:port/v1/accountholders/12345
+          description: Hyperlink to access the Accountholder's Profile.
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the error occured.
+          example: 2018-05-01T00:00
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+        supportMessage:
+          type: string
+          description: Support Message
+        customerId:
+          type: string
+          description: Customer ID or msisdn
+        sequenceNo:
+          type: string
+          description: A unique id for tracing all requests
+          example: 12345
+        transactionId:
+          type: string
+          description: Message ID
+        _links:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links'
+    tokenStatResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            msn:
+              type: string
+              minLength: 16
+              maxLength: 64
+              description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+              example: '5115314911298406'
+            contentToken:
+              type: string
+              minLength: 16
+              maxLength: 96
+              description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+              example: 81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058
+            tokenState:
+              type: string
+              minLength: 1
+              maxLength: 64
+              description: The status of the token.
+              example: Pending
+    transStatResponse:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            type:
+              description: The transaction query type.
+              minLength: 2
+              maxLength: 30
+              type: string
+              enum:
+              - debit
+              - order
+              - refund
+            msn:
+              type: string
+              minLength: 16
+              maxLength: 64
+              description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+              example: '5115314911298406'
+            orderRef:
+              type: string
+              minLength: 1
+              description: This field is the payment reference of the transaction being queried.
+              example: '1236457'
+            timestamp:
+              type: string
+              format: date-time
+              description: Time stamp of the error
+    Error_2:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+        statusMessage:
+          type: string
+          description: Status description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+x-refined-from:
+- mtn-group-ayoaccountholderinfo.yml
+- mtn-group-customer-billing-token-v1.yml

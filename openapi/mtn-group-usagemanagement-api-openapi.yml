@@ -1,0 +1,4630 @@
+openapi: 3.2.0
+info:
+  title: Mtn Group Usage Management API
+  version: 3.0.0 - Last updated date:2026-06-26 09:07:34
+  license:
+    name: MADAPI
+    url: https://developers.mtn.com/
+  description: 'Operations tagged UsageManagement across 2 of this provider''s published API definitions: mtn-group-tmf-usage-management-tmf635.yml, mtn-group-usage-management.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.mtn.com/v1
+  description: Production Server
+security:
+- OAuth2: []
+tags:
+- name: UsageManagement
+paths:
+  /agent/loanhistory:
+    get:
+      tags:
+      - UsageManagement
+      summary: Retrieves agent loan history with paging and country-specific DAASAGENT routing support.
+      description: Retrieves agent loan history with pagination, supported country validation, date filtering, and downstream DAASAGENT routing for Banktech reconciliation, audit requirements, and agent financial workflows.
+      operationId: UsageManagement_get_getAgentDataBanktech_agentloanhistory
+      parameters:
+      - name: country
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: customerIdHash
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: endDate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: maxResults
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: momoPartnerId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pageNumber
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: partnerName
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HTTP 200 indicating the request succeeded; the response body follows the documented schema for this operation and includes correlation identifiers where applicable for traceability across MTN MADAPI usage management flows.
+          content:
+            application/json:
+              schema:
+                title: BankTechAgentResponse
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  statusMessage:
+                    type: string
+                  transactionId:
+                    type: string
+                  customerId:
+                    type: string
+                  timestamp:
+                    type: string
+                  data:
+                    title: BankTechAgentData
+                    type: object
+                    properties:
+                      accountBalance1m:
+                        type: number
+                        format: double
+                      accountBalance3m:
+                        type: number
+                        format: double
+                      accountBalance6m:
+                        type: number
+                        format: double
+                      activatedAt:
+                        type: string
+                      agentProfile:
+                        type: string
+                      averageBalance1m:
+                        type: number
+                        format: double
+                      averageBalance3m:
+                        type: number
+                        format: double
+                      averageBalance6m:
+                        type: number
+                        format: double
+                      cashInLast1m:
+                        type: string
+                      cashInLast3m:
+                        type: string
+                      cashInLast6m:
+                        type: string
+                      cashInPeers1m:
+                        type: integer
+                        format: int32
+                      cashInPeers3m:
+                        type: integer
+                        format: int32
+                      cashInPeers6m:
+                        type: integer
+                        format: int32
+                      cashInValue1m:
+                        type: number
+                        format: double
+                      cashInValue3m:
+                        type: number
+                        format: double
+                      cashInValue6m:
+                        type: number
+                        format: double
+                      cashInVolume1m:
+                        type: integer
+                        format: int32
+                      cashInVolume3m:
+                        type: integer
+                        format: int32
+                      cashInVolume6m:
+                        type: integer
+                        format: int32
+                      cashOutLast1m:
+                        type: string
+                      cashOutLast3m:
+                        type: string
+                      cashOutLast6m:
+                        type: string
+                      cashOutPeers1m:
+                        type: integer
+                        format: int32
+                      cashOutPeers3m:
+                        type: integer
+                        format: int32
+                      cashOutPeers6m:
+                        type: integer
+                        format: int32
+                      cashOutValue1m:
+                        type: string
+                      cashOutValue3m:
+                        type: string
+                      cashOutValue6m:
+                        type: string
+                      cashOutVolume1m:
+                        type: integer
+                        format: int32
+                      cashOutVolume3m:
+                        type: integer
+                        format: int32
+                      cashOutVolume6m:
+                        type: integer
+                        format: int32
+                      commission1m:
+                        type: number
+                        format: double
+                      commission3m:
+                        type: number
+                        format: double
+                      commission6m:
+                        type: number
+                        format: double
+                      commissionCashIn1m:
+                        type: number
+                        format: double
+                      commissionCashIn3m:
+                        type: number
+                        format: double
+                      commissionCashIn6m:
+                        type: number
+                        format: double
+                      commissionCashOut1m:
+                        type: number
+                        format: double
+                      commissionCashOut3m:
+                        type: number
+                        format: double
+                      commissionCashOut6m:
+                        type: number
+                        format: double
+                      COMMISSIONING_EXTERNAL_PAYMENT_1m:
+                        type: number
+                        format: double
+                      COMMISSIONING_EXTERNAL_PAYMENT_3m:
+                        type: number
+                        format: double
+                      COMMISSIONING_EXTERNAL_PAYMENT_6m:
+                        type: number
+                        format: double
+                      commissioningVoucher1m:
+                        type: number
+                        format: double
+                      commissioningVoucher3m:
+                        type: number
+                        format: double
+                      commissioningVoucher6m:
+                        type: number
+                        format: double
+                      credit_limit:
+                        type: integer
+                        format: int32
+                      credit_limit_date:
+                        type: string
+                      cumulative_payments_30dy:
+                        type: number
+                        format: double
+                      date_key:
+                        type: integer
+                        format: int32
+                      dateOfBirth:
+                        type: string
+                      EXTERNAL_PAYMENT_last:
+                        type: string
+                      EXTERNAL_PAYMENT_peers_1m:
+                        type: integer
+                        format: int32
+                      EXTERNAL_PAYMENT_peers_3m:
+                        type: integer
+                        format: int32
+                      EXTERNAL_PAYMENT_peers_6m:
+                        type: integer
+                        format: int32
+                      EXTERNAL_PAYMENT_value_1m:
+                        type: number
+                        format: double
+                      EXTERNAL_PAYMENT_value_3m:
+                        type: number
+                        format: double
+                      EXTERNAL_PAYMENT_value_6m:
+                        type: number
+                        format: double
+                      EXTERNAL_PAYMENT_volume_1m:
+                        type: integer
+                        format: int32
+                      EXTERNAL_PAYMENT_volume_3m:
+                        type: integer
+                        format: int32
+                      EXTERNAL_PAYMENT_volume_6m:
+                        type: integer
+                        format: int32
+                      Number_Of_Customers_Served_1m:
+                        type: integer
+                        format: int32
+                      Number_Of_Customers_Served_3m:
+                        type: integer
+                        format: int32
+                      Number_Of_Customers_Served_6m:
+                        type: integer
+                        format: int32
+                      Optional_Parameter_1:
+                        type: integer
+                        format: int32
+                      Optional_Parameter_2:
+                        type: integer
+                        format: int32
+                      Optional_Parameter_3:
+                        type: integer
+                        format: int32
+                      Optional_Parameter_4:
+                        type: integer
+                        format: int32
+                      Optional_Parameter_5:
+                        type: integer
+                        format: int32
+                      Optional_Parameter_6:
+                        type: integer
+                        format: int32
+                      Optional_Parameter_7:
+                        type: integer
+                        format: int32
+                      Optional_Parameter_8:
+                        type: integer
+                        format: int32
+                      Optional_Parameter_9:
+                        type: integer
+                        format: int32
+                      Optional_Parameter_10:
+                        type: integer
+                        format: int32
+                      overdraft_fees_balance:
+                        type: integer
+                        format: int32
+                      overdraft_interest_balance:
+                        type: integer
+                        format: int32
+                      overdraft_principle_balance:
+                        type: integer
+                        format: int32
+                      days_past_due:
+                        type: integer
+                        format: int32
+                      drawdown_number:
+                        type: number
+                        format: double
+                      revenue1m:
+                        type: number
+                        format: double
+                      revenue3m:
+                        type: number
+                        format: double
+                      revenue6m:
+                        type: number
+                        format: double
+                      Transaction_Values_1m:
+                        type: number
+                        format: double
+                      Transaction_Values_3m:
+                        type: number
+                        format: double
+                      Transaction_Values_6m:
+                        type: number
+                        format: double
+                      Transaction_Volumes_1m:
+                        type: number
+                        format: double
+                      Transaction_Volumes_3m:
+                        type: number
+                        format: double
+                      Transaction_Volumes_6m:
+                        type: number
+                        format: double
+                      voucherLast1m:
+                        type: string
+                      voucherLast3m:
+                        type: string
+                      voucherLast6m:
+                        type: string
+                      voucherPeers1m:
+                        type: integer
+                        format: int32
+                      voucherPeers3m:
+                        type: integer
+                        format: int32
+                      voucherPeers6m:
+                        type: integer
+                        format: int32
+                      voucherValue1m:
+                        type: number
+                        format: double
+                      voucherValue3m:
+                        type: number
+                        format: double
+                      voucherValue6m:
+                        type: number
+                        format: double
+                      voucherVolume1m:
+                        type: integer
+                        format: int32
+                      voucherVolume3m:
+                        type: integer
+                        format: int32
+                      voucherVolume6m:
+                        type: integer
+                        format: int32
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+      description: Production Server
+  /customer/crbRecord:
+    get:
+      tags:
+      - UsageManagement
+      summary: Retrieves a Banktech customer CRB (credit bureau) snapshot via GET /customer/crbRecord when the loan-history response did not include bureau data, typically because the subscriber had no qualifying transactions in the configured look-back window.
+      description: Retrieves customer CRB record. This endpoint will be called if the CRB record was not returned in the LoanHistory endpoint due to that the customer has not transacted in the past 30 days
+      operationId: UsageManagement_get_getCrbRecord_customercrbRecord
+      parameters:
+      - name: country
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: customerIdHash
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: partnerId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: providerId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HTTP 200 indicating the request succeeded; the response body follows the documented schema for this operation and includes correlation identifiers where applicable for traceability across MTN MADAPI usage management flows.
+          content:
+            application/json:
+              schema:
+                title: CrbRecordResponse
+                type: object
+                properties:
+                  Header:
+                    title: Header
+                    type: object
+                    properties:
+                      crbName:
+                        type: string
+                      reportDate:
+                        type: string
+                      reportType:
+                        type: string
+                      productDisplayName:
+                        type: string
+                      requester:
+                        type: string
+                      requestNo:
+                        type: integer
+                        format: int32
+                  PersonalProfile:
+                    title: PersonalProfile
+                    type: object
+                    properties:
+                      crn:
+                        type: integer
+                        format: int32
+                      salutation:
+                        type: string
+                      surname:
+                        type: string
+                      otherNames:
+                        type: string
+                      fullName:
+                        type: string
+                      nationalID:
+                        type: string
+                      passportNo:
+                        type: string
+                      drivingLicenseNo:
+                        type: string
+                      serviceID:
+                        type: string
+                      alienID:
+                        type: string
+                  AccountList:
+                    type: array
+                    items:
+                      title: AccountList
+                      type: object
+                      properties:
+                        Account:
+                          title: Account
+                          type: object
+                          properties:
+                            accountStatus:
+                              type: string
+                  Summary:
+                    title: Summary
+                    type: object
+                    properties:
+                      creditHistory:
+                        title: CreditHistory
+                        type: object
+                        properties:
+                          mySector:
+                            type: integer
+                            format: int32
+                          allSectors:
+                            type: integer
+                            format: int32
+                      npaAccounts:
+                        title: NpaAccounts
+                        type: object
+                        properties:
+                          mySector:
+                            type: integer
+                            format: int32
+                          allSectors:
+                            type: integer
+                            format: int32
+                      npaClosedAccounts:
+                        title: NpaClosedAccounts
+                        type: object
+                        properties:
+                          mySector:
+                            type: integer
+                            format: int32
+                          allSectors:
+                            type: integer
+                            format: int32
+                      npaOpenAccounts:
+                        title: NpaOpenAccounts
+                        type: object
+                        properties:
+                          mySector:
+                            type: integer
+                            format: int32
+                          allSectors:
+                            type: integer
+                            format: int32
+                      paAccounts:
+                        title: PaAccounts
+                        type: object
+                        properties:
+                          mySector:
+                            type: integer
+                            format: int32
+                          allSectors:
+                            type: integer
+                            format: int32
+                      paClosedAccounts:
+                        title: PaClosedAccounts
+                        type: object
+                        properties:
+                          mySector:
+                            type: integer
+                            format: int32
+                          allSectors:
+                            type: integer
+                            format: int32
+                      paOpenAccounts:
+                        title: PaOpenAccounts
+                        type: object
+                        properties:
+                          mySector:
+                            type: integer
+                            format: int32
+                          allSectors:
+                            type: integer
+                            format: int32
+                  ScoreOutput:
+                    title: ScoreOutput
+                    type: object
+                    properties:
+                      positiveScore:
+                        type: integer
+                        format: int32
+                      probability:
+                        type: string
+                      grade:
+                        type: string
+                      reasonCodeAARC1:
+                        type: string
+                      reasonCodeAARC2:
+                        type: string
+                      reasonCodeAARC3:
+                        type: string
+                      reasonCodeAARC4:
+                        type: string
+                  statusCode:
+                    type: string
+                  statusMessage:
+                    type: string
+                  customerIdHash:
+                    type: string
+                  partnerId:
+                    type: string
+                  transactionId:
+                    type: string
+                  supportMessage:
+                    type: string
+                  customerId:
+                    type: string
+                  timestamp:
+                    type: string
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+      description: Production Server
+  /customer/loanhistory:
+    get:
+      tags:
+      - UsageManagement
+      summary: Retrieves Banktech loan history with paging and country-specific backend routing support.
+      description: Retrieves customer loan history including disbursement and repayment details with paging, partner identifiers, and routing to DAAS, DASS_MFS, or EVA backends for Banktech operations and financial tracking.
+      operationId: UsageManagement_get_getCustomerDataBanktech_customerloanhistory
+      parameters:
+      - name: appName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: country
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: customerIdHash
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: endDate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: hostName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: maxResults
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: momoPartnerId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pageNumber
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: userID
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: x-origin-channelid
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HTTP 200 indicating the request succeeded; the response body follows the documented schema for this operation and includes correlation identifiers where applicable for traceability across MTN MADAPI usage management flows.
+          content:
+            application/json:
+              schema:
+                title: BankTechResponse
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  statusMessage:
+                    type: string
+                  transactionId:
+                    type: string
+                  sequenceNumber:
+                    type: string
+                  customerId:
+                    type: string
+                  timestamp:
+                    type: string
+                  data:
+                    title: BanktechUserData
+                    type: object
+                    properties:
+                      kyc_momo_id:
+                        type: string
+                      kyc_msisdn:
+                        type: string
+                      account_status:
+                        type: string
+                      activation_date:
+                        type: integer
+                        format: int32
+                      atc_loans_amt_tot:
+                        type: integer
+                        format: int32
+                      atc_loans_first_date:
+                        type: integer
+                        format: int32
+                      atc_loans_last_date:
+                        type: integer
+                        format: int32
+                      atc_loans_last_overdue:
+                        type: integer
+                        format: int32
+                      atc_loans_max_term:
+                        type: integer
+                        format: int32
+                      atc_loans_overdue:
+                        type: integer
+                        format: int32
+                      atc_loans_qty_1m:
+                        type: integer
+                        format: int32
+                      atc_loans_qty_3m:
+                        type: integer
+                        format: int32
+                      atc_loans_qty_6m:
+                        type: integer
+                        format: int32
+                      atc_loans_tot_term:
+                        type: integer
+                        format: int32
+                      batch_id:
+                        type: integer
+                        format: int32
+                      behavioural_category:
+                        type: string
+                      behavioural_score:
+                        type: integer
+                        format: int32
+                      block_code_1:
+                        type: string
+                      block_code_1_date:
+                        type: integer
+                        format: int32
+                      block_code_2:
+                        type: string
+                      block_code_2_date:
+                        type: integer
+                        format: int32
+                      create_dt:
+                        type: integer
+                        format: int32
+                      credit_limit:
+                        type: integer
+                        format: int32
+                      customer_type:
+                        type: string
+                      date_key:
+                        type: string
+                      date_opened:
+                        type: integer
+                        format: int32
+                      dw_cpart:
+                        type: integer
+                        format: int32
+                      dw_part:
+                        type: integer
+                        format: int32
+                      end_of_day_balance:
+                        type: number
+                        format: double
+                      ewp_account_holder_type_cd:
+                        type: string
+                      gsm_active_days_qty_1m:
+                        type: integer
+                        format: int32
+                      gsm_active_days_qty_3m:
+                        type: integer
+                        format: int32
+                      gsm_active_days_qty_6m:
+                        type: integer
+                        format: int32
+                      gsm_avg_bund_size_1m:
+                        type: string
+                      gsm_avg_bund_size_3m:
+                        type: string
+                      gsm_avg_bund_size_6m:
+                        type: string
+                      gsm_avg_topup_amt_1m:
+                        type: number
+                        format: double
+                      gsm_avg_topup_amt_3m:
+                        type: number
+                        format: double
+                      gsm_avg_topup_amt_6m:
+                        type: number
+                        format: double
+                      gsm_dab_qty_1m:
+                        type: integer
+                        format: int32
+                      gsm_dab_qty_3m:
+                        type: integer
+                        format: int32
+                      gsm_dab_qty_6m:
+                        type: integer
+                        format: int32
+                      gsm_dat_vol_amt_1m:
+                        type: number
+                        format: double
+                      gsm_dat_vol_amt_3m:
+                        type: number
+                        format: double
+                      gsm_dat_vol_amt_6m:
+                        type: number
+                        format: double
+                      gsm_days_bund_less_2mb_1m:
+                        type: integer
+                        format: int32
+                      gsm_days_bund_less_2mb_3m:
+                        type: integer
+                        format: int32
+                      gsm_days_bund_less_2mb_6m:
+                        type: integer
+                        format: int32
+                      gsm_device_make:
+                        type: string
+                      gsm_imei_nr:
+                        type: string
+                      gsm_imei_qty_1m:
+                        type: string
+                      gsm_imsi_nr:
+                        type: string
+                      gsm_imsi_qty_1m:
+                        type: string
+                      gsm_in_calls_qty_1m:
+                        type: string
+                      gsm_in_calls_qty_3m:
+                        type: string
+                      gsm_in_calls_qty_6m:
+                        type: string
+                      gsm_la_days_qty:
+                        type: integer
+                        format: int32
+                      gsm_last_bundle_purchase:
+                        type: integer
+                        format: int32
+                      gsm_me2u_received_amt_1m:
+                        type: integer
+                        format: int32
+                      gsm_me2u_received_amt_3m:
+                        type: integer
+                        format: int32
+                      gsm_me2u_received_amt_6m:
+                        type: integer
+                        format: int32
+                      gsm_me2u_received_qty_1m:
+                        type: integer
+                        format: int32
+                      gsm_me2u_received_qty_3m:
+                        type: integer
+                        format: int32
+                      gsm_me2u_received_qty_6m:
+                        type: integer
+                        format: int32
+                      gsm_nau_amt_1m:
+                        type: number
+                        format: double
+                      gsm_nau_amt_3m:
+                        type: number
+                        format: double
+                      gsm_nau_amt_6m:
+                        type: number
+                        format: double
+                      gsm_network_town:
+                        type: string
+                      gsm_npt:
+                        type: string
+                      gsm_nrd:
+                        type: string
+                      gsm_nta_amt_1m:
+                        type: number
+                        format: double
+                      gsm_nta_amt_3m:
+                        type: number
+                        format: double
+                      gsm_nta_amt_6m:
+                        type: number
+                        format: double
+                      gsm_out_calls_qty_1m:
+                        type: integer
+                        format: int32
+                      gsm_out_calls_qty_3m:
+                        type: integer
+                        format: int32
+                      gsm_out_calls_qty_6m:
+                        type: integer
+                        format: int32
+                      gsm_p_usid:
+                        type: string
+                      gsm_po_limit_amt:
+                        type: integer
+                        format: int32
+                      gsm_s_ucid:
+                        type: string
+                      gsm_s_usid:
+                        type: string
+                      gsm_times_blocked_po_qty_1m:
+                        type: integer
+                        format: int32
+                      gsm_times_blocked_po_qty_3m:
+                        type: integer
+                        format: int32
+                      gsm_times_blocked_po_qty_6m:
+                        type: integer
+                        format: int32
+                      gsm_topup_method:
+                        type: string
+                      gsm_uniq_in_anum_qty_1m:
+                        type: integer
+                        format: int32
+                      gsm_uniq_in_anum_qty_3m:
+                        type: integer
+                        format: int32
+                      gsm_uniq_in_anum_qty_6m:
+                        type: integer
+                        format: int32
+                      gsm_uniq_out_bnum_qty_1m:
+                        type: integer
+                        format: int32
+                      gsm_uniq_out_bnum_qty_3m:
+                        type: integer
+                        format: int32
+                      gsm_uniq_out_bnum_qty_6m:
+                        type: integer
+                        format: int32
+                      kyc_dob:
+                        type: integer
+                        format: int32
+                      kyc_gender:
+                        type: string
+                      kyc_id_expiry_date:
+                        type: integer
+                        format: int32
+                      kyc_msisdn_random:
+                        type: string
+                      last_drawdown_date:
+                        type: integer
+                        format: int32
+                      last_payment_date:
+                        type: integer
+                        format: int32
+                      limit_decrease_date:
+                        type: integer
+                        format: int32
+                      limit_increase_date:
+                        type: integer
+                        format: int32
+                      max_completeness_date:
+                        type: string
+                      mom_bank_pull_amt_1m:
+                        type: integer
+                        format: int32
+                      mom_bank_pull_amt_3m:
+                        type: integer
+                        format: int32
+                      mom_bank_pull_amt_6m:
+                        type: number
+                        format: double
+                      mom_bank_pull_last_date:
+                        type: string
+                      mom_bank_pull_max_amt_1m:
+                        type: number
+                        format: double
+                      mom_bank_pull_max_amt_3m:
+                        type: integer
+                        format: int32
+                      mom_bank_pull_max_amt_6m:
+                        type: number
+                        format: double
+                      mom_bank_pull_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_bank_pull_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_bank_pull_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_bank_pull_uniq_acceptors_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_bank_pull_uniq_acceptors_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_bank_pull_uniq_acceptors_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_bank_push_amt_1m:
+                        type: number
+                        format: double
+                      mom_bank_push_amt_3m:
+                        type: number
+                        format: double
+                      mom_bank_push_amt_6m:
+                        type: number
+                        format: double
+                      mom_bank_push_last_date:
+                        type: integer
+                        format: int32
+                      mom_bank_push_max_amt_1m:
+                        type: number
+                        format: double
+                      mom_bank_push_max_amt_3m:
+                        type: number
+                        format: double
+                      mom_bank_push_max_amt_6m:
+                        type: number
+                        format: double
+                      mom_bank_push_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_bank_push_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_bank_push_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_bank_push_uniq_acceptors_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_bank_push_uniq_acceptors_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_bank_push_uniq_acceptors_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_bill_payment_amt_1m:
+                        type: number
+                        format: double
+                      mom_bill_payment_amt_3m:
+                        type: number
+                        format: double
+                      mom_bill_payment_amt_6m:
+                        type: number
+                        format: double
+                      mom_bill_payment_last_date:
+                        type: integer
+                        format: int32
+                      mom_bill_payment_max_amt_1m:
+                        type: number
+                        format: double
+                      mom_bill_payment_max_amt_3m:
+                        type: number
+                        format: double
+                      mom_bill_payment_max_amt_6m:
+                        type: number
+                        format: double
+                      mom_bill_payment_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_bill_payment_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_bill_payment_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_bill_payment_uniq_acceptors_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_bill_payment_uniq_acceptors_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_bill_payment_uniq_acceptors_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_deposit_amt_1m:
+                        type: number
+                        format: double
+                      mom_deposit_amt_3m:
+                        type: number
+                        format: double
+                      mom_deposit_amt_6m:
+                        type: number
+                        format: double
+                      mom_deposit_last_date:
+                        type: integer
+                        format: int32
+                      mom_deposit_max_amt_1m:
+                        type: number
+                        format: double
+                      mom_deposit_max_amt_3m:
+                        type: number
+                        format: double
+                      mom_deposit_max_amt_6m:
+                        type: number
+                        format: double
+                      mom_deposit_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_deposit_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_deposit_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_deposit_uniq_acceptors_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_deposit_uniq_acceptors_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_deposit_uniq_acceptors_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_p2p_received_amt_1m:
+                        type: number
+                        format: double
+                      mom_p2p_received_amt_3m:
+                        type: number
+                        format: double
+                      mom_p2p_received_amt_6m:
+                        type: number
+                        format: double
+                      mom_p2p_received_last_date:
+                        type: integer
+                        format: int32
+                      mom_p2p_received_max_amt_1m:
+                        type: number
+                        format: double
+                      mom_p2p_received_max_amt_3m:
+                        type: number
+                        format: double
+                      mom_p2p_received_max_amt_6m:
+                        type: number
+                        format: double
+                      mom_p2p_received_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_p2p_received_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_p2p_received_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_p2p_received_uniq_acceptors_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_p2p_received_uniq_acceptors_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_p2p_received_uniq_acceptors_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_p2p_send_amt_1m:
+                        type: number
+                        format: double
+                      mom_p2p_send_amt_3m:
+                        type: number
+                        format: double
+                      mom_p2p_send_amt_6m:
+                        type: number
+                        format: double
+                      mom_p2p_send_last_date:
+                        type: string
+                      mom_p2p_send_max_amt_1m:
+                        type: number
+                        format: double
+                      mom_p2p_send_max_amt_3m:
+                        type: number
+                        format: double
+                      mom_p2p_send_max_amt_6m:
+                        type: number
+                        format: double
+                      mom_p2p_send_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_p2p_send_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_p2p_send_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_registration_date:
+                        type: string
+                      mom_send_uniq_acceptors_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_send_uniq_acceptors_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_send_uniq_acceptors_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_withdrawal_amt_1m:
+                        type: number
+                        format: double
+                      mom_withdrawal_amt_3m:
+                        type: number
+                        format: double
+                      mom_withdrawal_amt_6m:
+                        type: number
+                        format: double
+                      mom_withdrawal_last_date:
+                        type: integer
+                        format: int32
+                      mom_withdrawal_max_amt_1m:
+                        type: number
+                        format: double
+                      mom_withdrawal_max_amt_3m:
+                        type: number
+                        format: double
+                      mom_withdrawal_max_amt_6m:
+                        type: number
+                        format: double
+                      mom_withdrawal_qty_1m:
+                        type: integer
+                        format: int32
+                      mom_withdrawal_qty_3m:
+                        type: integer
+                        format: int32
+                      mom_withdrawal_qty_6m:
+                        type: integer
+                        format: int32
+                      mom_withdrawal_uniq_acceptors_qty_1:
+                        type: integer
+                        format: int32
+                      mom_withdrawal_uniq_acceptors_qty_3:
+                        type: integer
+                        format: int32
+                      mom_withdrawal_uniq_acceptors_qty_6:
+                        type: integer
+                        format: int32
+                      momo_balance:
+                        type: integer
+                        format: int32
+                      opco_cd:
+                        type: string
+                      past_due_date:
+                        type: integer
+                        format: int32
+                      payment_value:
+                        type: integer
+                        format: int32
+                      previous_limit:
+                        type: integer
+                        format: int32
+                      previous_status:
+                        type: string
+                      p_ucid:
+                        type: string
+                      payment_date:
+                        type: integer
+                        format: int32
+                      source:
+                        type: string
+                      status_code:
+                        type: string
+                      status_date:
+                        type: integer
+                        format: int32
+                  crb:
+                    title: Crb
+                    type: object
+                    properties:
+                      Header:
+                        $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_banktechCrbRecord_Header'
+                      PersonalProfile:
+                        $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_banktechCrbRecord_PersonalProfile'
+                      AccountList:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_banktechCrbRecord_AccountList'
+                      Summary:
+                        $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_banktechCrbRecord_Summary'
+                      ScoreOutput:
+                        $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_banktechCrbRecord_ScoreOutput'
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+      description: Production Server
+  /customer/momo/history:
+    get:
+      tags:
+      - UsageManagement
+      summary: Retrieves MoMo wallet statement history with filters, paging, and country-specific routing.
+      description: Retrieves detailed MoMo wallet transaction history for a subscriber MSISDN within a specified date range, supporting filters, formats, pagination, and country-specific routing to the appropriate MoMo integration endpoint.
+      operationId: UsageManagement_get_getMomoTransactionHistory_customermomohistory
+      parameters:
+      - name: appName
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: attributes
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: endDate
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: format
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: hostName
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: msisdn
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: pageNum
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: queryType
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: x-country-code
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-origin-channelid
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HTTP 200 indicating the request succeeded; the response body follows the documented schema for this operation and includes correlation identifiers where applicable for traceability across MTN MADAPI usage management flows.
+          content:
+            application/json:
+              schema:
+                title: MomoTransactionResponse
+                type: object
+                properties:
+                  msisdn:
+                    type: string
+                  requestId:
+                    type: string
+                  dateRange:
+                    type: array
+                    items:
+                      type: string
+                  maxRecs:
+                    type: string
+                  numRecs:
+                    type: string
+                  pageNum:
+                    type: string
+                  submittedTime:
+                    type: string
+                  duration:
+                    type: string
+                  statusCode:
+                    type: string
+                  statusMsg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      title: MomoDataResponse
+                      type: object
+                      properties:
+                        amount:
+                          type: string
+                        date:
+                          type: string
+                        transaction_status:
+                          type: string
+                        to_msisdn:
+                          type: string
+                        date_column:
+                          type: string
+                        from_msisdn:
+                          type: string
+                        time_column:
+                          type: string
+                        fee:
+                          type: string
+                        from_username:
+                          type: string
+                        transaction_type:
+                          type: string
+                        to_username:
+                          type: string
+                        balance_after:
+                          type: string
+                        time:
+                          type: string
+                        balance_before:
+                          type: string
+                  key:
+                    type: string
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+      description: Production Server
+  /customer/momo/history/{requestId}:
+    get:
+      tags:
+      - UsageManagement
+      summary: Retrieves MoMo statement details by requestId with paging and downstream routing support.
+      description: Retrieves detailed MoMo wallet transactions by requestId, supporting paging, query parameters, asynchronous retrieval flows, and downstream routing to the appropriate MoMo history service.
+      operationId: UsageManagement_get_getMomoTransactionHistoryById_customermomohistoryr
+      parameters:
+      - name: appName
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: attributes
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: format
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: hostName
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: msisdn
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pageNum
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: requestId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: x-country-code
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-origin-channelid
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HTTP 200 indicating the request succeeded; the response body follows the documented schema for this operation and includes correlation identifiers where applicable for traceability across MTN MADAPI usage management flows.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_res_MomoTransactionResponse'
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+      description: Production Server
+  /sim/lastActivityDate/{id}:
+    get:
+      tags:
+      - UsageManagement
+      summary: Retrieves SIM last activity date for a subscriber via configured country-specific DAAS usage routing.
+      description: Retrieves subscriber SMS, voice, and data usage records to determine SIM last activity date, supporting dormancy analysis, engagement checks, and country-specific DAAS routing with detailed usage tracking.
+      operationId: UsageManagement_get_getSimLastActivityDate_simlastActivityDatei
+      parameters:
+      - name: appName
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: attributes
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: endTime
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: hostName
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: maxRecords
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: pageNumber
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: pageSize
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: referenceID
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: startTime
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: usageType
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: userID
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: x-origin-channelid
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HTTP 200 indicating the request succeeded; the response body follows the documented schema for this operation and includes correlation identifiers where applicable for traceability across MTN MADAPI usage management flows.
+          content:
+            application/json:
+              schema:
+                title: UsageResponse
+                type: object
+                properties:
+                  resultCode:
+                    type: string
+                  resultDescription:
+                    type: string
+                  transactionId:
+                    type: string
+                  msisdn:
+                    type: string
+                  referenceId:
+                    type: string
+                  requestDate:
+                    type: string
+                  maxRecords:
+                    type: string
+                  pageNumber:
+                    type: string
+                  numRecords:
+                    type: string
+                  dateRanges:
+                    type: array
+                    items:
+                      type: string
+                  sequenceNumber:
+                    type: string
+                  submittedTime:
+                    type: string
+                  requestRange:
+                    type: string
+                  maximumRecord:
+                    type: string
+                  numOfRecord:
+                    type: string
+                  pageNum:
+                    type: string
+                  noOfRecords:
+                    type: string
+                  requestTime:
+                    type: string
+                  duration:
+                    type: integer
+                    format: int32
+                  dateRange:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      title: UsageDataResponse
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        description:
+                          type: string
+                        usageDate:
+                          type: string
+                        balanceType:
+                          type: string
+                        usageType:
+                          type: string
+                        status:
+                          type: string
+                        usageCharacteristic:
+                          type: array
+                          items:
+                            title: UsageCharacteristic
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              valueType:
+                                type: string
+                              value:
+                                type: string
+                              units:
+                                type: string
+                        usageSpecification:
+                          title: UsageSpecification
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            name:
+                              type: string
+                            duration:
+                              type: string
+                            amount:
+                              type: string
+                            startTime:
+                              type: string
+                            endTime:
+                              type: string
+                        ratedProductUsage:
+                          type: array
+                          items:
+                            title: RatedProductUsage
+                            type: object
+                            properties:
+                              bucketValueConvertedInAmount:
+                                title: CommonUnit
+                                type: object
+                                properties:
+                                  unit:
+                                    type: string
+                                  value:
+                                    type: string
+                                  amount:
+                                    type: string
+                              otherDetails:
+                                title: OtherDetails
+                                type: object
+                                properties:
+                                  byteSent:
+                                    type: string
+                                  byteReceived:
+                                    type: string
+                                  balanceBefore:
+                                    type: string
+                                  balanceAfter:
+                                    type: string
+                                  daysOfvalidity:
+                                    type: string
+                                  unitBalanceBefore:
+                                    type: string
+                                  rate:
+                                    type: string
+                                  usedUnits:
+                                    type: string
+                                  balanceDetails:
+                                    type: array
+                                    items:
+                                      title: BalanceDetails
+                                      type: object
+                                      properties:
+                                        accountId:
+                                          type: string
+                                        amountBefore:
+                                          type: string
+                                        amountAfter:
+                                          type: string
+                                        amountCharged:
+                                          type: string
+                                  amountBefore:
+                                    type: string
+                                  amountAfter:
+                                    type: string
+                                  usedValue:
+                                    type: string
+                                  balanceType:
+                                    type: string
+                        binaryAttachment:
+                          type: array
+                          items:
+                            title: BinaryAttachment
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                format: byte
+                              href:
+                                type: string
+                              attachmentType:
+                                type: string
+                              content:
+                                type: string
+                                format: byte
+                              description:
+                                type: string
+                              mimeType:
+                                type: string
+                              name:
+                                type: string
+                        gsm:
+                          title: UsageGsm
+                          type: object
+                          properties:
+                            spend:
+                              title: UsageSpend
+                              type: object
+                              properties:
+                                spendM1:
+                                  type: string
+                                spendM2:
+                                  type: string
+                                spendM3:
+                                  type: string
+                                spendM4:
+                                  type: string
+                                spendM5:
+                                  type: string
+                                spendM6:
+                                  type: string
+                                spendM7:
+                                  type: string
+                                spendM8:
+                                  type: string
+                                spendM9:
+                                  type: string
+                                spendM10:
+                                  type: string
+                                spendM11:
+                                  type: string
+                                spendM12:
+                                  type: string
+                                spendMtd:
+                                  type: string
+                                spendYtd:
+                                  type: string
+                                spendPersMtd:
+                                  type: string
+                                spendPersYtd:
+                                  type: string
+                            avgMonthlySpend:
+                              type: string
+                        band:
+                          title: UsageBand
+                          type: object
+                          properties:
+                            calendarCategoryYtd:
+                              type: string
+                            calendarCategoryAnnual:
+                              type: string
+                            personalCategoryAnnual:
+                              type: string
+                            personalCycleStartDate:
+                              type: string
+                            personalCycleEndDate:
+                              type: string
+                            personalCategoryYtd:
+                              type: string
+                            personalCycleFirstDate:
+                              type: string
+                        voiceCharge:
+                          title: UsageUnit
+                          type: object
+                          properties:
+                            unit:
+                              type: string
+                            amount:
+                              type: string
+                        smsCharge:
+                          $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_res_UsageUnit'
+                        dataCharge:
+                          $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_res_UsageUnit'
+                        dateTime:
+                          type: string
+                        networkCd:
+                          type: string
+                        name:
+                          type: string
+                        processedTime:
+                          type: string
+                        transactionDate:
+                          type: string
+                        daysOfValidity:
+                          type: string
+                        code:
+                          type: string
+                        expiryDate:
+                          type: string
+                        frequency:
+                          type: string
+                        offerId:
+                          type: string
+                        calledMSISDN:
+                          type: string
+                        flag:
+                          type: string
+                        accessPointName:
+                          type: string
+                        networkType:
+                          type: string
+                        chargingContextId:
+                          type: string
+                        payType:
+                          type: string
+                        cellId:
+                          type: string
+                        usageNumber:
+                          type: string
+                        traffic:
+                          type: string
+                        operator:
+                          type: string
+                        systemCd:
+                          type: string
+                        callDuration:
+                          type: string
+                        accumulatorCount:
+                          type: string
+                        eventCallDetail:
+                          type: string
+                        paymentMethod:
+                          type: string
+                        incomingDataVolume:
+                          type: string
+                        bundleName:
+                          type: string
+                        productName:
+                          type: string
+                        amount:
+                          type: string
+                        submittedTime:
+                          type: string
+                        simActivationDate:
+                          type: string
+                        lastActivityDate:
+                          type: string
+                        accountDetails:
+                          type: array
+                          items:
+                            title: AccountDetails
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              balanceBefore:
+                                type: number
+                                format: double
+                              balanceAfter:
+                                type: string
+                              change:
+                                type: number
+                                format: double
+                        additionalInformation:
+                          type: array
+                          items:
+                            title: AdditionalInformation
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              value:
+                                type: string
+                        is_payable_gc:
+                          type: string
+                        gross_act:
+                          type: string
+                        is_pending_eyeballing:
+                          type: string
+                        is_gross_connection:
+                          type: string
+                        is_ads_gc:
+                          type: string
+                        is_rejected_sim:
+                          type: string
+                        date_key:
+                          type: string
+                        dealer_email:
+                          type: string
+                        is_med_low_sim:
+                          type: string
+                        momo_wallet:
+                          type: string
+                        is_quarantine_sim:
+                          type: string
+                        msisdn_key:
+                          type: string
+                        is_smartphone_ads:
+                          type: string
+                        dealer:
+                          type: string
+                        sim_swap_request:
+                          type: string
+                        failed_swap:
+                          type: string
+                        agent_email:
+                          type: string
+                        pending_swap:
+                          type: string
+                        successful_swap:
+                          type: string
+                        rejected_swap:
+                          type: string
+                  usage:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_data_UsageDataResponse'
+                  usageDate:
+                    type: string
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+      description: Production Server
+  /transaction/{id}:
+    get:
+      tags:
+      - UsageManagement
+      summary: Retrieves subscriber transaction details by MSISDN or transaction ID with paging and routing support.
+      description: Retrieves subscriber transaction details for wallet, bundle, and agent queries with paging, routing rules, subscription history support, analytics, and comprehensive transaction tracking across supported channels.
+      operationId: UsageManagement_get_getTransaction_transactionid
+      parameters:
+      - name: bundleType
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: endTime
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: idType
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: order
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pageNo
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: queryType
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: startTime
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: subId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-origin-channelid
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HTTP 200 indicating the request succeeded; the response body follows the documented schema for this operation and includes correlation identifiers where applicable for traceability across MTN MADAPI usage management flows.
+          content:
+            application/json:
+              schema:
+                title: UsageTransactionResponse
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  statusMessage:
+                    type: string
+                  resultCode:
+                    type: string
+                  resultDescription:
+                    type: string
+                  transactionId:
+                    type: string
+                  sequenceNumber:
+                    type: string
+                  maximumRecord:
+                    type: integer
+                    format: int32
+                  noOfRecord:
+                    type: integer
+                    format: int32
+                  pageNumber:
+                    type: integer
+                    format: int32
+                  requestDate:
+                    type: string
+                  dateRange:
+                    type: array
+                    items:
+                      type: string
+                  data:
+                    type: array
+                    items:
+                      title: TransactionData
+                      type: object
+                      properties:
+                        uid:
+                          type: string
+                        amount:
+                          type: string
+                        account:
+                          type: string
+                        date:
+                          type: string
+                        beneficiary:
+                          type: string
+                        bankId:
+                          type: integer
+                          format: int32
+                        bankName:
+                          type: string
+                        externalCustomerId:
+                          type: string
+                        externalTransactionId:
+                          type: string
+                        failureType:
+                          type: string
+                        merchantName:
+                          type: string
+                        paymentMethodId:
+                          type: string
+                        productName:
+                          type: string
+                        productType:
+                          type: string
+                        transactionType:
+                          type: string
+                        status:
+                          type: string
+                        terminalShortCode:
+                          type: string
+                        channel:
+                          type: string
+                        currency:
+                          type: string
+                        expiryDate:
+                          type: string
+                        customerId:
+                          type: string
+                        buyForOthers:
+                          type: string
+                        bundleId:
+                          type: string
+                        cdrId:
+                          type: string
+                        bundleType:
+                          type: string
+                        subscriptionName:
+                          type: string
+                        bundlePrice:
+                          type: string
+                        subscriptionAmount:
+                          type: string
+                        subscriptionDateTime:
+                          type: string
+                        subscriptionValidity:
+                          type: string
+                        subscriptionDescription:
+                          type: string
+                        agentRecord:
+                          title: AgentRecordData
+                          type: object
+                          properties:
+                            commissionCashIn1m:
+                              type: string
+                            commissionCashOut1m:
+                              type: string
+                            voucherValue1m:
+                              type: string
+                            cashInLast1m:
+                              type: string
+                            commissioningVoucher1m:
+                              type: string
+                            voucherVolume1m:
+                              type: string
+                            voucherPeers1m:
+                              type: string
+                            cashOutLast1m:
+                              type: string
+                            averageBalance1m:
+                              type: string
+                            cashOutVolume1m:
+                              type: string
+                            cashInVolume1m:
+                              type: string
+                            commission1m:
+                              type: string
+                            cashOutPeers1m:
+                              type: string
+                            voucherLast1m:
+                              type: string
+                            cashOutValue1m:
+                              type: string
+                            activatedAt:
+                              type: string
+                            cashInValue1m:
+                              type: string
+                            accountBalance1m:
+                              type: string
+                            cashInPeers1m:
+                              type: string
+                            revenue1m:
+                              type: string
+                            accountNumber:
+                              type: string
+                            posMsisdnHashed:
+                              type: string
+                            agentProfile:
+                              type: string
+                            accountBalance3m:
+                              type: string
+                            averageBalance3m:
+                              type: string
+                            commission3m:
+                              type: string
+                            voucherVolume3m:
+                              type: string
+                            voucherValue3m:
+                              type: string
+                            voucherPeers3m:
+                              type: string
+                            voucherLast3m:
+                              type: string
+                            commissioningVoucher3m:
+                              type: string
+                            cashInVolume3m:
+                              type: string
+                            cashInValue3m:
+                              type: string
+                            commissionCashIn3m:
+                              type: string
+                            cashInPeers3m:
+                              type: string
+                            cashInLast3m:
+                              type: string
+                            cashOutValue3m:
+                              type: string
+                            cashOutVolume3m:
+                              type: string
+                            commissionCashOut3m:
+                              type: string
+                            cashOutPeers3m:
+                              type: string
+                            cashOutLast3m:
+                              type: string
+                            revenue3m:
+                              type: string
+                            accountBalance6m:
+                              type: string
+                            averageBalance6m:
+                              type: string
+                            commission6m:
+                              type: string
+                            voucherVolume6m:
+                              type: string
+                            voucherValue6m:
+                              type: string
+                            voucherPeers6m:
+                              type: string
+                            voucherLast6m:
+                              type: string
+                            commissioningVoucher6m:
+                              type: string
+                            cashInVolume6m:
+                              type: string
+                            cashInValue6m:
+                              type: string
+                            commissionCashIn6m:
+                              type: string
+                            cashInPeers6m:
+                              type: string
+                            cashInLast6m:
+                              type: string
+                            cashOutValue6m:
+                              type: string
+                            cashOutVolume6m:
+                              type: string
+                            commissionCashOut6m:
+                              type: string
+                            cashOutPeers6m:
+                              type: string
+                            cashOutLast6m:
+                              type: string
+                            revenue6m:
+                              type: string
+                        efloatTransferSummary:
+                          title: EfloatTransferSummary
+                          type: object
+                          properties:
+                            fromTransferProfile:
+                              type: string
+                            toTransferProfile:
+                              type: string
+                            transferFromMsisdn:
+                              type: string
+                            transferToMsisdn:
+                              type: string
+                            transferAmount:
+                              type: string
+                            distributionPartner:
+                              type: string
+                            superAgent:
+                              type: string
+                            transferType:
+                              type: string
+                            hourKey:
+                              type: string
+                            hours:
+                              type: string
+                            tblDt:
+                              type: string
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+      description: Production Server
+  /usage/{customerId}/alerts:
+    get:
+      tags:
+      - UsageManagement
+      summary: Retrieves active usage alerts and thresholds for a customer MSISDN from IBF systems.
+      description: Retrieves customer usage alert settings, thresholds, and notification preferences for a specific MSISDN from IBF systems, supporting spend monitoring, bundle warnings, alert tracking, and self-service management.
+      operationId: UsageManagement_get_getNotification_usagecustomerIdalert
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: endDate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HTTP 200 indicating the request succeeded; the response body follows the documented schema for this operation and includes correlation identifiers where applicable for traceability across MTN MADAPI usage management flows.
+          content:
+            application/json:
+              schema:
+                title: NotificationResponse
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  transactionId:
+                    type: string
+                  statusMessage:
+                    type: string
+                  customerId:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      title: Data
+                      type: object
+                      properties:
+                        notifyType:
+                          type: string
+                        notifyStatus:
+                          type: string
+                        thresholdValue:
+                          type: string
+                        agentRecord:
+                          title: AgentRecord
+                          type: object
+                          properties:
+                            transactionId:
+                              type: string
+                            territoryId:
+                              type: string
+                            transactionTime:
+                              type: string
+                            balanceBefore:
+                              type: string
+                            balanceAfter:
+                              type: string
+                            channel:
+                              type: string
+                            hourKey:
+                              type: string
+                            hours:
+                              type: string
+                            tblDt:
+                              type: string
+                  timestamp:
+                    type: string
+                  sequenceNo:
+                    type: string
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    put:
+      tags:
+      - UsageManagement
+      summary: Updates customer's usage alerts details
+      description: Updates customer's usage alerts details with comprehensive alert management, notification preferences, and customer alert configuration capabilities.
+      operationId: UsageManagement_put_setNotification_usagecustomerIdalert
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: AlertDetails
+              type: object
+              properties:
+                notifyType:
+                  type: string
+                notifyStatus:
+                  type: string
+                thresholdValue:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+      description: Production Server
+  /usage/{customerId}/flags:
+    post:
+      tags:
+      - UsageManagement
+      summary: Updates customer marketing and data-sharing preferences through usage flag operations.
+      description: Updates customer marketing and data-sharing consent preferences using operationName values such as DATA_SHARING_ON, MARKETING_ON, and MARKETING_OFF through downstream usage-flags integration.
+      operationId: UsageManagement_post_setFlag_usagecustomerIdflags
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-origin-channelid
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: xAuthorization
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: SystemFlagReq
+              type: object
+              properties:
+                operationName:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+      description: Production Server
+  /usage/{customerId}/history:
+    get:
+      tags:
+      - UsageManagement
+      summary: Retrieves customer usage and transaction history with paging, filters, and routing support.
+      description: Retrieves customer usage and transaction history with date range, MoMo partner, paging, and channel-based routing to DAAS or BIB systems, supporting detailed reporting, analytics, and transaction tracking.
+      operationId: UsageManagement_get_getCustomerData_usagecustomerIdhisto
+      parameters:
+      - name: country
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: endDate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: maxResults
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: momoPartnerId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pageNumber
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: startDate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: x-origin-channelid
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: xAuthorization
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HTTP 200 indicating the request succeeded; the response body follows the documented schema for this operation and includes correlation identifiers where applicable for traceability across MTN MADAPI usage management flows.
+          content:
+            application/json:
+              schema:
+                title: DataFetchResponse
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  statusMessage:
+                    type: string
+                  transactionId:
+                    type: string
+                  sequenceNumber:
+                    type: string
+                  customerId:
+                    type: string
+                  timestamp:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      title: UserData
+                      type: object
+                      properties:
+                        kyc:
+                          title: Kyc
+                          type: object
+                          properties:
+                            idType:
+                              type: string
+                            lastName:
+                              type: string
+                            msisdn:
+                              type: integer
+                              format: int64
+                            dob:
+                              type: string
+                            idNum:
+                              type: string
+                            firstName:
+                              type: string
+                            gender:
+                              type: string
+                            momoId:
+                              type: string
+                            msisdnRandom:
+                              type: string
+                            dateOfBirth:
+                              type: string
+                            idExpiryDate:
+                              type: string
+                            title:
+                              type: string
+                            idNumber:
+                              type: string
+                        momo:
+                          title: Momo
+                          type: object
+                          properties:
+                            withdrawalMaxAmt6m:
+                              type: string
+                            sendAmt1m:
+                              type: string
+                            bankTransferAmt1m:
+                              type: string
+                            bankTransferMaxAmt3m:
+                              type: string
+                            billPaymentQty1m:
+                              type: string
+                            sendQty1m:
+                              type: string
+                            receivedAcceptorsQty3m:
+                              type: string
+                            billPaymentAcceptorsQt1:
+                              type: string
+                            billPaymentMaxAmt3m:
+                              type: string
+                            sendAcceptorsQty1m:
+                              type: string
+                            receivedMaxAmt3m:
+                              type: string
+                            withdrawalAmt6m:
+                              type: string
+                            receivedQty3m:
+                              type: string
+                            withdrawalLastDate:
+                              type: string
+                            withdrawalAmt3m:
+                              type: string
+                            sendMaxAmt1m:
+                              type: string
+                            withdrawalAmt1m:
+                              type: string
+                            registrationDate:
+                              type: string
+                            depositAmt1m:
+                              type: string
+                            withdrawalMaxAmt1m:
+                              type: string
+                            depositAcceptorsQty3m:
+                              type: string
+                            billPaymentAcceptorsQt3:
+                              type: string
+                            depositAmt6m:
+                              type: string
+                            withdrawalAcceptorsQty1:
+                              type: string
+                            receivedMaxAmt1m:
+                              type: string
+                            depositMaxAmt3m:
+                              type: string
+                            depositQty3m:
+                              type: string
+                            withdrawalAcceptorsQty6:
+                              type: string
+                            billPaymentLastDate:
+                              type: string
+                            bankTransferAmt6m:
+                              type: string
+                            receivedQty6m:
+                              type: string
+                            billPaymentAmt1m:
+                              type: string
+                            withdrawalQty3m:
+                              type: string
+                            billPaymentQty3m:
+                              type: string
+                            billPaymentMaxAmt1m:
+                              type: string
+                            receivedAmt1m:
+                              type: string
+                            withdrawalAcceptorsQty3:
+                              type: string
+                            billPaymentQty6m:
+                              type: string
+                            sendAmt3m:
+                              type: string
+                            bankTransferMaxAmt6m:
+                              type: string
+                            receivedLastDate:
+                              type: string
+                            sendQty3m:
+                              type: string
+                            bankTransferQty6m:
+                              type: string
+                            sendAcceptorsQty6m:
+                              type: string
+                            withdrawalQty1m:
+                              type: string
+                            bankTransferAmt3m:
+                              type: string
+                            bankTransferLastDate:
+                              type: string
+                            sendMaxAmt6m:
+                              type: string
+                            sendMaxAmt3m:
+                              type: string
+                            depositQty1m:
+                              type: string
+                            depositLastDate:
+                              type: string
+                            receivedAcceptorsQty6m:
+                              type: string
+                            sendQty6m:
+                              type: string
+                            billPaymentAcceptorsQt6:
+                              type: string
+                            withdrawalQty6m:
+                              type: string
+                            depositQty6m:
+                              type: string
+                            bankTransferMaxAmt1m:
+                              type: string
+                            depositAcceptorsQty1m:
+                              type: string
+                            bankTransferAccptrsQt6:
+                              type: string
+                            depositMaxAmt1m:
+                              type: string
+                            depositAcceptorsQty6m:
+                              type: string
+                            sendAcceptorsQty3m:
+                              type: string
+                            depositMaxAmt6m:
+                              type: string
+                            receivedQty1m:
+                              type: string
+                            receivedAcceptorsQty1m:
+                              type: string
+                            withdrawalMaxAmt3m:
+                              type: string
+                            billPaymentAmt6m:
+                              type: string
+                            bankTransferAccptrsQt3:
+                              type: string
+                            bankTransferQty3m:
+                              type: string
+                            bankTransferAccptrsQt1:
+                              type: string
+                            receivedMaxAmt6m:
+                              type: string
+                            receivedAmt6m:
+                              type: string
+                            receivedAmt3m:
+                              type: string
+                            depositAmt3m:
+                              type: string
+                            sendAmt6m:
+                              type: string
+                            bankTransferQty1m:
+                              type: string
+                            sendLastDate:
+                              type: string
+                            billPaymentAmt3m:
+                              type: string
+                            billPaymentMaxAmt6m:
+                              type: string
+                            withdrawalAcceptorsQty1m:
+                              type: string
+                            withdrawalAcceptorsQty3m:
+                              type: string
+                            withdrawalAcceptorsQty6m:
+                              type: string
+                            bankPullQty6m:
+                              type: string
+                            bankPullQty3m:
+                              type: string
+                            bankPullQty1m:
+                              type: string
+                            bankPullAmt6m:
+                              type: string
+                            bankPullAmt3m:
+                              type: string
+                            bankPullAmt1m:
+                              type: string
+                            bankPullUniqAcceptorsQty6m:
+                              type: string
+                            bankPullUniqAcceptorsQty3m:
+                              type: string
+                            bankPullUniqAcceptorsQty1m:
+                              type: string
+                            bankPullMaxAmt6m:
+                              type: string
+                            bankPullMaxAmt3m:
+                              type: string
+                            bankPullMaxAmt1m:
+                              type: string
+                            bankPullLastDate:
+                              type: string
+                            bankPushQty6m:
+                              type: string
+                            bankPushQty3m:
+                              type: string
+                            bankPushQty1m:
+                              type: string
+                            bankPushAmt6m:
+                              type: string
+                            bankPushAmt3m:
+                              type: string
+                            bankPushAmt1m:
+                              type: string
+                            bankPushUniqAcceptorsQty6m:
+                              type: string
+                            bankPushUniqAcceptorsQty3m:
+                              type: string
+                            bankPushUniqAcceptorsQty1m:
+                              type: string
+                            bankPushMaxAmt6m:
+                              type: string
+                            bankPushMaxAmt3m:
+                              type: string
+                            bankPushMaxAmt1m:
+                              type: string
+                            bankPushLastDate:
+                              type: string
+                            accountStatus:
+                              type: string
+                            momoBalance:
+                              type: string
+                            drawDownNumber:
+                              type: string
+                            cumulativePayments30dy:
+                              type: string
+                            source:
+                              type: string
+                            airtimePurcAmt1m:
+                              type: string
+                            airtimePurcAmt3m:
+                              type: string
+                            airtimePurcAmt6m:
+                              type: string
+                            airtimePurcLastDate:
+                              type: string
+                            airtimePurcMaxAmt1m:
+                              type: string
+                            airtimePurcMaxAmt6m:
+                              type: string
+                            airtimePurcMaxAmt3m:
+                              type: string
+                            airtimePurcQty1m:
+                              type: string
+                            airtimePurcQty3m:
+                              type: string
+                            airtimePurcQty6m:
+                              type: string
+                            buyGoodsAccepters1m:
+                              type: string
+                            buyGoodsAccepters3m:
+                              type: string
+                            buyGoodsAccepters6m:
+                              type: string
+                            buyGoodsAmt1m:
+                              type: string
+                            buyGoodsAmt3m:
+                              type: string
+                            buyGoodsAmt6m:
+                              type: string
+                            buyGoodsLastDate:
+                              type: string
+                            buyGoodsMaxAmt1m:
+                              type: string
+                            buyGoodsMaxAmt6m:
+                              type: string
+                            buyGoodsMaxAmt3m:
+                              type: string
+                            buyGoodsQty1m:
+                              type: string
+                            buyGoodsQty3m:
+                              type: string
+                            buyGoodsQty6m:
+                              type: string
+                            lastPaymentDate:
+                              type: string
+                            dateOpened:
+                              type: string
+                            lastDrawdownDate:
+                              type: string
+                        gsm:
+                          title: Gsm
+                          type: object
+                          properties:
+                            avgBundSize3m:
+                              type: string
+                            topupMethod:
+                              type: string
+                            npt:
+                              type: string
+                            timesBlockedPoQty6m:
+                              type: string
+                            sUcid:
+                              type: string
+                            me2uReceivedAmt3m:
+                              type: string
+                            datVolAmt6m:
+                              type: string
+                            avgTopupAmt6m:
+                              type: string
+                            uniqInAnumQty3m:
+                              type: string
+                            ntaAmt1m:
+                              type: string
+                            dabQty3m:
+                              type: string
+                            nauAmt3m:
+                              type: string
+                            networkTown:
+                              type: string
+                            poLimitAmt:
+                              type: string
+                            me2uReceivedQty3m:
+                              type: string
+                            pUsid:
+                              type: string
+                            pUcid:
+                              type: string
+                            deviceMake:
+                              type: string
+                            nrd:
+                              type: string
+                            imeiQty1m:
+                              type: string
+                            daysBundLess2mb1m:
+                              type: string
+                            uniqOutBnumQty3m:
+                              type: string
+                            nauAmt1m:
+                              type: string
+                            inCallsQty3m:
+                              type: string
+                            avgBundSize6m:
+                              type: string
+                            inCallsQty6m:
+                              type: string
+                            datVolAmt3m:
+                              type: string
+                            timesBlockedPoQty1m:
+                              type: string
+                            outCallsQty1m:
+                              type: string
+                            avgTopupAmt3m:
+                              type: string
+                            imsiNr:
+                              type: string
+                            uniqInAnumQty6m:
+                              type: string
+                            avgBundSize1m:
+                              type: string
+                            avgTopupAmt1m:
+                              type: string
+                            me2uReceivedAmt6m:
+                              type: string
+                            activeDaysQty6m:
+                              type: string
+                            ntaAmt3m:
+                              type: string
+                            laDaysQty:
+                              type: string
+                            dabQty1m:
+                              type: string
+                            daysBundLess2mb3m:
+                              type: string
+                            me2uReceivedQty1m:
+                              type: string
+                            inCallsQty1m:
+                              type: string
+                            uniqInAnumQty1m:
+                              type: string
+                            datVolAmt1m:
+                              type: string
+                            imsiQty1m:
+                              type: string
+                            outCallsQty6m:
+                              type: string
+                            activeDaysQty3m:
+                              type: string
+                            uniqOutBnumQty6m:
+                              type: string
+                            lastBundlePurchase:
+                              type: string
+                            timesBlockedPoQty3m:
+                              type: string
+                            dabQty6m:
+                              type: string
+                            activeDaysQty1m:
+                              type: string
+                            me2uReceivedQty6m:
+                              type: string
+                            nauAmt6m:
+                              type: string
+                            ntaAmt6m:
+                              type: string
+                            me2uReceivedAmt1m:
+                              type: string
+                            daysBundLess2mb6m:
+                              type: string
+                            imeiNr:
+                              type: string
+                            uniqOutBnumQty1m:
+                              type: string
+                            sUsid:
+                              type: string
+                            outCallsQty3m:
+                              type: string
+                            topUpMethod:
+                              type: string
+                        atcLoans:
+                          title: AtcLoans
+                          type: object
+                          properties:
+                            overdue:
+                              type: string
+                            maxTerm:
+                              type: string
+                            qty3m:
+                              type: string
+                            totTerm:
+                              type: string
+                            lastDate:
+                              type: string
+                            qty6m:
+                              type: string
+                            amtTot:
+                              type: string
+                            qty1m:
+                              type: string
+                            lastOverdue:
+                              type: string
+                            firstDate:
+                              type: string
+                            overdraftInterestBalance:
+                              type: string
+                            overdraftFeesBalance:
+                              type: string
+                            daysPastDue:
+                              type: string
+                            overdraftPrincipalBalance:
+                              type: string
+                            overdraftTotalBalance:
+                              type: string
+                        createDt:
+                          type: string
+                        opcoCd:
+                          type: string
+                        maxCompletenessDate:
+                          type: string
+                        ewpAccountHolderTypeCd:
+                          type: string
+                        createDate:
+                          type: string
+                        dateKey:
+                          type: string
+                        source:
+                          type: string
+                        transactionId:
+                          type: string
+                        statusCode:
+                          type: string
+                        timestamp:
+                          type: string
+                        batchId:
+                          type: string
+                        dwPart:
+                          type: string
+                        dwCpart:
+                          type: string
+                        behaviouralScore:
+                          type: string
+                        creditLimitdate:
+                          type: string
+                        customerType:
+                          type: string
+                        behaviouralCategory:
+                          type: string
+                        creditLimit:
+                          type: string
+                        previousLimit:
+                          type: string
+                        imsi:
+                          type: string
+                        sUcid:
+                          type: string
+                        pUsid:
+                          type: string
+                        imei:
+                          type: string
+                        msisdnKey:
+                          type: string
+                        errorCd:
+                          type: string
+                        errorMsg:
+                          type: string
+                        functType:
+                          type: string
+                        sysProcessedTime:
+                          type: integer
+                          format: int32
+                        timestampV:
+                          type: string
+                        pUcid:
+                          type: string
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+      description: Production Server
+  /usage/{id}/deviceOnNetwork:
+    get:
+      tags:
+      - UsageManagement
+      summary: Retrieves device-on-network details including IMEI, model, and activity signals.
+      description: Retrieves device information active on the network for a subscriber, including IMEI, device model, last seen activity, type filters, and optional date range support for fraud detection and customer care use cases.
+      operationId: UsageManagement_get_getDeviceOnNetworkByID_usageiddeviceOnNetwo
+      parameters:
+      - name: enddate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: sourceIdentifier
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: startdate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: type
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HTTP 200 indicating the request succeeded; the response body follows the documented schema for this operation and includes correlation identifiers where applicable for traceability across MTN MADAPI usage management flows.
+          content:
+            application/json:
+              schema:
+                title: DeviceOnNetworkResponse
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                  statusMessage:
+                    type: string
+                  supportMessage:
+                    type: string
+                  transactionId:
+                    type: string
+                  data:
+                    title: DeviceOnNetworkData
+                    type: object
+                    properties:
+                      nonremovable_uicc:
+                        type: string
+                      nonremovable_euicc:
+                        type: string
+                      lte_a:
+                        type: string
+                      tac:
+                        type: string
+                      v_2g:
+                        type: string
+                      browser_type:
+                        type: string
+                      audio_output:
+                        type: string
+                      gps_chipset:
+                        type: string
+                      main_display_dimension:
+                        type: string
+                      design_form:
+                        type: string
+                      internal_memory_size:
+                        type: string
+                      has_ca_bands:
+                        type: string
+                      hardware_edge:
+                        type: string
+                      expanded_memory_type:
+                        type: string
+                      number_of_sim:
+                        type: string
+                      has_5g:
+                        type: string
+                      software_os_version:
+                        type: string
+                      processor:
+                        type: string
+                      last_detection:
+                        type: string
+                      camera_reso:
+                        type: string
+                      has_voice_recording:
+                        type: string
+                      bluetooth:
+                        type: string
+                      software_os_name:
+                        type: string
+                      mms_receiver:
+                        type: string
+                      touch_screen:
+                        type: string
+                      hardware_gprs:
+                        type: string
+                      sim_form_factor:
+                        type: string
+                      microphone:
+                        type: string
+                      software_os_vendor:
+                        type: string
+                      memorycard:
+                        type: string
+                      radiofm:
+                        type: string
+                      v_3gp:
+                        type: string
+                      imsi:
+                        type: string
+                      length:
+                        type: string
+                      has_java_midp:
+                        type: string
+                      brand:
+                        type: string
+                      streaming_video:
+                        type: string
+                      wap_support:
+                        type: string
+                      gps:
+                        type: string
+                      device_category:
+                        type: string
+                      hardware_lte:
+                        type: string
+                      imei:
+                        type: string
+                      main_display_resolution_y:
+                        type: string
+                      dual_sim:
+                        type: string
+                      java_midp:
+                        type: string
+                      latest_supported_data_technology:
+                        type: string
+                      hardware_nfc:
+                        type: string
+                      rcse:
+                        type: string
+                      lte_cat:
+                        type: string
+                      hardware_hsdpa:
+                        type: string
+                      has_sms:
+                        type: string
+                      has_voice_speaker:
+                        type: string
+                      ptt:
+                        type: string
+                      model_name:
+                        type: string
+                      wlan:
+                        type: string
+                      loudspeaker:
+                        type: string
+                      supported_audio_format:
+                        type: string
+                      ua_prof:
+                        type: string
+                      height:
+                        type: string
+                      v_3g:
+                        type: string
+                      hardware_hsupa:
+                        type: string
+                      tbl_dt:
+                        type: integer
+                        format: int32
+                      sim_type:
+                        type: string
+                      ram_capacity:
+                        type: string
+                      camera_type:
+                        type: string
+                      width:
+                        type: string
+                      vilte:
+                        type: string
+                      has_wap_push:
+                        type: string
+                      msisdn_key:
+                        type: integer
+                        format: int64
+                      main_display_resolution_x:
+                        type: string
+                      omadm:
+                        type: string
+                      instmsg:
+                        type: string
+                      gps_antenna:
+                        type: string
+                      camera:
+                        type: string
+                      syncmlds:
+                        type: string
+                      wapversion:
+                        type: string
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+      description: Production Server
+  /usageManagement/v1/caag/{id}:
+    get:
+      tags:
+      - UsageManagement
+      summary: Retrieves grouped CAAG usage records with filters, masking, and paging for subscriber queries.
+      description: Retrieves CAAG call detail records for subscriber usage analysis, billing verification, and call history tracking with configurable filters, optional masking, paging, and protected downstream DAAS routing support.
+      operationId: UsageManagement_get_getCAAG_caagid
+      parameters:
+      - name: endTime
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: filter
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pageNo
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: startTime
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-authorization-claims
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-origin-channelid
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: HTTP 200 indicating the request succeeded; the response body follows the documented schema for this operation and includes correlation identifiers where applicable for traceability across MTN MADAPI usage management flows.
+          content:
+            application/json:
+              schema:
+                title: CAAGGroupedResponse
+                type: object
+                properties:
+                  APIStatus:
+                    title: APIStatus
+                    type: object
+                    properties:
+                      msisdn:
+                        type: string
+                      requestId:
+                        type: string
+                      dateRange:
+                        type: array
+                        items:
+                          type: string
+                      maxRecs:
+                        type: integer
+                        format: int32
+                      numRecs:
+                        type: integer
+                        format: int32
+                      pageNum:
+                        type: integer
+                        format: int32
+                      submittedTime:
+                        type: string
+                      duration:
+                        type: integer
+                        format: int32
+                      statusCode:
+                        type: integer
+                        format: int32
+                      statusMsg:
+                        type: string
+                      kyc_msisdn_random:
+                        type: string
+                      kyc_msisdn:
+                        type: string
+                      key:
+                        type: string
+                  APIData:
+                    type: object
+                    additionalProperties:
+                      type: object
+        '400':
+          description: Bad request. Invalid request parameters, missing required fields, or validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized. Invalid or missing authorization credentials, insufficient permissions, or authentication failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Forbidden. Access denied. The request is valid but the server refuses to perform it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '404':
+          description: Not found. The requested resource was not found or does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error. Unexpected system failure, database connectivity issues, or external service integration problems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '502':
+          description: Bad gateway. The server acting as a gateway received an invalid response from an upstream server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Service unavailable. The server is temporarily unable to handle the request due to maintenance or overload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+      description: Production Server
+components:
+  schemas:
+    rw_co_mtn_usage_aggregator_model_data_UsageDataResponse:
+      title: UsageDataResponse
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+        usageDate:
+          type: string
+        balanceType:
+          type: string
+        usageType:
+          type: string
+        status:
+          type: string
+        usageCharacteristic:
+          type: array
+          items:
+            title: UsageCharacteristic
+            type: object
+            properties:
+              name:
+                type: string
+              valueType:
+                type: string
+              value:
+                type: string
+              units:
+                type: string
+        usageSpecification:
+          title: UsageSpecification
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            duration:
+              type: string
+            amount:
+              type: string
+            startTime:
+              type: string
+            endTime:
+              type: string
+        ratedProductUsage:
+          type: array
+          items:
+            title: RatedProductUsage
+            type: object
+            properties:
+              bucketValueConvertedInAmount:
+                title: CommonUnit
+                type: object
+                properties:
+                  unit:
+                    type: string
+                  value:
+                    type: string
+                  amount:
+                    type: string
+              otherDetails:
+                title: OtherDetails
+                type: object
+                properties:
+                  byteSent:
+                    type: string
+                  byteReceived:
+                    type: string
+                  balanceBefore:
+                    type: string
+                  balanceAfter:
+                    type: string
+                  daysOfvalidity:
+                    type: string
+                  unitBalanceBefore:
+                    type: string
+                  rate:
+                    type: string
+                  usedUnits:
+                    type: string
+                  balanceDetails:
+                    type: array
+                    items:
+                      title: BalanceDetails
+                      type: object
+                      properties:
+                        accountId:
+                          type: string
+                        amountBefore:
+                          type: string
+                        amountAfter:
+                          type: string
+                        amountCharged:
+                          type: string
+                  amountBefore:
+                    type: string
+                  amountAfter:
+                    type: string
+                  usedValue:
+                    type: string
+                  balanceType:
+                    type: string
+        binaryAttachment:
+          type: array
+          items:
+            title: BinaryAttachment
+            type: object
+            properties:
+              id:
+                type: string
+                format: byte
+              href:
+                type: string
+              attachmentType:
+                type: string
+              content:
+                type: string
+                format: byte
+              description:
+                type: string
+              mimeType:
+                type: string
+              name:
+                type: string
+        gsm:
+          title: UsageGsm
+          type: object
+          properties:
+            spend:
+              title: UsageSpend
+              type: object
+              properties:
+                spendM1:
+                  type: string
+                spendM2:
+                  type: string
+                spendM3:
+                  type: string
+                spendM4:
+                  type: string
+                spendM5:
+                  type: string
+                spendM6:
+                  type: string
+                spendM7:
+                  type: string
+                spendM8:
+                  type: string
+                spendM9:
+                  type: string
+                spendM10:
+                  type: string
+                spendM11:
+                  type: string
+                spendM12:
+                  type: string
+                spendMtd:
+                  type: string
+                spendYtd:
+                  type: string
+                spendPersMtd:
+                  type: string
+                spendPersYtd:
+                  type: string
+            avgMonthlySpend:
+              type: string
+        band:
+          title: UsageBand
+          type: object
+          properties:
+            calendarCategoryYtd:
+              type: string
+            calendarCategoryAnnual:
+              type: string
+            personalCategoryAnnual:
+              type: string
+            personalCycleStartDate:
+              type: string
+            personalCycleEndDate:
+              type: string
+            personalCategoryYtd:
+              type: string
+            personalCycleFirstDate:
+              type: string
+        voiceCharge:
+          title: UsageUnit
+          type: object
+          properties:
+            unit:
+              type: string
+            amount:
+              type: string
+        smsCharge:
+          $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_res_UsageUnit'
+        dataCharge:
+          $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_res_UsageUnit'
+        dateTime:
+          type: string
+        networkCd:
+          type: string
+        name:
+          type: string
+        processedTime:
+          type: string
+        transactionDate:
+          type: string
+        daysOfValidity:
+          type: string
+        code:
+          type: string
+        expiryDate:
+          type: string
+        frequency:
+          type: string
+        offerId:
+          type: string
+        calledMSISDN:
+          type: string
+        flag:
+          type: string
+        accessPointName:
+          type: string
+        networkType:
+          type: string
+        chargingContextId:
+          type: string
+        payType:
+          type: string
+        cellId:
+          type: string
+        usageNumber:
+          type: string
+        traffic:
+          type: string
+        operator:
+          type: string
+        systemCd:
+          type: string
+        callDuration:
+          type: string
+        accumulatorCount:
+          type: string
+        eventCallDetail:
+          type: string
+        paymentMethod:
+          type: string
+        incomingDataVolume:
+          type: string
+        bundleName:
+          type: string
+        productName:
+          type: string
+        amount:
+          type: string
+        submittedTime:
+          type: string
+        simActivationDate:
+          type: string
+        lastActivityDate:
+          type: string
+        accountDetails:
+          type: array
+          items:
+            title: AccountDetails
+            type: object
+            properties:
+              id:
+                type: string
+              balanceBefore:
+                type: number
+                format: double
+              balanceAfter:
+                type: string
+              change:
+                type: number
+                format: double
+        additionalInformation:
+          type: array
+          items:
+            title: AdditionalInformation
+            type: object
+            properties:
+              name:
+                type: string
+              value:
+                type: string
+        is_payable_gc:
+          type: string
+        gross_act:
+          type: string
+        is_pending_eyeballing:
+          type: string
+        is_gross_connection:
+          type: string
+        is_ads_gc:
+          type: string
+        is_rejected_sim:
+          type: string
+        date_key:
+          type: string
+        dealer_email:
+          type: string
+        is_med_low_sim:
+          type: string
+        momo_wallet:
+          type: string
+        is_quarantine_sim:
+          type: string
+        msisdn_key:
+          type: string
+        is_smartphone_ads:
+          type: string
+        dealer:
+          type: string
+        sim_swap_request:
+          type: string
+        failed_swap:
+          type: string
+        agent_email:
+          type: string
+        pending_swap:
+          type: string
+        successful_swap:
+          type: string
+        rejected_swap:
+          type: string
+    rw_co_mtn_usage_aggregator_model_banktechCrbRecord_Summary:
+      title: Summary
+      type: object
+      properties:
+        creditHistory:
+          title: CreditHistory
+          type: object
+          properties:
+            mySector:
+              type: integer
+              format: int32
+            allSectors:
+              type: integer
+              format: int32
+        npaAccounts:
+          title: NpaAccounts
+          type: object
+          properties:
+            mySector:
+              type: integer
+              format: int32
+            allSectors:
+              type: integer
+              format: int32
+        npaClosedAccounts:
+          title: NpaClosedAccounts
+          type: object
+          properties:
+            mySector:
+              type: integer
+              format: int32
+            allSectors:
+              type: integer
+              format: int32
+        npaOpenAccounts:
+          title: NpaOpenAccounts
+          type: object
+          properties:
+            mySector:
+              type: integer
+              format: int32
+            allSectors:
+              type: integer
+              format: int32
+        paAccounts:
+          title: PaAccounts
+          type: object
+          properties:
+            mySector:
+              type: integer
+              format: int32
+            allSectors:
+              type: integer
+              format: int32
+        paClosedAccounts:
+          title: PaClosedAccounts
+          type: object
+          properties:
+            mySector:
+              type: integer
+              format: int32
+            allSectors:
+              type: integer
+              format: int32
+        paOpenAccounts:
+          title: PaOpenAccounts
+          type: object
+          properties:
+            mySector:
+              type: integer
+              format: int32
+            allSectors:
+              type: integer
+              format: int32
+    rw_co_mtn_usage_aggregator_model_res_MomoTransactionResponse:
+      title: MomoTransactionResponse
+      type: object
+      properties:
+        msisdn:
+          type: string
+        requestId:
+          type: string
+        dateRange:
+          type: array
+          items:
+            type: string
+        maxRecs:
+          type: string
+        numRecs:
+          type: string
+        pageNum:
+          type: string
+        submittedTime:
+          type: string
+        duration:
+          type: string
+        statusCode:
+          type: string
+        statusMsg:
+          type: string
+        data:
+          type: array
+          items:
+            title: MomoDataResponse
+            type: object
+            properties:
+              amount:
+                type: string
+              date:
+                type: string
+              transaction_status:
+                type: string
+              to_msisdn:
+                type: string
+              date_column:
+                type: string
+              from_msisdn:
+                type: string
+              time_column:
+                type: string
+              fee:
+                type: string
+              from_username:
+                type: string
+              transaction_type:
+                type: string
+              to_username:
+                type: string
+              balance_after:
+                type: string
+              time:
+                type: string
+              balance_before:
+                type: string
+        key:
+          type: string
+    rw_co_mtn_usage_aggregator_model_banktechCrbRecord_AccountList:
+      title: AccountList
+      type: object
+      properties:
+        Account:
+          title: Account
+          type: object
+          properties:
+            accountStatus:
+              type: string
+    rw_co_mtn_usage_aggregator_model_banktechCrbRecord_ScoreOutput:
+      title: ScoreOutput
+      type: object
+      properties:
+        positiveScore:
+          type: integer
+          format: int32
+        probability:
+          type: string
+        grade:
+          type: string
+        reasonCodeAARC1:
+          type: string
+        reasonCodeAARC2:
+          type: string
+        reasonCodeAARC3:
+          type: string
+        reasonCodeAARC4:
+          type: string
+    rw_co_mtn_usage_aggregator_model_banktechCrbRecord_PersonalProfile:
+      title: PersonalProfile
+      type: object
+      properties:
+        crn:
+          type: integer
+          format: int32
+        salutation:
+          type: string
+        surname:
+          type: string
+        otherNames:
+          type: string
+        fullName:
+          type: string
+        nationalID:
+          type: string
+        passportNo:
+          type: string
+        drivingLicenseNo:
+          type: string
+        serviceID:
+          type: string
+        alienID:
+          type: string
+    rw_co_mtn_usage_aggregator_model_res_UsageUnit:
+      title: UsageUnit
+      type: object
+      properties:
+        unit:
+          type: string
+        amount:
+          type: string
+    rw_co_mtn_usage_aggregator_model_banktechCrbRecord_Header:
+      title: Header
+      type: object
+      properties:
+        crbName:
+          type: string
+        reportDate:
+          type: string
+        reportType:
+          type: string
+        productDisplayName:
+          type: string
+        requester:
+          type: string
+        requestNo:
+          type: integer
+          format: int32
+    APIError:
+      title: APIError
+      required:
+      - statusCode
+      - statusMessage
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Error status code
+          example: '400'
+        statusMessage:
+          type: string
+          description: Human-readable error message
+          example: Bad request. Invalid parameters provided.
+        supportMessage:
+          type: string
+          description: Technical support message or error code for troubleshooting
+          example: VALIDATION_ERROR
+        transactionId:
+          type: string
+          description: Transaction identifier for tracking and correlation
+          example: '1234567890'
+        sequenceNo:
+          type: string
+          description: Sequence number for request tracking
+          example: '20250115120000001'
+        timestamp:
+          type: string
+          description: Error timestamp in ISO 8601 format
+          format: date-time
+          example: 2025-01-15 12:00:00+00:00
+        path:
+          type: string
+          description: API endpoint path where the error occurred
+          example: /api/v1/resource
+        method:
+          type: string
+          description: HTTP method of the request that caused the error
+          example: POST
+        downstreamStatusCode:
+          type: string
+          description: Downstream service error code if applicable
+      description: Generic MADAPI error response structure
+      example:
+        statusCode: '400'
+        statusMessage: Bad request. Invalid request parameters, missing required fields, or validation errors.
+        supportMessage: API_ERROR
+        transactionId: '1234567890'
+        sequenceNo: '20250115120000001'
+        timestamp: 2025-01-15 12:00:00+00:00
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token
+          scopes: {}
+    Bearer:
+      type: http
+      description: Bearer token received from OAuth2.0 authentication with the MADAPI
+      scheme: bearer
+      bearerFormat: JWT
+x-refined-from:
+- mtn-group-tmf-usage-management-tmf635.yml
+- mtn-group-usage-management.yml

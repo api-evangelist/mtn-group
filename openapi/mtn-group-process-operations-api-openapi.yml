@@ -1,0 +1,1415 @@
+openapi: 3.2.0
+info:
+  description: To retrieve and schedule delivery information for MTN Customers
+  version: v1.0
+  title: Customer Delivery Booking Process Operations API
+servers:
+- url: https://api.mtn.com/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Process Operations
+paths:
+  /booking/bookingAvailability:
+    get:
+      tags:
+      - Process Operations
+      summary: To retrieve the booking availability
+      description: Booking availability retrieval
+      operationId: Booking Availability
+      parameters:
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          enum:
+          - DSV
+      - name: customerGroupCode
+        in: query
+        required: true
+        description: Customer Group Code
+        schema:
+          type: string
+          maxLength: 10
+      - name: divisionCode
+        in: query
+        required: true
+        description: Division Code
+        schema:
+          type: string
+          maxLength: 5
+      - name: townCode
+        in: query
+        required: true
+        description: Town Code
+        schema:
+          type: string
+          maxLength: 5
+      - name: suburbName
+        in: query
+        required: true
+        description: Suburb Name
+        schema:
+          type: string
+          maxLength: 40
+      - name: clientName
+        in: query
+        required: true
+        description: Client/Card holder Name
+        schema:
+          type: string
+          maxLength: 50
+      - name: clientIdPassport
+        in: query
+        required: true
+        description: Client SA ID or Passport Number
+        schema:
+          type: string
+          maxLength: 20
+      - name: productCode
+        in: query
+        required: false
+        description: Product type code to be delivered
+        schema:
+          type: string
+          maxLength: 6
+      - name: searchRefType
+        in: query
+        required: false
+        description: Reference type indicator 1 = Unique or 2 = Mounties Ref, 3 = Order Number
+        schema:
+          type: integer
+      - name: searchRefValue
+        in: query
+        required: false
+        description: Reference Value to search by for received items
+        schema:
+          type: string
+          maxLength: 50
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bookingAvailabilityResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /booking/externalBooking:
+    post:
+      tags:
+      - Process Operations
+      summary: To validate the booking
+      description: External booking validation
+      operationId: External Booking
+      parameters:
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          enum:
+          - DSV
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/externalBookingResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/externalBookingRequest'
+        required: true
+  /booking/getBooking:
+    get:
+      tags:
+      - Process Operations
+      summary: To update or cancel a booking
+      description: To view a booking
+      operationId: Booking update
+      parameters:
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          enum:
+          - DSV
+      - name: 'divisionCode '
+        in: query
+        required: true
+        description: Division Code for the Customers client
+        schema:
+          type: string
+          maxLength: 6
+      - name: 'customerGroupCode '
+        in: query
+        required: true
+        description: Customer Group Code
+        schema:
+          type: string
+          maxLength: 10
+      - name: clientIDPassport
+        in: query
+        required: true
+        description: ID or Passport number of the client/cardholder
+        schema:
+          type: string
+          maxLength: 30
+      - name: 'createdDate '
+        in: query
+        required: true
+        description: Booking Created Date e.g. 20171204 - 15:45
+        schema:
+          type: string
+          format: date - time
+      - name: referenceNo
+        in: query
+        required: false
+        description: DX301117_425
+        schema:
+          type: string
+          maxLength: 20
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getBookingResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /booking/cancelBooking:
+    post:
+      tags:
+      - Process Operations
+      summary: To cancel a booking request
+      description: Booking Request cancellation
+      operationId: Cancel Booking
+      parameters:
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          enum:
+          - DSV
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cancelBookingResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/cancelBookingRequest'
+        required: true
+  /booking/findBooking:
+    get:
+      tags:
+      - Process Operations
+      summary: To track a booking
+      description: To know the current state of a booking
+      operationId: Track Booking
+      parameters:
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          enum:
+          - DSV
+      - name: customerGroupCode
+        in: query
+        required: true
+        description: Customer Group Code
+        schema:
+          type: string
+          maxLength: 10
+      - name: searchBy
+        in: query
+        required: true
+        description: Table column to search on (See FieldName in Booking Search Value Options table)
+        schema:
+          type: string
+          maxLength: 20
+      - name: 'searchValue '
+        in: query
+        required: true
+        description: Value to search for in table column i.e. 1 = Requested
+        schema:
+          type: string
+          maxLength: 30
+      - name: 'searchDate '
+        in: query
+        required: true
+        description: CreatedDate filter to search from e.g. 20171204
+        schema:
+          type: string
+          format: date
+      - name: 'searchRange '
+        in: query
+        required: true
+        description: Date Range to search By (Day, Week, Month)
+        schema:
+          type: string
+          maxLength: 20
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/findBookingResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /booking/updateBooking:
+    post:
+      tags:
+      - Process Operations
+      summary: To validate booking by Administrator
+      description: Booking validation by Administrator
+      operationId: Update Booking
+      parameters:
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          enum:
+          - DSV
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/updateBookingResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateBookingRequest'
+        required: true
+components:
+  schemas:
+    updateBookingResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+    externalBookingResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            referenceNo:
+              type: string
+              description: Booking Reference No generated
+    timeSlots:
+      type: string
+      example: 5:00AM - 5:00PM, 9:00AM - 5:00PM, 11:25AM - 8:00PM
+    bookingRequest:
+      type: object
+      properties:
+        referenceNo:
+          type: string
+          description: DX171204_425
+          maxLength: 20
+        divisionCode:
+          type: string
+          description: Division Code for the Customers client
+          maxLength: 6
+        customerGroupCode:
+          type: string
+          description: Customer Group Code
+          maxLength: 10
+        deliveryType:
+          type: integer
+          description: Delivery Type 1=F2F, 2=KND, 3=Uplift(Branch), 4 = Locker
+        referenceType:
+          type: integer
+          description: Search Identifier Type 1 = UniqueRef :2 = MountiesRef M;
+        referenceValue:
+          type: integer
+          description: Unique Reference provided by Customers, or MountiesReference provided by DSV
+          maxLength: 50
+        productCode:
+          type: string
+          description: Product Code provided by Customers
+          maxLength: 6
+        deliveryProvinceCode:
+          type: string
+          description: Province Code selected by Customer
+        deliveryTownCode:
+          type: string
+          description: Town Code
+          maxLength: 5
+        deliverySuburb:
+          type: string
+          description: Suburb Name to search by
+          maxLength: 40
+        deliveryPostalCode:
+          type: string
+          description: Product Type Code to be delivered
+          maxLength: 6
+        deliveryCountryCode:
+          type: string
+          description: Country Code for the delivery
+          maxLength: 4
+        deliveryDateTime:
+          type: string
+          format: date-time
+          description: Requested Delivery Date from
+        controllingLocation:
+          type: string
+          maxLength: 6
+          description: Controlling Location for the delivery
+        tripSheetID:
+          type: string
+          maxLength: 30
+          description: Unique identifier of the Tripsheet available for delivery
+        tripServiceTime:
+          type: string
+          maxLength: 20
+          description: Times the Suburb is visited for deliveries
+        clientName:
+          type: string
+          maxLength: 50
+          description: Full name of the client/card holder
+        clientIDPassport:
+          type: string
+          maxLength: 30
+          description: ID or Passport number of the client/cardholder
+        clientContactTel:
+          type: string
+          maxLength: 20
+          description: Contact number of the client/cardholder
+        clientDeliveryAddress1:
+          type: string
+          maxLength: 30
+          description: Client/Cardholder delivery address line 1
+        clientDeliveryAddress2:
+          type: string
+          maxLength: 30
+          description: Client/Cardholder delivery address line 2
+        clientDeliveryAddress3:
+          type: string
+          maxLength: 30
+          description: Client/Cardholder delivery address line 3
+        notificationSMS:
+          type: boolean
+          description: Client/Cardholder SMS notification indicator
+        notificationEmail:
+          type: boolean
+          description: Client/Cardholder Email notification indicator
+        notificationCalendar:
+          type: boolean
+          description: Client/Cardholder Calendar notification indicator
+        notificationCellNo:
+          type: string
+          maxLength: 12
+          description: Client/Cardholder SMS notification cell number
+        notificationEmailAddress:
+          type: string
+          maxLength: 50
+          description: Client/Cardholder Email notification address
+        notificationEmailCalendar:
+          type: string
+          maxLength: 50
+          description: Client/Cardholder Calendar appointment email address
+        clientSpecialInstructions:
+          type: string
+          maxLength: 250
+          description: Client/Cardholder special instructions for delivery
+        failCount:
+          type: integer
+          description: Number of times the Booking failed to slot onto Tripsheet
+        createdDate:
+          type: string
+          description: Date Booking was created
+        updatedDate:
+          type: string
+          description: Date Booking was updated
+        failedDate:
+          type: string
+          description: Date Booking last failed
+        bookedDate:
+          type: string
+          description: Date Booking was slotted onto Tripsheet successfully
+        cancelledDate:
+          type: string
+          description: Date Booking was cancelled by the user
+        deadlineDate:
+          type: string
+          description: Date the Data and Item must be received by
+        adminComments:
+          type: string
+          maxLength: 250
+          description: Comments entered by administrator users
+        messages:
+          type: string
+          maxLength: 250
+          description: List of messages generated during processing
+        status:
+          type: string
+          maxLength: 25
+          description: Status of the Booking Request
+        bookedBy:
+          type: string
+          maxLength: 30
+          description: User who submitted the Booking Request
+        thirdPartyDelivery:
+          type: boolean
+          description: Third Party Delivery Indicator
+        thirdPartyName:
+          type: string
+          maxLength: 50
+          description: John Smith
+        thirdPartyIDNumber:
+          type: string
+          maxLength: 20
+        thirdPartyContactNumber:
+          type: string
+          maxLength: 20
+        thirdPartyEmailAddress:
+          type: string
+          maxLength: 60
+        GPSX:
+          type: string
+          maxLength: 20
+          description: Latitude
+        GPSY:
+          type: string
+          maxLength: 20
+          description: Longitude
+    cancelBookingResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+    cancelBookingRequest:
+      type: object
+      properties:
+        referenceNo:
+          type: string
+          maxLength: 20
+          description: DX171130_425
+        divisionCode:
+          type: string
+          maxLength: 6
+          description: Division Code = MSD
+        customerGroupCode:
+          type: string
+          maxLength: 10
+          description: Customer Group Code
+        clientIDPassport:
+          type: string
+          maxLength: 20
+          description: '7012125181080'
+        cancellationReason:
+          type: string
+          maxLength: 100
+          description: Card no longer required
+    bookingAvailabilitySlots:
+      type: object
+      properties:
+        dailyTripId:
+          type: string
+          description: Unique daily trip GUID tripsheet identifier
+          maxLength: 68
+        townCode:
+          type: string
+          maxLength: 3
+        suburbName:
+          type: string
+          maxLength: 30
+        serviceDate:
+          type: string
+          format: date-time
+        serviceTime:
+          type: string
+          description: This is the service start time and end time
+          maxLength: 20
+          example: 9:00AM - 5:00PM
+        availableSlots:
+          type: integer
+          description: Number of available slots of Daily Trip Sheet
+        additionalSuburbNotes:
+          type: string
+          description: Additional suburb notes that are captured when setting up the delivery suburbs.
+          maxLength: 258
+    updateBookingRequest:
+      type: object
+      properties:
+        referenceNo:
+          type: string
+          maxLength: 20
+          description: DX171204_425
+        requestType:
+          type: integer
+          description: Type of request - 1 = New (Item does not exist in DSV DB yet):2 = Existing (Item exists in DSV DB). Defaults to 2 if not submitted
+        divisionCode:
+          type: string
+          maxLength: 6
+          description: Division Code for the Customers client
+        customerGroupCode:
+          type: string
+          maxLength: 10
+          description: Customer Group Code
+        deliveryTownCode:
+          type: string
+          maxLength: 5
+          description: Town Code
+        deliverySuburb:
+          type: string
+          maxLength: 40
+          description: Suburb Name to search by
+        clientName:
+          type: string
+          maxLength: 50
+          description: Full name of the client/card holder
+        clientIDPassport:
+          type: string
+          maxLength: 30
+          description: ID or Passport number of the client/cardholder
+        clientContactNo:
+          type: string
+          maxLength: 20
+          description: Contact number of the client/cardholder
+        clientDeliveryAddress1:
+          type: string
+          maxLength: 30
+          description: Client/Cardholder delivery address line 1. If a Branch or Locker Delivery, the branch or locker code must be supplied, followed by a pipe character (“|”) then the name of the locker or branch. (e.g. “123456|NorthRidingBranch”)
+        clientDeliveryAddress2:
+          type: string
+          maxLength: 30
+          description: Client/Cardholder delivery address line 2
+        clientDeliveryAddress3:
+          type: string
+          maxLength: 30
+          description: Client/Cardholder delivery address line 3
+        referenceType:
+          type: integer
+          description: Search Identifier Type 1=UniqueRef :2=MountiesReferenceID
+        referenceValue:
+          type: string
+          maxLength: 50
+          description: Unique Reference provided by Customers, or MountiesReference provided by DSV
+        productCode:
+          type: string
+          maxLength: 6
+          description: Product Code provided by Customers
+        deliveryPostalCode:
+          type: string
+          description: Product Type Code to be delivered
+        deliveryCountryCode:
+          type: string
+          description: Country Code for the delivery (“ZA”)
+        deliveryDateTime:
+          type: string
+          format: date - time
+          description: Requested Delivery Date from BookingAvailability return data. (Not required for Branch or Locker Deliveries)
+        tripSheetID:
+          type: string
+          maxLength: 30
+          description: Unique identifier of the Tripsheet available for delivery (Not required for Branch or Locker Deliveries)
+        tripServiceTime:
+          type: string
+          maxLength: 20
+          description: Times the Suburb is visited for deliveries (Not required for Branch or Locker Deliveries)
+        notificationSMS:
+          type: boolean
+          description: Client/Cardholder SMS notification indicator
+        notificationEmail:
+          type: boolean
+          description: Client/Cardholder Email notification indicator
+        notificationCalendar:
+          type: boolean
+          description: Client/Cardholder Calendar notification indicator
+        notificationCellNo:
+          type: string
+          maxLength: 12
+          description: Client/Cardholder SMS notification cell number
+        notificationEmailAddress:
+          type: string
+          description: Client/Cardholder Email notification address
+        notificationEmailCalendar:
+          type: string
+          description: Client/Cardholder Calendar appointment email address
+        clientSpecialInstructions:
+          type: string
+          description: Client/Cardholder special instructions for delivery
+        actionUser:
+          type: string
+          description: User who submitted the Booking Request. For external customers, please put your customer group code in here so we can track external submissions.
+        statusID:
+          type: string
+          description: Status of the Booking Request (see table 5.3). Should be 1, 2 or 3.
+        deliveryType:
+          type: integer
+          description: Delivery Type 1=F2F, 2=KND, 3=Uplift/Branch, 4=Locker
+        deliveryProvinceCode:
+          type: integer
+          description: Province Code selected by Customer
+        adminComments:
+          type: string
+          description: Comments entered by administrator users
+        thirdPartyDelivery:
+          type: boolean
+          description: Third Party Delivery Indicator
+        thirdPartyName:
+          type: string
+          description: John Smith
+        thirdPartyIDNumber:
+          type: string
+          description: '7012125161080'
+        thirdPartyContactNumber:
+          type: string
+          description: 0823335555
+        thirdPartyEmailAddress:
+          type: string
+          description: John.smith@mailme.com
+        GPSX:
+          type: string
+          description: Latitude
+        GPSY:
+          type: string
+          description: Longitude
+    getBookingResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            bookingRequest:
+              type: array
+              items:
+                $ref: '#/components/schemas/bookingRequest'
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/messages'
+    externalBookingRequest:
+      type: object
+      properties:
+        referenceNo:
+          type: string
+          description: DX301117_425 (DEX + BookingRequest.CreatedDate.ShortDate + “_” + BookingID)
+        requestType:
+          type: integer
+          description: 'Type of request - 1 = New (Item does not exist in DSV DB yet): 2 = Existing (Item exists in DSV DB). Defaults to 2 if not submitted.'
+        deliveryType:
+          type: integer
+          description: Delivery Type 1=F2F, 2=KND, 3=Uplift(Branch), 4 = Locker
+        divisionCode:
+          type: string
+          description: Division Code for the Customers client (Must be MSD)
+        customerGroupCode:
+          type: string
+          description: Customer Group Code
+        referenceType:
+          type: integer
+          description: 'Search Identifier Type 1 = UniqueRef : 2 = MountiesReferenceID; 0 = no reference value provided (** Required for RequestType =2)'
+        referenceValue:
+          type: string
+          description: Unique Reference provided by Customers, or MountiesReference provided by DSV, (** Required for RequestType =2)
+        productCode:
+          type: string
+          description: Product Code provided by Customers
+        deliveryProvinceCode:
+          type: integer
+          description: Province Code selected by Customer
+        deliveryTownCode:
+          type: string
+          description: Town Code
+        deliverySuburb:
+          type: string
+          description: Suburb name to search by
+        deliveryPostalCode:
+          type: string
+          description: Product Type Code to be delivered
+        deliveryCountryCode:
+          type: string
+          description: Country Code for the delivery
+        deliveryDateTime:
+          type: string
+          description: Requested Delivery Date from BookingAvailability return data. (*Not required for Branch or Locker Deliveries)
+          format: date-time
+        tripSheetId:
+          type: string
+          description: Unique identifier of the Tripsheet available for delivery from BookingAvailability return data (Not required for Branch or Locker Deliveries)
+        tripServiceTime:
+          type: string
+          description: Times the Suburb is visited for deliveries (Not required for Branch or Locker Deliveries)
+        clientName:
+          type: string
+          description: Full name of the client/card holder
+        clientIdPassport:
+          type: string
+          description: ID or Passport number of the client/cardholder
+        clientContactNo:
+          type: string
+          description: Contact number of the client/cardholder.
+        clientDeliveryAddress1:
+          type: string
+          description: Client/Cardholder delivery address line 1. If a Branch or Locker Delivery, the branch or locker code must be supplied, followed by a pipe character (“|”) then the name of the locker or branch. (e.g. “123456|NorthRidingBranch”)
+        clientDeliveryAddress2:
+          type: string
+          description: Client/Cardholder delivery address line 2
+        clientDeliveryAddress3:
+          type: string
+          description: Client/Cardholder delivery address line 3
+        notificationSMS:
+          type: boolean
+          description: Client/Cardholder SMS notification indicator
+        notificationEmail:
+          type: boolean
+          description: Client/Cardholder Email notification indicator
+        notificationCalendar:
+          type: boolean
+          description: Client/Cardholder Calendar notification indicator
+        notificationCellNo:
+          type: string
+          description: Client/Cardholder SMS notification cell number
+        notificationEmailAddress:
+          type: string
+          description: Client/Cardholder Email notification address
+        notificationEmailCalendar:
+          type: string
+          description: Client/Cardholder Calendar appointment email address
+        clientSpecialInstructions:
+          type: string
+          description: Client/Cardholder special instructions for delivery
+        adminComments:
+          type: string
+          description: Administrator user comments captured for booking
+        bookedBy:
+          type: string
+          description: User who submitted the Booking Request. For external customers, please put your customer group code in here so we can track external submissions.
+        thirdPartyDelivery:
+          type: boolean
+          description: Third Party Delivery Indicator
+        thirdPartyName:
+          type: string
+          description: Third Party Name
+        thirdPartyIdNumber:
+          type: string
+          description: Third Party Id Number
+        thirdPartyContactNumber:
+          type: string
+          description: Third Party Contact Number
+        thirdPartyEmailAddress:
+          type: string
+          description: Third Party Email Address
+        gpsX:
+          type: string
+          description: Latitude
+        gpsY:
+          type: string
+          description: Longitude
+    serviceDays:
+      type: object
+      properties:
+        version:
+          type: string
+          maxLength: 10
+        mon:
+          type: string
+          maxLength: 1
+          example: Y
+        tue:
+          type: string
+          maxLength: 1
+          example: Y
+        wed:
+          type: string
+          maxLength: 1
+          example: Y
+        thu:
+          type: string
+          maxLength: 1
+          example: Y
+        fri:
+          type: string
+          maxLength: 1
+          example: Y
+        sat:
+          type: string
+          maxLength: 1
+          example: Y
+        sun:
+          type: string
+          maxLength: 1
+          example: Y
+        pubHol:
+          type: string
+          maxLength: 1
+          example: Y
+        monServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        tueServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        wedServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        thuServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        friServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        satServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        sunServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        pHServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        createdDate:
+          type: string
+          format: date-time
+    bookingRequests:
+      type: object
+      properties:
+        referenceNo:
+          type: string
+          description: DX171204_425
+          maxLength: 20
+        divisionCode:
+          type: string
+          description: Division Code for the Customers client
+          maxLength: 6
+        customerGroupCode:
+          type: string
+          description: Customer Group Code
+          maxLength: 10
+        deliveryType:
+          type: integer
+          description: Delivery Type 1=F2F, 2=KND, 3=Uplift(Branch), 4 = Locker
+        referenceType:
+          type: integer
+          description: Search Identifier Type 1 = UniqueRef :2 = MountiesRef M;
+        referenceValue:
+          type: integer
+          description: Unique Reference provided by Customers, or MountiesReference provided by DSV
+          maxLength: 50
+        productCode:
+          type: string
+          description: Product Code provided by Customers
+          maxLength: 6
+        deliveryProvinceCode:
+          type: string
+          description: Province Code selected by Customer
+        deliveryTownCode:
+          type: string
+          description: Town Code
+          maxLength: 5
+        deliverySuburb:
+          type: string
+          description: Suburb Name to search by
+          maxLength: 40
+        deliveryPostalCode:
+          type: string
+          description: Product Type Code to be delivered
+          maxLength: 6
+        deliveryCountryCode:
+          type: string
+          description: Country Code for the delivery
+          maxLength: 4
+        deliveryDateTime:
+          type: string
+          format: date-time
+          description: Requested Delivery Date from
+        controllingLocation:
+          type: string
+          maxLength: 6
+          description: Controlling Location for the delivery
+        tripSheetID:
+          type: string
+          maxLength: 30
+          description: Unique identifier of the Tripsheet available for delivery
+        tripServiceTime:
+          type: string
+          maxLength: 20
+          description: Times the Suburb is visited for deliveries
+        clientName:
+          type: string
+          maxLength: 50
+          description: Full name of the client/card holder
+        clientIDPassport:
+          type: string
+          maxLength: 30
+          description: ID or Passport number of the client/cardholder
+        clientContactTel:
+          type: string
+          maxLength: 20
+          description: Contact number of the client/cardholder
+        clientDeliveryAddress1:
+          type: string
+          maxLength: 30
+          description: Client/Cardholder delivery address line 1
+        clientDeliveryAddress2:
+          type: string
+          maxLength: 30
+          description: Client/Cardholder delivery address line 2
+        clientDeliveryAddress3:
+          type: string
+          maxLength: 30
+          description: Client/Cardholder delivery address line 3
+        notificationSMS:
+          type: boolean
+          description: Client/Cardholder SMS notification indicator
+        notificationEmail:
+          type: boolean
+          description: Client/Cardholder Email notification indicator
+        notificationCalendar:
+          type: boolean
+          description: Client/Cardholder Calendar notification indicator
+        notificationCellNo:
+          type: string
+          maxLength: 12
+          description: Client/Cardholder SMS notification cell number
+        notificationEmailAddress:
+          type: string
+          maxLength: 50
+          description: Client/Cardholder Email notification address
+        notificationEmailCalendar:
+          type: string
+          maxLength: 50
+          description: Client/Cardholder Calendar appointment email address
+        clientSpecialInstructions:
+          type: string
+          maxLength: 250
+          description: Client/Cardholder special instructions for delivery
+        failCount:
+          type: integer
+          description: Number of times the Booking failed to slot onto Tripsheet
+        createdDate:
+          type: string
+          description: Date Booking was created
+        updatedDate:
+          type: string
+          description: Date Booking was updated
+        failedDate:
+          type: string
+          description: Date Booking last failed
+        bookedDate:
+          type: string
+          description: Date Booking was slotted onto Tripsheet successfully
+        cancelledDate:
+          type: string
+          description: Date Booking was cancelled by the user
+        deadlineDate:
+          type: string
+          description: Date the Data and Item must be received by
+        adminComments:
+          type: string
+          maxLength: 250
+          description: Comments entered by administrator users
+        messages:
+          type: string
+          maxLength: 250
+          description: List of messages generated during processing
+        statusDescription:
+          type: string
+          maxLength: 25
+          description: Status of the Booking Request
+        bookedBy:
+          type: string
+          maxLength: 30
+          description: User who submitted the Booking Request
+        thirdPartyDelivery:
+          type: boolean
+          description: Third Party Delivery Indicator
+        thirdPartyName:
+          type: string
+          maxLength: 50
+          description: John Smith
+        thirdPartyIDNumber:
+          type: string
+          maxLength: 20
+        thirdPartyContactNumber:
+          type: string
+          maxLength: 20
+        thirdPartyEmailAddress:
+          type: string
+          maxLength: 60
+        GPSX:
+          type: string
+          maxLength: 20
+          description: Latitude
+        GPSY:
+          type: string
+          maxLength: 20
+          description: Longitude
+    messages:
+      type: object
+      properties:
+        oneBookingRequestFound:
+          type: string
+          maxLength: 10
+    findBookingResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            bookingRequest:
+              type: array
+              items:
+                $ref: '#/components/schemas/bookingRequests'
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/messages'
+    bookingAvailabilityResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            bookingAvailabilitySlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/bookingAvailabilitySlots'
+            serviceDays:
+              type: array
+              items:
+                $ref: '#/components/schemas/serviceDays'
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        status:
+          type: string
+          description: Status code returned by provider system
+        error:
+          type: string
+          description: Status description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

@@ -1,0 +1,338 @@
+openapi: 3.2.0
+info:
+  description: A suite of apis for customer validation.
+  version: v1
+  title: MoMo Verification Validate using QnA API
+servers:
+- url: https://api.mtn.com/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Validate using QnA
+paths:
+  /verify/{customerId}/generateQnA:
+    get:
+      tags:
+      - Validate using QnA
+      summary: Generate Q&A for ID based validation
+      description: Validates the MoMo account for performing PIN Reset
+      parameters:
+      - name: customerId
+        in: path
+        description: ID value of the Accountholder i.e. MSISDN - the format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        description: Transaction ID
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: X-Authorization
+        in: header
+        description: Encrypted ECW credentials
+        required: false
+        schema:
+          type: string
+      - name: accountHolderIdNumber
+        in: query
+        description: Identification Number of the consumer who wants to register for MoMo or do a Pin Reset. e.g. 8512285568081
+        schema:
+          type: string
+      - name: requestIdentifier
+        in: query
+        description: requestIdentifier will identifies the request is MoMo registration or Zero balance pin reset.
+        schema:
+          type: string
+          enum:
+          - Registration
+          - PinReset
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/generateQAResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /verify/{customerId}/validateQnA:
+    post:
+      tags:
+      - Validate using QnA
+      summary: Validate Q&A for ID based validation
+      description: Validates the MoMo account for performing PIN Reset
+      parameters:
+      - name: customerId
+        in: path
+        description: ID value of the Accountholder i.e. MSISDN - the format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        description: Transaction ID
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: X-Authorization
+        in: header
+        description: Encrypted ECW credentials
+        required: false
+        schema:
+          type: string
+      - name: accountHolderIdNumber
+        in: query
+        description: Identification Number of the consumer who wants to register for MoMo or do a Pin Reset.
+        schema:
+          type: string
+      - name: requestId
+        in: query
+        description: ID which is generated during the get Q&A call, needs to be passed here
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateQnAResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QnABody'
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /customers/27831234567/generateQnA
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+    ValidateQnAResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code
+        statusMessage:
+          type: string
+          description: HTTP error description
+        customerId:
+          type: string
+          example: MTN123456
+          description: Id provided in the input
+        transactionId:
+          type: string
+          description: Transaction Id of the request
+    QnABody:
+      type: object
+      properties:
+        Answers:
+          type: array
+          description: Contains list of question and answers to validate the customer profile. Source system must pick the questions verificaion process, select the answers from the options and send the request to SOA.
+          items:
+            type: object
+            properties:
+              questionId:
+                type: string
+                description: Unique ID generated at Contactable while generating question. Source system must pass this question Id when validating the profile. e.g. 972bcefb-1dfd-4526-9dc1-21429e234abb
+              answerId:
+                type: string
+                description: Unique ID generated at Contactable while generating answer. Source system must pass this question Id when validating the profile. e.g. fdccbded-6414-46c1-8493-acf1a3d00d7a
+    dataQA:
+      type: array
+      description: This contains the list of challenging questions (3 questions as of now) that are related to the data provided at the time of generating ID number (accountHolderIdNumber) at the corresponding registration office. These questions will be generated only if the valid id is provided for the MoMo registration.
+      items:
+        type: object
+        properties:
+          requestId:
+            type: string
+            description: Unique ID generated by Provider system, this same requestId is to be sent in the validate Q&A call
+          questionId:
+            type: string
+            description: Unique ID generated while generating question. Source system must pass this question Id when validating the profile.
+          questionText:
+            type: string
+            description: Describes the question that is being asked to validate the user profile for customer registration. e.g. What is your first name?
+          answers:
+            type: array
+            description: Contains multiple answers(3 answers for each questio). User needs to pick 1 answer from the answers and validate in subsequent call.
+            items:
+              type: object
+              properties:
+                answerId:
+                  type: string
+                  description: Unique ID generated while generating answer. Source system must pass this question Id when validating the profile
+                answerText:
+                  type: string
+                  description: The answer that can be selected by the user to  validate the registration process. e.g. SONJA
+    generateQAResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code
+        statusMessage:
+          type: string
+          description: HTTP error description
+        customerId:
+          type: string
+          example: MTN123456
+          description: Id provided in the input
+        transactionId:
+          type: string
+          description: Transaction Id of the request
+        data:
+          $ref: '#/components/schemas/dataQA'
+        _links:
+          $ref: '#/components/schemas/ValidateQA_links'
+    ValidateQA_links:
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/ValidateQA_links_self'
+      description: Relevant links to the Accoutholder Profile.
+    ValidateQA_links_self:
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://host:port/v1/verification/12345
+          description: Hyperlink to access the Accountholder's Profile.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

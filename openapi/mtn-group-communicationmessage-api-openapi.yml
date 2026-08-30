@@ -1,0 +1,943 @@
+openapi: 3.2.0
+info:
+  title: Mtn Group Communication Message API
+  version: '1.0'
+  description: 'Operations tagged communicationMessage across 3 of this provider''s published API definitions: mtn-group-communication-management-v1.yml, mtn-group-rcs-communication.yml, mtn-group-tmf681-communication-management.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.mtn.com/v1
+- url: https://serverRoot/tmf-api/communicationManagement/v4/
+tags:
+- name: communicationMessage
+paths:
+  /chat/inboundMessage:
+    post:
+      operationId: createInboundMessage
+      summary: Creates a inbound CommunicationMessage
+      description: This operation creates a inbound CommunicationMessage entity.
+      tags:
+      - communicationMessage
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunicationMessage'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommunicationMessage_inbound'
+        description: The CommunicationMessage to be created
+        required: true
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v1
+  /chat/outboundMediaUpload/{communicationId}:
+    post:
+      operationId: UploadMedia
+      summary: Uploads media content
+      description: This operation uploads media file .
+      tags:
+      - communicationMessage
+      parameters:
+      - name: communicationId
+        description: The Communication Id to which the media is to be sent
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: name
+        description: The media filename that is to be sent
+        in: header
+        schema:
+          type: string
+      - name: mediaType
+        description: The media type of the file that is to be sent
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        description: The file contents to be transferred
+        required: true
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v1
+  /chat/outboundMessageWithMedia:
+    post:
+      operationId: Send message with media reference
+      summary: Sends message with media reference
+      description: This operation Sends message with media reference.
+      tags:
+      - communicationMessage
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageMediaResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommunicationMessage_outboundMessageWithMedia'
+        description: The CommunicationMessage to be created
+        required: true
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v1
+  /communicationMessage:
+    post:
+      operationId: createCommunicationMessage
+      summary: Creates a 'CommunicationMessage'
+      tags:
+      - communicationMessage
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunicationMessage_2'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommunicationMessage_Create2'
+        description: The Communication Message to be created
+    servers:
+    - url: https://api.mtn.com/v1
+components:
+  schemas:
+    TextReply:
+      type: object
+      properties:
+        channel:
+          type: string
+        messageId:
+          type: string
+        relatedMessageId:
+          type: string
+        relatedClientMessageId:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+        encryptionKey:
+          type: string
+        whatsapp:
+          $ref: '#/components/schemas/WhatsAppContent'
+        charset:
+          type: string
+        content:
+          type: string
+    WhatsAppContent:
+      type: object
+      properties:
+        profileName:
+          type: string
+    CommunicationMessage:
+      allOf:
+      - required:
+        - statusCode
+        - statusMessage
+        - integrationId
+        properties:
+          statusCode:
+            type: string
+            description: Status of the transaction •  0- Success •  Any value other than 0- Failure
+            example: '0000'
+          statusMessage:
+            type: string
+            description: Indicates status of transaction
+          supportMessage:
+            type: string
+            description: Support message
+          integrationId:
+            type: string
+            description: Unique integration Id
+    CommunicationMessage_inbound:
+      type: object
+      properties:
+        integrationId:
+          type: string
+        integrationName:
+          type: string
+        event:
+          $ref: '#/components/schemas/ReplyEvents'
+    MessagingTemplate:
+      type: array
+      items:
+        properties:
+          contentType:
+            type: string
+            example: Attachment
+          attachment:
+            type: object
+            properties:
+              mediaType:
+                type: string
+              filename:
+                type: string
+              mime:
+                type: string
+              url:
+                type: string
+    MessageMediaResponse:
+      allOf:
+      - required:
+        - apiMessageId
+        - accepted
+        - error
+        properties:
+          apiMessageId:
+            type: string
+            description: Unique identifier for every file upload response
+          accepted:
+            type: boolean
+            description: Status of the upload
+          to:
+            type: string
+            description: Sender Id
+          error:
+            type: string
+            description: Indicates error status
+    ReferenceMediaReply:
+      required:
+      - files
+      type: object
+      properties:
+        channel:
+          type: string
+        messageId:
+          type: string
+        relatedMessageId:
+          type: string
+        relatedClientMessageId:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+        encryptionKey:
+          type: string
+        whatsapp:
+          $ref: '#/components/schemas/WhatsAppContent'
+        caption:
+          type: string
+        files:
+          type: array
+          description: 'An array of the file object with a list of media items that is attached to the inbound media message. This parameter is only applicable to MO event callbacks for media by reference '
+          items:
+            $ref: '#/components/schemas/ReferenceMediaFile'
+    CommunicationMessage_outboundMessageWithMedia:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          example: Text
+        text:
+          type: string
+          description: Text Content
+        channel:
+          type: object
+          properties:
+            id:
+              type: string
+            platform:
+              type: string
+              example: Open
+            type:
+              type: string
+              example: Private
+            to:
+              type: object
+              properties:
+                id:
+                  type: string
+                idType:
+                  type: string
+                nickname:
+                  type: string
+            from:
+              type: object
+              properties:
+                id:
+                  type: string
+                idType:
+                  type: string
+                nickname:
+                  type: string
+            time:
+              type: string
+              format: date-time
+            messageId:
+              type: string
+        content:
+          $ref: '#/components/schemas/MessagingTemplate'
+    MediaResponse:
+      allOf:
+      - required:
+        - fileId
+        - accepted
+        - error
+        properties:
+          fileId:
+            type: string
+            description: Unique identifier for every file upload response
+          accepted:
+            type: boolean
+            description: Status of the upload
+          error:
+            type: string
+            description: Indicates error status
+    MediaReply:
+      type: object
+      properties:
+        channel:
+          type: string
+        messageId:
+          type: string
+        relatedMessageId:
+          type: string
+        relatedClientMessageId:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+        encryptionKey:
+          type: string
+        whatsapp:
+          $ref: '#/components/schemas/WhatsAppContent'
+        caption:
+          type: string
+        anyOf:
+          $ref: '#/components/schemas/ReferenceMediaReply'
+    ReferenceMediaFile:
+      required:
+      - byteSize
+      - contentType
+      - downloadUrl
+      type: object
+      properties:
+        contentType:
+          type: string
+          description: Media content type for the media item
+        downloadUrl:
+          type: string
+          description: Download URL to be used for downloading the media item
+        sha256Hash:
+          type: string
+        byteSize:
+          type: integer
+          description: Byte size of the file to be downloaded
+          format: int64
+        fileName:
+          type: string
+          description: Original file name (if it is available)
+    ReplyEvents:
+      type: object
+      properties:
+        moText:
+          type: array
+          items:
+            $ref: '#/components/schemas/TextReply'
+        moMedia:
+          type: array
+          items:
+            $ref: '#/components/schemas/MediaReply'
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+          example: 2019-08-23T07:29:25.593+0000
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/<path>
+    Attachment:
+      type: object
+      description: Complements the description of an element (for instance a product) through video, pictures...
+      properties:
+        description:
+          type: string
+          description: A narrative text describing the content of the attachment
+        href:
+          type: string
+          description: Reference of the attachment
+        id:
+          type: string
+          description: Unique identifier of the attachment
+        type:
+          type: string
+          description: Attachment type such as video, picture
+        url:
+          type: string
+          description: Uniform Resource Locator, is a web page address (a subset of URI)
+    CommunicationMessage_2:
+      type: object
+      description: 'Communication message means a notification approach in the format of a message which can be dispatched (sent) to the certain user by the system with the content which can be felt and understood by the recipient. The user can be either a final customer or a customer service agent. The message can reach the customer in different interaction channels, including: email, short message, mobile app notification (push).'
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+        customerId:
+          type: string
+          description: CustomerId provided in the input
+          example: string
+        statusMessage:
+          type: string
+          description: Description of the processing result. Forexample incase there was an error, this will have the message showing the error that happened
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        sendTime:
+          type: string
+          format: date-time
+          description: The time of sending communication message
+    TimePeriod:
+      type: object
+      description: A base / value business entity used to represent a period of time between two timepoints.
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+          description: An instant of time, ending at the TimePeriod.
+        startDateTime:
+          type: string
+          format: date-time
+          description: An instant of time, starting at the TimePeriod
+    CommunicationRequestCharacteristic:
+      type: object
+      description: <b><i>The values of parameters which are used in the content if the content contains them.</i></b>
+      properties:
+        name:
+          type: string
+          description: Content parameter identifier
+        value:
+          type: string
+          description: Content parameter value
+        cardOrientation:
+          type: string
+          description: Content parameter identifier
+        imageAlignment:
+          type: string
+          description: Content parameter value
+        mediahref:
+          type: string
+          description: Content parameter identifier
+        mediaContent:
+          type: string
+          description: Content parameter value
+        mediaFileSize:
+          type: string
+          description: Content parameter value
+        thumbnailContentType:
+          type: string
+          description: Content parameter value
+        thumbnailFileSize:
+          type: string
+          description: Content parameter identifier
+        thumbnailhref:
+          type: string
+          description: Content parameter identifier
+        height:
+          type: string
+          description: Content parameter value
+        content:
+          type: string
+          description: Content parameter value
+        title:
+          type: string
+          description: Content parameter value
+        description:
+          type: string
+          description: Content parameter value
+    RelateParty:
+      type: object
+      description: <b><i>The party entity of the receiver (user)</i></b>
+      properties:
+        href:
+          type: string
+          description: Hypertext Reference of the party
+        id:
+          type: string
+          description: Unique identifier of party
+        name:
+          type: string
+          description: name of the party
+        postBack:
+          type: string
+          description: Send back information
+        role:
+          type: string
+          description: role of the party (customer, partner, etc)
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: Validity period of the party
+    Receiver:
+      type: object
+      description: <b><i>Receivers of the communication message.</i></b>
+      properties:
+        appUserId:
+          type: string
+          description: ID of the mobile app user
+        email:
+          type: string
+          description: Receiver address of email, if the communication type is email
+        id:
+          type: string
+          description: ID of the receiver
+        ip:
+          type: string
+          description: IP address of the receiver
+        name:
+          type: string
+          description: Name of the receiver
+        phoneNumber:
+          type: string
+          description: Phone number of the receiver, if the communication type is SMS.
+        party:
+          $ref: '#/components/schemas/RelateParty'
+    CommunicationMessage_Create2:
+      type: object
+      description: 'Communication message means a notification approach in the format of a message which can be dispatched (sent) to the certain user by the system with the content which can be felt and understood by the recipient. The user can be either a final customer or a customer service agent. The message can reach the customer in different interaction channels, including: email, short message, mobile app notification (push).
+
+        Skipped properties: id,href'
+      required:
+      - type
+      - content
+      - sender
+      - receiver
+      properties:
+        productId:
+          type: string
+          description: The promotion/communication Id.
+        content:
+          type: string
+          description: The content of the communication message.
+        description:
+          type: string
+          description: Description for the whole object
+        status:
+          type: string
+          description: Status of communication message
+        subject:
+          type: string
+          description: "The title of the message. \nIt is necessary for the email and mobile app push."
+        characteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommunicationRequestCharacteristic'
+        receiver:
+          type: array
+          items:
+            $ref: '#/components/schemas/Receiver'
+        sender:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sender'
+        attachment:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+    Sender:
+      type: object
+      description: <b><i>Sender of the communication message.</i></b>
+      properties:
+        email:
+          type: string
+          description: Sender address of email, if the communication type is email
+        id:
+          type: string
+          description: ID of the sender
+        name:
+          type: string
+          description: Name of the sender
+        phoneNumber:
+          type: string
+          description: Phone number of the sender, if the communication type is SMS.
+        party:
+          $ref: '#/components/schemas/RelateParty'
+    Error_2:
+      required:
+      - statusCode
+      - statusMessage
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+    CommunicationMessageStateType:
+      type: string
+      description: Communication message state type
+      enum:
+      - initial
+      - inProgress
+      - completed
+      - cancelled
+      - failed
+    Attachment_2:
+      type: object
+      description: Complements the description of an element (for instance a product) through video, pictures...
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this particular attachment
+        content:
+          type: string
+          description: The actual contents of the attachment object, if embedded, encoded as base64
+        url:
+          type: string
+          description: Uniform Resource Locator, is a web page address (a subset of URI)
+        name:
+          type: string
+          description: The name of the attachment
+        attachmentType:
+          type: string
+          description: Attachment type such as video, picture
+        mimeType:
+          type: string
+          description: Attachment mime type such as extension file for video, picture and document
+    SendEmail_Response:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        data:
+          type: object
+          properties:
+            emailIdReference:
+              type: string
+              description: Reference number for Email from UNE
+    Receiver_2:
+      type: object
+      description: Receivers of the communication message.
+      properties:
+        email:
+          type: string
+          description: Receiver address of email, if the communication type is email.
+        appUserId:
+          type: string
+          description: ID of the mobile app user
+    Characteristic:
+      type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the characteristic
+        name:
+          type: string
+          description: Name of the characteristic
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+    Sender_2:
+      type: object
+      description: Sender of the communication message.
+      properties:
+        id:
+          type: string
+          description: ID of the sender
+        name:
+          type: string
+          description: Name of the sender
+    CommunicationMessage_Create:
+      type: object
+      description: 'Communication message means a notification approach in the format of a message which can be dispatched (sent) to the certain user by the system with the content which can be felt and understood by the recipient. The user can be either a final customer or a customer service agent. The message can reach the customer in different interaction channels, including: email, short message, mobile app notification (push).
+
+        Skipped properties: id,href'
+      required:
+      - content
+      - receiver
+      - sender
+      - messageType
+      properties:
+        content:
+          type: string
+          description: The content of the communication message
+        description:
+          type: string
+          description: Description for the whole object
+        sendTime:
+          type: string
+          format: date-time
+          description: The time of sending communication message
+        sendTimeComplete:
+          type: string
+          format: date-time
+          description: The time of completion of sending communication message
+        useCaseId:
+          type: string
+          description: Use case ID for UNE
+        subUseCaseId:
+          type: string
+          description: Sub use case ID for UNE
+        attachment:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment_2'
+          description: Any attachment associated with this message
+        characteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic'
+          description: Any additional characteristic(s) of this message
+        receiver:
+          type: array
+          items:
+            $ref: '#/components/schemas/Receiver_2'
+          minItems: 1
+          description: The receiver(s) of this message
+        sender:
+          $ref: '#/components/schemas/Sender_2'
+        state:
+          $ref: '#/components/schemas/CommunicationMessageStateType'
+          description: Status of communication message
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    APIError:
+      type: object
+      required:
+      - statusMessage
+      - supportMessage
+      - transactionId
+      - timestamp
+      - path
+      - method
+      properties:
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        timestamp:
+          type: string
+          example: '2020-08-19 09:09:09'
+        path:
+          type: string
+          description: endpoint path used to make request
+        method:
+          type: string
+          description: HTTP Method used to make request
+          example: GET/POST/PATCH
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token
+x-refined-from:
+- mtn-group-communication-management-v1.yml
+- mtn-group-rcs-communication.yml
+- mtn-group-tmf681-communication-management.yml

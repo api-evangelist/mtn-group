@@ -1,0 +1,335 @@
+openapi: 3.2.0
+info:
+  description: To retrieve and schedule delivery information for MTN Customers
+  version: v1.0
+  title: Customer Delivery Booking Reference Data Operations API
+servers:
+- url: https://api.mtn.com/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Reference Data Operations
+paths:
+  /booking/province:
+    get:
+      tags:
+      - Reference Data Operations
+      summary: To retrieve the list of provinces available in the system
+      description: Province list retrieval
+      operationId: Province
+      parameters:
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          enum:
+          - DSV
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/provinceResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /booking/town:
+    get:
+      tags:
+      - Reference Data Operations
+      summary: To retrieve the list of towns available in the system
+      description: Town list retrieval
+      operationId: Town
+      parameters:
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          enum:
+          - DSV
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/townResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /booking/suburb:
+    get:
+      tags:
+      - Reference Data Operations
+      summary: To retrieve the list of suburb available in the system
+      description: Suburb list retrieval
+      operationId: Suburb
+      parameters:
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          enum:
+          - DSV
+      - name: divisionCode
+        in: query
+        required: true
+        description: Division Code
+        schema:
+          type: string
+      - name: suburbSearchValue
+        in: query
+        required: true
+        description: Suburb Search Value Provided (Minimum 3 Characters)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/suburbResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    provinceList:
+      type: object
+      properties:
+        provinceId:
+          type: integer
+          example: 4
+        provinceName:
+          type: string
+          maxLength: 50
+    townList:
+      type: object
+      properties:
+        townCode:
+          type: string
+          maxLength: 10
+        townName:
+          type: string
+          maxLength: 10
+        provinceId:
+          type: integer
+          example: 4
+    townResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            version:
+              type: string
+            townList:
+              type: array
+              items:
+                $ref: '#/components/schemas/townList'
+    suburbList:
+      type: object
+      properties:
+        controllingLocation:
+          type: string
+          maxLength: 4
+        townCode:
+          type: string
+          maxLength: 3
+        provinceId:
+          type: integer
+          example: 4
+        provinceName:
+          type: string
+          maxLength: 50
+        suburbName:
+          type: string
+          maxLength: 30
+    suburbResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            suburbList:
+              type: array
+              items:
+                $ref: '#/components/schemas/suburbList'
+    provinceResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            version:
+              type: string
+            provinceList:
+              type: array
+              items:
+                $ref: '#/components/schemas/provinceList'
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        status:
+          type: string
+          description: Status code returned by provider system
+        error:
+          type: string
+          description: Status description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

@@ -1,0 +1,2125 @@
+openapi: 3.2.0
+info:
+  title: Mtn Group Registration API
+  version: '1.0'
+  description: 'Operations tagged Registration across 3 of this provider''s published API definitions: mtn-group-customer-billing-token-v1.yml, mtn-group-notification-production.yml, mtn-group-notification-v2.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.mtn.com/v1/customer
+- url: https://api.mtn.com/v1
+- url: https://api.mtn.com/v2
+tags:
+- name: Registration
+paths:
+  /bill/registerToken:
+    post:
+      tags:
+      - Registration
+      summary: Register Token Service
+      description: Billing Recurring Service Token Registration
+      operationId: Register
+      parameters:
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+          enum:
+          - Pantheon
+          - SOA
+          default: Pantheon
+      - name: allowPoll
+        in: header
+        required: true
+        schema:
+          type: boolean
+          enum:
+          - true
+          - false
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadReq'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '452':
+          description: Invalid API Version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvAPIVersion'
+        '454':
+          description: MSISDN Not Provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsisdnNotProvided'
+        '463':
+          description: Subscription Channel Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSubChanNotFound'
+        '464':
+          description: Subscription Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSubNotFound'
+        '466':
+          description: Service Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSvcNotFound'
+        '467':
+          description: Active Subscription Exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorActSubsEx'
+        '470':
+          description: Service Not Linked To Billing Channel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSvcNotLinked'
+        '473':
+          description: Service ID or Service Ref Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSvcIdSvcRefNotFound'
+        '478':
+          description: Invalid MSISDN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvMsisdn'
+        '480':
+          description: Invalid Billing Rate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvBillRate'
+        '485':
+          description: Pending Subscription Exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorPendingSubEx'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '515':
+          description: Subscription Not Active
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSubNotActive'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterTokenRequest'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v1/customer
+  /notification/3PP:
+    post:
+      tags:
+      - Registration
+      summary: Register/Update 3PP for notification.
+      description: Register/Update 3PP for notification.
+      operationId: register3PPNotificationDetailsUsingPOST
+      responses:
+        '201':
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RegisterNotificationResponse'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '409':
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+      deprecated: false
+      security:
+      - OAuth2: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThirdParty'
+        description: thirdParty
+        required: true
+    servers:
+    - url: https://api.mtn.com/v1
+  /notification/3PP/{id}:
+    get:
+      tags:
+      - Registration
+      summary: Get 3PP notification details by id.
+      description: Get 3PP notification details by id.
+      operationId: get3PPNotificationDetailsByIdUsingGET
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+      deprecated: false
+      security:
+      - OAuth2: []
+    put:
+      tags:
+      - Registration
+      summary: Update 3PP notification.
+      description: Update 3PP notification for notifications.
+      operationId: register3PPNotificationDetailsUsingPUT
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '409':
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+      deprecated: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThirdParty'
+        description: thirdParty
+        required: true
+      security:
+      - OAuth2: []
+    delete:
+      tags:
+      - Registration
+      summary: Delete 3PP notification registration by id.
+      description: Delete 3PP notification registration by id.
+      operationId: delete3PPNotificationDetailsByIdUsingDELETE
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '409':
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+      deprecated: false
+      security:
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v1
+  /notification/3PP/{targetSystem}/{code}/{notificationType}:
+    get:
+      tags:
+      - Registration
+      summary: Get 3PP Notification details by target system, code and notification type.
+      description: Get 3PP Notification details by name, code and notification type.
+      operationId: get3PPNotificationDetailsByNameAndCodeAndNotificationTypeUsingGET
+      parameters:
+      - name: notificationType
+        in: path
+        description: notificationType
+        required: true
+        schema:
+          type: string
+      - name: code
+        in: path
+        description: code
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: path
+        description: Target System
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '409':
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+      deprecated: false
+      security:
+      - OAuth2: []
+    delete:
+      tags:
+      - Registration
+      summary: Delete 3PP Notification registration by target system, code and notification type.
+      description: Delete 3PP notification registration by name, code and notification type.
+      operationId: delete3PPNotificationDetailsByNameAndCodeAndNotificationTypeUsingDELETE
+      parameters:
+      - name: notificationType
+        in: path
+        description: notificationtype
+        required: true
+        schema:
+          type: string
+      - name: code
+        in: path
+        description: code
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: path
+        description: Target System
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '409':
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_2'
+      deprecated: false
+      security:
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v1
+  /notification/register/3PP:
+    post:
+      tags:
+      - Registration
+      summary: Register/Update 3PP for notification.
+      description: Register/Update 3PP for notification.
+      operationId: register3PPNotificationDetailsUsingPOST
+      parameters:
+      - in: header
+        name: transactionId
+        description: A unique identifier for the transaction
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RegisterNotificationResponse_2'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '409':
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+      deprecated: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterNotificationRequest'
+        description: This is the request used for notification registration.
+        required: true
+      security:
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /notification/register/3PP/{id}:
+    get:
+      tags:
+      - Registration
+      summary: Get 3PP notification details by id.
+      description: Get 3PP notification details by id.
+      operationId: get3PPNotificationDetailsByIdUsingGET
+      parameters:
+      - in: header
+        name: transactionId
+        description: A unique identifier for the transaction
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DeleteNotificationSubscriptionResponse'
+        '400':
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+      deprecated: false
+      security:
+      - OAuth2: []
+    delete:
+      tags:
+      - Registration
+      summary: Delete 3PP Notification registration by id.
+      description: Delete 3PP notification registration by id.
+      operationId: delete3PPNotificationDetailsByIDUsingDELETE
+      parameters:
+      - in: header
+        name: transactionId
+        description: A unique identifier for the transaction
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DeleteNotificationSubscriptionResponse'
+        '400':
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '409':
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+      deprecated: false
+      security:
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /notification/register/3PP/{targetSystem}/{code}/{notificationType}:
+    get:
+      tags:
+      - Registration
+      summary: Get 3PP Notification details by target system, code and notification type.
+      description: Get 3PP Notification details by name, code and notification type.
+      operationId: get3PPNotificationDetailsByNameAndCodeAndNotificationTypeUsingGET
+      parameters:
+      - name: notificationType
+        in: path
+        description: notificationType
+        required: true
+        schema:
+          type: string
+      - name: code
+        in: path
+        description: code
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: path
+        description: Target System
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Internal use only
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DeleteNotificationSubscriptionResponse'
+        '400':
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '409':
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+      deprecated: false
+      security:
+      - OAuth2: []
+    delete:
+      tags:
+      - Registration
+      summary: Delete 3PP Notification registration by target system, code and notification type.
+      description: Delete 3PP notification registration by name, code and notification type.
+      operationId: delete3PPNotificationDetailsByNameAndCodeAndNotificationTypeUsingDELETE
+      parameters:
+      - name: notificationType
+        in: path
+        description: notificationtype
+        required: true
+        schema:
+          type: string
+      - name: code
+        in: path
+        description: code
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: path
+        description: Target System
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Internal use only
+        schema:
+          type: string
+      - name: x-country-code
+        in: header
+        description: Internal use only
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DeleteNotificationSubscriptionResponse'
+        '400':
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '409':
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error_3'
+      deprecated: false
+      security:
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+components:
+  schemas:
+    RelatedParty:
+      type: object
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      required:
+      - '@referredType'
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity eg MSISDN.
+          example: 9994746
+        role:
+          type: string
+          description: Role played by the related party
+          example: Customer
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    Price:
+      type: object
+      description: Provides all amounts (tax included, duty free, tax rate), used currency and percentage to apply for Price Alteration.
+      properties:
+        taxIncludedAmount:
+          $ref: '#/components/schemas/Money'
+          description: All taxes included amount (expressed in the given currency)
+    ErrorActSubsEx:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1002
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Active Subscription Exists'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ErrorInvBillRate:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1006
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Invalid Billing Rate'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ErrorSubNotActive:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1003
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Subscription Not Active'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    CreateOrderResponse:
+      required:
+      - statusCode
+      - statusMessage
+      - data
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Result code. Example- '0000'
+        statusMessage:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          type: object
+          properties:
+            billingToken:
+              type: object
+              properties:
+                msn:
+                  type: string
+                  minLength: 16
+                  maxLength: 64
+                  description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+                  example: '5115314911298406'
+                contentToken:
+                  type: string
+                  minLength: 16
+                  maxLength: 96
+                  description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+                  example: 81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058
+                allowToActivate:
+                  type: boolean
+                  description: Information inidicating if activation of token will be allowed.
+                  example: true
+                proposalIndicator:
+                  type: integer
+                  description: This indicates what is proposed, 0 - Nothing, 1 - Spend Limit only, 2 - Digital Limit only, 3 - Both Digital and Spend Limit, 4 - Nothing with SUL equals to SPUL and Digital Limit equal to New Monthly Committed Value
+                  enum:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                proposedDigitalLimit:
+                  type: integer
+                  minimum: 1
+                  maximum: 999999
+                  description: This the proposed digital limit in Rxx whole rands only.
+                  example: 25000
+                proposedSpendLimit:
+                  type: integer
+                  minimum: 1
+                  maximum: 999999
+                  description: This the proposed digital limit in Rxx whole rands only.
+                  example: 25000
+                proratedBill:
+                  type: integer
+                  minimum: 0
+                  maximum: 999999
+                  description: The prorated amount in cents. Note, this field won't be returned if the token is not a monthly token, which is specified via selectedDebitOrderDate
+                  example: 90
+                proratedBillDate:
+                  type: string
+                  minLength: 10
+                  maxLength: 10
+                  description: The date upon which the prorated billing will be performed, in the format 'yyyy-mm-dd'. Note, this field won't be returned if the token is not a monthly token, which is specified via selectedDebitOrderDate
+                  example: '2023-02-22'
+            subscription:
+              $ref: '#/components/schemas/ProductOrder2'
+    ErrorInvMsisdn:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1008
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Invalid MSISDN'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ErrorPendingSubEx:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1005
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Pending Subscription Exists'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ProductTerm:
+      type: object
+      description: Description of a productTerm linked to this product. This represent a commitment with a duration
+      properties:
+        description:
+          type: string
+          description: Description of the productTerm
+        name:
+          type: string
+          description: Name of the productTerm
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    ErrorBadReq:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 5000
+        statusMessage:
+          type: string
+          description: Status description
+          example: Bad Request
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ErrorSubChanNotFound:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1007
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Subscription Channel Not Found'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    RelatedChannel:
+      type: object
+      description: Related channel to another entity. May be online web, mobile app, social ,etc.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        role:
+          type: string
+          description: Role of channel
+        href:
+          type: string
+          description: Reference of the related entity.
+    ErrorMsisdnNotProvided:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 4003
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: MSISDN Not Provided'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ErrorSubNotFound:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1000
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Subscription Not Found'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ProductOrderItem:
+      type: object
+      description: An identified part of the order. A product order is decomposed into one or more order items.
+      properties:
+        product:
+          $ref: '#/components/schemas/ProductRefOrValue'
+        itemTotalPrice:
+          $ref: '#/components/schemas/OrderPrice'
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+        statusMessage:
+          type: string
+          description: Status description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ErrorInvAPIVersion:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 3001
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Invalid API Version'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    AgreementRef:
+      type: object
+      description: Agreement reference. An agreement represents a contract or arrangement, either written or verbal and sometimes enforceable by law, such as a service level agreement or a customer price agreement. An agreement involves a number of other business entities, such as products, services, and resources and/or their specifications.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+    ErrorSvcIdSvcRefNotFound:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 3004
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Service ID or Service Ref Not Found'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ProductOrder2:
+      type: object
+      description: A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
+      required:
+      - productOrderItem
+      properties:
+        id:
+          type: string
+          description: ID created on repository side (OM system)
+        description:
+          type: string
+          description: Description of the product order
+        externalId:
+          type: string
+          description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
+        orderDate:
+          type: string
+          format: date-time
+          description: Date when the order was created
+        agreement:
+          $ref: '#/components/schemas/AgreementRef'
+        channel:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedChannel'
+        productOrderItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOrderItem'
+          minItems: 1
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+    ErrorSvcNotLinked:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 5001
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Service Not Linked To Billing Channel'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    AgreementItemRef2:
+      type: object
+      description: Agreement reference. An agreement represents a contract or arrangement, either written or verbal and sometimes enforceable by law, such as a service level agreement or a customer price agreement. An agreement involves a number of other business entities, such as products, services, and resources and/or their specifications.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+    ProductRefOrValue:
+      type: object
+      description: A product to be created defined by value or existing defined by reference. The polymorphic attributes @type, @schemaLocation & @referredType are related to the product entity and not the RelatedProductRefOrValue class itself
+      properties:
+        agreement:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgreementItemRef2'
+        characteristic:
+          type: array
+          description: product characteristics such as amount, type, etc
+          items:
+            $ref: '#/components/schemas/productCharacteristic'
+        productOffering:
+          $ref: '#/components/schemas/ProductOfferingRef'
+        productTerm:
+          type: array
+          description: Description of a productTerm linked to this product. This represent a commitment with a duration
+          items:
+            $ref: '#/components/schemas/ProductTerm'
+        status:
+          type: array
+          description: status of product
+          items:
+            $ref: '#/components/schemas/ProductStatusType'
+        orderDate:
+          type: string
+          description: Date when the order was created.
+        startDate:
+          type: string
+          description: Is the date from which the product starts
+        terminationDate:
+          type: string
+          description: Is the date when the product was terminated.
+    Money:
+      type: object
+      description: A base / value business entity used to represent money
+      properties:
+        unit:
+          type: string
+          description: Currency (ISO4217 norm uses 3 letters to define the currency)
+        value:
+          type: number
+          format: float
+          description: A positive floating point number
+    productCharacteristic:
+      type: object
+      properties:
+        name:
+          type: string
+          example: hulaya data
+        value:
+          type: number
+          example: 6
+    ProductOfferingRef:
+      type: object
+      description: ProductOffering reference. A product offering represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        name:
+          type: string
+          description: Name of unique identifier of related entity
+    ErrorSvcNotFound:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 3000
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Service Not Found'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    RegisterTokenRequest:
+      type: object
+      properties:
+        billingToken:
+          type: object
+          required:
+          - transactionId
+          - contractingPartnerId
+          - platformPartnerId
+          - msisdn
+          - billingType
+          - subscriberType
+          properties:
+            transactionId:
+              type: string
+              minLength: 9
+              maxLength: 36
+              description: Unique transaction identifier. It is advised that the client system use the methods defined in [RFC4122](https://tools.ietf.org/html/rfc4122) to generate this value.
+              example: '123456768'
+            contractingPartnerId:
+              type: string
+              minLength: 9
+              maxLength: 9
+              description: Contracting Partner Identifier as supplied by MTN Digital Department.
+              example: '911844857'
+            platformPartnerId:
+              type: string
+              minLength: 9
+              maxLength: 9
+              description: Platform Partner Identifier.
+              example: '911844857'
+            customerId:
+              type: string
+              minLength: 10
+              maxLength: 12
+              description: MSISDN of the subscriber.
+              example: '27832001000'
+            customerIdType:
+              type: string
+              description: Type of customer id
+              example: msisdn
+            billingType:
+              type: string
+              description: Token billing attempt will be for the full amount
+            sourceReferenceNumber:
+              type: string
+              description: The payment reference number generated for the payment at the source channel – for MTNPay card payments
+            returnUrl:
+              type: string
+              description: This field will be the self-service channel web page URL where the user is supposed to be once the payment is done on payportal – for MTNPay card payments
+            contentTypeId:
+              type: string
+              minLength: 3
+              maxLength: 3
+              description: Content type identifier. Default to 100 for DCB Google.
+              example: '100'
+            contentDescription:
+              type: string
+              minLength: 1
+              maxLength: 100
+              description: Description of content charged for.
+              example: Games
+            contentId:
+              type: string
+              minLength: 1
+              maxLength: 35
+              description: Content identifier.
+              example: '001'
+            partnerDisplayName:
+              type: string
+              minLength: 1
+              maxLength: 25
+              description: Content provider name.
+              example: Google
+            serviceInterval:
+              type: integer
+              minLength: 1
+              maxLength: 999
+              description: This field represents the service interval for a subscription/adhoc service in days. For adhoc the service interval should be 0.
+              example: 1
+            serviceIntervalMaxBillAmount:
+              type: integer
+              minimum: 0
+              maximum: 999999
+              description: This field represents the maximum billable amount(in cents) per service interval.
+              example: 100
+            fallBackInitialStepDownServiceExtension:
+              type: integer
+              minLength: 1
+              maxLength: 999
+              description: 'If Billing type is FALL-BACK this field is the duration  for which the service will be initially extended for in days. '
+              example: 1
+            fallBackInitialStepDownCharge:
+              type: integer
+              minLength: 0
+              maxLength: 999999
+              description: This is the amount(in cents) that should be charged for the period above.
+              example: 100
+            fallBackFinalStepDownServiceExtension:
+              type: integer
+              minLength: 1
+              maxLength: 999
+              description: If Billing type is FALL-BACK this field is the duration in days for which the service will be extended for in the event that the initial stepdown attempt was unsuccessful, otherwise empty.
+              example: 1
+            fallBackFinalStepDownCharge:
+              type: integer
+              minLength: 0
+              maxLength: 999999
+              description: This field is only applicable if the fallBack final step down service interval is present,  and it is the amount in cents.
+              example: 100
+            initialCharge:
+              type: integer
+              minLength: 0
+              maxLength: 999999
+              description: 'table: This field represents the service initial charge in cents'
+              example: 100
+            tokenExpiry:
+              type: string
+              minLength: 10
+              maxLength: 10
+              description: This field represents the expiry date of a Content-Token in the format 'yyyy-mm-dd'.
+              example: '2020-02-18'
+            freeDays:
+              type: integer
+              description: This field represents the number of free service days a subscriber will be entitled to when authorizing a Content-Token.
+              example: 2
+            contentLimit:
+              type: string
+              minLength: 4
+              maxLength: 35
+              description: This field is used to indicate which limit counter to step.
+              example: MTN-ENTERTAINMENT
+            allowedRecoveryIntervals:
+              type: integer
+              minimum: 0
+              maximum: 31
+              description: This field indicates the number of intervals that can be back billed for a service.
+              example: 2
+            billingMethod:
+              type: string
+              description: 'The payment method for the service: Card Payment and Momo are only compatible with billingType value FULL. If billingMethod = "MTN Airtime" then only subscriberMNO = "Onnet" is allowed. If billingMethod is not defined, Pantheon shall set default to "MTN Airtime".'
+              enum:
+              - MTN Airtime
+              - Card Payment
+              - Momo
+              - Offnet Airtime
+            budgetPeriod:
+              type: integer
+              description: Credit Card Budget period in months. If budgetPeriod is not defined, Pantheon shall set default to 0 months.
+              example: 1
+            userAlias:
+              type: string
+              minimum: 5
+              maxLength: 50
+              description: Additional alias to identify a user i.e like an email address.
+              example: pantheon@mtn.com
+            secureDTxId:
+              type: string
+              minimum: 5
+              maxLength: 30
+              description: ID returned from the Secure-D check as part of DOI process.
+            revenueCategory:
+              type: string
+              minimum: 1
+              maxLength: 30
+              description: Revenue category.
+            revenueSubCategory:
+              type: string
+              minimum: 1
+              maxLength: 30
+              description: Revenue sub-category.
+            smeIntContractingPartnerId:
+              type: string
+              minimum: 9
+              maxLength: 9
+              description: The Subscription Management Engine internal partner identifier.
+            contractingPartnerType:
+              type: string
+              description: "table: This is the allowed content types. If contractingPartnerType is not defined, Pantheon shall set default to \"Not Specified\". \n\n  |Type                 |Description                  |\n  |-------------------|---------------------------|\n  | CP                   | Content Partner          |\n  | WASP              | External WASP Partner |"
+              enum:
+              - CP
+              - WASP
+            subscriberMNO:
+              type: string
+              description: Mobile Network Operator. If billingMethod = "MTN Airtime" then only subscriberMNO = "Onnet" is allowed. If subscriberMNO is not defined, Pantheon shall set default to "Onnet".
+              enum:
+              - Onnet
+              - Offnet
+            revenueTreatment:
+              type: string
+              description: Revenue treatment.
+              enum:
+              - Principle
+              - Agent
+            integratorPartnerId:
+              type: string
+              minLength: 9
+              maxLength: 9
+              description: A party that acts as an aggregator of the transaction.
+              example: '911844857'
+            contentProviderId:
+              type: string
+              minLength: 9
+              maxLength: 9
+              description: A party that has no contract with MTN but in the contract with the contracting party, it states that MTN needs to pay a portion of the revenue to them.
+              example: '911844857'
+            acquisitionChannel:
+              type: string
+              minLength: 1
+              maxLength: 30
+              description: This field is used to indicate the request channel.
+              example: USSD
+            selectedDebitOrderDate:
+              type: integer
+              minimum: 1
+              maximum: 31
+              description: The token anniversary date as selected by the subscriber. Note that if the selected date does not exist in any month (e.g., 29, 30, or 31), then billing will happen on the last day of the month. This field is only used for a monthly subscription - use serviceInterval for daily/weekly subscriptions.
+              example: 25
+            billCycles:
+              type: integer
+              description: This field indicates the number of cycles/intervals that can be billed for a service. This field is only used for billingType = “FULL”
+        subscription:
+          type: object
+          properties:
+            externalId:
+              type: string
+              description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
+              example: 67328fhhfdfh39u956
+            status:
+              type: string
+              example: Captured
+              description: Status of the product
+            reason:
+              type: string
+              example: 1
+            description:
+              type: string
+              example: purchase VAS product
+            channel:
+              type: array
+              items:
+                $ref: '#/components/schemas/RelatedChannel'
+            productOrderItem:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductOrderItem'
+              minItems: 1
+            relatedParty:
+              type: array
+              items:
+                $ref: '#/components/schemas/RelatedParty'
+    ProductStatusType:
+      type: string
+      description: Possible values for the status of the product
+      enum:
+      - created
+      - pendingActive
+      - cancelled
+      - active
+      - pendingTerminate
+      - terminated
+      - suspended
+      - 'aborted '
+    OrderPrice:
+      type: object
+      description: An amount, usually of money, that represents the actual price paid by the Customer for this item or this order
+      properties:
+        priceType:
+          type: string
+          description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth
+        recurringChargePeriod:
+          type: string
+          description: Could be month, week...
+        price:
+          $ref: '#/components/schemas/Price'
+          description: a structure used to define price amount
+    Error_2:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        path:
+          type: string
+          description: The path that caused the error
+          example: /subscribers/27831234567
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+    Success:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        AdditionalData:
+          $ref: '#/components/schemas/Data'
+    ThirdParty:
+      type: object
+      properties:
+        notificationType:
+          type: string
+        notificationUrl:
+          type: string
+        targetSystem:
+          type: string
+        code:
+          type: string
+      title: ThirdParty
+    RegisterNotificationResponse__links_self:
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://host:port/v1/
+          description: Hyperlink to access the Notification  created.
+    Data:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id that gets generated
+          example: Rec1
+        targetsystem:
+          type: string
+          description: The intended system that will receive the notification
+          example: AYO
+        code:
+          type: string
+          description: Code generated
+          example: FZ-32-SFSG-1
+        notificationURL:
+          type: string
+          description: The URL that will receive the notifications
+          example: https://ayowebapi-team2.mmiholdings.co.za/api/v1/madapi/rechargenotification
+        notificationType:
+          type: string
+          description: The method used
+          example: PUT
+        countryCode:
+          type: string
+          example: ZA
+        created At:
+          type: string
+          format: date-time
+          description: Date and time the request is created
+          example: '2021-07-21T17:32:28Z'
+        modified At:
+          type: string
+          format: date-time
+          description: Date and time the request was modified
+          example: '2021-07-21T17:32:28Z'
+        registration Status:
+          type: string
+          description: Status of the registration
+          example: Deleted
+    RegisterNotificationResponse:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        id:
+          type: string
+          description: The id generated upon registration for notifications and to be used upon processing actual notifications
+          example: c5f80cb8-dc8b-11ea-87d0-0242ac130003
+        links:
+          $ref: '#/components/schemas/RegisterNotificationResponse__links_self'
+    Error_3:
+      type: object
+      description: Generic MADAPI error response
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        sequenceNo:
+          type: string
+          description: This is a unique transaction Identifier returned to the client
+          example: 90dba2e7-676b-45c7-b4a0-9e82eb975596
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /subscribers/27831234567
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+    RegisterNotificationRequest:
+      description: This is the model expected for notification registration request.
+      type: object
+      properties:
+        notificationType:
+          type: string
+        notificationUrl:
+          type: string
+        targetSystem:
+          type: string
+        code:
+          type: string
+    DeleteNotificationSubscriptionResponse:
+      type: object
+      description: The response for deleting a notification subscription
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        sequenceNo:
+          type: string
+          description: This is a unique transaction Identifier returned to the client
+          example: '12345'
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Id that gets generated
+              example: Rec1
+            targetSystem:
+              type: string
+              description: The intended system that will receive the notification
+              example: AYO
+            code:
+              type: string
+              description: Code generated
+              example: FZ-32-SFSG-1
+            notificationURL:
+              type: string
+              description: The URL that will receive the notifications
+              example: https://ayowebapi-team2.mmiholdings.co.za/api/v1/madapi/rechargenotification
+            notificationType:
+              type: string
+              description: The method used
+              example: PUT
+            countryCode:
+              type: string
+              example: ZA
+            createdAt:
+              type: string
+              format: date-time
+              description: Date and time the request is created
+              example: 2020-08-01T12:34:400Z
+            modifiedAt:
+              type: string
+              format: date-time
+              description: Date and time the request was modified
+              example: 2020-08-01T12:34:400Z
+            registrationStatus:
+              type: string
+              description: Status of the registration
+              example: Deleted
+    RegisterNotificationResponse_2:
+      type: object
+      description: This is the response expected for a notification registration request.
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        sequenceNo:
+          type: string
+          description: This is a unique transaction Identifier returned to the client
+          example: '12345'
+        id:
+          type: string
+          description: The id generated upon registration for notifications and to be used upon processing actual notifications
+          example: c5f80cb8-dc8b-11ea-87d0-0242ac130003
+        links:
+          type: object
+          properties:
+            href:
+              type: string
+              example: https://host:port/v1/
+              description: Hyperlink to access the Notification  created.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token
+x-refined-from:
+- mtn-group-customer-billing-token-v1.yml
+- mtn-group-notification-production.yml
+- mtn-group-notification-v2.yml

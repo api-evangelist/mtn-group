@@ -1,0 +1,150 @@
+openapi: 3.2.0
+info:
+  description: To register services and activate services content tokens
+  version: v1.0
+  title: Customer Billing Token URL Create API
+servers:
+- url: https://api.mtn.com/v1/customer
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: urlCreate
+paths:
+  /bill/urlCreate:
+    post:
+      tags:
+      - urlCreate
+      summary: Create URL
+      parameters:
+      - name: targetSystem
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - Pantheon
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createUrlResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUrlRequest'
+        required: true
+components:
+  schemas:
+    createUrlRequest:
+      type: object
+      required:
+      - transactionId
+      properties:
+        transactionId:
+          type: string
+          description: Unique transaction identifier. It is advised that the client system use the methods defined in RFC4122 to generate this value.
+        contentToken:
+          type: string
+          minLength: 16
+          maxLength: 96
+          description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+          example: 81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058
+        customerId:
+          type: string
+          description: MSISDN of the customer
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+        statusMessage:
+          type: string
+          description: Status description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    createUrlResponse:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        data:
+          type: object
+          properties:
+            redirectUrl:
+              type: string
+              description: This will have the encrypted url that will be route to pay portal on click.In case of "Paylink" URL will be sent part of response.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

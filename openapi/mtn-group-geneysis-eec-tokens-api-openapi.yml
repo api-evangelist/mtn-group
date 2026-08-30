@@ -1,0 +1,144 @@
+openapi: 3.2.0
+info:
+  description: This API provides EEC Token Management
+  version: 1.0.0
+  title: GENEYSIS - EEC TOKENS MANAGEMENT API-mtn GENEYSIS EEC TOKENS API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+- url: https://api.mtn.com/v1/eec/
+security:
+- ApiKeyAuth: []
+tags:
+- name: GENEYSIS-EEC-TOKENS
+paths:
+  /eecToken/{msisdn}/{accountRef}:
+    get:
+      tags:
+      - GENEYSIS-EEC-TOKENS
+      operationId: geteecTokensFromDBUsingGet
+      parameters:
+      - name: accountRef
+        in: path
+        description: accountRef
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        description: countryCode
+        required: true
+        schema:
+          type: string
+      - name: msisdn
+        in: path
+        description: msisdn
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            '*/*':
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    description: This is the MADAPI Canonical response Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system response are mapped to specific canonical response codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+                  statusMessage:
+                    type: string
+                    description: Status Message
+                  transactionId:
+                    type: string
+                    description: API generated Id to include for tracing requests
+                  data:
+                    $ref: '#/components/schemas/EecTokenResponse'
+                  _links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: https://api.mtn/app/v1/eec/eecToken/2323464618463/acc-23464618463
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    EecTokenResponse:
+      type: object
+      properties:
+        accountNo:
+          type: string
+        dateOfPurchase:
+          type: string
+        origRef:
+          type: string
+        amount:
+          type: string
+        tokens:
+          type: array
+          items:
+            type: string
+      title: EecTokenResponse
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: API generated Id to include for tracing requests
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+          example: 2019-08-23T07:29:25.593+0000
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn/app/v1/eec/eecToken/2323464618463/acc-23464618463
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header

@@ -1,0 +1,1008 @@
+openapi: 3.2.0
+info:
+  title: Mtn Group Product Order API
+  version: 4.0.0
+  description: 'Operations tagged productOrder across 2 of this provider''s published API definitions: mtn-group-product-ordering-coe.yml, mtn-group-tmf-product-ordering-tmf622.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.mtn.com/tmf-api/productordering/v1
+security:
+- OAuth2: []
+- ApiKeyAuth: []
+tags:
+- name: productOrder
+paths:
+  /productOrder:
+    post:
+      operationId: createProductOrder
+      summary: Creates a ProductOrder
+      description: This operation creates a ProductOrder entity.
+      tags:
+      - productOrder
+      parameters:
+      - name: transactionId
+        in: header
+        description: The transaction Id for request tracing. This should be forwarded from the Process Layer.
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/ProductOrder_Create2'
+        description: The ProductOrder to be created
+        required: true
+    servers:
+    - url: https://api.mtn.com/tmf-api/productordering/v1
+  /productOrder/{id}:
+    get:
+      operationId: retrieveProductOrder
+      summary: Retrieves a ProductOrder by customer ID
+      description: This operation retrieves a ProductOrder entity. Attribute selection is enabled for all first level attributes.
+      tags:
+      - productOrder
+      parameters:
+      - name: id
+        description: Identifier of the ProductOrder,i.e. Subscriber Identifier
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: limit
+        description: the number of records/items to be returned
+        required: false
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ViewActiveVAS'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteProductOrder
+      summary: Deletes a ProductOrder
+      description: This operation deletes a ProductOrder entity.
+      tags:
+      - productOrder
+      parameters:
+      - name: id
+        description: Identifier of the ProductOrder
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: reason
+        required: true
+        in: header
+        schema:
+          type: string
+          enum:
+          - Not interested
+          - Inapprpriate
+          - Not valuable
+      responses:
+        '204':
+          description: success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/CancelProductOrderResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/productOrderDelete'
+        description: The ProductOrder to be created
+        required: true
+    servers:
+    - url: https://api.mtn.com/tmf-api/productordering/v1
+components:
+  schemas:
+    OrderItemActionType:
+      type: string
+      description: action to be performed on the product
+      enum:
+      - add
+      - modify
+      - delete
+      - noChange
+    RelatedParty:
+      type: object
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      required:
+      - '@referredType'
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity eg MSISDN.
+          example: 9994746
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+    Price:
+      type: object
+      description: Provides all amounts (tax included, duty free, tax rate), used currency and percentage to apply for Price Alteration.
+      properties:
+        percentage:
+          type: number
+          format: float
+          description: Percentage to apply for ProdOfferPriceAlteration
+        taxRate:
+          type: number
+          format: float
+          description: Tax rate
+        dutyFreeAmount:
+          $ref: '#/components/schemas/Money'
+          description: All taxes excluded amount (expressed in the given currency)
+        taxIncludedAmount:
+          $ref: '#/components/schemas/Money'
+          description: All taxes included amount (expressed in the given currency)
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    OrderTerm2:
+      $ref: '#/components/schemas/OrderTermRef'
+    CreateOrderResponse:
+      required:
+      - resultCode
+      - resultDescription
+      - data
+      type: object
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOrder2'
+        state:
+          type: string
+          example: inprogress
+        direction:
+          type: string
+          example: Inbound
+    ProductSpecificationRef1:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifier
+    ProductOfferingQualificationRef:
+      type: object
+      description: It's a productOfferingQualification that has been executed previously
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: Name of the related entity.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    ProductTerm:
+      type: object
+      description: Description of a productTerm linked to this product. This represent a commitment with a duration
+      properties:
+        description:
+          type: string
+          description: Description of the productTerm
+        name:
+          type: string
+          description: Name of the productTerm
+        duration:
+          $ref: '#/components/schemas/Quantity'
+          description: Duration of the productTerm
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: productTerm validity period
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    PriceAlteration:
+      type: object
+      description: Is an amount, usually of money, that modifies the price charged for an order item.
+      required:
+      - price
+      - priceType
+      properties:
+        applicationDuration:
+          type: integer
+          description: Duration during which the alteration applies on the order item price (for instance 2 months free of charge for the recurring charge)
+        description:
+          type: string
+          description: A narrative that explains in detail the semantics of this order item price alteration
+        name:
+          type: string
+          description: Name of the order item price alteration
+        priceType:
+          type: string
+          description: A category that describes the price such as recurring, one time and usage.
+        priority:
+          type: integer
+          description: Priority level for applying this alteration among all the defined alterations on the order item price
+        recurringChargePeriod:
+          type: string
+          description: Could be month, week...
+        unitOfMeasure:
+          type: string
+          description: Could be minutes, GB...
+        price:
+          $ref: '#/components/schemas/Price'
+        productOfferingPrice:
+          $ref: '#/components/schemas/ProductOfferingPriceRef'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    BillingAccountRef:
+      type: object
+      description: BillingAccount reference. A BillingAccount is a detailed description of a bill structure.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the billing account
+        href:
+          type: string
+          description: Reference of the billing account
+        name:
+          type: string
+          description: Name of the billing account
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    ProductOrder_Create2:
+      type: object
+      description: 'A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
+
+        Skipped properties: id,href,completionDate,orderDate,state,expectedCompletionDate,productOrderItem.state'
+      required:
+      - productOrderItem
+      properties:
+        status:
+          type: string
+          example: Captured
+          description: Status of the product
+        reason:
+          type: string
+          example: 1
+        description:
+          type: string
+          example: purchase VAS product
+        externalId:
+          type: string
+          description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
+        channel:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedChannel'
+        productOrderItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOrderItem'
+          minItems: 1
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        '@type':
+          type: string
+        '@baseType':
+          type: string
+    RelatedChannel:
+      type: object
+      description: Related channel to another entity. May be online web, mobile app, social ,etc.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        '@referredType':
+          type: string
+    PaymentRef:
+      type: object
+      description: If an immediate payment has been done at the product order submission, the payment information are captured and stored (as a reference) in the order.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: A name for the payment
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    ProductOrderItem:
+      type: object
+      description: An identified part of the order. A product order is decomposed into one or more order items.
+      properties:
+        '@type':
+          type: string
+          description: type of the product
+          example: productOrder
+        action:
+          $ref: '#/components/schemas/OrderItemActionType'
+          description: 'The action to be carried out on the Product. Can be: add, modify, delete, noChange'
+        product:
+          $ref: '#/components/schemas/ProductRefOrValue'
+        productOffering:
+          $ref: '#/components/schemas/ProductOfferingRef'
+        quoteItem:
+          $ref: '#/components/schemas/QuoteItemRef'
+        itemTerm:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderTerm2'
+    Error:
+      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+      type: object
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name.
+    product2:
+      type: object
+      description: A product offering procured by a customer or other interested party playing a party role. A product is realized as one or more service(s) and / or resource(s).
+      properties:
+        name:
+          type: string
+          description: Name of the product. It could be the same as the name of the product offering
+        id:
+          type: string
+          description: Unique identifier of the product
+        status:
+          type: string
+          description: status of the product
+        href:
+          type: string
+          description: Reference of the product
+        description:
+          type: string
+          description: Is the description of the product. It could be copied from the description of the Product Offering.
+        orderDate:
+          type: string
+          format: date-time
+          description: Is the date when the product was ordered
+        productOffering:
+          $ref: '#/components/schemas/ProductOfferingRef'
+        productCharacteristic:
+          $ref: '#/components/schemas/productCharacteristic'
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        productTerm:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductTerm'
+    CancelProductOrderResponse:
+      required:
+      - resultCode
+      - resultDescription
+      - data
+      type: object
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOrder_Create2'
+        state:
+          type: string
+          example: inprogress
+        direction:
+          type: string
+          example: Inbound
+    TimePeriod:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          type: string
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+    OrderTermRef:
+      type: object
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+          description: Name of the item
+    productOrderDelete:
+      type: object
+      description: 'A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
+
+        Skipped properties: id,href,completionDate,orderDate,state,expectedCompletionDate,productOrderItem.state'
+      required:
+      - productOrderItem
+      properties:
+        status:
+          type: string
+          example: Captured
+          description: Status of the product
+        description:
+          type: string
+          example: purchase VAS product
+        channel:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedChannel'
+        productOrderItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOrderItem'
+          minItems: 1
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+    ProductOrder2:
+      type: object
+      description: A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
+      required:
+      - productOrderItem
+      properties:
+        id:
+          type: string
+          description: ID created on repository side (OM system)
+        href:
+          type: string
+          description: Hyperlink to access the order
+        completionDate:
+          type: string
+          format: date-time
+          description: Date when the order was completed
+        description:
+          type: string
+          description: Description of the product order
+        expectedCompletionDate:
+          type: string
+          format: date-time
+          description: Expected delivery date amended by the provider
+        externalId:
+          type: string
+          description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
+        orderDate:
+          type: string
+          format: date-time
+          description: Date when the order was created
+        reason:
+          type: string
+        requestedCompletionDate:
+          type: string
+          format: date-time
+          description: Requested delivery date from the requestor perspective
+        requestedStartDate:
+          type: string
+          format: date-time
+          description: 'Order fulfillment start date wished by the requestor. This is used when, for any reason, requestor cannot allow seller to begin to operationally begin the fulfillment before a date. '
+        billingAccount:
+          $ref: '#/components/schemas/BillingAccountRef'
+        channel:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedChannel'
+        orderTotalPrice:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderPrice'
+        payment:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentRef'
+        productOfferingQualification:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOfferingQualificationRef'
+        productOrderItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOrderItem'
+          minItems: 1
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        state:
+          $ref: '#/components/schemas/ProductOrderStateType'
+          description: Tracks the lifecycle status of the product order, such as Acknowledged, Rejected, InProgress, Pending and so on.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    QuoteItemRef:
+      type: object
+      description: It's a Quote item that has been executed previously.
+      required:
+      - id
+      - quoteId
+      properties:
+        id:
+          type: string
+          description: Id of an item of a quote
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: Name of the related entity.
+        quoteHref:
+          type: string
+          description: Reference of the related entity.
+        quoteId:
+          type: string
+          description: Unique identifier of a related entity.
+        quoteName:
+          type: string
+          description: Name of the related entity.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    ViewActiveVAS:
+      required:
+      - resultCode
+      - resultDescription
+      - data
+      type: object
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/product2'
+    ProductRefOrValue:
+      type: object
+      description: A product to be created defined by value or existing defined by reference. The polymorphic attributes @type, @schemaLocation & @referredType are related to the product entity and not the RelatedProductRefOrValue class itself
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the product
+        productRelationship:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductRelationship'
+        characteristic:
+          type: array
+          description: product characteristics such as amount, type, etc
+          items:
+            $ref: '#/components/schemas/productCharacteristic'
+        productSpecification:
+          $ref: '#/components/schemas/ProductSpecificationRef1'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    Quantity:
+      type: object
+      description: An amount in a given unit
+      properties:
+        amount:
+          default: 1
+          type: number
+          format: float
+          description: Numeric value in a given unit
+        units:
+          type: string
+          description: Unit
+    ProductOfferingRef:
+      type: object
+      description: ProductOffering reference. A product offering represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+    productCharacteristic:
+      type: object
+      properties:
+        name:
+          type: string
+          example: hulaya data
+        value:
+          type: number
+          example: 6
+        valuetype:
+          type: string
+        unitOfMeasure:
+          type: string
+          example: GB
+        type:
+          type: string
+          example: dataLimit
+    ProductRelationship:
+      type: object
+      description: Linked products to the one instantiate, such as [bundled] if the product is a bundle and you want to describe the bundled products inside this bundle; [reliesOn] if the product needs another already owned product to rely on (e.g. an option on an already owned mobile access product) [targets] or [isTargeted] (depending on the way of expressing the link) for any other kind of links that may be useful
+      required:
+      - product
+      - relationshipType
+      properties:
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        relationshipType:
+          type: string
+          description: Relationship type
+    Money:
+      type: object
+      description: A base / value business entity used to represent money
+      properties:
+        unit:
+          type: string
+          description: Currency (ISO4217 norm uses 3 letters to define the currency)
+        value:
+          type: number
+          format: float
+          description: A positive floating point number
+    ProductOrderStateType:
+      type: string
+      description: Possible values for the state of the order
+      enum:
+      - acknowledged
+      - rejected
+      - pending
+      - held
+      - inProgress
+      - cancelled
+      - completed
+      - failed
+      - partial
+      - assessingCancellation
+      - pendingCancellation
+    ProductOfferingPriceRef:
+      type: object
+      description: ProductPriceOffering reference. An amount, usually of money, that is asked for or allowed when a ProductOffering is bought, rented, or leased
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: Name of the related entity.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    OrderPrice:
+      type: object
+      description: An amount, usually of money, that represents the actual price paid by the Customer for this item or this order
+      properties:
+        description:
+          type: string
+          description: A narrative that explains in detail the semantics of this order item price.
+        name:
+          type: string
+          description: A short descriptive name such as "Subscription price".
+        priceType:
+          type: string
+          description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth
+        recurringChargePeriod:
+          type: string
+          description: Could be month, week...
+        unitOfMeasure:
+          type: string
+          description: Could be minutes, GB...
+        billingAccount:
+          $ref: '#/components/schemas/BillingAccountRef'
+          description: A reference to a billing account used for paid the order price charge
+        price:
+          $ref: '#/components/schemas/Price'
+          description: a structure used to define price amount
+        priceAlteration:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceAlteration'
+          description: a strucuture used to describe a price alteration
+        productOfferingPrice:
+          $ref: '#/components/schemas/ProductOfferingPriceRef'
+          description: An amount, usually of money, that is asked for or allowed when a ProductOffering is bought, rented, or leased. The price is valid for a defined period of time.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token
+x-refined-from:
+- mtn-group-product-ordering-coe.yml
+- mtn-group-tmf-product-ordering-tmf622.yml

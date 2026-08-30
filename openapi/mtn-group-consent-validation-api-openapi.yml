@@ -1,0 +1,172 @@
+openapi: 3.2.0
+info:
+  description: A suite of apis for customer consent validation.
+  version: 2.0.0
+  title: Consent Validation API
+servers:
+- url: https://api.mtn.com/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Consent Validation
+  description: Consent Validation Implementation to confirm user consent
+paths:
+  /consent/{msisdn}:
+    post:
+      tags:
+      - Consent Validation
+      summary: Provides an easy way for double opt-in to their traditional channel applications like USSD.
+      description: Confirms next action based on subscriber consent mostly for traditional channels.
+      operationId: consentValidation
+      parameters:
+      - name: msisdn
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessConsentResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/consentError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/consentError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/consentError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/consentError'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/consentError'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/consentError'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/consentError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/consentError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentRequest'
+        required: true
+components:
+  schemas:
+    SuccessConsentResponseLink:
+      type: object
+      properties:
+        self:
+          type: string
+          example: https://api.mtn.com/v1/consent
+    SuccessConsentResponse:
+      type: object
+      required:
+      - statusCode
+      - data
+      - _links
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        customerId:
+          type: string
+          example: '234806589013'
+        data:
+          type: object
+          properties:
+            sent:
+              type: boolean
+              example: true
+        _links:
+          $ref: '#/components/schemas/SuccessConsentResponseLink'
+    consentError:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+        SupportMessage:
+          type: string
+          description: Support Message
+        transactionId:
+          type: string
+          description: Message ID
+    ConsentRequest:
+      type: object
+      required:
+      - flowType
+      - confirmationMessage
+      - callbackUrl
+      properties:
+        confirmationMessage:
+          type: string
+          example: Do you consent to making this purchase? . Press 1 to accept , Press 2 to reject.
+        flowType:
+          type: string
+          example: ussd
+          description: ussd or sms
+          enum:
+          - ussd
+          - sms
+        callbackUrl:
+          type: string
+          example: https://your-domain/notification
+          description: The callback url where the user's consent will be posted to
+        customData:
+          type: array
+          items:
+            type: string
+          example:
+          - custom data 1
+          - custom data 2
+          description: This is a custom list of strings that you want to be sent back to you when the user's consent is posted back in ConsentNotificationResponse object.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

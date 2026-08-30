@@ -1,0 +1,456 @@
+openapi: 3.2.0
+info:
+  title: TMF666 Account Management Financial Account API
+  version: 1.0.0
+  description: 'TMF666 Account Management API with MTN extensions to retrieve financial account transactions, transaction details, outstanding balances, account balances.
+
+    '
+servers:
+- url: https://api.mtn.com/tmf-api/financialProfile/v1
+security:
+- bearerAuth: []
+tags:
+- name: FinancialAccount
+paths:
+  /financialAccount/{id}/transaction:
+    get:
+      summary: List Financial Account Transactions
+      operationId: listFinancialAccountTransactions
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Financial Account identifier
+      - name: debitCredit
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - D
+          - C
+      - name: offset
+        in: query
+        schema:
+          type: string
+          example: '1'
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 50
+      - name: searchBasedOn
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - S
+      - name: serviced
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful transaction list response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialTransactionList'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - FinancialAccount
+  /financialAccount/{id}/transaction/{tid}:
+    get:
+      summary: Retrieve Financial Account Transaction
+      operationId: getFinancialAccountTransaction
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Financial Account identifier
+      - name: tid
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Transaction identifier
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialTransaction'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - FinancialAccount
+  /financialAccount/{id}/outstandingBalance:
+    get:
+      summary: Retrieve Financial Account Outstanding Balance
+      operationId: getFinancialAccountOutstandingBalance
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: outStandingBasedOn
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - E
+      responses:
+        '200':
+          description: Outstanding balance response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutstandingAmount'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - FinancialAccount
+  /financialAccount/{id}/balance:
+    get:
+      summary: Retrieve Financial Account Balance
+      operationId: getFinancialAccountBalance
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: balanceLevel
+        in: query
+        required: true
+        schema:
+          type: number
+          enum:
+          - 2
+      - name: outStandingBasedOn
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - E
+      responses:
+        '200':
+          description: Successful balance response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutstandingAmount'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - FinancialAccount
+components:
+  schemas:
+    FinancialTransactionList:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/FinancialTransaction'
+    OutstandingAmount:
+      type: object
+      properties:
+        totalDebitAmount:
+          type: number
+        totalCreditAmount:
+          type: number
+        totalUnbilledAmount:
+          type: number
+        billedOutstandingAmount:
+          type: number
+        totalOustandingAmount:
+          type: number
+    FinancialTransaction:
+      type: object
+      properties:
+        transactionNumber:
+          type: string
+        transactionDate:
+          type: string
+        debitCredit:
+          type: string
+        amount:
+          type: string
+        remarks:
+          type: string
+        channel:
+          type: string
+        currency:
+          type: string
+        accessedBy:
+          type: string
+        adjustedAmount:
+          type: string
+        autoAdjustFlag:
+          type: string
+        correlationID:
+          type: string
+        financialPostingReference:
+          type: string
+        financialPostingStatus:
+          type: string
+        hierarchyEntityCode:
+          type: string
+        hierarchyParent:
+          type: string
+        isBulkTransaction:
+          type: string
+        invoiceMetaData:
+          type: object
+        userAdditionalInfo:
+          type: object
+        uraadjustmentdetails:
+          type: object
+        paymentDetails:
+          type: array
+          items:
+            type: object
+        isCleared:
+          type: string
+        status:
+          type: string
+        statusChangeDate:
+          type: object
+          properties:
+            invrecinsertdate:
+              type: string
+        taxAmount:
+          type: string
+        approvalOperationType:
+          type: string
+        excessAmount:
+          type: string
+        runningTotal:
+          type: string
+        cashBoxNumber:
+          type: string
+        disputeAmount:
+          type: string
+        externalReference:
+          type: string
+        paymentId:
+          type: string
+        reasons:
+          type: string
+        transactionOwner:
+          type: string
+        hierarchyRunningTotal:
+          type: string
+        parentHierarchyRunningTotal:
+          type: string
+    Error:
+      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+      type: object
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

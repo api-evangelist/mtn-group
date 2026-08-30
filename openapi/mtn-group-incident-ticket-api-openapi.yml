@@ -1,0 +1,697 @@
+openapi: 3.2.0
+info:
+  title: Mtn Group Incident ticket API
+  version: v1.0
+  description: 'Operations tagged Incident ticket across 2 of this provider''s published API definitions: mtn-group-job-card-management.yml, mtn-group-ticket.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://localhost:8080
+- url: https://api.mtn.com/
+tags:
+- name: Incident ticket
+paths:
+  /incident:
+    post:
+      tags:
+      - Incident ticket
+      summary: Create a new ticket
+      description: Create a new ticket by specifying the 'originIncidentNumber'.
+      responses:
+        201:
+          description: Incident created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ticketResponse'
+        401:
+          description: Not authenticated
+        404:
+          description: Not found
+        407:
+          description: Proxy system not authenticated
+        500:
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/newTicket'
+        description: Request body
+        required: true
+    put:
+      tags:
+      - Incident ticket
+      summary: Modify an existing ticket
+      description: This call is used to update a ticket that already exists by using the 'targetIncidentNumber'.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ticketResponse'
+        401:
+          description: Not authenticated
+        404:
+          description: Not found
+        407:
+          description: Proxy system not authenticated
+        500:
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateTicket'
+        description: Request body
+        required: true
+    servers:
+    - url: http://localhost:8080
+components:
+  schemas:
+    newTicket:
+      type: object
+      required:
+      - targetSystem
+      - originSystem
+      - transactionId
+      - callerId
+      - originIncidentNumber
+      - shortDescription
+      properties:
+        targetSystem:
+          type: string
+          description: System receiving the request
+          example: REMEDYSA
+          enum:
+          - REMEDYSA
+          - SERVICENOW
+        originSystem:
+          type: string
+          description: System originating the request
+          example: SERVICENOW
+          enum:
+          - REMEDYSA
+          - SERVICENOW
+        transactionId:
+          type: string
+          description: Transaction identifier used by client
+          example: 123ABC
+        callerId:
+          type: string
+          description: User from calling system
+          example: a.gonzalez.bogaz@accenture.com
+        originIncidentNumber:
+          type: string
+          description: Origin ticket identifier, this is the id of the ticket at the originating system
+          example: INC0011558
+        shortDescription:
+          type: string
+          description: Brief description about the ticket
+          example: Superman is sick
+        detailedDescription:
+          type: string
+          description: More detailed description of the ticket
+          example: Superman is sick because he was exposed to Kryptonite
+        impact:
+          type: string
+          description: Level of impact
+          example: '1'
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+        urgency:
+          type: string
+          description: Level of urgency
+          example: '3'
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+        interface:
+          type: string
+          description: interface applicable to requests for RemedySA
+          example: interface
+        signalName:
+          type: string
+          description: signalName applicable to requests for RemedySA
+          example: signalName
+        attachmentFilename:
+          type: string
+          description: Name of file being attached
+          example: image1.png
+        attachmentData:
+          type: string
+          format: base64
+          description: Attachment data encoded in base64
+          example: fdgrdvh22dhv2dhtdt3h35th4
+    ticketResponse:
+      type: object
+      required:
+      - targetIncidentNumber
+      - statusCode
+      - statusMessage
+      - originTransactionId
+      - targetTransactionId
+      properties:
+        targetIncidentNumber:
+          type: string
+          description: Target ticket identifier, this is the id of the ticket at the target system
+        statusCode:
+          type: string
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status response description
+          example: processed
+        originTransactionId:
+          type: string
+          description: Transaction identifier generated by system originating the request
+          example: MTN123456
+        targetTransactionId:
+          type: string
+          description: Transaction identifier generated by target
+          example: 17af7d89db62885072fa83305b961972
+    updateTicket:
+      type: object
+      required:
+      - transactionId
+      - originSystem
+      - targetSystem
+      - targetIncidentNumber
+      properties:
+        transactionId:
+          type: string
+          description: Transaction identifier used by client
+          example: 123ABC
+        originSystem:
+          type: string
+          description: System originating the request
+          example: SERVICENOW,REMEDYSA
+        targetSystem:
+          type: string
+          description: System receiving the request
+          example: REMEDYSA,SERVICENOW
+        targetIncidentNumber:
+          type: string
+          description: Incident number at the target system
+          example: INC0011964
+        shortDescription:
+          type: string
+          description: Brief description about the ticket
+          example: Superman is sick
+        detailedDescription:
+          type: string
+          description: More detailed description of the ticket
+          example: Superman is sick because he was exposed to Kryptonite
+        impact:
+          type: string
+          description: Level of impact
+          example: '1'
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+        urgency:
+          type: string
+          description: Level of urgency
+          example: '3'
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+        attachmentFilename:
+          type: string
+          description: Name of file being attached
+          example: image1.png
+        attachmentData:
+          type: string
+          format: base64
+          description: Attachment data encoded in base64
+          example: fdgrdvh22dhv2dhtdt3h35th4
+        state:
+          type: string
+          description: Only applicable for values 2,3,6,7,8. Value 1 is set when an incident is created. Value 2 can only be set if the ticket 'assignedTo' field was prevously set
+          example: '3'
+          enum:
+          - '2'
+          - '3'
+          - '6'
+          - '7'
+          - '8'
+        assignedTo:
+          type: string
+          description: Who the incident is assigned to
+          example: integration.mtn.sa.remedy
+        closeCode:
+          type: string
+          description: Applicable when setting 'state' to 6. This value is used to indicate the code for resolution.
+          enum:
+          - Not Resolved – Not Reproducible
+          - Not Resolved – Problem Raised
+          - Not Resolved – Resolved by Vendor
+          - Resolved - Workaround Applied
+          - Resolved – Fixed by Caller
+          - Resolved – Fixed Without Action
+          - Resolved – Permanent Fix Applied
+          example: Resolved – Permanent Fix Applied
+        closeNotes:
+          type: string
+          description: Custom notes for closing ticket.
+          example: All done!
+        comments:
+          type: string
+          description: Comments to incident
+          example: My comments
+        workNotes:
+          type: string
+          description: Work notes to incident
+          example: My notes
+        subcategory:
+          type: string
+          description: Incident category
+          example: database
+        interface:
+          type: string
+          description: interface applicable to requests for RemedySA
+          example: interface
+        signalName:
+          type: string
+          description: signalName applicable to requests for RemedySA
+          example: signalName
+        summary:
+          type: string
+          description: summary applicable to requests for RemedySA
+          example: summary
+        detailedSummary:
+          type: string
+          description: detailedSummary applicable to requests for RemedySA
+          example: detailedSummary
+    TicketCreateData:
+      type: object
+      properties:
+        referenceNumber:
+          type: string
+          description: Ticket reference number
+        estimatedResolutionTime:
+          type: string
+          description: Estimated resolition time for the ticket created
+        urgency:
+          type: string
+          description: Urgency / priority of the created ticket
+        docketRefNumber:
+          type: string
+        incidentReopenCount:
+          type: number
+          description: Number of times the ticket has been re-opened
+    MediumCharacteristic:
+      type: object
+      description: Describes the contact medium characteristics that could be used to contact a party (an individual or an organization)
+      properties:
+        contact:
+          type: string
+          description: Person's phone number or email
+        buildingNumber:
+          type: string
+          description: Building number
+        city:
+          type: string
+          description: The city
+        contactType:
+          type: string
+          description: 'The type of contact, for example: phone number such as mobile, fixed home, fixed office. postal address such as shipping instalation…'
+        addressType:
+          type: string
+          description: Type of address such as residential address, office address etc.
+        placeName:
+          type: string
+          description: Name of village or town or place etc.
+        sectorName:
+          type: string
+          description: Name of sector or relevant etc.
+        cellName:
+          type: string
+          description: Name of cell number or town or place etc.
+        districtName:
+          type: string
+          description: Name of village or town or place etc.
+        street1:
+          type: string
+          description: Describes the street
+        state:
+          type: string
+        region:
+          type: string
+          description: Region of the complainant
+        street:
+          type: string
+        street2:
+          type: string
+        postCode:
+          type: string
+          description: Postcode
+        stateOrProvince:
+          type: string
+          description: State or province
+        country:
+          type: string
+          description: The country
+        emailAddress:
+          type: string
+          description: Full email address in standard format
+        faxNumber:
+          type: string
+          description: The fax number of the contact
+        phoneNumber:
+          type: string
+          description: The primary phone number of the contact
+        alternateNumber:
+          type: array
+          items:
+            type: string
+            description: List of alternate phone/contact numbers of the customer
+            example:
+            - '2507865432'
+        socialNetworkId:
+          type: string
+          description: Identifier as a member of a social network
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    ContactMedium:
+      type: object
+      description: Indicates the contact medium that could be used to contact the party.
+      properties:
+        mediumType:
+          type: string
+          description: 'Type of the contact medium, such as: physicalAdress,postalAddress,contactPerson etc.'
+        preferred:
+          type: boolean
+          description: If true, indicates that is the preferred contact medium
+        characteristic:
+          $ref: '#/components/schemas/MediumCharacteristic'
+          description: Any additional characteristic(s) of this contact medium
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    ticketResponse_2:
+      type: object
+      required:
+      - targetIncidentNumber
+      - statusCode
+      - statusMessage
+      - originTransactionId
+      - targetTransactionId
+      properties:
+        targetIncidentNumber:
+          type: string
+          description: Target ticket identifier, this is the id of the ticket at the target system
+        statusCode:
+          type: string
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status response description
+          example: processed
+        originTransactionId:
+          type: string
+          description: Transaction identifier generated by system originating the request
+          example: MTN123456
+        targetTransactionId:
+          type: string
+          description: Transaction identifier generated by target
+          example: 17af7d89db62885072fa83305b961972
+        data:
+          $ref: '#/components/schemas/TicketCreateData'
+    updateTicket_2:
+      type: object
+      required:
+      - transactionId
+      - originSystem
+      - targetSystem
+      - targetIncidentNumber
+      properties:
+        transactionId:
+          type: string
+          description: Transaction identifier used by client
+          example: 123ABC
+        originSystem:
+          type: string
+          description: System originating the request
+          example: SERVICENOW,REMEDYSA
+        targetSystem:
+          type: string
+          description: System receiving the request
+          example: REMEDYSA,SERVICENOW
+        targetIncidentNumber:
+          type: string
+          description: Incident number at the target system
+          example: INC0011964
+        shortDescription:
+          type: string
+          description: Brief description about the ticket
+          example: Superman is sick
+        detailedDescription:
+          type: string
+          description: More detailed description of the ticket
+          example: Superman is sick because he was exposed to Kryptonite
+        impact:
+          type: string
+          description: Level of impact
+          example: '1'
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+        urgency:
+          type: string
+          description: Level of urgency
+          example: '3'
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+        attachmentFilename:
+          type: string
+          description: Name of file being attached
+          example: image1.png
+        attachmentData:
+          type: string
+          format: base64
+          description: Attachment data encoded in base64
+          example: fdgrdvh22dhv2dhtdt3h35th4
+        state:
+          type: string
+          description: Only applicable for values 2,3,6,7,8. Value 1 is set when an incident is created. Value 2 can only be set if the ticket 'assignedTo' field was prevously set
+          example: '3'
+          enum:
+          - '2'
+          - '3'
+          - '6'
+          - '7'
+          - '8'
+        assignedTo:
+          type: string
+          description: Who the incident is assigned to
+          example: integration.mtn.sa.remedy
+        closeCode:
+          type: string
+          description: Applicable when setting 'state' to 6. This value is used to indicate the code for resolution.
+          enum:
+          - Not Resolved – Not Reproducible
+          - Not Resolved – Problem Raised
+          - Not Resolved – Resolved by Vendor
+          - Resolved - Workaround Applied
+          - Resolved – Fixed by Caller
+          - Resolved – Fixed Without Action
+          - Resolved – Permanent Fix Applied
+          example: Resolved – Permanent Fix Applied
+        closeNotes:
+          type: string
+          description: Custom notes for closing ticket.
+          example: All done!
+        comments:
+          type: string
+          description: Comments to incident
+          example: My comments
+        workNotes:
+          type: string
+          description: Work notes to incident
+          example: My notes
+        subcategory:
+          type: string
+          description: Incident category
+          example: database
+        interface:
+          type: string
+          description: interface applicable to requests for RemedySA
+          example: interface
+        signalName:
+          type: string
+          description: signalName applicable to requests for RemedySA
+          example: signalName
+        summary:
+          type: string
+          description: summary applicable to requests for RemedySA
+          example: summary
+        detailedSummary:
+          type: string
+          description: detailedSummary applicable to requests for RemedySA
+          example: detailedSummary
+        status:
+          type: string
+          description: Status of the ticket
+        statusUpdateTime:
+          type: string
+          format: datetime
+        commentsUpdateTime:
+          type: string
+          format: datetime
+          description: Time when a new comment is being submitted
+        statusUpdateStaffCode:
+          type: string
+          description: Staff number of the individual submitting the update
+        commentsUpdateStaffCode:
+          type: string
+          description: Comment of the individual submitting the update
+    newTicket_2:
+      type: object
+      required:
+      - targetSystem
+      - originSystem
+      - transactionId
+      - callerId
+      - originIncidentNumber
+      - shortDescription
+      properties:
+        targetSystem:
+          type: string
+          description: System receiving the request
+          example: REMEDYSA
+          enum:
+          - REMEDYSA
+          - SERVICENOW
+          - CLM
+        originSystem:
+          type: string
+          description: System originating the request
+          example: SERVICENOW
+          enum:
+          - REMEDYSA
+          - SERVICENOW
+        transactionId:
+          type: string
+          description: Transaction identifier used by client
+          example: 123ABC
+        callerId:
+          type: string
+          description: User from calling system
+          example: a.gonzalez.bogaz@accenture.com
+        originIncidentNumber:
+          type: string
+          description: Origin ticket identifier, this is the id of the ticket at the originating system
+          example: INC0011558
+        shortDescription:
+          type: string
+          description: Brief description about the ticket
+          example: Superman is sick
+        detailedDescription:
+          type: string
+          description: More detailed description of the ticket
+          example: Superman is sick because he was exposed to Kryptonite
+        impact:
+          type: string
+          description: Level of impact
+          example: '1'
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+        urgency:
+          type: string
+          description: Level of urgency
+          example: '3'
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+        interface:
+          type: string
+          description: interface applicable to requests for RemedySA
+          example: interface
+        signalName:
+          type: string
+          description: signalName applicable to requests for RemedySA
+          example: signalName
+        attachmentFilename:
+          type: string
+          description: Name of file being attached
+          example: image1.png
+        attachmentData:
+          type: string
+          format: base64
+          description: Attachment data encoded in base64
+          example: fdgrdvh22dhv2dhtdt3h35th4
+        customerId:
+          type: string
+          description: Mobile number of the entity reporting the incident
+        entityType:
+          type: string
+          description: Categorisation of the entity that has created the ticket. P -> Profile Level S -> Single Service Level I -> Individual Level
+          enum:
+          - P
+          - S
+          - I
+        ticketCategoryCode:
+          type: string
+          description: Represents code of the Trouble ticket Category created
+        destinationNumber:
+          type: string
+          description: Represents destination number
+        ticketCategory:
+          type: string
+          description: Ticket category
+        ticketSubCategory:
+          type: string
+          description: Ticket level 2 category
+        subscriberName:
+          type: string
+          description: Subscriber Name
+        contactMedium:
+          $ref: '#/components/schemas/ContactMedium'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token
+x-refined-from:
+- mtn-group-job-card-management.yml
+- mtn-group-ticket.yml

@@ -1,0 +1,505 @@
+openapi: 3.2.0
+info:
+  description: List of services to integrate with insurance service provider to manage insurance policies and policy related information. It provides the ability for channel applications to request for quote, submit application, manage application and fetch list of policies.
+  version: v1.0
+  title: Insurance Quotation API
+servers:
+- url: https://za.api.mtn.com/insurance
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Quotation
+paths:
+  /v1/quotation:
+    post:
+      tags:
+      - Quotation
+      summary: Request for one or bulk quotations
+      description: Provides the ability for channels to request for one or bulk quotations.
+      operationId: Quotation
+      parameters:
+      - name: channelId
+        in: header
+        description: Source system identifier
+        required: true
+        x-example: EBUPortal
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        required: false
+        description: Name of the backend system
+        schema:
+          type: string
+          enum:
+          - ATS
+          default: ATS
+      - name: transactionId
+        in: header
+        description: Unique identifier of this transaction. Generated automatically by MADAPI and passed to backend if not sent by channel.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuotationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorForbidden'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBackend'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuotationRequest'
+        required: true
+components:
+  schemas:
+    QuotationRequest:
+      type: object
+      required:
+      - quoteType
+      properties:
+        customer:
+          type: object
+          required:
+          - type
+          properties:
+            type:
+              type: string
+              description: Type of customer
+              enum:
+              - cbu
+              - ebu
+              - sme
+            customerSubType:
+              type: string
+              enum:
+              - sme
+            title:
+              type: string
+              enum:
+              - mr
+              - mrs
+              - ms
+            initials:
+              type: string
+              description: Intials of the customer. Data encrypted by MADAPI before sending to backend system.
+              example: MJ
+              maxLength: 10
+            firstName:
+              type: string
+              description: First name of the customer. Data encrypted by MADAPI before sending to backend system.
+              example: Mary
+              minLength: 1
+              maxLength: 100
+            lastName:
+              type: string
+              description: Surname of the customer. Data encrypted by MADAPI before sending to backend system.
+              example: Joan
+              minLength: 2
+              maxLength: 100
+            companyName:
+              type: string
+              description: Company name of the customer. Data encrypted by MADAPI before sending to backend system.
+              minLength: 2
+              maxLength: 100
+              example: Missy Joans (Pty) Ltd
+            tradingName:
+              type: string
+              description: Trading name of the customer. Data encrypted by MADAPI before sending to backend system.
+              minLength: 2
+              maxLength: 100
+              example: Missy Joans & Co
+            companyRegistration:
+              type: string
+              description: Company name of the customer. Data encrypted by MADAPI before sending to backend system.
+              minLength: 15
+              maxLength: 100
+        quoteItem:
+          type: array
+          items:
+            required:
+            - productType
+            - quantity
+            properties:
+              productType:
+                type: string
+                description: Type of the insured product, like Device, Cyber Sim or Contract Protector or Router Insurance
+                enum:
+                - device
+                - cyberSim
+                - contractProtector
+                - routerInsurance
+              coverType:
+                type: string
+                description: Premium type filter (optional). Mandatory for Downgrade if product type is chosen as 'device'.
+                enum:
+                - allRisk
+                - repairOnly
+                - accident
+                - lossTheft
+              addOn:
+                type: array
+                items:
+                  type: string
+                  example: excessBuyDown
+                  description: List of addOn covers like excessBuyDown, cyberSim, contractProtector, routerInsurance
+              productIdType:
+                type: string
+                description: How the insured product is identified, such as using a Product Code, TAC or SKU. Mandatory if product type is chosen as 'device'.
+                enum:
+                - code
+                - tac
+                - sku
+                - marketingId
+              productId:
+                type: string
+                description: Actual identifier for the selected type such as a specific SKU. Mandatory if product type is chosen as 'device'.
+                minLength: 2
+                maxLength: 50
+                example: 7923642
+              quantity:
+                type: number
+                description: Total devices to be quoted on for insurance.
+                example: 5
+        quoteType:
+          type: string
+          description: Type of quotation requested.
+          enum:
+          - quotation
+          - downgrade
+          - finalisation
+    ErrorBackend:
+      type: object
+      title: ErrorBackend
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: MADAPI Canonical Error Code of 4 digit long
+          default: '5000'
+        statusMessage:
+          type: string
+          description: Error description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+        transactionId:
+          type: string
+          description: Unique identifier of this transaction
+    ErrorUnauthorized:
+      type: object
+      title: ErrorUnauthorized
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: MADAPI Canonical Error Code of 4 digit long
+          default: '4000'
+        statusMessage:
+          type: string
+          description: Error description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+        transactionId:
+          type: string
+          description: Unique identifier of this transaction
+    ErrorBadRequest:
+      type: object
+      title: ErrorBadRequest
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: MADAPI Canonical Error Code of 4 digit long
+          default: '5000'
+        statusMessage:
+          type: string
+          description: Error description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+        transactionId:
+          type: string
+          description: Unique identifier of this transaction
+    ErrorForbidden:
+      type: object
+      title: ErrorForbidden
+      required:
+      - error
+      - error_description
+      properties:
+        error:
+          type: string
+          description: Error description
+        error_description:
+          type: string
+          description: More error details and corrective measures
+    QuotationResponse:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - transactionId
+      - data
+      properties:
+        statusCode:
+          type: string
+          description: Result code.
+          default: '0000'
+        statusMessage:
+          type: string
+          description: Short message describing how many quotes were generated.
+        transactionId:
+          type: string
+          description: Unique id of this transaction.
+        data:
+          type: object
+          required:
+          - quoteId
+          - quoteExpirationDate
+          - quote
+          properties:
+            quoteId:
+              type: integer
+              description: Unique quote identifier for this request.
+            quoteExpirationDate:
+              type: string
+              format: date
+              description: Date this quote expires in the future.
+            quote:
+              type: array
+              items:
+                type: object
+                required:
+                - subQuoteId
+                - cover
+                properties:
+                  subQuoteId:
+                    type: string
+                    description: Unique quote identifier for this device. This is the item level quotationID that is also used for the selected covers on /application service
+                    example: 245-371-18
+                  cover:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - coverType
+                      - premiumAmountIncl
+                      - premiumAmountExcl
+                      - discountAmountIncl
+                      - discountAmountExcl
+                      - quantity
+                      - totalAmountIncl
+                      - totalAmountExcl
+                      - totalDiscountAmountIncl
+                      - totalDiscountAmountExcl
+                      - linkedToDevice
+                      properties:
+                        coverType:
+                          type: string
+                          description: Code for this premium band.
+                          enum:
+                          - allRisk
+                          - repairOnly
+                          - accident
+                          - lossTheft
+                          - excessBuyDown
+                          - cyberSim
+                          - contractProtector
+                          - routerInsurance
+                        coverTypeName:
+                          type: string
+                          description: Name of this premium band. User friendly  label.
+                          example: All Risk
+                        premiumAmountIncl:
+                          type: string
+                          description: Calculated item Insurance Amount (excl VAT)
+                        premiumAmountExcl:
+                          type: string
+                          description: Calculated item Insurance Amount (incl VAT)
+                        discountAmountIncl:
+                          type: string
+                          description: Calculated item discount Insurance Amount (excl VAT)
+                        discountAmountExcl:
+                          type: string
+                          description: Calculated item discount Insurance Amount (incl VAT)
+                        quantity:
+                          type: integer
+                          description: Total devices this premium type applies to.
+                          example: 10
+                        totalDiscountAmountIncl:
+                          type: string
+                          description: Total calculated discounted Insurance Amount (excl VAT)
+                        totalDiscountAmountExcl:
+                          type: string
+                          description: Total calculated discounted Insurance Amount (incl VAT)
+                        totalAmountIncl:
+                          type: string
+                          description: Total calculated Insurance Amount (excl VAT). Total amount is after discount is applied.
+                        totalAmountExcl:
+                          type: string
+                          description: Total calculated Insurance Amount (incl VAT). Total amount is after discount is applied
+                        tooltip:
+                          type: string
+                          description: Toolip, if applicable
+                        description:
+                          type: string
+                          description: Description for this premium band, if applicable
+                        addon:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                            - coverType
+                            - amountIncl
+                            - amountExcl
+                            - quantity
+                            - totalAmountIncl
+                            - totalAmountExcl
+                            properties:
+                              coverType:
+                                type: string
+                                description: Code for this premium band.
+                                enum:
+                                - cyberSim
+                                - contractProtector
+                              coverTypeName:
+                                type: string
+                                description: Name of this premium band.
+                              premiumAmountIncl:
+                                type: string
+                                description: Calculated item Insurance Amount (excl VAT)
+                              premiumAmountExcl:
+                                type: string
+                                description: Calculated item Insurance Amount (incl VAT)
+                              discountAmountIncl:
+                                type: string
+                                description: Calculated item discount Insurance Amount (excl VAT)
+                              discountAmountExcl:
+                                type: string
+                                description: Calculated item discount Insurance Amount (incl VAT)
+                              quantity:
+                                type: integer
+                                description: Total devices this premium type applies to.
+                              totalDiscountAmountIncl:
+                                type: string
+                                description: Total calculated discounted Insurance Amount (excl VAT)
+                              totalDiscountAmountExcl:
+                                type: string
+                                description: Total calculated discounted Insurance Amount (incl VAT)
+                              totalAmountIncl:
+                                type: string
+                                description: Total calculated Insurance Amount (excl VAT). Total amount is after discount is applied
+                              totalAmountExcl:
+                                type: string
+                                description: Total calculated Insurance Amount (incl VAT). Total amount is after discount is applied
+                              tooltip:
+                                type: string
+                                description: Toolip, if applicable
+                              description:
+                                type: string
+                                description: Description for this premium band, if appplicable
+                  product:
+                    type: object
+                    required:
+                    - productIdType
+                    - productId
+                    - insuredValue
+                    - quantity
+                    - category
+                    properties:
+                      productIdType:
+                        type: string
+                        description: How the insured product is identified, sucha as using a Product Code, TAC or SKU
+                        enum:
+                        - code
+                        - tac
+                        - sku
+                        - marketingId
+                      productId:
+                        type: string
+                        description: Actual identifier for the selected type such as a specific SKU
+                        maxLength: 50
+                      insuredValue:
+                        type: string
+                        description: Insured value of the item
+                      quantity:
+                        type: integer
+                        description: Total devices this cover applies to
+                      category:
+                        type: string
+                        description: Category of the item
+                        enum:
+                        - cellphone
+                        - tablets
+                        - iPad
+                        - modems
+                        - laptops
+                        - simCards
+                        - wearables
+                        - other
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: x-api-key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/edgemicro-custom-auth/token?grant_type=client_credentials

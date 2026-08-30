@@ -1,0 +1,505 @@
+openapi: 3.2.0
+info:
+  description: This API assesses risks for an MTN customer as well as creates applications
+  version: 1.0.0
+  title: MTN Siebel API
+  contact:
+    email: developer-support@mtn.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://api.mtn.com/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: siebel
+paths:
+  /siebel/{id}/openOrders:
+    get:
+      summary: Open Orders
+      description: This operation retrieves current open orders
+      tags:
+      - siebel
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: idType
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openOrdersResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /siebel/{id}/assetDetails:
+    get:
+      summary: Asset Details
+      description: This operation retrieves current open orders
+      tags:
+      - siebel
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: idType
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/assetDetailsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /siebel/{id}/createCase:
+    post:
+      summary: Create Case
+      description: This operation creates a case number for a user
+      tags:
+      - siebel
+      parameters:
+      - name: id
+        description: Unique id for order (Order Number)
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createCaseResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createCaseRequest'
+        required: true
+components:
+  schemas:
+    createCaseResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        data:
+          type: object
+          properties:
+            caseNumber:
+              type: string
+    createCaseRequest:
+      type: object
+      properties:
+        applicationId:
+          type: string
+        customerType:
+          type: string
+        applicationType:
+          type: string
+        flag:
+          type: string
+          example: Y
+    assetDetailsInsurance:
+      type: object
+      properties:
+        productName:
+          type: string
+          example: Insurance
+        insuranceNumber:
+          type: string
+          example: MTNAR328314S
+        billedMsisdn:
+          type: string
+          example: 27609608141
+        premiumType:
+          type: string
+          example: All Risk
+    openOrdersResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        data:
+          type: object
+          properties:
+            openOrders:
+              type: object
+              properties:
+                openOrders-1:
+                  type: object
+                  properties:
+                    orderNumber:
+                      type: string
+                    costCenter:
+                      type: string
+                    billingSubType:
+                      type: string
+                    paymentMethod:
+                      type: string
+                    billingType:
+                      type: string
+                    insuranceDetails:
+                      type: object
+                      properties:
+                        insurance:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/openOrderInsuranceArray'
+                openOrders-2:
+                  type: object
+                  properties:
+                    orderNumber:
+                      type: string
+                    costCenter:
+                      type: string
+                    billingSubType:
+                      type: string
+                    paymentMethod:
+                      type: string
+                    billingType:
+                      type: string
+                    serviceClass:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/serviceClassArray'
+                    insuranceDetails:
+                      type: object
+                      properties:
+                        insurance:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/openOrderInsuranceArray'
+    serviceClassArray:
+      type: object
+      properties:
+        productType:
+          type: string
+        prodPromInstanceId:
+          type: string
+        serviceNumber:
+          type: string
+        pricePlan:
+          type: string
+        dealName:
+          type: string
+        offsetMRC:
+          type: string
+        spulValue:
+          type: string
+        contractTerm:
+          type: string
+        serviceMRC:
+          type: string
+        device:
+          type: object
+          properties:
+            deviceName:
+              type: string
+            handsetMRC:
+              type: string
+            productType:
+              type: string
+            handsetValue:
+              type: string
+            prodPromInstanceId:
+              type: string
+    assetDetailsResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        data:
+          type: object
+          properties:
+            assetDetails:
+              type: object
+              properties:
+                assetNumber-1:
+                  type: object
+                  properties:
+                    productType:
+                      type: string
+                      example: GSM
+                    billingAccountType:
+                      type: string
+                      example: EBU
+                    billingAccountSubType:
+                      type: string
+                      example: Retail Employee
+                    created:
+                      type: string
+                      example: 2023-06-07
+                    mrc:
+                      type: string
+                      example: R1732.04
+                    paymentMethod:
+                      type: string
+                      example: Credit
+                    rootTerm:
+                      type: string
+                      example: 24
+                    serialNumber:
+                      type: string
+                      example: 2324232424232
+                assetNumber-2:
+                  type: object
+                  properties:
+                    created:
+                      type: string
+                      example: 2023-06-07
+                    productType:
+                      type: string
+                      example: GSM
+                    billingAccountType:
+                      type: string
+                      example: EBU
+                    billingAccountSubType:
+                      type: string
+                      example: Retail Employee
+                    mrc:
+                      type: string
+                      example: R1732.04
+                    paymentMethod:
+                      type: string
+                      example: Credit
+                    rootTerm:
+                      type: string
+                      example: 24
+                    serialNumber:
+                      type: string
+                      example: 2324232424232
+                    deviceTaxPrice:
+                      type: string
+                      example: 270
+                    handsetValue:
+                      type: string
+                      example: 4921.739
+                    deviceDetails:
+                      type: object
+                      properties:
+                        deviceName:
+                          type: string
+                          example: Huawei_P10
+                        imei:
+                          type: string
+                          example: 654342613870009
+                    insurance:
+                      $ref: '#/components/schemas/assetDetailsInsurance'
+    openOrderInsuranceArray:
+      type: object
+      properties:
+        spulValue:
+          type: string
+        dealName:
+          type: string
+        serviceMRC:
+          type: string
+        serviceNumber:
+          type: string
+        productType:
+          type: string
+        pricePlan:
+          type: string
+        offsetMRC:
+          type: string
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /loans/2348024008124/...
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

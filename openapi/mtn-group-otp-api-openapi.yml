@@ -1,0 +1,292 @@
+openapi: 3.2.0
+info:
+  description: A suite of apis for customer consent validation.
+  version: 2.0.0
+  title: Consent Validation OTP API
+servers:
+- url: https://api.mtn.com/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: OTP
+paths:
+  /consent/{customerId}/generateotp:
+    post:
+      tags:
+      - OTP
+      summary: Generate OTP and send to the customer's registered Id
+      description: Generate OTP and send it to the customer's Id
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        description: id for the Customer; if id is msisdn, format must be E.123
+        x-example: '2568810000026'
+        schema:
+          type: string
+      - name: X-Authorization
+        in: header
+        description: Bearer token to the backend.
+        x-example: b7b2320f4-xxxxx-xxxx-xxxxx-45ewr0388dca
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Unique identifier for the 3PP sending the request
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateOTPResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                IdNumber:
+                  type: string
+                  description: ID Number of the customer
+                notificationChannel:
+                  type: string
+                  example: ussd
+                  description: Channel to be used - ussd, sms or email
+                  enum:
+                  - ussd
+                  - sms
+                  - email
+  /consent/{customerId}/verifyotp:
+    post:
+      tags:
+      - OTP
+      summary: Validates the OTP sent to the subscriber from the generateotp request call
+      description: Validates the OTP sent to the subscriber. Once the otp has been verified, it will return invalid for subsequent calls.
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        description: id for the Customer; if id is msisdn, format must be E.123
+        x-example: '2568810000026'
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Unique identifier for the 3PP sending the request
+        schema:
+          type: string
+      - name: otpKey
+        in: query
+        description: Unique identifier for the OTP that was originally sent. This is the value used in the "requestOTP" method.
+        schema:
+          type: string
+      - name: otp
+        in: query
+        required: true
+        description: OTP as recieved on the SMS or Email Id
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyOTPResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+components:
+  schemas:
+    preapprovalError:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /subscribers/27831234567
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+    VerifyOTPResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          description: Generated or NotGenerated
+          example: Generated
+        customerId:
+          type: string
+          description: Customer's new MSISDN or Primary MSISDN
+          example: '2568810000026'
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            otpKey:
+              type: string
+              description: otpKey will be retuned to 3PP as response
+    GenerateOTPResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          description: Generated or NotGenerated
+          example: Generated
+        customerId:
+          type: string
+          description: Customer's new MSISDN or Primary MSISDN
+          example: '2568810000026'
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            IdNumber:
+              type: string
+              description: ID Number of the customer
+            servicesCount:
+              type: integer
+              description: Number of MSISDNs linked to the same customer's ID Number
+              example: 4
+            otpKey:
+              type: string
+              description: otpKey will be retuned to 3PP as response
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

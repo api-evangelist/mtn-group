@@ -1,0 +1,335 @@
+openapi: 3.2.0
+info:
+  version: v1.0
+  title: MTN Customer Management Mo Mo API
+  description: An API to register MoMo on Tier 0 for BSS. Please refer to the reference guides https://developers.mtn.com/API-Reference-Guides and Response and Error Codes documents https://developers.mtn.com/ResponseCodes
+servers:
+- url: https://api.mtn.com/v1/customerManagement
+tags:
+- name: MoMo
+paths:
+  /momo/tier0/registration:
+    post:
+      description: Registers customer on MoMo Tier 0.
+      summary: MoMo Tier 0 Registration
+      tags:
+      - MoMo
+      parameters:
+      - in: header
+        name: X-Authorization
+        description: An authorization key
+        schema:
+          type: string
+      - in: query
+        name: allowDuplicate
+        required: false
+        schema:
+          type: string
+      - in: header
+        name: targetSystem
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Registration Response. For a successful request, it will contain the transaction id and status of Registration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MomoRegistrationResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        409:
+          description: Conflict. ID already exists as a subscriber
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequestBody'
+        description: Registration Request to be initiated on GSM Account
+        required: true
+components:
+  schemas:
+    ContactMediumCharacteristic:
+      type: object
+      properties:
+        city:
+          type: string
+          description: City
+        stateOrProvince:
+          type: string
+          description: State or province
+        country:
+          type: string
+          description: Contact country
+          example: GH
+        contactType:
+          type: string
+          description: Type of address
+          enum:
+          - HOME
+          - BIZZ
+        name:
+          type: string
+          description: Address Name
+        town:
+          type: string
+          description: Town Name
+        street:
+          type: string
+          description: Street Name
+        postalCode:
+          type: string
+          description: Zip Code
+          example: 155
+        addressLines:
+          type: array
+          description: First Address Line
+          items:
+            type: string
+      description: Indicates the contact medium that could be used to contact the party.
+    RelatedParty:
+      required:
+      - customerMsisdn
+      type: object
+      properties:
+        customerMsisdn:
+          type: string
+          description: Unique msisdn to be registered for the customer.
+          example: 233559999781
+        msisdnVerificationCode:
+          type: string
+          maxLength: 64
+          description: An optional msisdn verification code for validating the account holder's msisdn
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+    IndividualIdentification:
+      type: object
+      properties:
+        individualId:
+          type: string
+          description: Unique alphanumeric string for the document used to identify the individual
+          example: G7888777
+        indentificationType:
+          type: string
+          enum:
+          - PASS
+          - CPFA
+          - SRSA
+          - NRIN
+          - OTHR
+          - DRLC
+          - SOCS
+          - AREG
+          - IDCD
+          description: Identification type (passport, national identity card, drivers license, social security number, birth certificate)
+        issuingAuthority:
+          type: string
+        issuingDate:
+          type: string
+          description: Date of the format yyyy-MM-dd
+          example: '2019-05-15'
+        expiryDate:
+          type: string
+          description: Date of the format yyyy-MM-dd
+          example: '2019-05-15'
+    RegistrationRequestBody:
+      type: object
+      required:
+      - relatedParty
+      - individualIndentification
+      - contactMedium
+      - accountHolder
+      properties:
+        relatedParty:
+          $ref: '#/components/schemas/RelatedParty'
+        individualIndentification:
+          $ref: '#/components/schemas/IndividualIdentification'
+        contactMedium:
+          $ref: '#/components/schemas/ContactMedium'
+        partyCharacteristic:
+          $ref: '#/components/schemas/Characteristic'
+    ContactMedium:
+      type: object
+      properties:
+        mediumType:
+          type: string
+          description: Contact Medium Type
+          example: Postal
+        characteristic:
+          $ref: '#/components/schemas/ContactMediumCharacteristic'
+      description: Indicates the contact medium that could be used to contact the party.
+    MomoRegistrationResponse:
+      type: object
+      required:
+      - accountHolderIdentity
+      - accountHolderIdentityType
+      - statusCode
+      - transactionId
+      properties:
+        accountHolderIdentity:
+          type: string
+          description: The ID of resource created
+          example: '9230088'
+        accountHolderIdentityType:
+          type: string
+          description: The type of ID for the resource created
+          example: ID
+        statusCode:
+          type: string
+          description: The status code for operation
+          example: '0000'
+        transactionId:
+          type: string
+          description: The transaction Id created for the request
+          example: A3344098765456
+    Characteristic:
+      required:
+      - name
+      - value
+      type: object
+      properties:
+        username:
+          type: string
+          description: a valid unique username of the account holder
+        email:
+          type: string
+          description: A valid unique email address of the account holder
+        emailVerificationCode:
+          type: string
+          maxLength: 64
+          description: OTP to validate the email address
+        languageCode:
+          type: string
+          description: An optional valid language code
+        alias:
+          type: string
+          description: An alias for the account holder
+        acceptedTCVersion:
+          type: string
+        quoteId:
+          type: string
+          description: Quote ID to use
+        parentAccountHolderId:
+          type: string
+          description: A valid identity associatd with a parent account holder
+        mlngInd:
+          type: string
+        regnAdrInd:
+          type: boolean
+          example: true
+        mnrInd:
+          type: boolean
+          example: true
+        profession:
+          type: string
+        clearingNumber:
+          type: string
+        securityQuestion:
+          type: string
+        securityQuestionAnswer:
+          type: string
+        bankAccountNumber:
+          type: string
+          description: A bank account number
+        bankDomainName:
+          type: string
+        profileName:
+          type: string
+          description: The profile to be created for the customer during registration
+          example: MTNGH Minimum KYC Subscriber Profile
+        externalId:
+          type: string
+        givenName:
+          type: string
+          description: First name of the individual
+          example: John
+        middleName:
+          type: string
+          description: Middles name or initial
+          example: K.
+        familyName:
+          type: string
+          description: Contains the non-chosen or inherited name. Also known as last name in the Western context
+          example: Doe
+        fullName:
+          type: string
+          description: Full name flatten (first, middle, and last names)
+          example: John Doe
+        gender:
+          type: string
+          description: Gender
+          example: MALE
+          enum:
+          - MALE
+          - FEMALE
+        countryOfBirth:
+          type: string
+          description: Country where the individual was born
+          example: GH
+        cityOfBirth:
+          type: string
+          description: City where the individual was born
+          example: Accra
+        birthDate:
+          type: string
+          description: Birth date using format YYYY-MM-DD
+          format: date-time
+          example: '1987-01-14'
+        nationality:
+          type: string
+          description: Nationality
+          example: GH
+        familyNameSuffix:
+          type: string
+        title:
+          type: string
+          example: Mr
+        postalAddressName:
+          type: string
+        taxNumber:
+          type: string
+        taxRegion:
+          type: string
+        timeout:
+          type: string
+          example: '30'
+      description: Describes a given characteristic of an object xor entity through a name/value pair.
+    APIError:
+      type: object
+      required:
+      - statusMessage
+      - supportMessage
+      - transactionId
+      - timestamp
+      - path
+      - method
+      properties:
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        timestamp:
+          type: string
+          example: '2020-08-19 09:09:09'
+        path:
+          type: string
+          description: endpoint path used to make request
+        method:
+          type: string
+          description: HTTP Method used to make request
+          example: GET
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header

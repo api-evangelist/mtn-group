@@ -1,0 +1,316 @@
+openapi: 3.2.0
+info:
+  title: Service Activation and Configuration Monitor API
+  description: "## TMF API Reference: TMF640 - Service Activation and Configuration\n\n Version 4.0 \n\nService Activation and Configuration API goal is to provide the ability to activate and configure Service. This API features Monitor pattern allowing to manage service configuration/activation asynchronous request (server side will provide monitor as POST/PATCH response) \n\n### TMF640 performs the following Operations on service resource :\n- Retrieve a service or a collection of services depending on filter criteria\n- Partial update of an service\n- Create a service (including default values and creation rules)\n- Delete a service (for administration purposes)\n- Manage notification of events\n\n### Monitor Resource\n\nMonitor resource is used to track and log activation and/or configuration request\n\n### TMF640 provides following operation on Monitor resource:\n\n- Retrieval of a monitor or a collection of monitor\n\nCopyright © TM Forum 2019; All Rights Reserved"
+  version: 4.0.0
+servers:
+- url: http://api.mtn.com/v1
+tags:
+- name: monitor
+paths:
+  /monitor:
+    get:
+      operationId: listMonitor
+      summary: List or find Monitor objects
+      description: This operation list or find Monitor entities
+      tags:
+      - monitor
+      parameters:
+      - name: fields
+        description: Comma-separated properties to be provided in response
+        required: false
+        in: query
+        schema:
+          type: string
+      - name: offset
+        description: Requested index for start of resources to be provided in response
+        required: false
+        in: query
+        schema:
+          type: integer
+      - name: limit
+        description: Requested number of resources to be provided in response
+        required: false
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Result-Count:
+              description: Actual number of items returned in the response body
+              schema:
+                type: integer
+            X-Total-Count:
+              description: Total number of items matching criteria
+              schema:
+                type: integer
+          content:
+            application/json;charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Monitor'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /monitor/{id}:
+    get:
+      operationId: retrieveMonitor
+      summary: Retrieves a Monitor by ID
+      description: This operation retrieves a Monitor entity. Attribute selection is enabled for all first level attributes.
+      tags:
+      - monitor
+      parameters:
+      - name: id
+        description: Identifier of the Monitor
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: fields
+        description: Comma-separated properties to provide in response
+        required: false
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Monitor'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Monitor:
+      type: object
+      description: Monitoring of resources
+      properties:
+        id:
+          type: string
+          description: Identifier of an instance of the monitor. Required to be unique within the resource type.  Used in URIs as the identifier for specific instances of a type
+        href:
+          type: string
+          description: reference to this monitor
+        sourceHref:
+          type: string
+          description: The monitored resource href
+        state:
+          type: string
+          description: The Monitor state of the resource.  InProgress, InError, Completed
+        request:
+          $ref: '#/components/schemas/Request'
+          description: Represents the request
+        response:
+          $ref: '#/components/schemas/Response'
+          description: Represents the response
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    HeaderItem:
+      type: object
+      description: An item typically included in a request or response
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          description: The name of the header item, e.g. locale
+        value:
+          type: string
+          description: The value of the header item, e.g. en-us
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Response:
+      type: object
+      description: A response to a request
+      required:
+      - body
+      - header
+      properties:
+        body:
+          type: string
+          description: The body of the response. For example for an HTTP response might contain HTML for rendering.
+        statusCode:
+          type: string
+          description: The status of the response. For example for an HTTP response would be codes such as 200, 400, etc.
+        header:
+          type: array
+          items:
+            $ref: '#/components/schemas/HeaderItem'
+          minItems: 1
+          description: Items included in the header of the response. For example for an HTTP response might contain negotiated locale.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Request:
+      type: object
+      description: A response to a request
+      required:
+      - body
+      - header
+      properties:
+        body:
+          type: string
+          description: The body of the request. For example for an HTTP request might contain content of a form .
+        method:
+          type: string
+          description: The protocol of the request, e.g. http
+        to:
+          type: string
+          description: The target of the request, e.g. a URL for an HTTP request
+        header:
+          type: array
+          items:
+            $ref: '#/components/schemas/HeaderItem'
+          minItems: 1
+          description: Items included in the header of the request. For example for an HTTP request might contain requested locale, basic authentication.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Error:
+      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+      type: object
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name.

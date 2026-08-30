@@ -1,0 +1,182 @@
+openapi: 3.2.0
+info:
+  description: To register services and activate services content tokens
+  version: v1.0
+  title: Customer Billing Token Refund API
+servers:
+- url: https://api.mtn.com/v1/customer
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Refund
+paths:
+  /bill/refund:
+    post:
+      tags:
+      - Refund
+      summary: Refund Token Service
+      description: Refund token request is used to refund subscribers which were succesfully billed for DCB and Adhoc tokens. A debitNotidication with billed subscriber account balance details is required for a refund to be processed.
+      parameters:
+      - name: targetSystem
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - Pantheon
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/refundResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/refundRequest'
+        required: true
+components:
+  schemas:
+    refundResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            msn:
+              type: string
+    refundRequest:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        originalPaymentRef:
+          type: string
+          minLength: 16
+          maxLength: 64
+          description: The MSN associated with the debitToken request that this refund is for
+          example: '5115314911297401'
+        originalDateTime:
+          type: string
+          minLength: 20
+          maxLength: 20
+          description: Date and Time the debit occured in the format 'YYYY-MM-DDTHh:Mm:SsZ' or 'YYYY-MM-DD Hh:Mm:SS'.
+          example: '2020-01-01 12:12:12'
+        totalAmount:
+          type: integer
+          minimum: 0
+          maximum: 999999
+          description: This is the total transaction amount
+          example: 1000
+        contentToken:
+          type: string
+          minLength: 16
+          maxLength: 96
+          description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+          example: 81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058
+        contractingPartnerId:
+          type: string
+          minLength: 9
+          maxLength: 9
+          description: Contracting Partner Identifier as supplied by MTN Digital Department.
+          example: '911844857'
+        platformPartnerId:
+          type: string
+          minLength: 9
+          maxLength: 9
+          description: Platform Partner Identifier.
+          example: '911844857'
+        refundType:
+          type: string
+          description: The type of refund that is being initiated by the carrier. This will help MTN to differentiate a partial and a full refund
+          enum:
+          - Partial
+          - Full
+        currency:
+          type: string
+          description: The currency for the transaction. This value can be hardcoded to "RANDS".
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+        statusMessage:
+          type: string
+          description: Status description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

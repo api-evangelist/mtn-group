@@ -1,0 +1,491 @@
+openapi: 3.2.0
+info:
+  title: Sales Lead API
+  description: "## TMF API Reference : TMF 699 - Sales \n\nThis API provides interfaces for Sales Lead, Sales Opportunity, Sales Quote and the other management capabilities to support the sales activities to build relationship with the prospect customer who could be a person or organization that has an interest in the goods and/or services and possibly become the actual customers with one or more Subscriptions."
+  version: 4.0.0
+servers:
+- url: https://za.api.mtn.com/sales/v1/
+security:
+- OAuth2: []
+tags:
+- name: salesLead
+paths:
+  /lead:
+    post:
+      operationId: createSalesLead
+      summary: Creates a SalesLead
+      description: This operation creates a SalesLead entity.
+      tags:
+      - salesLead
+      parameters:
+      - name: transactionId
+        description: transactionId
+        in: header
+        schema:
+          type: string
+      - name: x-origin-channelId
+        description: The SalesLead to be created
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/createSalesLeadResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error405'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error415'
+        '500':
+          description: Internal server error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error500'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/SalesLead_Create'
+        description: The SalesLead to be created
+        required: true
+components:
+  schemas:
+    lead_leadDetails:
+      type: object
+      description: leaddetails
+      properties:
+        leadSource:
+          type: string
+          description: LeadSource
+          example: customer enquiry
+        leadOrigin:
+          type: string
+          description: LeadOrigin
+          example: IVR
+        interactionReason:
+          type: string
+          description: InteractionReason
+          example: new sales pitch
+        leadReference:
+          type: string
+          description: LeadReference
+          example: sales one
+        subSegment:
+          type: string
+          description: SubSegment
+          example: sales
+        partnerName:
+          type: string
+          description: PartnerName
+          example: partner
+        createdDate:
+          type: string
+          description: CreatedDate
+          example: '2019-08-23'
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 5000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+    createSalesLeadResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Success
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+          example: Success
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        id:
+          type: string
+          description: This is the Id generated by backend
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+    Error415:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 415
+        error:
+          type: string
+          description: error message
+          example: Unsupported Media Type
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    SalesLead_Create:
+      type: object
+      description: 'A Sales Lead is the identification of a person or organization that has an interest in the goods and/or services provided in the prospect of them becoming Customers with one or more Subscriptions.
+
+        Skipped properties: id,href,status,creationDate,statusChangeDate'
+      required:
+      - customerDetails
+      properties:
+        customerDetails:
+          $ref: '#/components/schemas/lead_customerDetails'
+        productDetails:
+          $ref: '#/components/schemas/lead_productDetails'
+        campaignDetails:
+          $ref: '#/components/schemas/lead_campaignDetails'
+        leadDetails:
+          $ref: '#/components/schemas/lead_leadDetails'
+    lead_customerDetails:
+      type: object
+      description: customerdetails
+      required:
+      - lastName
+      - firstName
+      - company
+      - mobileNumber
+      - email
+      - opco
+      properties:
+        description:
+          type: string
+          description: Unique description of the salesLead
+          example: new sales lead
+        lastName:
+          type: string
+          description: Name of the salesLead -  mandatory parameter needed for salesforce backend
+          example: Smith
+        firstName:
+          type: string
+          description: First name
+          example: John
+        salutation:
+          type: string
+          description: Salutation
+          example: Mr
+        middleName:
+          type: string
+          description: MiddleName
+          example: New
+        company:
+          type: string
+          description: Company - mandatory parameter needed for salesforce backend
+          example: MTN
+        street:
+          type: string
+          description: Street value
+          example: new street
+        city:
+          type: string
+          description: City
+          example: Durban
+        state:
+          type: string
+          description: State
+          example: Durban
+        postalCode:
+          type: string
+          description: PostalCode
+          example: '543456'
+        country:
+          type: string
+          description: Country
+          example: SouthAfrica
+        latitude:
+          type: string
+          description: Latitude
+          example: 29.8587° S
+        longitude:
+          type: string
+          description: Longitude
+          example: 31.0218° E
+        phone:
+          type: string
+          description: Phone
+          example: '27657876765'
+        mobileNumber:
+          type: string
+          description: phone details
+          example: '27876678987'
+        email:
+          type: string
+          description: Email
+          example: test@mtn.com
+        website:
+          type: string
+          description: Website
+          example: www.abc.com
+        industry:
+          type: string
+          description: Industry
+          example: Telecom
+        annualRevenue:
+          type: integer
+          description: AnnualRevenue
+          example: '5000000'
+        numberofEmployees:
+          type: integer
+          description: NumberOfEmployees
+          example: '500'
+        businessOrganizationType:
+          type: string
+          description: BusinessOrganizationType
+          example: SME
+        companyRegistration:
+          type: string
+          description: CompanyRegistration
+          example: Sole owenership
+        companySize:
+          type: string
+          description: Indicates the nature of the salesLead
+          example: Multilocation
+        preferredCommunication:
+          type: string
+          description: PreferredCommunication
+          example: email
+        domainName:
+          type: string
+          description: DomainName
+          example: '@abc.com'
+        externalChannel:
+          type: string
+          description: ExternalChannel
+          example: WEBSITE
+        notes:
+          type: string
+          description: Notes
+          example: details and information
+        preferredContactSlot:
+          type: string
+          description: PreferredContactSlot
+          example: afternoon
+        feasibilityDetails:
+          type: string
+          description: FeasibilityDetails
+          example: Feasibile
+        feasibilityStatus:
+          type: string
+          description: FeasibilityStatus
+          example: eligible
+        utmSource:
+          type: string
+          description: ExternalChannel
+          example: utmSource
+        networkFeasibility:
+          type: string
+          description: FeasibilityDetails
+          example: Feasibile
+        solutionType:
+          type: string
+          description: solution type
+          example: test
+        sales:
+          type: string
+          description: sales
+          example: sales
+        segment:
+          type: string
+          description: segment
+          example: sales
+        region:
+          type: string
+          description: region
+          example: Durban
+        opco:
+          type: string
+          description: Opco it is a mandatory parameter needed for salesforce backend
+          example: SouthAfrica
+        id:
+          type: string
+          description: RSAID
+          example: '2345676567'
+        idType:
+          type: string
+          description: type of id
+          example: RSA ID
+    lead_campaignDetails:
+      type: object
+      description: campaigndetails
+      properties:
+        campaignName:
+          type: string
+          description: CampaignName
+          example: new business campaign
+        campaignType:
+          type: string
+          description: CampaignType
+          example: digital campaign
+        campaignOwner:
+          type: string
+          description: CampaignOwner
+          example: sales team
+        campaignPromotionId:
+          type: string
+          description: CampaignPromotionID
+          example: campaign-1A
+    Error500:
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3010'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: method used by MADAPI to get the response
+    Error404:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        error:
+          type: string
+          description: error message
+          example: Not found
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    lead_productDetails:
+      type: object
+      description: customerdetails
+      properties:
+        productServiceDescription:
+          type: string
+          description: Indicates the nature of the salesLead
+          example: Internet Service
+        serviceRequiredPeriod:
+          type: string
+          description: ServiceRequiredPeriod
+          example: '12'
+        typeofProduct:
+          type: string
+          description: TypeofProduct
+          example: individual service
+        productCode:
+          type: string
+          description: ProductCode
+          example: INT-1gbps
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

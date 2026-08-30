@@ -1,0 +1,707 @@
+openapi: 3.2.0
+info:
+  title: service-activation-aggregator Netflix Integration Controller API
+  description: Service Activation and Configuration API goal is to provide the ability to activate and configure Service. This API features Monitor pattern allowing to manage service configuration/activation asynchronous request (server side will provide monitor as POST/PATCH response).
+  license:
+    name: MADAPI
+    url: https://developers.mtn.com/
+  version: 1.0.0
+servers:
+- url: https://api.mtn.com/
+  description: Generated server url
+tags:
+- name: netflix-integration-controller
+paths:
+  /service/{id}:
+    delete:
+      tags:
+      - netflix-integration-controller
+      summary: This operation deletes a Subscriber
+      description: This operation deletes a subscriber for Netflix functionality by ID, including entitlement and cancellation handling.
+      operationId: netflixIntegrationDeleteReq
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: x-country-code
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: serviceProviderID
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: cancellationReason
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+        required: true
+      responses:
+        '204':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+    patch:
+      tags:
+      - netflix-integration-controller
+      summary: This operation upgrades a Service entity
+      description: This operation updates a Service entity for Netflix functionality, including handling upgrade and provisioning logic.
+      operationId: netflixIntegrationUpgrade
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-country-code
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: partnerName
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+        required: true
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+  /service:
+    post:
+      tags:
+      - netflix-integration-controller
+      summary: This operation creates a Service entity
+      description: This operation creates a Service entity for Netflix functionality, including handling provisioning and integration logic.
+      operationId: netflixIntegrationEnroll
+      parameters:
+      - name: transactionId
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: x-origin-channelid
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-country-code
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+  /service/callback/{countryCode}/{consumer}/{requestType}:
+    post:
+      tags:
+      - netflix-integration-controller
+      summary: This operation deletes a Subscriber
+      description: This operation is used to notify the third-party provider (3pp) with the entitlement result, ensuring accurate updates regarding the subscriber's entitlement status and any related changes.
+      operationId: bokuCallBack
+      parameters:
+      - name: consumer
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - Comviva
+      - name: countryCode
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: requestType
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - GET_DATA
+          - TYPE_5G
+          - FOUR_G
+          - CHECK_IMEI
+          - SERVICE_ACTIVATION
+          - LICENSE_SERVICE
+          - GET_VLR
+          - SMS_MO
+          - PDP
+          - NETFLIX
+          - getNetQuery
+          - ActHLRfresh
+          - CreateEntitlement
+          - CheckEntitlementStatus
+          - ActivateEntitlement
+          - UpdateEntitlement
+          - SuspendEntitlement
+          - ResumeEntitlement
+          - CancelEntitlement
+      - name: X-Fortumo-Content-Signature
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+  /bundle/callback/{entitlementType}:
+    post:
+      tags:
+      - netflix-integration-controller
+      summary: Boku Call Back
+      description: This operation handles the Boku callback by the entitlement type, processing incoming data and responding accordingly.
+      operationId: callBack
+      parameters:
+      - name: entitlementType
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BokuCallback'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BokuCallbackResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+components:
+  schemas:
+    RelatedParty:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        phoneNumber:
+          type: string
+        email:
+          type: string
+        '@referredType':
+          type: string
+    Subscription:
+      type: object
+      properties:
+        Plan:
+          $ref: '#/components/schemas/Plan'
+    Bundle:
+      type: object
+      properties:
+        Id:
+          type: string
+        OfferId:
+          type: string
+        Status:
+          type: string
+    ServerErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '3001'
+        statusMessage:
+          type: string
+          example: INTERNAL_SERVER_ERROR
+        supportMessage:
+          type: string
+          example: An internal server error occurred and processing could not be completed.
+        httpStatus;:
+          type: array
+          example:
+            code: 500
+            series: SERVER_ERROR
+            reason: Internal Server Error
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    BokuCallback:
+      type: object
+      properties:
+        platformId:
+          type: string
+        callbackType:
+          type: string
+        merchantReference:
+          type: string
+        operationReference:
+          type: string
+        entitlementState:
+          type: string
+        entitlementId:
+          type: string
+        billingIdentity:
+          type: string
+        timestamp:
+          type: string
+        entitlementCreated_at:
+          type: string
+    UnauthorizedErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '4000'
+        statusMessage:
+          type: string
+          example: Unauthorized
+        supportMessage:
+          type: string
+          example: The supplied authentication is invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 401
+            series: CLIENT_ERROR
+            reason: Unauthorized
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+        hreflang:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        deprecation:
+          type: string
+        profile:
+          type: string
+        name:
+          type: string
+        templated:
+          type: boolean
+    BadRequestErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '5000'
+        statusMessage:
+          type: string
+          example: INVALID_INPUT_PARAMETERS
+        supportMessage:
+          type: string
+          example: The input parameters provided are invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 400
+            series: CLIENT_ERROR
+            reason: Bad Request
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    Plan:
+      type: object
+      properties:
+        Type:
+          type: string
+        LocalizedType:
+          type: string
+    SpServiceCharacteristics:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    RelatedEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        '@referredType':
+          type: string
+    Service:
+      type: object
+      properties:
+        category:
+          type: string
+        description:
+          type: string
+        feature:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feature'
+        relatedEntity:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedEntity'
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        serviceSpecification:
+          $ref: '#/components/schemas/ServiceSpecification'
+        serviceCharacteristics:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceCharacteristics'
+        relatedServiceOrderItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedServiceOrderItem'
+        state:
+          type: string
+        name:
+          type: string
+        serviceDate:
+          type: string
+        startDate:
+          type: string
+        startMode:
+          type: string
+        '@type':
+          type: string
+    Links:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Link'
+    SupportingService:
+      type: object
+      properties:
+        serviceCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpServiceCharacteristics'
+        description:
+          type: string
+    BokuCallbackResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        status:
+          type: string
+        message:
+          type: string
+        requestId:
+          type: string
+        transactionId:
+          type: string
+    ServiceSpecification:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        partner:
+          type: string
+        '@type':
+          type: string
+    APIResponse:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/Links'
+    AdditionalInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    FeatureCharacteristics:
+      type: object
+      properties:
+        value:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+    ApiResponse:
+      type: object
+      properties:
+        transactionId:
+          type: string
+        sequenceNo:
+          type: string
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        _links:
+          $ref: '#/components/schemas/Links'
+        category:
+          type: string
+        description:
+          type: string
+        feature:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feature'
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feature'
+        relatedEntity:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedEntity'
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        serviceSpecification:
+          $ref: '#/components/schemas/ServiceSpecification'
+        supportingService:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupportingService'
+        note:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
+        state:
+          type: string
+        timestamp:
+          type: string
+        errorDescription:
+          type: string
+        path:
+          type: string
+        method:
+          type: string
+        '@type':
+          type: string
+        Bundle:
+          $ref: '#/components/schemas/Bundle'
+        Subscription:
+          $ref: '#/components/schemas/Subscription'
+        HasPartnerMop:
+          type: string
+        ProductType:
+          type: string
+        SuspendStatus:
+          type: string
+        SuspendEventID:
+          type: string
+        NetflixTransactionID:
+          type: string
+        UnsuspendStatus:
+          type: string
+        UnsuspendEventID:
+          type: string
+        data:
+          type: object
+    RelatedServiceOrderItem:
+      type: object
+      properties:
+        itemId:
+          type: string
+        role:
+          type: string
+        cancellationReason:
+          type: string
+        serviceOrderHref:
+          type: string
+        serviceOrderId:
+          type: string
+        itemAction:
+          type: string
+        '@referredType':
+          type: string
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+    Feature:
+      type: object
+      properties:
+        featureCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeatureCharacteristics'
+    ServiceCharacteristics:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        additionalInfo:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalInfo'

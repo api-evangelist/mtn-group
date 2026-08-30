@@ -1,0 +1,178 @@
+openapi: 3.2.0
+info:
+  description: A suite of apis for customer consent validation.
+  version: 2.0.0
+  title: Consent Validation Cancel Customer PreApproval API
+servers:
+- url: https://api.mtn.com/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Cancel Customer PreApproval
+paths:
+  /consent/cancelPreapproval:
+    post:
+      tags:
+      - Cancel Customer PreApproval
+      summary: Provides the ability to cancel an existing customer PreApproval Request(s)
+      description: Manages existing Customer PreApproval information by been able to cancel a single or multiple preapprovals (this is based on what request parameters are sent).
+      parameters:
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests, so that the API can easily trace the HTTP request all the way from a client to MTNs backend processes (via our proxies). Each time a request is made to an MTN API the client should include a unique request reference in the HTTP Header. The value must be between 5 and 20 characters, and consist of ASCII letters, digits, or the characters +, /, =, and -. Invalid or blank IDs will be ignored and replaced with generated ones. MTN may use this to detect duplicate transactions from the client, but this functionality is not always guaranteed, so clients must make their own efforts to prevent duplicate transactions. MTN will also log the transactionId in order to assist with debugging and to correlate transactions processed by the API to requests from the client.
+        required: true
+        schema:
+          type: string
+      - name: X-Authorization
+        in: header
+        description: Encrypted ECW credentials
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cancelPreapprovalResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preapprovalError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/cancelPreapprovalRequest'
+        description: Request body
+        required: true
+components:
+  schemas:
+    preapprovalError:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /subscribers/27831234567
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+    cancelPreapprovalResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+        _links:
+          $ref: '#/components/schemas/cancelPreapprovalResponse__links'
+    cancelPreapprovalRequest:
+      type: object
+      required:
+      - message
+      properties:
+        preapprovalId:
+          type: string
+          example: 12456789
+          description: ID of the preapproval (generated by back-end system) that needs to be cancelled/deleted. Note that if you want to delete multiple preapprovals than this needs to be left blank.
+        customerId:
+          type: string
+          example: FRI:2330183736/MSISDN
+          description: The ID of the customer for which to cancel ALL their preapprovals (this can be used for multiple preapproval cancellations)
+        accountHolderId:
+          type: string
+          example: ID:1234567/ID
+          description: The internal ID of the accountHolder - If provided than will delete ALL preapprovals for this user
+    cancelPreapprovalResponse__links_self:
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://host:port/consent/v1/preapproval
+          description: Hyperlink to access the problem.
+    cancelPreapprovalResponse__links:
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/cancelPreapprovalResponse__links_self'
+      description: Relevant links to the problem.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

@@ -1,0 +1,538 @@
+openapi: 3.2.0
+info:
+  title: Mtn Group Channel Service API
+  version: 1.0.0
+  description: 'Operations tagged channelService across 2 of this provider''s published API definitions: mtn-group-product-catalog-coe.yml, mtn-group-tmf-product-catalog-tmf620.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.mtn.com/tmf-api/productcatalog/v1
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: channelService
+paths:
+  /productOffering/{id}/dynamicOffers:
+    get:
+      operationId: retrieveDynamicProductOffering
+      summary: Retrieves the dynamic ProductOffering by ID for USSD
+      description: This operation retrieves a ProductOffering entity. Attribute selection is enabled for all first level attributes.
+      tags:
+      - channelService
+      parameters:
+      - name: id
+        description: Identifier of the ProductOffering
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: transactionId
+        required: false
+        schema:
+          type: string
+      - name: offerType
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - AIRTIME
+          - VOICE
+          - DATA
+          - SOCIAL
+          - COMBO
+          - SMS
+          - ALL
+          - NDAKO
+          - DYNAMICDATA
+          - Burner Cross Sell
+          - Burner Offer One
+          - Burner Upsell
+      - name: offerMenuId
+        in: query
+        required: false
+        description: This will be used by 3PP to pass the AuthKey values.
+        schema:
+          type: string
+      - name: validity
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - Daily
+          - Weekly
+          - Monthly
+      - name: category
+        in: query
+        description: Category of the product to be fetched from that catalogue
+        schema:
+          type: string
+          enum:
+          - StandardATL
+          - PersonalizedATL
+          - Burner
+          - All
+      - name: subCategory
+        in: query
+        description: This can be any of the sub category of the category entered. This may be require only if the category is passed. Subscriber Type can be passed like Prepaid or Postpaid.
+        schema:
+          type: string
+      - name: platform
+        in: query
+        description: This flag correlates to the allPlatforms flag in the response. In essence, its a ‘Flag’ indicating which platform the bundles is being requested for. All - Indicates that all bundles should be returned. ‘Self Service’ - Indicates the bundles are being requested for self-service platforms ‘Assisted Sales’ - Indicates the bundles are being requested for assisted sales channels CSR Only
+        schema:
+          type: string
+      - name: channel
+        in: query
+        required: false
+        description: This parameter indicates which channel the response is for. like "All", "IVR", "MTNApp", "USSD", "Portal"
+        schema:
+          type: string
+      - name: bundleState
+        in: query
+        required: false
+        description: When passed in input ,helps to return only the 'Active' or 'Inactive' or 'All' the bundles . Allowed values 'Active' , 'Inactive' and 'All'.
+        schema:
+          type: string
+      - name: subscriberType
+        in: query
+        required: false
+        description: The subscriber type associated to the MSISDN entered above. The field can be one of the following values-Converged,Prepaid, MVNO,Contract,Hybrid,EBU,FTTH.The Neon offers will be returned irrespective of the subtye.
+        schema:
+          type: string
+      - name: amount
+        in: query
+        description: Specify the balance amount
+        schema:
+          type: string
+      - name: topSeller
+        in: query
+        description: When set to 'Yes' output contains both the top selling and regular bundles. When set to 'No' the output contains only the regular bundles. When set to 'All' returns both the top selling and regular bundles .Allowed values 'Yes','No','All'
+        schema:
+          type: string
+      - name: purchaseMedium
+        in: query
+        description: When passed in input ,helps to return only the matched bundles.Suppose if user tries to buy via Airtime this parameter takes value as 'Airtime' and those applicable bundles are returned.Allowed values 'Card','Airtime','Momo','Loyalty' and 'All'.
+        schema:
+          type: string
+      - name: pricePlanId
+        in: query
+        description: The priceplan ID associated to the MSISDN entered above. Bundles that are not applicable to this price plan are excluded from the response based on this parameter and also bundles only applicable for the price plan is returned.
+        schema:
+          type: string
+      - name: suburb
+        in: query
+        description: Specify the suburb of the customer
+        schema:
+          type: string
+      - name: city
+        in: query
+        description: Specify the city of the customer
+        schema:
+          type: string
+      - name: province
+        in: query
+        description: Specify the province of the customer
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/DynamicProductOffering'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://api.mtn.com/tmf-api/productcatalog/v1
+components:
+  schemas:
+    BundledCatalogue:
+      type: object
+      description: A type of ProductOffering that belongs to a grouping of ProductOfferings made available to the market. It inherits of all attributes of ProductOffering.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the BundledProductOffering
+        active:
+          type: string
+          enum:
+          - true
+          - false
+        serviceOptionId:
+          type: string
+          example: '9'
+        description:
+          type: string
+          description: offer description
+          example: k
+        bundleType:
+          type: string
+          description: Type of bundle like Voice
+          example: Voice
+        channel:
+          type: string
+          description: source channel
+          example: USSD
+        platform:
+          type: string
+          description: indicates if this is self service or assisted
+          example: Assisted
+        attributeId:
+          type: string
+          example: '19'
+        bundleValue:
+          type: string
+          description: value of the bundle
+        bundleUOM:
+          type: string
+          description: UOM value of bundle
+        price:
+          type: string
+          description: price of the bundle
+          example: '10'
+        validity:
+          type: string
+          description: offer validity
+          example: Days
+        validityExtension:
+          type: string
+          description: extension limit of the validity
+        chargeType:
+          type: string
+          description: whether the offer is renewable or once off
+          example: Once-Off
+        recurringSOID:
+          type: string
+          description: Service option ID of the recurring offer
+        cardType:
+          type: string
+          description: Type of the card
+          example: Simple
+        name:
+          type: string
+          description: Name of the BundledProductOffering
+          example: USER
+        indicator:
+          type: string
+          description: indicator of the bundle
+        ip:
+          type: string
+          description: IP of the bundle
+        spec:
+          type: string
+          description: bundle specification
+        additionalInfo:
+          type: string
+          description: Additional information on bundle
+        collapsedDescription:
+          type: string
+          description: small description of the bundle
+        expandedDescription:
+          type: string
+          description: detailed description of the bundle
+        image:
+          type: string
+          description: Image URL
+        productPrompt:
+          type: string
+          description: product description
+        pricePlan:
+          type: string
+          description: Price plan of the offer
+        pricePlanExclusion:
+          type: string
+          description: exclusion from the price plan
+        type:
+          type: string
+          description: subscriber type
+          example: C
+        flag:
+          type: string
+          description: indication of shared flag
+          example: N
+        me2uFlag:
+          type: string
+          description: indication of ME2U flag
+          example: N
+        purchaseMedium:
+          type: string
+          description: medium of purchase
+          example: AIRTIME
+        saaeId:
+          type: string
+          description: SAAE ID
+        topSeller:
+          type: string
+          description: indication the channel
+          example: USSD
+        chargeable:
+          type: string
+          description: indicates if the bundle is chargable
+          example: T
+        pricePlanCount:
+          type: string
+          description: count of the price plans
+    personalizedBundles:
+      type: object
+      description: provides personalized bundle details of the customer
+      properties:
+        offerId:
+          type: string
+          description: The service option id associated with the product which is being returned
+        name:
+          type: string
+          description: Bundle description
+        productType:
+          type: string
+          description: The type of product which is being returned
+        segmentCategory:
+          type: string
+          description: The category or validity period of the product which is being returned
+        bundleValue:
+          type: string
+          description: The inclusive value associated with the product that is being returned
+        bundleUOM:
+          type: string
+          description: The unit of measure associated with the product that is being returned
+        bundlePrice:
+          type: string
+          description: The price associated with the product that is being returned
+        validity:
+          type: string
+          description: The validity period of the product in days
+        recurrence:
+          type: string
+          description: The recurrence period of the product that is being returned
+        chargable:
+          type: string
+          description: The charge attribute of the product that is being returned
+    DynamicProductOffering:
+      type: object
+      description: Represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            BundledCatalogue:
+              type: array
+              items:
+                $ref: '#/components/schemas/BundledCatalogue'
+              description: A type of ProductOffering that belongs to a grouping of ProductOfferings made available to the market. It inherits of all attributes of ProductOffering from XMF for Standard ATL offers.
+            personalizedBundles:
+              type: array
+              items:
+                $ref: '#/components/schemas/personalizedBundles'
+              description: Details of the personalized bundles returned for the customer. This is personalised ATL offers from XMF.
+            burnerOffer:
+              type: array
+              items:
+                $ref: '#/components/schemas/burnerOffer'
+              description: Details of the burner offer returned for the customer. This is Burner offers returned from NEON.
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    burnerOffer:
+      type: object
+      description: provides personalized bundle details of the customer
+      properties:
+        offerId:
+          type: string
+          description: The service option id associated with the product which is being returned
+        message:
+          type: string
+          description: Bundle description
+          example: '1 Day-8GB
+
+            '
+        shortMessage:
+          type: string
+          description: short Bundle description
+          example: 1 Day-8GB
+        encoding:
+          type: string
+          description: message encoding
+          example: UTF-8
+        language:
+          type: string
+          description: message language
+          example: English (UK)
+        offerType:
+          type: string
+          description: Type of offer
+          example: stv
+        category:
+          type: string
+          description: The category of the product which is being returned
+          example: DataBTL
+        subCategory:
+          type: string
+          description: The validity period of the product which is being returned
+          example: Daily
+        service:
+          type: array
+          description: details of the service
+          items:
+            properties:
+              serviceType:
+                type: string
+                description: service type
+                example: Data
+              value:
+                type: string
+                description: value of the service
+                example: '8192'
+              valueUOM:
+                type: string
+                description: unit of the value
+                example: MB
+              rate:
+                type: string
+                description: effective rate
+                example: '0'
+              validity:
+                type: string
+                description: validity of the service
+              validityUOM:
+                type: string
+                description: unit of the validity value
+              promotion:
+                type: string
+                description: indicates if the offer is promotional
+                example: F
+        provisionValidity:
+          type: string
+          description: provision validity of the offer
+          example: '7'
+        provisionValidityUOM:
+          type: string
+          description: provision validity unit of the offer
+          example: Days
+        provisionType:
+          type: string
+          description: provision type of the offer
+          example: Integrated
+        serviceOptionID:
+          type: string
+          description: service option ID of the offer
+          example: '2436'
+        catalogue:
+          type: string
+          description: reporting catalogue name
+          example: SupersizePrepaid
+        bundleDescription:
+          type: string
+          description: description of the bundle
+          example: 7 Day-1.25GB
+        frequency:
+          type: string
+          description: interval of offer
+          example: ADHOC
+        provisionPrice:
+          type: string
+          description: The price associated with the product that is being returned
+        validity:
+          type: string
+          description: The validity period of the product in days
+        weightage:
+          type: string
+          description: weightage of the returned offer
+        order:
+          type: string
+          description: order number
+        price:
+          type: string
+          description: price of order
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token
+x-refined-from:
+- mtn-group-product-catalog-coe.yml
+- mtn-group-tmf-product-catalog-tmf620.yml

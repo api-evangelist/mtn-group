@@ -1,0 +1,2099 @@
+openapi: 3.2.0
+info:
+  title: Mtn Group Catalog API
+  version: 1.0.0
+  description: 'Operations tagged catalog across 4 of this provider''s published API definitions: mtn-group-product-catalog-coe.yml, mtn-group-product-catalog-management-v1.yml, mtn-group-product-catalogue-management.yml, mtn-group-tmf-product-catalog-tmf620.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.mtn.com/tmf-api/productcatalog/v1
+- url: https://api.mtn.com/productCatalogManagement/v1/
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: catalog
+paths:
+  /catalog:
+    get:
+      operationId: listCatalog
+      summary: List or find Catalog objects
+      description: This operation list or find Catalog entities
+      tags:
+      - catalog
+      parameters:
+      - name: transactionId
+        in: header
+        required: false
+        description: Client generated Id to include for tracing requests.
+        x-example: 6f0bece6-7df3-4da4-af02-5e7f16e5e6fc
+        schema:
+          type: string
+      - name: Issellable
+        in: query
+        required: true
+        description: ascertains whether the product is sellable or not
+        schema:
+          type: string
+          enum:
+          - true
+          - false
+      - name: category name
+        in: query
+        description: name of the product category
+        required: true
+        schema:
+          type: string
+          enum:
+          - VAS
+          - CUG
+          - FNF
+          - Devices
+          - Accessories
+          - ProviderActivation
+          - SharedData
+          - PoolShare
+          - FixedShare
+          - LoyaltyCatalog
+          - GDS
+      - name: lifecycle
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - Launched
+          - Active
+          - Initial
+          - Rejected
+          - Retired
+          - Obsolete
+          - In design
+      - name: business type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - Postpay
+          - Prepay
+      - name: depth
+        description: used to expand inline referenced entities up to the level specified
+        required: false
+        in: query
+        x-example: 4
+        schema:
+          type: integer
+      - name: market segment
+        description: name of the product market segment,e.g individual, Staff
+        required: false
+        in: query
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: fields to be included in the response, name, id, url
+        x-example: name
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Response_Catalog'
+                type: array
+                items:
+                  type: object
+              example:
+              - id: 65ba11061fe59c93fda349ca
+                name: 'Test VPN MPLS '
+                description: 'Test VPN MPLS '
+                isBundle: false
+                lifecycleStatus: Initial
+                pendingApproval: []
+                businessType:
+                - Postpaid
+                version: '61'
+                '@type': SimpleProductOffering
+                '@baseType': ProductOffering
+                isSellable: true
+                place: []
+                category:
+                - id: 61541d665c27790007bbd619
+                  '@type': Category
+                  name: Plan
+                  version: '0'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-category/61541d665c27790007bbd619
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-category
+                agreement: []
+                marketSegment:
+                - id: 61530cd8433b9b92e9d54c5d
+                  name: CORPORATE
+                  '@referredType': Corporate
+                channel:
+                - id: 5d38893c83ba2e1cba2de8a7
+                  href: https://host:port/catalogManagement/channel/3
+                  name: Selfcare
+                  '@referredType': CRM
+                attachment: []
+                allowedProductAction:
+                  channels:
+                  - name: Selfcare
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                    - noChange
+                productOfferingTerm: []
+                productOfferingPrice:
+                - id: 65cdf9431fe59c93fda350aa
+                  name: New price test
+                  version: '5'
+                  '@type': OneTimeChargeProdOfferPriceCharge
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering-price/65cdf9431fe59c93fda350aa
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering-price
+                productSpecification:
+                  id: 65ba11051fe59c93fda349bf
+                  name: Test VPN MPLS  product specification
+                  version: '22'
+                  '@type': CompositeProductSpecification
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-specification/65ba11051fe59c93fda349bf
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-specification
+                constraint: []
+                allowedRole: []
+                termActions: []
+                externalSystem:
+                - id: 4ed2b728-186d-413a-9cbd-87c3187f1c1f
+                  system: NGB
+                  paymentMethod: []
+                  '@type': MandatoryOffering
+                  '@baseType': Offering
+                  prodSpecCharValueUse: []
+                  agreementCharValueUse: []
+                localization: []
+                bundledProductOffering: []
+                prodSpecCharValueUse: []
+                relatedParty: []
+                customerCategory:
+                - code: CORP
+                  name: CORPORATE
+                  subCategory:
+                  - name: CORPORATE ACCOUNT
+                    code: CORA
+                    subCategory: []
+                  - name: DISTRIBUTORS
+                    code: DIST
+                    subCategory: []
+                  - name: SUPPLIERS
+                    code: SUPP
+                    subCategory: []
+                lastUpdate: '2024-06-04T09:07:02.869Z'
+                code: PO70155XBF
+                metadata: {}
+                validFor: {}
+                href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering/65ba11061fe59c93fda349ca
+                '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering
+              - id: 65d2fec01fe59c93fda35282
+                name: TEST - DIA
+                description: TEST - DIA
+                isBundle: false
+                lifecycleStatus: Initial
+                pendingApproval: []
+                businessType:
+                - Postpaid
+                version: '124'
+                '@type': SimpleProductOffering
+                '@baseType': ProductOffering
+                isSellable: true
+                place: []
+                category:
+                - id: 61541d665c27790007bbd619
+                  '@type': Category
+                  name: Plan
+                  version: '0'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-category/61541d665c27790007bbd619
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-category
+                agreement: []
+                marketSegment:
+                - id: 61530cd8433b9b92e9d54c61
+                  href: https://host:port/productOfferingReferences/marketSegmentRef/10
+                  name: EB
+                  '@referredType': EB
+                channel:
+                - id: 5d38893c83ba2e1cba2de8a7
+                  href: https://host:port/catalogManagement/channel/3
+                  name: Selfcare
+                  '@referredType': CRM
+                - id: 5d38891b83ba2e1cba2de852
+                  href: https://host:port/catalogManagement/channel/1
+                  name: CRM
+                  '@referredType': CRM
+                attachment: []
+                allowedProductAction:
+                  channels:
+                  - name: Selfcare
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                  - name: CRM
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                productOfferingTerm: []
+                productOfferingPrice:
+                - id: 65f3f61de2ee91fcd11380cd
+                  name: 'OneTimeCharges '
+                  version: '14'
+                  '@type': OneTimeChargeProdOfferPriceCharge
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering-price/65f3f61de2ee91fcd11380cd
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering-price
+                productSpecification:
+                  id: 65d2fec01fe59c93fda35277
+                  name: TEST - DIA  product specification
+                  version: '34'
+                  '@type': CompositeProductSpecification
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-specification/65d2fec01fe59c93fda35277
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-specification
+                constraint: []
+                allowedRole: []
+                termActions: []
+                externalSystem: []
+                localization: []
+                bundledProductOffering: []
+                prodSpecCharValueUse: []
+                relatedParty: []
+                customerCategory:
+                - code: CORP
+                  name: CORPORATE
+                  subCategory:
+                  - name: CORPORATE ACCOUNT
+                    code: CORA
+                    subCategory: []
+                  - name: DISTRIBUTORS
+                    code: DIST
+                    subCategory: []
+                  - name: SUPPLIERS
+                    code: SUPP
+                    subCategory: []
+                lastUpdate: '2024-04-25T07:06:58.866Z'
+                code: PO926531JA
+                metadata: {}
+                validFor: {}
+                href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering/65d2fec01fe59c93fda35282
+                '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering
+              - id: 65d346001fe59c93fda35536
+                name: testing VPN MPLS
+                description: VPN MPLS
+                isBundle: false
+                lifecycleStatus: Initial
+                pendingApproval: []
+                businessType:
+                - Postpaid
+                version: '21'
+                '@type': SimpleProductOffering
+                '@baseType': ProductOffering
+                isSellable: true
+                place: []
+                category:
+                - id: 61541d665c27790007bbd619
+                  '@type': Category
+                  name: Plan
+                  version: '0'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-category/61541d665c27790007bbd619
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-category
+                agreement: []
+                marketSegment:
+                - id: 618a27461743e200066860af
+                  name: CORP
+                  '@referredType': EB
+                - id: 61530cd8433b9b92e9d54c5d
+                  name: CORPORATE
+                  '@referredType': Corporate
+                - id: 61530cd8433b9b92e9d54c5e
+                  name: CORPORATE ACCOUNT
+                  '@referredType': Corporate
+                channel:
+                - id: 5d38891b83ba2e1cba2de852
+                  href: https://host:port/catalogManagement/channel/1
+                  name: CRM
+                  '@referredType': CRM
+                attachment: []
+                allowedProductAction:
+                  channels:
+                  - name: CRM
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                    - noChange
+                productOfferingTerm: []
+                productOfferingPrice:
+                - id: 65d478771fe59c93fda356c5
+                  name: New price
+                  version: '1'
+                  '@type': OneTimeChargeProdOfferPriceCharge
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering-price/65d478771fe59c93fda356c5
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering-price
+                productSpecification:
+                  id: 65d345ff1fe59c93fda3552b
+                  name: VPN MPLS product specification
+                  version: '3'
+                  '@type': CompositeProductSpecification
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-specification/65d345ff1fe59c93fda3552b
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-specification
+                constraint: []
+                allowedRole: []
+                termActions: []
+                externalSystem: []
+                localization: []
+                bundledProductOffering: []
+                prodSpecCharValueUse: []
+                relatedParty: []
+                customerCategory:
+                - code: CORP
+                  name: CORPORATE
+                  subCategory:
+                  - name: CORPORATE ACCOUNT
+                    code: CORA
+                    subCategory: []
+                  - name: DISTRIBUTORS
+                    code: DIST
+                    subCategory: []
+                  - name: SUPPLIERS
+                    code: SUPP
+                    subCategory: []
+                lastUpdate: '2024-03-18T10:20:08.730Z'
+                code: PO32057OTJ
+                metadata: {}
+                validFor: {}
+                href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering/65d346001fe59c93fda35536
+                '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering
+              - id: 65ddadccdb48c0d53fb52f83
+                name: Test offer
+                description: Test offer
+                isBundle: false
+                lifecycleStatus: Initial
+                pendingApproval: []
+                businessType:
+                - Postpaid
+                version: '20'
+                '@type': SimpleProductOffering
+                '@baseType': ProductOffering
+                isSellable: true
+                place: []
+                category:
+                - id: 61541d665c27790007bbd619
+                  '@type': Category
+                  name: Plan
+                  version: '0'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-category/61541d665c27790007bbd619
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-category
+                agreement: []
+                marketSegment:
+                - id: 61530cd7433b9b92e9d54c50
+                  name: INDIVIDUAL
+                  '@referredType': Retail
+                - id: 5d4bdbff528c2425c23289b5
+                  name: Individual Customer
+                  '@referredType': Retail
+                channel:
+                - id: 5d38893c83ba2e1cba2de8a7
+                  href: https://host:port/catalogManagement/channel/3
+                  name: Selfcare
+                  '@referredType': CRM
+                attachment: []
+                allowedProductAction:
+                  channels:
+                  - name: Selfcare
+                    allowedActionType:
+                    - modify
+                    - add
+                    - delete
+                    - noChange
+                productOfferingTerm: []
+                productOfferingPrice: []
+                productSpecification:
+                  id: 65ddadcbdb48c0d53fb52f78
+                  name: Test offer product specification
+                  version: '6'
+                  '@type': CompositeProductSpecification
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-specification/65ddadcbdb48c0d53fb52f78
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-specification
+                constraint: []
+                allowedRole: []
+                termActions: []
+                externalSystem: []
+                localization: []
+                bundledProductOffering: []
+                prodSpecCharValueUse: []
+                relatedParty: []
+                customerCategory:
+                - code: INDV
+                  name: INDIVIDUAL
+                  subCategory:
+                  - name: CORP AND SMALL BUSINESSE
+                    code: CASB
+                    subCategory: []
+                  - name: FOREIGN ORGANIZATION
+                    code: FORO
+                    subCategory: []
+                  - name: GOVERNMENT
+                    code: GOVN
+                    subCategory: []
+                  - name: INDIVIDUAL
+                    code: INV
+                    subCategory: []
+                  - name: MARKET TRANSFER
+                    code: MART
+                    subCategory: []
+                  - name: PREPAID
+                    code: PREP
+                    subCategory: []
+                  - name: VIP
+                    code: VIP
+                    subCategory: []
+                lastUpdate: '2024-02-27T10:27:15.731Z'
+                code: PO64216IQW
+                metadata: {}
+                validFor: {}
+                href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering/65ddadccdb48c0d53fb52f83
+                '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering
+              - id: 65ddb93bdb48c0d53fb5315f
+                name: Test offer - GSM
+                description: Test offer - GSM
+                isBundle: false
+                lifecycleStatus: Initial
+                pendingApproval: []
+                businessType:
+                - Postpaid
+                version: '29'
+                '@type': SimpleProductOffering
+                '@baseType': ProductOffering
+                isSellable: true
+                place: []
+                category:
+                - id: 61541d665c27790007bbd619
+                  '@type': Category
+                  name: Plan
+                  version: '0'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-category/61541d665c27790007bbd619
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-category
+                agreement: []
+                marketSegment:
+                - id: 61530cd7433b9b92e9d54c50
+                  name: INDIVIDUAL
+                  '@referredType': Retail
+                - id: 5d4bdbff528c2425c23289b5
+                  name: Individual Customer
+                  '@referredType': Retail
+                - id: 5d43cbbc18adf5f90f2af514
+                  href: https://host:port/productOfferingReferences/marketSegmentRef/2
+                  name: Small businesses
+                  '@referredType': Corporate
+                channel: []
+                attachment: []
+                allowedProductAction:
+                  channels: []
+                productOfferingTerm: []
+                productOfferingPrice:
+                - id: 65ddbfcadb48c0d53fb53291
+                  name: One time charge
+                  version: '0'
+                  '@type': OneTimeChargeProdOfferPriceCharge
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering-price/65ddbfcadb48c0d53fb53291
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering-price
+                productSpecification:
+                  id: 65ddb93bdb48c0d53fb53154
+                  name: Test offer - GSM product specification
+                  version: '10'
+                  '@type': CompositeProductSpecification
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-specification/65ddb93bdb48c0d53fb53154
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-specification
+                constraint: []
+                allowedRole: []
+                termActions: []
+                externalSystem: []
+                localization: []
+                bundledProductOffering: []
+                prodSpecCharValueUse: []
+                relatedParty: []
+                customerCategory:
+                - code: INDV
+                  name: INDIVIDUAL
+                  subCategory:
+                  - name: CORP AND SMALL BUSINESSE
+                    code: CASB
+                    subCategory: []
+                  - name: FOREIGN ORGANIZATION
+                    code: FORO
+                    subCategory: []
+                  - name: GOVERNMENT
+                    code: GOVN
+                    subCategory: []
+                  - name: INDIVIDUAL
+                    code: INV
+                    subCategory: []
+                  - name: MARKET TRANSFER
+                    code: MART
+                    subCategory: []
+                  - name: PREPAID
+                    code: PREP
+                    subCategory: []
+                  - name: VIP
+                    code: VIP
+                    subCategory: []
+                lastUpdate: '2024-02-27T11:19:03.584Z'
+                code: PO91871EBF
+                metadata: {}
+                validFor: {}
+                href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering/65ddb93bdb48c0d53fb5315f
+                '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering
+              - id: 65df04d2db48c0d53fb536a6
+                name: Iphone14--Testing
+                description: Iphone14--Testing
+                isBundle: false
+                lifecycleStatus: Initial
+                pendingApproval: []
+                businessType:
+                - Postpaid
+                - Prepaid
+                version: '20'
+                '@type': SimpleProductOffering
+                '@baseType': ProductOffering
+                isSellable: true
+                place: []
+                category:
+                - id: 61541da95c27790007bbd6fd
+                  '@type': Category
+                  name: Devices
+                  version: '0'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-category/61541da95c27790007bbd6fd
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-category
+                - id: 61541d905c27790007bbd6a5
+                  '@type': Category
+                  name: Plan
+                  version: '0'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-category/61541d905c27790007bbd6a5
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-category
+                agreement: []
+                marketSegment:
+                - id: 61530cd8433b9b92e9d54c61
+                  href: https://host:port/productOfferingReferences/marketSegmentRef/10
+                  name: EB
+                  '@referredType': EB
+                - id: 61530cd7433b9b92e9d54c50
+                  name: INDIVIDUAL
+                  '@referredType': Retail
+                channel:
+                - id: 5d38891b83ba2e1cba2de852
+                  href: https://host:port/catalogManagement/channel/1
+                  name: CRM
+                  '@referredType': CRM
+                attachment: []
+                allowedProductAction:
+                  channels:
+                  - name: CRM
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                    - noChange
+                productOfferingTerm: []
+                productOfferingPrice:
+                - id: 65df0b2adb48c0d53fb5374e
+                  name: Iphone14price
+                  version: '4'
+                  '@type': OneTimeChargeProdOfferPriceCharge
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering-price/65df0b2adb48c0d53fb5374e
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering-price
+                productSpecification:
+                  id: 65df04d1db48c0d53fb5369b
+                  name: Iphone14--Testing product specification
+                  version: '10'
+                  '@type': GoodsProductSpec
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-specification/65df04d1db48c0d53fb5369b
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-specification
+                constraint: []
+                allowedRole: []
+                termActions: []
+                externalSystem: []
+                localization: []
+                bundledProductOffering: []
+                prodSpecCharValueUse: []
+                relatedParty: []
+                customerCategory:
+                - code: INDV
+                  name: INDIVIDUAL
+                  subCategory:
+                  - name: CORP AND SMALL BUSINESSE
+                    code: CASB
+                    subCategory: []
+                  - name: FOREIGN ORGANIZATION
+                    code: FORO
+                    subCategory: []
+                  - name: GOVERNMENT
+                    code: GOVN
+                    subCategory: []
+                  - name: INDIVIDUAL
+                    code: INV
+                    subCategory: []
+                  - name: MARKET TRANSFER
+                    code: MART
+                    subCategory: []
+                  - name: PREPAID
+                    code: PREP
+                    subCategory: []
+                  - name: VIP
+                    code: VIP
+                    subCategory: []
+                lastUpdate: '2024-06-04T09:06:59.380Z'
+                code: PO78211HJC
+                metadata: {}
+                validFor: {}
+                href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering/65df04d2db48c0d53fb536a6
+                '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering
+              - id: 65e1a58ae2ee91fcd11368dc
+                name: Test -DIA 1
+                description: Test -DIA 1
+                isBundle: false
+                lifecycleStatus: In test
+                pendingApproval: []
+                businessType:
+                - Postpaid
+                version: '58'
+                '@type': SimpleProductOffering
+                '@baseType': ProductOffering
+                isSellable: true
+                place: []
+                category:
+                - id: 61541d665c27790007bbd619
+                  '@type': Category
+                  name: Plan
+                  version: '0'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-category/61541d665c27790007bbd619
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-category
+                agreement: []
+                marketSegment:
+                - id: 61530cd8433b9b92e9d54c61
+                  href: https://host:port/productOfferingReferences/marketSegmentRef/10
+                  name: EB
+                  '@referredType': EB
+                channel:
+                - id: 5d38893c83ba2e1cba2de8a7
+                  href: https://host:port/catalogManagement/channel/3
+                  name: Selfcare
+                  '@referredType': CRM
+                - id: 5d38891b83ba2e1cba2de852
+                  href: https://host:port/catalogManagement/channel/1
+                  name: CRM
+                  '@referredType': CRM
+                attachment: []
+                allowedProductAction:
+                  channels:
+                  - name: Selfcare
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                  - name: CRM
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                productOfferingTerm: []
+                productOfferingPrice:
+                - id: 65e1b7c7e2ee91fcd1136a01
+                  name: One Time Charges
+                  version: '23'
+                  '@type': OneTimeChargeProdOfferPriceCharge
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering-price/65e1b7c7e2ee91fcd1136a01
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering-price
+                productSpecification:
+                  id: 65e1a58ae2ee91fcd11368d1
+                  name: Test -DIA 1 product specification
+                  version: '24'
+                  '@type': CompositeProductSpecification
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-specification/65e1a58ae2ee91fcd11368d1
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-specification
+                constraint: []
+                allowedRole: []
+                termActions: []
+                externalSystem:
+                - id: fefe156c-4512-4892-8786-eba9db220169
+                  system: NGB
+                  paymentMethod: []
+                  '@type': MandatoryOffering
+                  '@baseType': Offering
+                  prodSpecCharValueUse: []
+                  agreementCharValueUse: []
+                localization: []
+                bundledProductOffering: []
+                prodSpecCharValueUse: []
+                relatedParty: []
+                customerCategory:
+                - code: CORP
+                  name: CORPORATE
+                  subCategory:
+                  - name: CORPORATE ACCOUNT
+                    code: CORA
+                    subCategory: []
+                  - name: DISTRIBUTORS
+                    code: DIST
+                    subCategory: []
+                  - name: SUPPLIERS
+                    code: SUPP
+                    subCategory: []
+                lastUpdate: '2024-07-22T09:33:52.624Z'
+                code: PO94931WNA
+                metadata: {}
+                validFor: {}
+                href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering/65e1a58ae2ee91fcd11368dc
+                '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering
+              - id: 65f41989e2ee91fcd1138b7b
+                name: Test DIA NS
+                description: Test DIA NS
+                localization: []
+                isBundle: false
+                lifecycleStatus: Initial
+                pendingApproval: []
+                businessType:
+                - Postpaid
+                '@type': SimpleProductOffering
+                '@baseType': ProductOffering
+                isSellable: true
+                place: []
+                category:
+                - id: 61541d665c27790007bbd619
+                  '@type': Category
+                  name: Plan
+                  version: '0'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-category/61541d665c27790007bbd619
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-category
+                agreement: []
+                marketSegment:
+                - id: 61530cd8433b9b92e9d54c61
+                  href: https://host:port/productOfferingReferences/marketSegmentRef/10
+                  name: EB
+                  '@referredType': EB
+                channel:
+                - id: 5d38893c83ba2e1cba2de8a7
+                  href: https://host:port/catalogManagement/channel/3
+                  name: Selfcare
+                  '@referredType': CRM
+                - id: 5d38891b83ba2e1cba2de852
+                  href: https://host:port/catalogManagement/channel/1
+                  name: CRM
+                  '@referredType': CRM
+                attachment: []
+                allowedProductAction:
+                  channels:
+                  - name: Selfcare
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                  - name: CRM
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                productOfferingTerm: []
+                productOfferingPrice:
+                - id: 65f41989e2ee91fcd1138b5d
+                  name: Test DIA NS - One Time Charges
+                  '@type': OneTimeChargeProdOfferPriceCharge
+                  version: '5'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering-price/65f41989e2ee91fcd1138b5d
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering-price
+                productSpecification:
+                  id: 65f41989e2ee91fcd1138b55
+                  name: Test DIA NS product specification
+                  '@type': CompositeProductSpecification
+                  version: '6'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-specification/65f41989e2ee91fcd1138b55
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-specification
+                constraint: []
+                allowedRole: []
+                customerCategory:
+                - code: CORP
+                  name: CORPORATE
+                  subCategory:
+                  - name: CORPORATE ACCOUNT
+                    code: CORA
+                    subCategory: []
+                  - name: DISTRIBUTORS
+                    code: DIST
+                    subCategory: []
+                  - name: SUPPLIERS
+                    code: SUPP
+                    subCategory: []
+                termActions: []
+                externalSystem:
+                - id: 87d19709-5ab7-49da-a524-82d04174e944
+                  system: NGB
+                  paymentMethod: []
+                  '@type': MandatoryOffering
+                  '@baseType': Offering
+                  prodSpecCharValueUse: []
+                  agreementCharValueUse: []
+                bundledProductOffering: []
+                prodSpecCharValueUse: []
+                relatedParty: []
+                lastUpdate: '2024-04-25T07:07:00.714Z'
+                code: PO37932AEQ
+                version: '12'
+                metadata: {}
+                validFor: {}
+                href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering/65f41989e2ee91fcd1138b7b
+                '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering
+              - id: 65f41f2ee2ee91fcd1138ddc
+                name: Dummy Offer 1
+                description: Dummy Offer
+                localization: []
+                isBundle: false
+                lifecycleStatus: Initial
+                pendingApproval: []
+                businessType:
+                - Postpaid
+                '@type': SimpleProductOffering
+                '@baseType': ProductOffering
+                isSellable: true
+                place: []
+                category:
+                - id: 61541d665c27790007bbd619
+                  '@type': Category
+                  name: Plan
+                  version: '0'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-category/61541d665c27790007bbd619
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-category
+                agreement: []
+                marketSegment:
+                - id: 61530cd8433b9b92e9d54c61
+                  href: https://host:port/productOfferingReferences/marketSegmentRef/10
+                  name: EB
+                  '@referredType': EB
+                channel:
+                - id: 5d38893c83ba2e1cba2de8a7
+                  href: https://host:port/catalogManagement/channel/3
+                  name: Selfcare
+                  '@referredType': CRM
+                - id: 5d38891b83ba2e1cba2de852
+                  href: https://host:port/catalogManagement/channel/1
+                  name: CRM
+                  '@referredType': CRM
+                attachment: []
+                allowedProductAction:
+                  channels:
+                  - name: Selfcare
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                  - name: CRM
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                productOfferingTerm: []
+                productOfferingPrice:
+                - id: 65f41f2ee2ee91fcd1138dbd
+                  name: Dummy Offer - One Time Charges
+                  '@type': OneTimeChargeProdOfferPriceCharge
+                  version: '12'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering-price/65f41f2ee2ee91fcd1138dbd
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering-price
+                - id: 6629090017af8a85dbfe6d15
+                  name: installation fee
+                  version: '12'
+                  '@type': OneTimeChargeProdOfferPriceCharge
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering-price/6629090017af8a85dbfe6d15
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering-price
+                - id: 6644b2522d8a6ce6786f9015
+                  name: Discount offer
+                  version: '10'
+                  '@type': OneTimeChargeProdOfferPriceCharge
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering-price/6644b2522d8a6ce6786f9015
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering-price
+                productSpecification:
+                  id: 65f41f2de2ee91fcd1138db5
+                  name: Dummy Offer product specification
+                  '@type': CompositeProductSpecification
+                  version: '14'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-specification/65f41f2de2ee91fcd1138db5
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-specification
+                constraint: []
+                allowedRole: []
+                customerCategory:
+                - code: CORP
+                  name: CORPORATE
+                  subCategory:
+                  - name: CORPORATE ACCOUNT
+                    code: CORA
+                    subCategory: []
+                  - name: DISTRIBUTORS
+                    code: DIST
+                    subCategory: []
+                  - name: SUPPLIERS
+                    code: SUPP
+                    subCategory: []
+                termActions: []
+                externalSystem: []
+                bundledProductOffering: []
+                prodSpecCharValueUse: []
+                relatedParty: []
+                lastUpdate: '2024-05-17T12:17:50.641Z'
+                code: PO82737YYX
+                version: '22'
+                metadata: {}
+                validFor: {}
+                info:
+                - propagationStatus: 'Product-offering creation in billing failed: {"statusCode":422,"error":"Offering validation error","message":"Charge was not found"}'
+                href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering/65f41f2ee2ee91fcd1138ddc
+                '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering
+              - id: 65f41f3ce2ee91fcd1138de4
+                name: Dummy Offer
+                description: Dummy Offer
+                localization: []
+                isBundle: false
+                lifecycleStatus: Initial
+                pendingApproval: []
+                businessType:
+                - Postpaid
+                '@type': SimpleProductOffering
+                '@baseType': ProductOffering
+                isSellable: true
+                place: []
+                category:
+                - id: 61541d665c27790007bbd619
+                  '@type': Category
+                  name: Plan
+                  version: '0'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-category/61541d665c27790007bbd619
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-category
+                agreement: []
+                marketSegment:
+                - id: 61530cd8433b9b92e9d54c61
+                  href: https://host:port/productOfferingReferences/marketSegmentRef/10
+                  name: EB
+                  '@referredType': EB
+                channel:
+                - id: 5d38893c83ba2e1cba2de8a7
+                  href: https://host:port/catalogManagement/channel/3
+                  name: Selfcare
+                  '@referredType': CRM
+                - id: 5d38891b83ba2e1cba2de852
+                  href: https://host:port/catalogManagement/channel/1
+                  name: CRM
+                  '@referredType': CRM
+                attachment: []
+                allowedProductAction:
+                  channels:
+                  - name: Selfcare
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                  - name: CRM
+                    allowedActionType:
+                    - add
+                    - modify
+                    - delete
+                productOfferingTerm: []
+                productOfferingPrice:
+                - id: 65f41f2ee2ee91fcd1138dbd
+                  name: Dummy Offer - One Time Charges
+                  '@type': OneTimeChargeProdOfferPriceCharge
+                  version: '12'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering-price/65f41f2ee2ee91fcd1138dbd
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering-price
+                productSpecification:
+                  id: 65f41f2de2ee91fcd1138db5
+                  name: Dummy Offer product specification
+                  '@type': CompositeProductSpecification
+                  version: '14'
+                  href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-specification/65f41f2de2ee91fcd1138db5
+                  '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-specification
+                constraint: []
+                allowedRole: []
+                customerCategory:
+                - code: CORP
+                  name: CORPORATE
+                  subCategory:
+                  - name: CORPORATE ACCOUNT
+                    code: CORA
+                    subCategory: []
+                  - name: DISTRIBUTORS
+                    code: DIST
+                    subCategory: []
+                  - name: SUPPLIERS
+                    code: SUPP
+                    subCategory: []
+                termActions: []
+                externalSystem: []
+                bundledProductOffering: []
+                prodSpecCharValueUse: []
+                relatedParty: []
+                lastUpdate: '2024-07-31T10:52:42.070Z'
+                code: PO96213HMX
+                version: '4'
+                href: https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/v1/product-offering/65f41f3ce2ee91fcd1138de4
+                '@schemaLocation': https://app.bss-uat-mtncs-za.tcoe.mtn.com/dcm/product-catalogue/schema/v1/product-offering
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://api.mtn.com/tmf-api/productcatalog/v1
+  /catalog/{id}:
+    get:
+      operationId: retrieveCatalog
+      summary: Retrieves a 'Catalog' by Id
+      tags:
+      - catalog
+      parameters:
+      - name: id
+        description: Identifier of the Category
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: false
+        description: Client generated Id to include for tracing requests.
+        x-example: 6f0bece6-7df3-4da4-af02-5e7f16e5e6fc
+        schema:
+          type: string
+      - name: fields
+        required: false
+        in: query
+        description: name,id,description,businessType,version,productOffering,productOfferingTerm,productOfferingPrice
+        schema:
+          type: string
+      - name: targetprice
+        required: false
+        in: query
+        description: target of the policy to determine pricing, pass pricepolicy for this parameter
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        description: Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Response_Catalog2'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://api.mtn.com/tmf-api/productcatalog/v1
+components:
+  schemas:
+    ProductTerm:
+      type: object
+      description: Description of a productTerm linked to this product. This represent a commitment with a duration
+      properties:
+        validFor:
+          $ref: '#/components/schemas/validity'
+    Response_Catalog:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      - catalog
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        catalog:
+          type: array
+          items:
+            $ref: '#/components/schemas/Catalog_level-1'
+    Catalog_level-1:
+      type: object
+      description: A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the Catalog
+          example: 63514374jfgfs
+        name:
+          type: string
+          description: Name of the catalog
+          example: Ketir Bundles
+    validity:
+      type: object
+      properties:
+        amount:
+          type: number
+          description: number representing the validity
+          example: 7
+        unitofmeasure:
+          type: string
+          description: amount unit of mesure e.g days, month, weekly
+          example: days
+    ProductOffering_level_2:
+      type: object
+      required:
+      - productSpecification
+      - id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        productSpecification:
+          $ref: '#/components/schemas/productSpecification'
+        productOfferingTerm:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductTerm'
+        productOfferingPrice:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOfferingPriceRef'
+    TimePeriod:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          type: string
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+    price:
+      type: object
+      properties:
+        value:
+          type: number
+          description: number representing value of the price/amount
+          example: 10
+        unit:
+          type: string
+          description: unit of mesureof the value/amount eg. SSP
+          example: SSP
+    Catalog_level-2:
+      type: object
+      required:
+      - category
+      properties:
+        name:
+          type: string
+        businessType:
+          type: string
+        version:
+          type: string
+        lifecycleStatus:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category_level_2'
+    ProdSpecCharValueUse:
+      type: object
+      description: A use of the ProdSpecCharacteristicValue by a ProductOffering to which additional properties (attributes) apply or override the properties of similar properties contained in ProdSpecCharacteristicValue. It should be noted that characteristics which their value(s) addressed by this object must exist in corresponding product specification. The available characteristic values for a ProductSpecCharacteristic in a Product specification can be modified at the ProductOffering level. For example, a characteristic 'Color' might have values White, Blue, Green, and Red. But, the list of values can be restricted to e.g. White and Blue in an associated product offering. It should be noted that the list of values in 'ProdSpecCharValueUse' is a strict subset of the list of values as defined in the corresponding product specification characteristics.
+      properties:
+        name:
+          type: string
+          description: Name of the associated productSpecCharacteristic
+        description:
+          type: string
+          description: A narrative that explains in detail what the productSpecCharacteristic is
+        valueType:
+          type: string
+          description: A kind of value that the characteristic can take on, such as numeric, text and so forth
+        minCardinality:
+          type: integer
+          description: The minimum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where zero is the value for the minCardinality.
+        maxCardinality:
+          type: integer
+          description: The maximum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where five is the value for the maxCardinality.
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the productSpecCharacteristic is valid
+        productSpecCharacteristicValue:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSpecCharacteristicRef'
+    productSpecification:
+      type: array
+      items:
+        $ref: '#/components/schemas/productSpecificationRef'
+    Response_Catalog2:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      - catalog
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        catalog:
+          $ref: '#/components/schemas/Catalog_level-2'
+    productSpecificationRef:
+      type: object
+      required:
+      - productSpecCharacteristic
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        lifeCycleStatus:
+          type: string
+        href:
+          type: string
+        version:
+          type: string
+        lastUpdate:
+          type: string
+        type:
+          type: string
+        productSpecCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSpecCharacteristic'
+    ProductSpecCharacteristic:
+      type: array
+      items:
+        $ref: '#/components/schemas/ProductSpecCharacteristicRef'
+    ProductOfferingPriceRef:
+      type: object
+      properties:
+        name:
+          type: string
+        recurringChargePeriodType:
+          type: string
+          example: weekly
+        priceType:
+          type: string
+          description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth.
+        recurringChargePeriodLength:
+          type: integer
+          description: 'the period of the recurring charge:  1, 2, ... .It sets to zero if it is not applicable'
+        price:
+          $ref: '#/components/schemas/price'
+        constraint:
+          type: object
+          properties:
+            prodSpecCharValueUse:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProdSpecCharValueUse'
+            productOfferingPrice:
+              type: object
+              properties:
+                price:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/price'
+    Category_level_2:
+      type: object
+      required:
+      - productoffering
+      properties:
+        productoffering:
+          $ref: '#/components/schemas/ProductOffering_level_2'
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    ProductSpecCharacteristicRef:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        maxCardinality:
+          type: string
+        minCardinality:
+          type: string
+        value:
+          type: string
+          description: A discrete value that the characteristic can take on. the value type is defined by 'valueType' characteristic
+        unitOfMeasure:
+          type: string
+          description: Could be minutes, GB, SMS, minutes
+        '@type':
+          type: string
+          description: description on the type of the resouce eg data, voice,SMS,
+        '@schemaLocation':
+          type: string
+          description: Hyperlink reference to schema describing this object
+    Error_2:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        status:
+          type: string
+          description: Status/Error code returned from the provider system
+        error:
+          type: string
+          description: Status/Error description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
+    RelatedParty:
+      type: object
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        name:
+          type: string
+          description: Name of the related entity.
+        role:
+          type: string
+          description: Role played by the related party
+        baseType:
+          type: string
+          description: When sub-classing, this defines the super-class
+        type:
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        referredType:
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    Catalog:
+      type: object
+      description: A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the Catalog
+        href:
+          type: string
+          description: Unique reference of the catalog
+        catalogType:
+          type: string
+          description: Indicates if the catalog is a product, service or resource catalog
+        description:
+          type: string
+          description: Description of this catalog
+        lastUpdate:
+          type: string
+          format: date-time
+          description: Date and time of the last update
+        lifecycleStatus:
+          type: string
+          description: Used to indicate the current lifecycle status
+        name:
+          type: string
+          description: Name of the catalog
+        version:
+          type: string
+          description: Catalog version
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryRef'
+          description: List of root categories contained in this catalog
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+          description: List of parties involved in this catalog
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the catalog is valid
+        baseType:
+          type: string
+          description: When sub-classing, this defines the super-class
+        type:
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Response_Catalog_2:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      - data
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Catalog'
+    CategoryRef:
+      type: object
+      description: The category for grouping recommendations
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity
+        href:
+          type: string
+          description: Holds URI.
+        name:
+          type: string
+          description: Name of the related entity.
+        description:
+          type: string
+          description: Description of the related entity.
+        lifecycleStatus:
+          type: string
+          description: Used to indicate the current lifecycle status
+        version:
+          type: string
+          description: Category version
+        baseType:
+          type: string
+          description: When sub-classing, this defines the super-class
+        type:
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        referredType:
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    Error_3:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        status:
+          type: string
+          description: Status/Error code returned from the provider system
+        error:
+          type: string
+          description: Status/Error description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
+    PlanMessage:
+      type: object
+      properties:
+        msgTypeId:
+          type: string
+        msgTypeName:
+          type: string
+        isFrequencyRequest:
+          type: string
+          enum:
+          - '0'
+          - '1'
+        frequencyId:
+          type: string
+        frequency:
+          type: string
+        active:
+          type: string
+        msgList:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageList'
+    MessageList:
+      type: object
+      properties:
+        msgId:
+          type: string
+        msgTypeId:
+          type: string
+        languageCode:
+          type: string
+        language:
+          type: string
+        message:
+          type: string
+        isFilled:
+          type: string
+        renewalMessage:
+          type: string
+    PlanMetaData:
+      type: object
+      properties:
+        planMetadataId:
+          type: string
+        planId:
+          type: string
+        planName:
+          type: string
+        promoText:
+          type: string
+        description:
+          type: string
+        discountText:
+          type: string
+        validityType:
+          type: string
+        languageId:
+          type: string
+        searchKeyword:
+          type: string
+    ServiceMetaData:
+      type: object
+      properties:
+        serviceName:
+          type: string
+          example: Zoom Package
+        serviceDesc:
+          type: string
+          example: Zoom Package
+        languageId:
+          type: string
+          example: '1'
+        languageName:
+          type: string
+          example: en
+        keyword:
+          type: string
+          example: English
+        image:
+          type: string
+          example: []
+    Catalog_2:
+      type: object
+      description: A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the Catalog
+        href:
+          type: string
+          description: Unique reference of the catalog
+        catalogType:
+          type: string
+          description: Indicates if the catalog is a product, service or resource catalog
+        description:
+          type: string
+          description: Description of this catalog
+        lastUpdate:
+          type: string
+          format: date-time
+          description: Date and time of the last update
+        lifecycleStatus:
+          type: string
+          description: Used to indicate the current lifecycle status
+        name:
+          type: string
+          description: Name of the catalog
+        version:
+          type: string
+          description: Catalog version
+        primaryURL:
+          type: string
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryRef_2'
+          description: List of root categories contained in this catalog
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+          description: List of parties involved in this catalog
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the catalog is valid
+        serviceMetadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceMetaData'
+          description: List of root service meta data contained in this catalog
+        baseType:
+          type: string
+          description: When sub-classing, this defines the super-class
+        type:
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        serviceType:
+          type: string
+          description: Service type
+        serviceName:
+          type: string
+          description: Service name
+        tenantId:
+          type: string
+          description: Tenant id
+        tenantName:
+          type: string
+          description: Tenant name
+        requestType:
+          type: string
+          description: Request type
+        catalogCategory:
+          type: string
+          description: Category
+        chargingMode:
+          type: string
+          description: Mode of charging
+        serviceValidity:
+          type: string
+          description: Validity of the service
+        serviceMsgList:
+          type: string
+          description: Service type Message List
+        status:
+          type: string
+          description: service status
+        activeStatus:
+          type: string
+          description: Active state of Service
+        consentKeywords:
+          type: string
+          description: Consent keywords
+        typeOfService:
+          type: string
+          description: Type of service
+        consentRequired:
+          type: boolean
+          description: Is Consent Required
+        gatewayCharging:
+          type: string
+          description: Gateway charging
+        freeCounter:
+          type: string
+        priceQueryReq:
+          type: boolean
+          description: Price query required
+        balanceQueryReq:
+          type: boolean
+          description: Balance query required
+        access:
+          type: string
+          description: Access
+        freeMOService:
+          type: string
+          description: Free MO Service
+        ready:
+          type: string
+          description: State
+        subMtCpDaily:
+          type: string
+        mtPushEnabled:
+          type: string
+        shortCode:
+          type: string
+        directSubscription:
+          type: string
+        thirdConsentRequired:
+          type: string
+        planLinked:
+          type: string
+        spId:
+          type: string
+        dndCheck:
+          type: string
+        fallbackConsentRequired:
+          type: string
+        servicePausable:
+          type: string
+        promoContentMtLimited:
+          type: string
+        familyPlanReq:
+          type: string
+        fBreqFamilyPlan:
+          type: string
+        notificationReqFamilyPlan:
+          type: string
+        offNet:
+          type: string
+        callbackRegRequired:
+          type: string
+        amountBasedChargingReq:
+          type: string
+        consentReqFreePlan:
+          type: string
+        chargingReqFreePlan:
+          type: string
+        dndCategory:
+          type: string
+        dndCategoryMap:
+          type: object
+        serviceValidityMap:
+          type: object
+        typeOfServiceMap:
+          type: object
+        userTypeMap:
+          type: object
+        cli:
+          type: string
+        secondarySpId:
+          type: string
+        secondarySpName:
+          type: string
+        isServicePauseable:
+          type: string
+        promoContentMtLimitEnabled:
+          type: string
+        isFamilyPlanReq:
+          type: string
+        isFbReqFamilyPlan:
+          type: string
+        isNotifReqFamilyPlan:
+          type: string
+        noOfFamilyMembersList:
+          type: array
+          items:
+            type: string
+        serviceImageList:
+          type: array
+          items:
+            type: string
+        isAmountBasedChargingReq:
+          type: string
+        isPackRequired:
+          type: string
+        isConsentReqFreePlan:
+          type: string
+        isChargingReqFreePlan:
+          type: string
+        giftOptionEnabled:
+          type: string
+        isDirectCallbackReq:
+          type: string
+    Response_Catalog_3:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      - data
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        pageSize:
+          type: string
+          description: Catalog Page Size
+          example: 1
+        next:
+          type: string
+          example: 5
+        previous:
+          type: string
+          example: 0
+        responseCount:
+          type: string
+          description: Catalog Response Size - Actual Number of catalog items returned
+          example: 4
+        offset:
+          type: string
+          description: Catalog offset
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Catalog_2'
+    CategoryRef_2:
+      type: object
+      description: The category for grouping recommendations
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity
+        href:
+          type: string
+          description: Holds URI.
+        name:
+          type: string
+          description: Name of the related entity.
+        description:
+          type: string
+          description: Description of the related entity.
+        lifecycleStatus:
+          type: string
+          description: Used to indicate the current lifecycle status
+        version:
+          type: string
+          description: Category version
+        baseType:
+          type: string
+          description: When sub-classing, this defines the super-class
+        type:
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        referredType:
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+        haSubCategory:
+          type: string
+          description: Sub category flag . Valid values are 1 for 'has child' and 0 for 'no child'
+        level:
+          type: string
+          description: Level of navigation at the menu will be displayed.
+        renewalPrice:
+          type: string
+        renewalPricePoint:
+          type: string
+        pricePoint:
+          type: string
+        renewalLifecycleId:
+          type: string
+        lifecycleId:
+          type: string
+        validityPeriod:
+          type: string
+        gracePeriod:
+          type: string
+        suspendPeriod:
+          type: string
+        parkingPeriod:
+          type: string
+        allowInGrace:
+          type: string
+        disableFallback:
+          type: string
+        autoRenew:
+          type: string
+        isfallBackReq:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        isFoc:
+          type: string
+        timeDurationList:
+          type: array
+          items:
+            type: string
+          maxItems: 0
+        specialDaysList:
+          type: array
+          items:
+            type: string
+          maxItems: 0
+        focDaysList:
+          type: array
+          items:
+            type: string
+          maxItems: 0
+        renValPeriod:
+          type: string
+        planMsgList:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlanMessage'
+        isRenFbReg:
+          type: string
+        isGraceChargeble:
+          type: string
+        isSuspendChargeable:
+          type: string
+        allowInSuspend:
+          type: string
+        isParkingChargeable:
+          type: string
+        allowInParking:
+          type: string
+        deactivationMode:
+          type: string
+        periodicityPlan:
+          type: string
+        periodicityPeriod:
+          type: string
+        resubsAllowed:
+          type: string
+        renewalPlanId:
+          type: string
+        validityType:
+          type: string
+        microChargingEnabled:
+          type: string
+        preRenewalConsent:
+          type: string
+        isOneOffReq:
+          type: string
+        failAction:
+          type: string
+        isFamilyPlan:
+          type: string
+        discountAmount:
+          type: string
+        discountPercentage:
+          type: string
+        discountText:
+          type: string
+        promoText:
+          type: string
+        subPrice:
+          type: string
+        planMetadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlanMetaData'
+      required:
+      - id
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token
+x-refined-from:
+- mtn-group-product-catalog-coe.yml
+- mtn-group-product-catalog-management-v1.yml
+- mtn-group-product-catalogue-management.yml
+- mtn-group-tmf-product-catalog-tmf620.yml

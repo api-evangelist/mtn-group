@@ -1,0 +1,568 @@
+openapi: 3.2.0
+info:
+  title: Digital Identity Management Users API
+  description: '## TMF API Reference: TMF720 - Digital Identity Management
+
+
+    Digital Identity Management API goal is to provide the ability to manage a digital identity. This digital identity allows to identify an individual, a resource, or a partyRole (a specific role - or set of roles - for a given individual). A digital identity is associated with credential/authentification method.'
+  version: 4.0.0
+servers:
+- url: https://serverRoot/tmf-api/digitalIdentityManagement/v4/
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Users
+paths:
+  /users/identity:
+    get:
+      operationId: Details of users identity
+      summary: search users for their identity details
+      description: This operation list or find DigitalIdentity entities
+      tags:
+      - Users
+      parameters:
+      - name: transactionId
+        description: unique id for the transaction
+        required: false
+        in: header
+        schema:
+          type: string
+      - name: bearerToken
+        description: Bearer token for Auth0 authentication
+        required: true
+        in: query
+        schema:
+          type: string
+      - name: assetId
+        in: query
+        description: Query string to search for users.
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page index of the results to return. First page is 0.
+        required: false
+        schema:
+          type: integer
+      - name: perPage
+        in: query
+        description: Number of results per page. Defaults to 50.
+        required: false
+        schema:
+          type: integer
+      - name: totals
+        in: query
+        description: If true, the query will return the total number of items that match.
+        required: false
+        schema:
+          type: boolean
+      - name: sort
+        in: query
+        description: The field to use for sorting. Use `field:1` for ascending order and `field:-1` for descending order.
+        required: false
+        schema:
+          type: string
+      - name: connection
+        in: query
+        description: The name of the connection to use for the search.
+        required: false
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: A comma-separated list of fields to include or exclude from the result. Eg. "user_id,email,email_verified". Leave empty to retrieve all fields.
+        required: false
+        schema:
+          type: string
+      - name: includeFields
+        in: query
+        description: Whether to include or exclude the fields specified in the `fields` parameter. Defaults to true.
+        required: false
+        schema:
+          type: boolean
+      - name: searchEngine
+        in: query
+        description: The version of the search engine to use. Defaults to "v3".
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/userIdentityResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error405'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /update/users/{id}:
+    patch:
+      tags:
+      - Users
+      summary: Update a user
+      description: Updates a user with the object's properties received in the request's body (the object should be a JSON object). These are the attributes that can be updated at the root
+      parameters:
+      - name: transactionId
+        in: header
+        description: Unique identifier of the transaction.
+        required: false
+        schema:
+          type: string
+      - name: bearerToken
+        description: Bearer token for Auth0 authentication
+        required: true
+        in: query
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The identifier of the user to update.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/userIdentityResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error405'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error500'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/UserReqObject'
+  /users/{id}:
+    get:
+      tags:
+      - Users
+      summary: Get a user by Id
+      description: Retrieve user details by specific user Id
+      parameters:
+      - name: transactionId
+        in: header
+        description: Unique identifier of the transaction.
+        required: false
+        schema:
+          type: string
+      - name: bearerToken
+        description: Bearer token for Auth0 authentication
+        required: true
+        in: query
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: The identifier of the user whose details to be fetched.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/getUserResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error405'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error500'
+components:
+  schemas:
+    userIdentityResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: Any additional message from backend
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        data:
+          type: object
+          properties:
+            users:
+              type: array
+              items:
+                properties:
+                  appMetadata:
+                    type: object
+                    description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
+                    properties:
+                      profile:
+                        type: object
+                        properties:
+                          encodedUsername:
+                            type: string
+                            description: username in encoded format
+                            example: bWFraGlsMDA2QGdtYWlsLmNvbQ
+                          phoneVerified:
+                            type: boolean
+                            description: Whether the user's phone number is verified
+                            example: 'false'
+                          profileType:
+                            type: string
+                            description: profile communication
+                            example: email_only
+                          unwantedPatterns:
+                            type: boolean
+                            description: any pattern identified
+                            example: 'false'
+                          emailAlreadyExist:
+                            type: boolean
+                            description: Checks if user email already exit in active directory
+                            example: false
+                      dpoMetadata:
+                        type: object
+                        allOf:
+                        - $ref: '#/components/schemas/DPOMetadataObject'
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+    UserReqObject:
+      type: object
+      additionalProperties: false
+      properties:
+        appMetadata:
+          type: object
+          description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
+          properties:
+            dpoMetadata:
+              type: object
+              allOf:
+              - $ref: '#/components/schemas/DPOMetadataObject'
+        clientId:
+          type: string
+          description: The ID of the client (application) for which the invitation is being sent.
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error401:
+      properties:
+        error:
+          type: string
+          description: error message from target system to indicate transaction status.
+          example: missing_authorization
+        error_description:
+          type: string
+          description: detailed error message from target system to indicate transaction status.
+          example: Missing Authorization header
+    UserObject:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: The user's email address
+          example: user@example.com
+        emailVerified:
+          type: boolean
+          description: Whether the user's email address is verified
+          example: true
+        username:
+          type: string
+          description: The user's username
+          example: user
+        phoneNumber:
+          type: string
+          description: The user's phone number
+          example: '+1234567890'
+        phoneVerified:
+          type: boolean
+          description: Whether the user's phone number is verified
+          example: false
+        identities:
+          type: array
+          description: The user's identities
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+                description: The identity's user identifier
+                example: 5f22f7f57f5d4b45c5c3292a
+              provider:
+                type: string
+                description: The identity's provider
+                example: auth0
+              connection:
+                type: string
+                description: The identity's connection
+                example: mtnid
+              isSocial:
+                type: boolean
+                description: Whether the identity is social
+                example: false
+        picture:
+          type: string
+          description: The URL of the user's picture
+          example: https://example.com/user-picture.jpg
+        name:
+          type: string
+          description: The user's name
+          example: John Doe
+        nickname:
+          type: string
+          description: The user's nickname
+          example: johnny
+        multifactor:
+          type: array
+          description: The types of multifactor authentication the user has enrolled in
+          items:
+            type: string
+            example: guardian
+        appMetadata:
+          type: object
+          description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
+        userMetadata:
+          type: object
+          description: Metadata associated with the user that does not impact the user's core functionality and is editable by the user
+        blocked:
+          type: boolean
+          description: Whether the user is blocked
+          example: false
+        givenName:
+          type: string
+          description: The user's given name
+          example: John
+        familyName:
+          type: string
+          description: The user's family name
+          example: Doe
+    Error500:
+      properties:
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3001'
+    getUserResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: Any additional message from backend
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        data:
+          type: object
+          properties:
+            user:
+              type: object
+              allOf:
+              - $ref: '#/components/schemas/UserObject'
+            userId:
+              type: string
+              description: The user's unique identifier
+              example: auth0|5f22f7f57f5d4b45c5c3292a
+            createdAt:
+              type: string
+              format: date-time
+              description: When the user was created
+              example: '2020-07-30T14:35:33.782Z'
+            updatedAt:
+              type: string
+              format: date-time
+              description: When the user was last updated
+              example: '2020-07-30T14:35:33.782Z'
+            lastIP:
+              type: string
+              description: The last IP address from which the user logged in
+              example: 192.0.2.0
+            lastLogin:
+              type: string
+              format: date-time
+              description: The last time the user logged in
+              example: '2020-07-30T14:35:33.782Z'
+            loginCount:
+              type: integer
+              description: The number of times the user has logged in
+              example: 42
+    DPOMetadataObject:
+      type: object
+      additionalProperties: false
+      properties:
+        services:
+          type: array
+          items:
+            type: object
+            properties:
+              asset:
+                type: string
+                example: partner
+              assetId:
+                type: string
+                description: Permanent or temporary Partner ID
+                example: '23456'
+              roles:
+                type: array
+                items:
+                  type: string
+                  example: Admin
+              metadata:
+                type: object
+                properties:
+                  tempId:
+                    type: string
+                    description: Temporary Partner ID
+                    example: '56353'
+                  status:
+                    type: string
+                    example: Enabled
+                  termsAccepted:
+                    type: boolean
+                    description: Whether the terms have been accepted
+                    example: false
+    Error404:
+      properties:
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        message:
+          type: string
+          description: details
+          example: no match found
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

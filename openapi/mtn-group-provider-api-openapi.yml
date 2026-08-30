@@ -1,0 +1,768 @@
+openapi: 3.2.0
+info:
+  description: "The Data Share API facilitates data share between Data Share Agent(Data Sender) and Customer(Data Receiver) also provides a data analytics.\nIt also provides functionality to manage provider and consumer msisdns that are linked as part of the Internet Share Bundles Product\n\n**26-August-21: ChangeID: 0000000327**\n  - Added a new GET endpoint /customers/{customerId}/summary\n**20-Sept-21: ChangeID: 0000000000**\n  - Added a new GET endpoint /providers/{providerMsisdn}/eligibility\n**04-Oct-21: ChangeID: 0000000000**\n  - Modified the POST endpoint to support Addition of a Consumer to a Family Pack Shared Account\n**18-Oct-21: ChangeID: 0000000000**\n  - Modified the DELETE endpoint to support delete of all connsumers, delete a specific consumer from a shared family pack\n**20-Nov-21: ChangeID: 0000000000**\n  - Added a new PATCH endpoint to enable setting of consumer data limits on a shared data package"
+  version: 1.7.1
+  title: Customer Data Share Provider API
+servers:
+- url: https://api.mtn.com/v1/datashare
+security:
+- ApiKeyAuth: []
+tags:
+- name: Provider
+paths:
+  /providers/{providerMsisdn}:
+    post:
+      tags:
+      - Provider
+      summary: Add consumer msidsn to share data
+      description: Allows a provider to add a customer to use their internet share bundle
+      parameters:
+      - name: providerMsisdn
+        in: path
+        description: Provider Msisdn.The format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        description: This is the  transaction Id from the caller.
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderShareResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerInformation'
+        description: Request body
+        required: true
+    delete:
+      tags:
+      - Provider
+      summary: Deactivates Internet sharing for a provider/consumer msisdn or removes consumer msisdns from the provider msisdn
+      description: Allows a provider to leave data sharing or to remove a customer and hence stop them from using their internet share bundle
+      parameters:
+      - name: providerMsisdn
+        in: path
+        description: Provider Msisdn. This is the msisdn that has the active Internet Share Bundle. The format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: consumerMsisdn
+        in: query
+        description: The msisdn that is to be stopped from using the Internet Share bundle on the provider msisdn. The format must be E.123. Use this if you'd like to remove only one consumer from sharing the provider internet share bundle
+        required: false
+        schema:
+          type: string
+      - name: removeConsumers
+        in: query
+        description: set this variable to the keyword ALL if you would like to remove all consumers sharing the provider internet share bundle
+        required: false
+        schema:
+          type: string
+          enum:
+          - ALL
+      - name: transactionId
+        description: This is the  transaction Id from the caller.
+        in: header
+        schema:
+          type: string
+      - name: nodeId
+        description: This is the partner's identifier. For CIS this will be the iname
+        in: query
+        schema:
+          type: string
+      - name: input
+        description: This is additional input from the 3pp. For CIS, this is the product code
+        in: query
+        schema:
+          type: string
+      - name: targetSystem
+        in: query
+        schema:
+          type: string
+          enum:
+          - CIS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+      - Provider
+      summary: Update datashare limits and Suspend/Unsuspend number
+      description: Allows a provider to adjust consumer limits
+      parameters:
+      - name: providerMsisdn
+        in: path
+        description: Provider Msisdn.The format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        description: This is the  transaction Id from the caller.
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderShareResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerInformation'
+        description: Request body
+        required: true
+  /providers/{providerMsisdn}/activate:
+    post:
+      tags:
+      - Provider
+      summary: Activate data sharing plan
+      description: Allows a provider to activate data sharing bundle
+      parameters:
+      - name: providerMsisdn
+        in: path
+        description: Provider Msisdn.The format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        description: This is the  transaction Id from the caller.
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderShareResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerInformation'
+        description: Request body
+        required: true
+    get:
+      tags:
+      - Provider
+      summary: Retrieve all consumer MSISDNs linked to the provider msisdn
+      description: Provides the ability to retrieve all consumers that are sharing the internet share bundle with the provider
+      parameters:
+      - name: providerMsisdn
+        in: path
+        description: Provider Msisdn. The format must be E.123
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: clientTransactionId
+        description: 3pp transaction Id
+        schema:
+          type: string
+      - name: partnerId
+        in: query
+        description: This is the iname value of the partner
+        schema:
+          type: string
+      - name: action
+        in: query
+        description: This is the expected backend action. VIEW_FAMILY_PACK_CONSUMERS when viewing consumers and VIEW_FAMILY_PACK_PROVIDER when viewing providers
+        schema:
+          type: string
+          enum:
+          - VIEW_FAMILY_PACK_CONSUMERS
+          - VIEW_FAMILY_PACK_PROVIDER
+      - name: viewType
+        in: query
+        schema:
+          type: string
+          enum:
+          - PROVIDER
+          - CONSUMER
+      - in: query
+        name: productId
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumersListResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /providers/{providerMsisdn}/eligibility:
+    get:
+      tags:
+      - Provider
+      summary: Check if a number is a provider
+      description: Allows a 3pp to check if a number is a provider or not
+      parameters:
+      - name: providerMsisdn
+        in: path
+        description: Provider Msisdn.The format must be E.123
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: clientTransactionId
+        description: 3pp transaction Id
+        schema:
+          type: string
+      - name: partnerId
+        in: query
+        description: This is the iname value of the partner
+        schema:
+          type: string
+      - name: action
+        in: query
+        schema:
+          type: string
+          enum:
+          - IS_PROVIDER
+      - in: query
+        name: productId
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderEligibilityResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: Unsupported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ProviderPostResponseData:
+      type: object
+      properties:
+        notification:
+          type: string
+        amount:
+          type: number
+        requestId:
+          type: string
+        responseType:
+          type: string
+        action:
+          type: string
+        countryCode:
+          type: string
+        product:
+          $ref: '#/components/schemas/ProductDetails'
+    ConsumerInformation:
+      type: object
+      required:
+      - customerId
+      properties:
+        consumerMsisdn:
+          type: string
+          example: '256789999781'
+          description: The msisdn that is allowed to/stopped from using the Internet Share bundle on the provider msisdn. The format must be E.123
+        threshold:
+          type: string
+        unit:
+          type: string
+        nodeId:
+          type: string
+          description: This is the partner's identifier. For CIS this will be the iname
+        input:
+          type: string
+        paymentOption:
+          type: string
+        targetSystem:
+          type: string
+          description: Backend system expected to process the service request
+          enum:
+          - CIS
+        operationType:
+          type: string
+          description: Describes the type of operation being made in the request
+          enum:
+          - MAKE_UNLIMITED_ALL
+          - ADD_MOBILE_NUMBER
+          - SET_LIMIT_ALL
+          - MAKE_UNLIMITED_SINGLE
+          - SET_LIMIT_SINGLE
+          - ACTIVATE_DATA_PLAN
+          - SUSPEND_NUMBER
+          - UNSUSPEND_NUMBER
+    ProviderEligibilityResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP status codes
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Success
+        transactionId:
+          type: string
+          description: Client generated Id to include for tracing requests.
+          example: '12376892'
+        data:
+          type: object
+          properties:
+            eligibilityStatus:
+              type: boolean
+              description: This will be true if the provided number is a provider and will be false if its not a provider
+            countryCode:
+              type: string
+              description: This is the mobile number for the mobile number
+            requestId:
+              type: string
+              description: Request Id from the back end system
+    ProviderShareResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP status codes
+          example: '0000'
+        errorCode:
+          type: string
+          description: HTTP error codes
+          example: S1001
+        statusMessage:
+          type: string
+          example: Success
+        transactionId:
+          type: string
+          description: Client generated Id to include for tracing requests.
+          example: '12376892'
+        data:
+          $ref: '#/components/schemas/ProviderPostResponseData'
+    ConsumersListResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP code extension
+        statusMessage:
+          type: string
+          example: Success
+        transactionId:
+          type: string
+          description: Client generated Id to include for tracing requests.
+        data:
+          type: object
+          properties:
+            consumerList:
+              type: array
+              description: List of all consumers' msisdns linked to provider msisdn
+              items:
+                $ref: '#/components/schemas/ConsumerInformation'
+        _link:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/customers/256789999781/dataShare
+    SuccessResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP Error code extension
+          example: '0000'
+        errorCode:
+          type: string
+          description: HTTP Error code extension
+          example: S1001
+        statusMessage:
+          type: string
+          example: Action Successful
+        transactionId:
+          type: string
+          description: Transaction Id used for tracking purposes
+          example: txn123
+        data:
+          type: object
+          properties:
+            countryCode:
+              type: string
+              description: ISO Country Code
+              example: NG
+            action:
+              type: string
+            product:
+              type: object
+              properties:
+                productId:
+                  type: string
+                  description: Product Id
+                productName:
+                  type: string
+                  description: Product name
+                productType:
+                  type: string
+                  description: Product type
+            amountCharged:
+              type: number
+              format: float
+              description: Amount charged during the delete operation
+            notification:
+              type: string
+        _link:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/customers/2348064816493/dataShare
+    Error:
+      properties:
+        transactionId:
+          type: string
+          description: Unique ID generated by the API per request for tracking purpose.
+        sequenceNo:
+          type: string
+          description: A unique id for tracking request/response on MADAPI
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamps of Error
+          example: 2020-04-02T07:29:25.593+0000
+        statusCode:
+          type: string
+          description: Error Code
+          example: '1000'
+        error:
+          type: string
+          description: Short Description
+          example: NOT_FOUND
+        message:
+          type: string
+          description: More Error details and corrective measures
+          example: ''
+        path:
+          type: string
+          description: The path to the request
+          example: https://api.mtn.com/v1/
+    ProductDetails:
+      type: object
+      properties:
+        productId:
+          type: string
+          description: Product Id
+        productName:
+          type: string
+          description: Name of the product
+        productType:
+          type: string
+          description: Type of the product
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header

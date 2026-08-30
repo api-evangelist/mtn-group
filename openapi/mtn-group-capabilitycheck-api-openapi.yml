@@ -1,0 +1,155 @@
+openapi: 3.2.0
+info:
+  version: 1.0.0
+  title: Madapi-MTN-RCS Capability Check API
+  description: This API provides  ability to check the capability of an MSISDN to receive RCS mesages
+servers:
+- url: https://api.mtn.com/v1
+security:
+- APIKeyAuth: []
+tags:
+- name: capabilityCheck
+paths:
+  /customer/{productId}/capabilityCheck:
+    post:
+      operationId: capabilityCheck
+      summary: Provides ability to check the capability of an MSISDN to receive RCS mesages
+      description: Provides ability to check the capability of an MSISDN to receive RCS mesages
+      tags:
+      - capabilityCheck
+      parameters:
+      - name: productId
+        description: customer's bot id
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/checkResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              type: object
+              properties:
+                customerId:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                  - '+2348031234567'
+                  - '+2348061234567'
+        description: user's msisdn
+        required: true
+components:
+  schemas:
+    checkResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+        customerId:
+          type: string
+          description: CustomerId provided in the input
+          example: string
+        statusMessage:
+          type: string
+          description: Description of the processing result. Forexample incase there was an error, this will have the message showing the error that happened
+        data:
+          type: object
+          properties:
+            capabilities:
+              type: array
+              items:
+                properties:
+                  chatBotCommunication:
+                    type: string
+                    description: chatBotCcommunication
+                  chat:
+                    type: string
+                    description: chat
+                  fileTransfer:
+                    type: string
+                    description: file transfer
+                  callComposer:
+                    type: string
+                    description: call composer
+                  geolocationPush:
+                    type: string
+                    description: geolocation push
+            rcsEnabledContacts:
+              type: array
+              items:
+                type: string
+              example:
+              - '+2348031234567'
+              - '+2348061234567'
+    Error:
+      required:
+      - statusCode
+      - statusMessage
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+  securitySchemes:
+    APIKeyAuth:
+      type: apiKey
+      name: x-API-Key
+      in: header

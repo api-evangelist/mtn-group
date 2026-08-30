@@ -1,0 +1,407 @@
+openapi: 3.2.0
+info:
+  description: This API provides the option to reserver MSISDN for registration and also validate starter pack pairing
+  version: 1.0.0
+  title: TMF685 - Resource Pool Management - BSS SIM & MSISDN Availability APIs API
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: some-email-id@tecnotree.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+- url: https://{environment}.api.mtn.com/{basePath}
+  variables:
+    environment:
+      enum:
+      - ugandauat
+      - ugandaprod
+      default: dclmuat
+    basePath:
+      default: /drm/resource-pool/v1
+tags:
+- name: SIM & MSISDN Availability APIs
+paths:
+  /reservation:
+    post:
+      tags:
+      - SIM & MSISDN Availability APIs
+      operationId: reservation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevisionRequest'
+        required: true
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RevisionResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /reservation/{Reservation-ID}:
+    post:
+      tags:
+      - SIM & MSISDN Availability APIs
+      operationId: reservationPatch
+      parameters:
+      - name: Reservation-ID
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevisionPatchRequest'
+        required: true
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RevisionPatchResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /availabilityCheck:
+    post:
+      tags:
+      - SIM & MSISDN Availability APIs
+      operationId: availabilityCheck
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AvailabilityCheck'
+        required: true
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AvailabilityResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    RevisionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        '@type':
+          type: string
+        resourceReservationItem:
+          $ref: '#/components/schemas/RevisionResponseResourceReservationItem'
+        validfor:
+          $ref: '#/components/schemas/RevisionResponseValidFor'
+        reservationState:
+          type: string
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RevisionResponseRelatedParty'
+        version:
+          type: integer
+          format: int32
+    RevisionResponseRelatedParty:
+      type: object
+      properties:
+        role:
+          type: string
+        name:
+          type: string
+        '@type':
+          type: string
+        '@baseType':
+          type: string
+    RevisionPatchResourceCapacityDemand:
+      type: object
+      properties:
+        resourceCapacityDemandAmount:
+          type: integer
+          format: int32
+    RevisionResourceCapacityDemand:
+      type: object
+      properties:
+        resourceCapacityDemandAmount:
+          type: integer
+          format: int32
+        '@type':
+          type: string
+    RevisionAppliedResourceCapacity:
+      type: object
+      properties:
+        appliedCapacityAmount:
+          type: integer
+          format: int32
+        resource:
+          type: array
+          items:
+            $ref: '#/components/schemas/RevisionResource'
+    RevisionPatchResourceReservationItem:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RevisionPatchItem'
+    RevisionPatchResource:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        value:
+          type: string
+    RevisionResource:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        '@referredType':
+          type: string
+        '@baseType':
+          type: string
+        value:
+          type: string
+    RevisionPatchResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        description:
+          type: string
+        resourceReservationItem:
+          $ref: '#/components/schemas/RevisionPatchResourceReservationItem'
+        requestedPeriod:
+          $ref: '#/components/schemas/RevisionPatchRequestedPeriod'
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        __v:
+          type: integer
+          format: int32
+        reservationState:
+          type: string
+    RevisionPatchRequest:
+      type: object
+      properties:
+        reservationState:
+          type: string
+    RevisionPatchRequestedPeriod:
+      type: object
+      properties:
+        startDate:
+          type: string
+        endDate:
+          type: string
+    Error:
+      required:
+      - code
+      - reason
+      type: object
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          description: URI of documentation describing the error.
+          format: uri
+    Resource:
+      type: object
+      properties:
+        id:
+          type: string
+        '@referredType':
+          type: string
+        '@baseType':
+          type: string
+        value:
+          type: string
+    RevisionResponseValidFor:
+      type: object
+      properties:
+        startDate:
+          type: string
+        endDate:
+          type: string
+    RevisionPatchItem:
+      type: object
+      properties:
+        resourceCapacityDemand:
+          $ref: '#/components/schemas/RevisionPatchResourceCapacityDemand'
+        appliedResourceCapacity:
+          $ref: '#/components/schemas/RevisionPatchAppliedResourceCapacity'
+        subReservationState:
+          type: string
+    RevisionPatchAppliedResourceCapacity:
+      type: object
+      properties:
+        appliedCapacityAmount:
+          type: string
+        resource:
+          type: array
+          items:
+            $ref: '#/components/schemas/RevisionPatchResource'
+    RevisionRequest:
+      type: object
+      properties:
+        '@type':
+          type: string
+        resourceReservationItem:
+          $ref: '#/components/schemas/RevisionResourceReservationItem'
+        valid_for:
+          $ref: '#/components/schemas/RevisionValidFor'
+    AppliedResourceCapacity:
+      type: object
+      properties:
+        appliedCapacityAmount:
+          type: string
+        resource:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+    RevisionItem:
+      type: object
+      properties:
+        subReservationState:
+          type: string
+        resourceCapacityDemand:
+          $ref: '#/components/schemas/RevisionResourceCapacityDemand'
+        appliedResourceCapacity:
+          $ref: '#/components/schemas/RevisionAppliedResourceCapacity'
+    RevisionResponseResourceCapacityDemand:
+      type: object
+      properties:
+        resourceCapacityDemandAmount:
+          type: integer
+          format: int32
+        '@type':
+          type: string
+    AvailabilityCheck:
+      type: object
+      properties:
+        resourceCapacityDemand:
+          $ref: '#/components/schemas/ResourceCapacityDemand'
+    RevisionResponseResource:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        '@referredType':
+          type: string
+        value:
+          type: string
+    RevisionResponseResourceItem:
+      type: object
+      properties:
+        resourceCapacityDemand:
+          $ref: '#/components/schemas/RevisionResponseResourceCapacityDemand'
+        appliedResourceCapacity:
+          $ref: '#/components/schemas/RevisionResponseAppliedResourceCapacity'
+        subReservationState:
+          type: string
+    RevisionValidFor:
+      type: object
+      properties:
+        startDate:
+          type: string
+        endDate:
+          type: string
+    RevisionResourceReservationItem:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RevisionItem'
+    AvailabilityResponse:
+      type: object
+      properties:
+        appliedResourceCapacity:
+          $ref: '#/components/schemas/AppliedResourceCapacity'
+    ResourceCapacityDemand:
+      type: object
+      properties:
+        resourceCapacityDemandAmount:
+          type: string
+        pattern:
+          type: string
+        '@type':
+          type: string
+    RevisionResponseAppliedResourceCapacity:
+      type: object
+      properties:
+        appliedCapacityAmount:
+          type: string
+        resource:
+          type: array
+          items:
+            $ref: '#/components/schemas/RevisionResponseResource'
+    RevisionResponseResourceReservationItem:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RevisionResponseResourceItem'
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      name: Authorization
+      in: header
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io

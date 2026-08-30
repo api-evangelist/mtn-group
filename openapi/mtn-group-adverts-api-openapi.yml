@@ -1,0 +1,306 @@
+openapi: 3.2.0
+info:
+  version: 0.0.1
+  title: Mobile Advertisement Adverts API
+  description: 'A brief description of the API.
+
+    It can be multiple lines.
+
+    '
+servers:
+- url: https://api.mtn.com
+tags:
+- name: Adverts
+paths:
+  /adverts/feeds/web-feeds:
+    get:
+      description: Optional query param of **size** determines size of returned array
+      parameters:
+      - name: inventoryId
+        in: query
+        description: plid
+        required: true
+        schema:
+          type: string
+      - name: userAgent
+        in: query
+        description: ua
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: query
+        description: uid
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: query
+        description: password
+        required: true
+        schema:
+          type: string
+      - name: mobileSubscriberNumber
+        in: query
+        description: msn
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: query
+        description: ot
+        required: false
+        schema:
+          type: string
+      - name: bandWidth
+        in: query
+        description: force size to given width value
+        required: false
+        schema:
+          type: integer
+      - name: User-Agent
+        in: header
+        description: User Agent in header
+        required: true
+        schema:
+          type: string
+      - name: x-up-subno
+        in: header
+        description: Unique use identifier
+        required: false
+        schema:
+          type: string
+      - name: screenpixelwidth
+        in: header
+        description: overwrites handset width
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebData'
+      tags:
+      - Adverts
+  /adverts/feeds/sms-feeds:
+    get:
+      description: Optional query param of **size** determines size of returned array
+      parameters:
+      - name: inventoryId
+        in: query
+        description: plid
+        required: true
+        schema:
+          type: string
+      - name: userAgent
+        in: query
+        description: ua
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: query
+        description: uid
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: query
+        description: password
+        required: true
+        schema:
+          type: string
+      - name: mobileSubscriberNumber
+        in: query
+        description: msn
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: query
+        description: ot
+        required: false
+        schema:
+          type: string
+      - name: bandWidth
+        in: query
+        description: force size to given width value
+        required: false
+        schema:
+          type: integer
+      - name: User-Agent
+        in: header
+        description: User Agent in header
+        required: true
+        schema:
+          type: string
+      - name: x-up-subno
+        in: header
+        description: Unique use identifier
+        required: false
+        schema:
+          type: string
+      - name: screenpixelwidth
+        in: header
+        description: overwrites handset width
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SMSData'
+      tags:
+      - Adverts
+  /adverts/feeds/pcm-feeds:
+    get:
+      description: Optional query param of **size** determines size of returned array
+      parameters:
+      - name: inventoryId
+        in: query
+        description: plid
+        required: true
+        schema:
+          type: string
+      - name: userAgent
+        in: query
+        description: ua
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: query
+        description: uid
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: query
+        description: password
+        required: true
+        schema:
+          type: string
+      - name: mobileSubscriberNumber
+        in: query
+        description: msn
+        required: false
+        schema:
+          type: string
+      - name: transactionId
+        in: query
+        description: ot
+        required: false
+        schema:
+          type: string
+      - name: bandWidth
+        in: query
+        description: force size to given width value
+        required: false
+        schema:
+          type: integer
+      - name: User-Agent
+        in: header
+        description: User Agent in header
+        required: true
+        schema:
+          type: string
+      - name: x-up-subno
+        in: header
+        description: Unique use identifier
+        required: false
+        schema:
+          type: string
+      - name: screenpixelwidth
+        in: header
+        description: overwrites handset width
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PCMData'
+      tags:
+      - Adverts
+components:
+  schemas:
+    SMSResponse:
+      title: content
+      properties:
+        main:
+          type: object
+          properties:
+            imgUrl:
+              type: string
+            imgText:
+              type: string
+            title:
+              type: string
+            imageLink:
+              type: string
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+    PCMData:
+      properties:
+        data:
+          $ref: '#/components/schemas/PCMResponse'
+    WebResponse:
+      title: content
+      properties:
+        main:
+          type: object
+          properties:
+            imgUrl:
+              type: string
+            imgText:
+              type: string
+            title:
+              type: string
+            imageLink:
+              type: string
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+    PCMResponse:
+      title: content
+      properties:
+        adNmame:
+          type: object
+          properties:
+            adValid:
+              type: boolean
+              example: true
+            imgUrl:
+              type: string
+            clickUrl:
+              type: string
+            adText:
+              type: string
+            adId:
+              type: integer
+            pcmTransId:
+              type: string
+            MarbilTransId:
+              type: integer
+    WebData:
+      properties:
+        data:
+          $ref: '#/components/schemas/WebResponse'
+    SMSData:
+      properties:
+        data:
+          $ref: '#/components/schemas/SMSResponse'

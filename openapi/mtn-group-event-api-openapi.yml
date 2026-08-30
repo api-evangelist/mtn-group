@@ -1,0 +1,486 @@
+openapi: 3.2.0
+info:
+  title: Streaming Event API
+  description: The Event Management API provides a standardized client interface to the enterprise event management system.
+  version: 4.0.0
+servers:
+- url: https://serverRoot/tmf-api/event/v4/
+security:
+- ApiKeyAuth: []
+- basicAuth: []
+tags:
+- name: event
+paths:
+  /topic/{topicId}/event:
+    get:
+      operationId: listEvent
+      summary: List or find Event objects
+      description: This operation list or find Event entities
+      tags:
+      - event
+      parameters:
+      - name: topicId
+        description: Identifier of the parent Topic entity
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: fields
+        description: Comma-separated properties to be provided in response
+        required: false
+        in: query
+        schema:
+          type: string
+      - name: offset
+        description: Requested index for start of resources to be provided in response
+        required: false
+        in: query
+        schema:
+          type: integer
+      - name: limit
+        description: Requested number of resources to be provided in response
+        required: false
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Result-Count:
+              description: Actual number of items returned in the response body
+              schema:
+                type: integer
+            X-Total-Count:
+              description: Total number of items matching criteria
+              schema:
+                type: integer
+          content:
+            application/json;charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createEvent
+      summary: Creates a Event
+      description: This operation creates a Event entity.
+      tags:
+      - event
+      parameters:
+      - name: topicId
+        description: Identifier of the parent Topic entity
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/Event_Create'
+        description: The Event to be created
+        required: true
+  /topic/{topicId}/event/{id}:
+    get:
+      operationId: retrieveEvent
+      summary: Retrieves a Event by ID
+      description: This operation retrieves a Event entity. Attribute selection is enabled for all first level attributes.
+      tags:
+      - event
+      parameters:
+      - name: topicId
+        description: Identifier of the parent Topic entity
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: id
+        description: Identifier of the Event
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: fields
+        description: Comma-separated properties to provide in response
+        required: false
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+      type: object
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name.
+    RelatedParty:
+      type: object
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      required:
+      - '@referredType'
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: Name of the related entity.
+        role:
+          type: string
+          description: Role played by the related party
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    Any: {}
+    Event_Create:
+      type: object
+      description: 'event with common attributes.
+
+        Skipped properties: id,href'
+      properties:
+        correlationId:
+          type: string
+          description: The correlation id for this event.
+        description:
+          type: string
+          description: An explnatory of the event.
+        domain:
+          type: string
+          description: The domain of the event.
+        eventId:
+          type: string
+          description: The identifier of the notification.
+        eventTime:
+          type: string
+          format: date-time
+          description: Time of the event occurrence.
+        eventType:
+          type: string
+          description: The type of the notification.
+        priority:
+          type: string
+          description: A priority.
+        timeOcurred:
+          type: string
+          format: date-time
+          description: The time the event occured.
+        title:
+          type: string
+          description: The title of the event.
+        analyticCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic'
+        event:
+          $ref: '#/components/schemas/Any'
+          description: The event linked to the involved resource object
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        reportingSystem:
+          $ref: '#/components/schemas/EntityRef'
+          description: Reporting System described by EntityRef
+        source:
+          $ref: '#/components/schemas/EntityRef'
+          description: Source Entity described by EntityRef
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Characteristic:
+      type: array
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      items:
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the characteristic
+          name:
+            type: string
+            description: Name of the characteristic
+          value:
+            type: string
+            description: Value of the characteristic
+          valueType:
+            type: string
+            description: Data type of the value of the characteristic
+    Event:
+      type: object
+      description: event with common attributes.
+      properties:
+        correlationId:
+          type: string
+          description: The correlation id for this event.
+        description:
+          type: string
+          description: An explnatory of the event.
+        domain:
+          type: string
+          description: The domain of the event.
+        eventId:
+          type: string
+          description: The identifier of the notification.
+        eventTime:
+          type: string
+          format: date-time
+          description: Time of the event occurrence.
+        eventType:
+          type: string
+          description: The type of the notification.
+        priority:
+          type: string
+          description: A priority.
+        timeOcurred:
+          type: string
+          format: date-time
+          description: The time the event occured.
+        title:
+          type: string
+          description: The title of the event.
+        analyticCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic'
+        event:
+          $ref: '#/components/schemas/Any'
+          description: The event linked to the involved resource object
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        reportingSystem:
+          $ref: '#/components/schemas/EntityRef'
+          description: Reporting System described by EntityRef
+        source:
+          $ref: '#/components/schemas/EntityRef'
+          description: Source Entity described by EntityRef
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    EntityRef:
+      type: object
+      description: Entity reference schema to be use for all entityRef class.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: Name of the related entity.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header

@@ -1,0 +1,148 @@
+openapi: 3.2.0
+info:
+  version: v1.0
+  title: Customer Management - COE Add User API
+  description: An API to Create customers,create admin users,activate/deactivate,disable Sims.
+servers:
+- url: https://coe.api.mtn.com/customerManagement/v1
+tags:
+- name: Add User
+paths:
+  /customer/{portfolioId}/user:
+    post:
+      operationId: to add a user
+      summary: To add users
+      description: This operation Create Users that will have permissions.
+      tags:
+      - Add User
+      parameters:
+      - name: portfolioId
+        in: path
+        description: Portfolio ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Add_User_Response'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Add_User'
+        description: Add Users
+        required: true
+components:
+  schemas:
+    Credential:
+      required:
+      - id
+      - state
+      type: object
+      properties:
+        id:
+          type: string
+          description: UserId
+        state:
+          $ref: '#/components/schemas/Any'
+          description: ' set up'
+    IndividualIdentified:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: Jobtitleid
+    RelatedParty:
+      required:
+      - customerMsisdn
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        name:
+          type: string
+          description: Name of the related entity
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+    ResourceIdentified:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: User Type Id
+    Add_User_Response:
+      type: object
+      properties:
+        nickName:
+          type: string
+          description: The User Name
+        credential:
+          type: array
+          items:
+            $ref: '#/components/schemas/Credential'
+          description: Describes the credential of a customer.
+        individualIdentified:
+          $ref: '#/components/schemas/IndividualIdentified'
+          description: Describes the characteristic of a customer.
+        portfolioId:
+          $ref: '#/components/schemas/PortfolioId'
+          description: portfolioId of a user.
+        resourceIdentified:
+          $ref: '#/components/schemas/ResourceIdentified'
+          description: user Typeid of a user.
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+          description: Describes the attribute of a user.
+    Any: {}
+    PortfolioId:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: PortfolioId
+    Add_User:
+      type: object
+      description: 'Skipped properties: id,href'
+      required:
+      - engagedParty
+      - name
+      properties:
+        nickName:
+          type: string
+          description: The User Name
+        credential:
+          type: array
+          items:
+            $ref: '#/components/schemas/Credential'
+          description: Describes the credential of a customer.
+        individualIdentified:
+          $ref: '#/components/schemas/IndividualIdentified'
+          description: Describes the characteristic of a customer.
+        portfolioId:
+          $ref: '#/components/schemas/PortfolioId'
+          description: portfolioId of a user.
+        resourceIdentified:
+          $ref: '#/components/schemas/ResourceIdentified'
+          description: user Typeid of a user.
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+          description: Describes the attribute of a user.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header

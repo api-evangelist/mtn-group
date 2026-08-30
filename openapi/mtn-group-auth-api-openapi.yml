@@ -1,0 +1,127 @@
+openapi: 3.2.0
+info:
+  title: Authentication Auth API
+  description: '## Authentication API'
+  version: 4.0.0
+servers:
+- url: https://api.mtn.com/v1/bss-oauth
+tags:
+- name: auth
+paths:
+  /oauth2/token:
+    post:
+      operationId: auth
+      summary: Sends an auth request
+      description: This operation sends an authorization request.
+      tags:
+      - auth
+      security:
+      - ApiKey: []
+      responses:
+        '200':
+          description: Created
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/Credential'
+        description: The ResourceOrder to be created
+        required: true
+components:
+  schemas:
+    Credential:
+      type: object
+      description: Authorization request
+      properties:
+        userName:
+          type: string
+          example: user
+        password:
+          type: string
+          example: 7b9fd751ae7c3284a1c9552429e73b15
+    AuthResponse:
+      type: object
+      description: Authorization response
+      properties:
+        access_token:
+          type: string
+          example: 2d787d0e-1390-39d8-9fef-6a520cfe3cef
+        refresh_token:
+          type: string
+          example: 7b9fd751-ae7c-3284-a1c9-552429e73b15
+        scope:
+          type: string
+          example: openid
+        id_token:
+          type: string
+          example: xxxxxxxxx
+        token_type:
+          type: string
+          example: Bearer
+        expires_in:
+          type: number
+          example: 3600
+    Error:
+      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+      type: object
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      name: x-api-key
+      in: header

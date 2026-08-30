@@ -1,0 +1,240 @@
+openapi: 3.2.0
+info:
+  version: v.2.3
+  title: MTN Customer Plans Premiums API
+  contact:
+    name: MTN API Support
+    email: developer-support@mtn.com
+  description: "An API to retrieve the Plan details of an MTN customer and calculate aYo premiums. Can also be used by 3rd-party partners (3PP) for airtime recharge of a prepaid subscriber\n**24-June-21: ChangeID: c835ca3**\n    - Added an optional channel parameter on the /customers/{customerId}/plans/refill endpoint\n**09-August-21: ChangeID: 87f0b10**\n        - Added optional UC/UT objects in the wallet response\n**07-February-22: ChangeID : 1122**\n  Added query parm for getFRI integration and accountholderid list . as well as FinancialResourceInformation object in the response(Joli)\n**01-June-2023: New request used to initiate block/unblock for FRI"
+servers:
+- url: https://api.mtn.com/v2
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Premiums
+paths:
+  /customers/{customerId}/plans:
+    post:
+      description: Requesting a MTN customer's premium per product.
+      summary: Request Premium
+      tags:
+      - Premiums
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer who is sending the transaction. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Customer Plans Premium object. For a successful request, the response will contain all the customers Premium details. If the customer does not have any requested data, then those fields will be null."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerPremium'
+        '207':
+          description: If there was an error retrieving some part of the request, then the successful request will be shown, and the remaining failed objects will be be excluded.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PremiumError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PremiumError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PremiumError'
+        '404':
+          description: Customer not found
+          content:
+            The data object/envelope will be null:
+              example:
+                data: null
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PremiumError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PremiumRequest'
+        description: Request body
+        required: true
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+        sequenceNo:
+          type: string
+          description: A unique identifier for tracking all requests
+          example: '12939993'
+    PremiumError:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This will have MADAPI response mapping, based on the value received from the downstream system
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+        supportMessage:
+          type: string
+          description: Support Message
+        transactionId:
+          type: string
+          description: Message ID
+    Amount:
+      type: object
+      required:
+      - value
+      - type
+      - unit
+      description: The amount details for a wallet.
+      properties:
+        type:
+          type: string
+          description: This is the type of the wallet value.
+          enum:
+          - CURRENCY
+          - DATA
+          - MINUTES
+          - SMS
+        value:
+          type: string
+          description: This is the value of a balance wallet.
+        unit:
+          type: string
+          description: This is the unit of the wallet value.
+          enum:
+          - ZAR
+          - NGN
+          - GB
+          - MB
+          - MINUTES
+          - SMS
+          - FCFA
+          example: NGN
+    PremiumData:
+      type: object
+      description: Contains response information pertaining to the premium request.
+      properties:
+        message:
+          type: string
+          description: A message send by the back end pertaining to the premium calculation request
+        premium:
+          $ref: '#/components/schemas/Amount'
+        loyaltyInformation:
+          $ref: '#/components/schemas/LoyaltyBalances'
+    PremiumRequest:
+      type: object
+      required:
+      - receivingCustomerId
+      - transactionId
+      - product
+      - amount
+      - transactionType
+      properties:
+        amount:
+          type: string
+          $ref: '#/components/schemas/Amount'
+        transactionId:
+          type: string
+          description: Internal correlation ID
+        accountHolderId:
+          type: string
+          description: The accountholder's ID to which the sendingCustomerId belong
+        quoteId:
+          type: string
+          description: Can be provided when a quote is associated with the request.
+        receivingCustomerId:
+          type: string
+          description: The beneficiary's customer ID.
+        product:
+          type: string
+          description: The product for which the premium is requested
+        transactionType:
+          type: string
+          description: Different transaction types can have different premiums associated with it.
+        message:
+          type: string
+          description: The calling customer can populate a message intended for the back-end application.
+    LoyaltyBalances:
+      type: object
+      description: Contains all the loyalty balances associated with a customer.
+      properties:
+        generatedAmount:
+          $ref: '#/components/schemas/Amount'
+        consumedAmount:
+          $ref: '#/components/schemas/Amount'
+        newBalance:
+          $ref: '#/components/schemas/Amount'
+    CustomerPremium:
+      type: object
+      required:
+      - originReferenceId
+      properties:
+        originReferenceId:
+          type: string
+          description: Origin Reference Id
+        statusCode:
+          type: string
+          description: This will have MADAPI response mapping, based on the value received from the downstream system
+        data:
+          $ref: '#/components/schemas/PremiumData'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

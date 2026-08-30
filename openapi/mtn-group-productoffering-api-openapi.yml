@@ -1,0 +1,231 @@
+openapi: 3.2.0
+info:
+  title: MTN G2M Product Offering API
+  description: 'API to provide capability to manage Offering specification of  products. '
+  version: 1.0.0
+servers:
+- url: https://api.mtn.com/v1/g2m
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: productOffering
+paths:
+  /productOffering/deals:
+    get:
+      tags:
+      - productOffering
+      summary: Retrieve Deals
+      operationId: getDealsResponseUsingGET
+      parameters:
+      - in: query
+        name: buId
+        schema:
+          type: string
+      - in: query
+        name: dealId
+        schema:
+          type: string
+      - in: query
+        name: interactionDate
+        schema:
+          type: string
+      - in: query
+        name: interactionId
+        schema:
+          type: string
+      - in: query
+        name: opId
+        schema:
+          type: string
+      - in: query
+        name: productId
+        schema:
+          type: string
+      - in: query
+        name: serviceName
+        schema:
+          type: string
+      - in: query
+        name: sourceApplicationId
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/GetDealsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    PricePlan:
+      type: object
+      properties:
+        subDealId:
+          type: string
+        pricePlan:
+          type: string
+        serviceMRCWithVAT:
+          type: string
+        serviceMRCWithoutVAT:
+          type: string
+        serviceType:
+          type: string
+    DealDevices:
+      type: object
+      properties:
+        subDealId:
+          type: string
+        deviceName:
+          type: string
+        deviceMRCWithVAT:
+          type: string
+        deviceMRCWithoutVAT:
+          type: string
+    GetDealsResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        data:
+          type: object
+          properties:
+            buID:
+              type: string
+            deals:
+              type: array
+              items:
+                $ref: '#/components/schemas/Deals'
+            interactionDate:
+              type: string
+              format: date-time
+            interactionDateComplete:
+              type: string
+              format: date-time
+            interactionID:
+              type: string
+            interationStatus:
+              type: string
+            opID:
+              type: string
+            products:
+              type: array
+              items:
+                $ref: '#/components/schemas/Products'
+            sourceApplicationID:
+              type: string
+    Products:
+      type: object
+      properties:
+        productid:
+          type: string
+        productName:
+          type: string
+        serviceMRC:
+          type: string
+        productType:
+          type: string
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        status:
+          type: string
+          description: Status/Error code returned from the provider system
+        error:
+          type: string
+          description: Status/Error description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
+    Deals:
+      type: object
+      properties:
+        dealId:
+          type: string
+        dealType:
+          type: string
+        dealName:
+          type: string
+        contractTerm:
+          type: string
+        dealPriceWithVAT:
+          type: string
+        dealPriceWithoutVAT:
+          type: string
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/DealDevices'
+        pricePlan:
+          type: array
+          items:
+            $ref: '#/components/schemas/PricePlan'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

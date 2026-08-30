@@ -1,0 +1,703 @@
+openapi: 3.2.0
+info:
+  version: 1.0.0
+  title: Customer Identification Customer Information API
+  description: "The Customer Identification API provides information about a customer and their historical usage events on voice, data, SMS, Roaming etc. Information can be retrieved by stating the date range for the period the API consumer is interested in. It will return date and time on which a specific event occurred on a customer's MSISDN as queried by the API consumer\n### Supported Operations\n\n  1. **Recharge and Usage Historical Information**\n      - **subscriberUsage:** Data, Voice, SMS call events\n            records\n      - **roamingUsage**: Data, Voice, SMS call events\n            records for Roaming\n      - **rechargeHistory:** Airtime Recharge Events\n      - **daUsageHistory:** Dedicated Account Balance usage\n      - **mainAccountUsage:** Events that used the Main Airtime\n      - **accountAdjustments:** Bucket Balance adjustment events that\n      happened on MA and DA's\n      - **internetUsageDetails:** Detailed Data usage events\n      - **validateKYC**: Validates whether msisdn and NIN values provided match or don't match\n \n  2. **Xtratime**\n      - View Loan Details: gets the list of open loans and their data for a subscriber of Xtratime product\n      - View Transaction Detail:  used to get a list of the history for loans (Advance/Recoveries) for a subscriber of xtratime product.\n      - Customer Eligibility: used to retrieve the list of denomination identifiers i.e. loan bands for which the subscriber is eligible at the time of the request.\n      - Customer Profile: used to retrieve the credit limit and balances list of the customer\n      \n  3. **Customer Information**\n      - Query Customer Data: Returns kyc and summary statistics on usage data for a subscriber msisdn. **Note, depending on the priviledges assigned to a 3PP all/less data is returned.**\n      - Query Merchant Data: Returns kyc and summary statistics on usage data for a momopay merchant msisdn. **Note, depending on the priviledges assigned to a 3PP all/less data is returned.**"
+  contact:
+    email: developer-support@mtn.com
+    name: MTN API Support
+servers:
+- url: https://api.mtn.com/v1/customerIdentification/
+security: []
+tags:
+- name: Customer Information
+  description: ''
+paths:
+  /customer:
+    post:
+      description: Query Customer or Merchant Data
+      summary: Query Customer or Merchant Data
+      tags:
+      - Customer Information
+      operationId: QueryCustomerorMerchantData
+      deprecated: false
+      parameters:
+      - name: x-api-key
+        in: header
+        required: true
+        description: API Key
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        required: true
+        description: Client Transaction ID
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        required: false
+        description: ''
+        schema:
+          type: string
+          enum:
+          - application/json;charset=utf-8
+      responses:
+        '201':
+          description: Success
+          headers: {}
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+              example:
+                APIStatus:
+                  msisdn: '256789999576'
+                  requestId: '1990380913420547969'
+                  dateRange:
+                  - '20200901'
+                  - '20200922'
+                  maxRecs: -1
+                  numRecs: 50
+                  pageNum: 50
+                  submittedTime: 2020-09-25 19:26:32.011000
+                  duration: 5457
+                  statusCode: 200
+                  statusMsg: OK
+                  APIData:
+                  - atc_loans_amt_tot: 0
+                    atc_loans_first_date: 0
+                    atc_loans_last_date: 0
+                    atc_loans_last_overdue: 0
+                    atc_loans_max_term: 0
+                    atc_loans_overdue: 0
+                    atc_loans_qty_1m: 0
+                    atc_loans_qty_3m: 0
+                    atc_loans_qty_6m: 0
+                    atc_loans_tot_term: 0
+                    batch_id: -1
+                    create_dt: 20211027
+                    date_key: 20191113
+                    dw_cpart: -1
+                    dw_part: -1
+                    ewp_account_holder_type_cd: MTNU Staff Account
+                    gsm_active_days_qty_1m: 27
+                    gsm_active_days_qty_3m: 87
+                    gsm_active_days_qty_6m: 177
+                    gsm_avg_bund_size_1m: 0
+                    gsm_avg_bund_size_3m: 0
+                    gsm_avg_bund_size_6m: 0
+                    gsm_avg_topup_amt_1m: 0
+                    gsm_avg_topup_amt_3m: 0
+                    gsm_avg_topup_amt_6m: 0
+                    gsm_dab_qty_1m: 0
+                    gsm_dab_qty_3m: 0
+                    gsm_dab_qty_6m: 0
+                    gsm_dat_vol_amt_1m: 10975
+                    gsm_dat_vol_amt_3m: 33035
+                    gsm_dat_vol_amt_6m: 66809
+                    gsm_days_bund_less_2mb_1m: 0
+                    gsm_days_bund_less_2mb_3m: 0
+                    gsm_days_bund_less_2mb_6m: 0
+                    gsm_device_make: SAMSUNG
+                    gsm_imei_nr: 352296490153390
+                    gsm_imei_qty_1m: 1
+                    gsm_imsi_nr: 641101917126876
+                    gsm_imsi_qty_1m: 1
+                    gsm_in_calls_qty_1m: 424
+                    gsm_in_calls_qty_3m: 1152
+                    gsm_in_calls_qty_6m: 2147
+                    gsm_la_days_qty: 0
+                    gsm_last_bundle_purchase: 20211003
+                    gsm_me2u_received_amt_1m: 0
+                    gsm_me2u_received_amt_3m: 0
+                    gsm_me2u_received_amt_6m: 0
+                    gsm_me2u_received_qty_1m: 0
+                    gsm_me2u_received_qty_3m: 0
+                    gsm_me2u_received_qty_6m: 0
+                    gsm_nau_amt_1m: 0
+                    gsm_nau_amt_3m: 0
+                    gsm_nau_amt_6m: 286
+                    gsm_network_town: ''
+                    gsm_npt: PREPAID
+                    gsm_nrd: 20080218
+                    gsm_nta_amt_1m: 0
+                    gsm_nta_amt_3m: 250
+                    gsm_nta_amt_6m: 235250
+                    gsm_out_calls_qty_1m: 422
+                    gsm_out_calls_qty_3m: 1443
+                    gsm_out_calls_qty_6m: 2601
+                    gsm_p_usid: -1
+                    gsm_po_limit_amt: 0
+                    gsm_s_ucid: -1
+                    gsm_s_usid: -1
+                    gsm_times_blocked_po_qty_1m: 0
+                    gsm_times_blocked_po_qty_3m: 0
+                    gsm_times_blocked_po_qty_6m: 0
+                    gsm_topup_method: R_DIRECTP_STDDATABUN
+                    gsm_uniq_in_anum_qty_1m: 305
+                    gsm_uniq_in_anum_qty_3m: 850
+                    gsm_uniq_in_anum_qty_6m: 1572
+                    gsm_uniq_out_bnum_qty_1m: 282
+                    gsm_uniq_out_bnum_qty_3m: 991
+                    gsm_uniq_out_bnum_qty_6m: 1806
+                    kyc_dob: 19800421
+                    kyc_first_name: David
+                    kyc_gender: M
+                    kyc_id_expiry_date: 20241024
+                    kyc_id_num: CM80007101HWHL
+                    kyc_id_type: NATIONALID
+                    kyc_last_name: Batanda
+                    kyc_momo_id: 40106229
+                    kyc_msisdn: 256772121248
+                    kyc_msisdn_random: '-1'
+                    kyc_title: MR
+                    max_completeness_date: 20211026
+                    mom_bank_pull_amt_1m: 2500000
+                    mom_bank_pull_amt_3m: 9400000
+                    mom_bank_pull_amt_6m: 14700000
+                    mom_bank_pull_last_date: 20211023
+                    mom_bank_pull_max_amt_1m: 800000
+                    mom_bank_pull_max_amt_3m: 800000
+                    mom_bank_pull_max_amt_6m: 800000
+                    mom_bank_pull_qty_1m: 4
+                    mom_bank_pull_qty_3m: 15
+                    mom_bank_pull_qty_6m: 28
+                    mom_bank_pull_uniq_acceptors_qty_1m: 2
+                    mom_bank_pull_uniq_acceptors_qty_3m: 2
+                    mom_bank_pull_uniq_acceptors_qty_6m: 2
+                    mom_bank_push_amt_1m: 0
+                    mom_bank_push_amt_3m: 0
+                    mom_bank_push_amt_6m: 0
+                    mom_bank_push_last_date: 0
+                    mom_bank_push_max_amt_1m: 0
+                    mom_bank_push_max_amt_3m: 0
+                    mom_bank_push_max_amt_6m: 0
+                    mom_bank_push_qty_1m: 0
+                    mom_bank_push_qty_3m: 0
+                    mom_bank_push_qty_6m: 0
+                    mom_bank_push_uniq_acceptors_qty_1m: 0
+                    mom_bank_push_uniq_acceptors_qty_3m: 0
+                    mom_bank_push_uniq_acceptors_qty_6m: 0
+                    mom_bill_payment_amt_1m: 150000
+                    mom_bill_payment_amt_3m: 579000
+                    mom_bill_payment_amt_6m: 1139000
+                    mom_bill_payment_last_date: 20211001
+                    mom_bill_payment_max_amt_1m: 150000
+                    mom_bill_payment_max_amt_3m: 150000
+                    mom_bill_payment_max_amt_6m: 150000
+                    mom_bill_payment_qty_1m: 1
+                    mom_bill_payment_qty_3m: 6
+                    mom_bill_payment_qty_6m: 11
+                    mom_bill_payment_uniq_acceptors_qty_1m: 1
+                    mom_bill_payment_uniq_acceptors_qty_3m: 2
+                    mom_bill_payment_uniq_acceptors_qty_6m: 2
+                    mom_deposit_amt_1m: 16500000
+                    mom_deposit_amt_3m: 24850000
+                    mom_deposit_amt_6m: 31900000
+                    mom_deposit_last_date: 20211022
+                    mom_deposit_max_amt_1m: 6000000
+                    mom_deposit_max_amt_3m: 6000000
+                    mom_deposit_max_amt_6m: 6000000
+                    mom_deposit_qty_1m: 6
+                    mom_deposit_qty_3m: 13
+                    mom_deposit_qty_6m: 18
+                    mom_deposit_uniq_acceptors_qty_1m: 6
+                    mom_deposit_uniq_acceptors_qty_3m: 11
+                    mom_deposit_uniq_acceptors_qty_6m: 14
+                    mom_p2p_received_amt_1m: 818000
+                    mom_p2p_received_amt_3m: 2564500
+                    mom_p2p_received_amt_6m: 4685500
+                    mom_p2p_received_last_date: 20211011
+                    mom_p2p_received_max_amt_1m: 508000
+                    mom_p2p_received_max_amt_3m: 1000000
+                    mom_p2p_received_max_amt_6m: 1000000
+                    mom_p2p_received_qty_1m: 2
+                    mom_p2p_received_qty_3m: 10
+                    mom_p2p_received_qty_6m: 31
+                    mom_p2p_received_uniq_acceptors_qty_1m: 1
+                    mom_p2p_received_uniq_acceptors_qty_3m: 1
+                    mom_p2p_received_uniq_acceptors_qty_6m: 1
+                    mom_p2p_send_amt_1m: 9520000
+                    mom_p2p_send_amt_3m: 24732500
+                    mom_p2p_send_amt_6m: 37244500
+                    mom_p2p_send_last_date: 20211025
+                    mom_p2p_send_max_amt_1m: 3940000
+                    mom_p2p_send_max_amt_3m: 3940000
+                    mom_p2p_send_max_amt_6m: 3940000
+                    mom_p2p_send_qty_1m: 22
+                    mom_p2p_send_qty_3m: 64
+                    mom_p2p_send_qty_6m: 119
+                    mom_registration_date: 20080218
+                    mom_send_uniq_acceptors_qty_1m: 17
+                    mom_send_uniq_acceptors_qty_3m: 34
+                    mom_send_uniq_acceptors_qty_6m: 52
+                    mom_withdrawal_amt_1m: 100000
+                    mom_withdrawal_amt_3m: 450000
+                    mom_withdrawal_amt_6m: 650000
+                    mom_withdrawal_last_date: 20211009
+                    mom_withdrawal_max_amt_1m: 100000
+                    mom_withdrawal_max_amt_3m: 300000
+                    mom_withdrawal_max_amt_6m: 300000
+                    mom_withdrawal_qty_1m: 1
+                    mom_withdrawal_qty_3m: 3
+                    mom_withdrawal_qty_6m: 5
+                    mom_withdrawal_uniq_acceptors_qty_1m: 1
+                    mom_withdrawal_uniq_acceptors_qty_3m: 3
+                    mom_withdrawal_uniq_acceptors_qty_6m: 5
+                    opco_cd: UG
+                    p_ucid: 4667530
+                    source: MOMO
+                    status_code: AC
+                    kyc_merchant_code: 129405@momopay
+                    kyc_momo_account_number: 256392967379
+                    kyc_merchant_type: PERSONAL
+                    kyc_business_type: ''
+                    kyc_business_name: BERNARD SSENYONDO
+                    profile: MTNU MoMoPay Individual
+                    momopay_fst_actvty_date: '2021-09-07 09:19:29'
+                    date_last_receipt_into_momopay_wallet: '2021-11-28 15:09:38'
+                    date_last_transfer_from_momopay_to_mobile_money: 2021-11-29 16    :03:48
+                    date_last_transfer_from_momopay_to_bank: null
+                    mom_momo_transactionsperday: 1
+                    mom_momo_payment_qty_6m: 15
+                    mom_momo_payment_qty_3m: 0
+                    mom_momo_payment_qty_1m: 0
+                    day_momo_payment_qty: 0
+                    mom_momo_payment_amt_6m: 2285500
+                    mom_momo_payment_amt_3m: null
+                    mom_momo_payment_amt_1m: null
+                    day_momo_payment_amt: null
+                    mom_momo_payment_acceptors_6m: 1
+                    mom_momo_payment_acceptors_3m: 0
+                    mom_momo_payment_acceptors_1m: 0
+                    day_momo_payment_acceptors: 0
+                    mom_momo_payment_max_amt_6m: 465000
+                    mom_momo_payment_max_amt_3m: null
+                    mom_momo_payment_max_amt_1m: null
+                    day_momo_payment_max_amt: null
+                    mom_momo_payment_last_date: '2021-11-28 15:09:38'
+                    mom_momo_withdrawal: null
+                    mom_momo_till_wallet_qty_6m: 14
+                    mom_momo_till_wallet_qty_3m: 0
+                    mom_momo_till_wallet_qty_1m: 0
+                    day_momo_till_wallet_amt: null
+                    mom_momo_till_wallet_amt_6m: 2171000
+                    mom_momo_till_wallet_amt_3m: null
+                    mom_momo_till_wallet_amt_1m: null
+                    day_momo_till_wallet_qty: 0
+                    mom_momo_till_bank_qty_6m: null
+                    mom_momo_till_bank_qty_3m: null
+                    mom_momo_till_bank_qty_1m: null
+                    day_momo_till_bank_qty: null
+                    mom_momo_till_bank_amt_6m: null
+                    mom_momo_till_bank_amt_3m: null
+                    mom_momo_till_bank_amt_1m: null
+                    day_momo_till_bank_amt: null
+                    mom_momo_m2m_payment_qty_6m: 15
+                    mom_momo_m2m_payment_qty_3m: 0
+                    mom_momo_m2m_payment_qty_1m: 0
+                    day_momo_m2m_payment_qty: 0
+                    mom_momo_m2m_payment_amt_6m: 2285500
+                    mom_momo_m2m_payment_amt_3m: null
+                    mom_momo_m2m_payment_amt_1m: null
+                    day_momo_m2m_payment_amt: null
+                    momo_no_activity_qty_6m: 165
+                    momo_no_activity_qty_3m: null
+                    momo_no_activity_qty_1m: null
+                    account_status_cd: ACTIVE
+                    balance: 9673
+                    submission_time: 20220323 08:34:30
+                    request_id: 3b50b78e82ee40978cdd2fe9913baf6b
+                    response_time_sec: 0.1946
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+        '401':
+          description: Unauthorized
+          headers: {}
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+        '403':
+          description: Forbidden
+          headers: {}
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+        '404':
+          description: Not Found
+          headers: {}
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+        '500':
+          description: Internal Server Error
+          headers: {}
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/customerUsage'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/customerInfo'
+        description: 'Name assigned to the task to be performed. Below are the possible values;
+
+          - **queryData:** Query subscriber kyc data and summary usage statistics
+
+          - **queryMerchantData:** Query MoMo Merchant kyc data and summary usage statistics'
+        required: true
+components:
+  schemas:
+    PageNum:
+      title: PageNum
+      description: Maximum number of records that can be returned in a single response
+      type: integer
+      format: int32
+      enum:
+      - 50
+    CustomerResponse:
+      title: CustomerResponse
+      example:
+        APIStatus:
+          msisdn: '256789999576'
+          requestId: '1990380913420547969'
+          dateRange:
+          - '20200901'
+          - '20200922'
+          maxRecs: -1
+          numRecs: 50
+          pageNum: 50
+          submittedTime: 2020-09-25 19:26:32.011000
+          duration: 5457
+          statusCode: 200
+          statusMsg: OK
+          APIData:
+          - atc_loans_amt_tot: 0
+            atc_loans_first_date: 0
+            atc_loans_last_date: 0
+            atc_loans_last_overdue: 0
+            atc_loans_max_term: 0
+            atc_loans_overdue: 0
+            atc_loans_qty_1m: 0
+            atc_loans_qty_3m: 0
+            atc_loans_qty_6m: 0
+            atc_loans_tot_term: 0
+            batch_id: -1
+            create_dt: 20211027
+            date_key: 20191113
+            dw_cpart: -1
+            dw_part: -1
+            ewp_account_holder_type_cd: MTNU Staff Account
+            gsm_active_days_qty_1m: 27
+            gsm_active_days_qty_3m: 87
+            gsm_active_days_qty_6m: 177
+            gsm_avg_bund_size_1m: 0
+            gsm_avg_bund_size_3m: 0
+            gsm_avg_bund_size_6m: 0
+            gsm_avg_topup_amt_1m: 0
+            gsm_avg_topup_amt_3m: 0
+            gsm_avg_topup_amt_6m: 0
+            gsm_dab_qty_1m: 0
+            gsm_dab_qty_3m: 0
+            gsm_dab_qty_6m: 0
+            gsm_dat_vol_amt_1m: 10975
+            gsm_dat_vol_amt_3m: 33035
+            gsm_dat_vol_amt_6m: 66809
+            gsm_days_bund_less_2mb_1m: 0
+            gsm_days_bund_less_2mb_3m: 0
+            gsm_days_bund_less_2mb_6m: 0
+            gsm_device_make: SAMSUNG
+            gsm_imei_nr: 352296490153390
+            gsm_imei_qty_1m: 1
+            gsm_imsi_nr: 641101917126876
+            gsm_imsi_qty_1m: 1
+            gsm_in_calls_qty_1m: 424
+            gsm_in_calls_qty_3m: 1152
+            gsm_in_calls_qty_6m: 2147
+            gsm_la_days_qty: 0
+            gsm_last_bundle_purchase: 20211003
+            gsm_me2u_received_amt_1m: 0
+            gsm_me2u_received_amt_3m: 0
+            gsm_me2u_received_amt_6m: 0
+            gsm_me2u_received_qty_1m: 0
+            gsm_me2u_received_qty_3m: 0
+            gsm_me2u_received_qty_6m: 0
+            gsm_nau_amt_1m: 0
+            gsm_nau_amt_3m: 0
+            gsm_nau_amt_6m: 286
+            gsm_network_town: ''
+            gsm_npt: PREPAID
+            gsm_nrd: 20080218
+            gsm_nta_amt_1m: 0
+            gsm_nta_amt_3m: 250
+            gsm_nta_amt_6m: 235250
+            gsm_out_calls_qty_1m: 422
+            gsm_out_calls_qty_3m: 1443
+            gsm_out_calls_qty_6m: 2601
+            gsm_p_usid: -1
+            gsm_po_limit_amt: 0
+            gsm_s_ucid: -1
+            gsm_s_usid: -1
+            gsm_times_blocked_po_qty_1m: 0
+            gsm_times_blocked_po_qty_3m: 0
+            gsm_times_blocked_po_qty_6m: 0
+            gsm_topup_method: R_DIRECTP_STDDATABUN
+            gsm_uniq_in_anum_qty_1m: 305
+            gsm_uniq_in_anum_qty_3m: 850
+            gsm_uniq_in_anum_qty_6m: 1572
+            gsm_uniq_out_bnum_qty_1m: 282
+            gsm_uniq_out_bnum_qty_3m: 991
+            gsm_uniq_out_bnum_qty_6m: 1806
+            kyc_dob: 19800421
+            kyc_first_name: David
+            kyc_gender: M
+            kyc_id_expiry_date: 20241024
+            kyc_id_num: CM80007101HWHL
+            kyc_id_type: NATIONALID
+            kyc_last_name: Batanda
+            kyc_momo_id: 40106229
+            kyc_msisdn: 256772121248
+            kyc_msisdn_random: '-1'
+            kyc_title: MR
+            max_completeness_date: 20211026
+            mom_bank_pull_amt_1m: 2500000
+            mom_bank_pull_amt_3m: 9400000
+            mom_bank_pull_amt_6m: 14700000
+            mom_bank_pull_last_date: 20211023
+            mom_bank_pull_max_amt_1m: 800000
+            mom_bank_pull_max_amt_3m: 800000
+            mom_bank_pull_max_amt_6m: 800000
+            mom_bank_pull_qty_1m: 4
+            mom_bank_pull_qty_3m: 15
+            mom_bank_pull_qty_6m: 28
+            mom_bank_pull_uniq_acceptors_qty_1m: 2
+            mom_bank_pull_uniq_acceptors_qty_3m: 2
+            mom_bank_pull_uniq_acceptors_qty_6m: 2
+            mom_bank_push_amt_1m: 0
+            mom_bank_push_amt_3m: 0
+            mom_bank_push_amt_6m: 0
+            mom_bank_push_last_date: 0
+            mom_bank_push_max_amt_1m: 0
+            mom_bank_push_max_amt_3m: 0
+            mom_bank_push_max_amt_6m: 0
+            mom_bank_push_qty_1m: 0
+            mom_bank_push_qty_3m: 0
+            mom_bank_push_qty_6m: 0
+            mom_bank_push_uniq_acceptors_qty_1m: 0
+            mom_bank_push_uniq_acceptors_qty_3m: 0
+            mom_bank_push_uniq_acceptors_qty_6m: 0
+            mom_bill_payment_amt_1m: 150000
+            mom_bill_payment_amt_3m: 579000
+            mom_bill_payment_amt_6m: 1139000
+            mom_bill_payment_last_date: 20211001
+            mom_bill_payment_max_amt_1m: 150000
+            mom_bill_payment_max_amt_3m: 150000
+            mom_bill_payment_max_amt_6m: 150000
+            mom_bill_payment_qty_1m: 1
+            mom_bill_payment_qty_3m: 6
+            mom_bill_payment_qty_6m: 11
+            mom_bill_payment_uniq_acceptors_qty_1m: 1
+            mom_bill_payment_uniq_acceptors_qty_3m: 2
+            mom_bill_payment_uniq_acceptors_qty_6m: 2
+            mom_deposit_amt_1m: 16500000
+            mom_deposit_amt_3m: 24850000
+            mom_deposit_amt_6m: 31900000
+            mom_deposit_last_date: 20211022
+            mom_deposit_max_amt_1m: 6000000
+            mom_deposit_max_amt_3m: 6000000
+            mom_deposit_max_amt_6m: 6000000
+            mom_deposit_qty_1m: 6
+            mom_deposit_qty_3m: 13
+            mom_deposit_qty_6m: 18
+            mom_deposit_uniq_acceptors_qty_1m: 6
+            mom_deposit_uniq_acceptors_qty_3m: 11
+            mom_deposit_uniq_acceptors_qty_6m: 14
+            mom_p2p_received_amt_1m: 818000
+            mom_p2p_received_amt_3m: 2564500
+            mom_p2p_received_amt_6m: 4685500
+            mom_p2p_received_last_date: 20211011
+            mom_p2p_received_max_amt_1m: 508000
+            mom_p2p_received_max_amt_3m: 1000000
+            mom_p2p_received_max_amt_6m: 1000000
+            mom_p2p_received_qty_1m: 2
+            mom_p2p_received_qty_3m: 10
+            mom_p2p_received_qty_6m: 31
+            mom_p2p_received_uniq_acceptors_qty_1m: 1
+            mom_p2p_received_uniq_acceptors_qty_3m: 1
+            mom_p2p_received_uniq_acceptors_qty_6m: 1
+            mom_p2p_send_amt_1m: 9520000
+            mom_p2p_send_amt_3m: 24732500
+            mom_p2p_send_amt_6m: 37244500
+            mom_p2p_send_last_date: 20211025
+            mom_p2p_send_max_amt_1m: 3940000
+            mom_p2p_send_max_amt_3m: 3940000
+            mom_p2p_send_max_amt_6m: 3940000
+            mom_p2p_send_qty_1m: 22
+            mom_p2p_send_qty_3m: 64
+            mom_p2p_send_qty_6m: 119
+            mom_registration_date: 20080218
+            mom_send_uniq_acceptors_qty_1m: 17
+            mom_send_uniq_acceptors_qty_3m: 34
+            mom_send_uniq_acceptors_qty_6m: 52
+            mom_withdrawal_amt_1m: 100000
+            mom_withdrawal_amt_3m: 450000
+            mom_withdrawal_amt_6m: 650000
+            mom_withdrawal_last_date: 20211009
+            mom_withdrawal_max_amt_1m: 100000
+            mom_withdrawal_max_amt_3m: 300000
+            mom_withdrawal_max_amt_6m: 300000
+            mom_withdrawal_qty_1m: 1
+            mom_withdrawal_qty_3m: 3
+            mom_withdrawal_qty_6m: 5
+            mom_withdrawal_uniq_acceptors_qty_1m: 1
+            mom_withdrawal_uniq_acceptors_qty_3m: 3
+            mom_withdrawal_uniq_acceptors_qty_6m: 5
+            opco_cd: UG
+            p_ucid: 4667530
+            source: MOMO
+            status_code: AC
+      type: object
+      properties:
+        APIStatus:
+          type: object
+      required:
+      - APIStatus
+    customerInfo:
+      title: customerInfo
+      type: object
+      properties:
+        customerId:
+          description: MSISDN of the customer
+          type: string
+        partnerId:
+          description: partnerID of the 3PP
+          type: string
+        appName:
+          description: appName used to trigger the API request
+          type: string
+        hostName:
+          description: dummy hostname parameter
+          type: string
+        operationName:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/OperationName'
+          - description: 'Name assigned to the task to be performed. Below are the possible values;
+
+              - **queryData:** Query subscriber kyc data and summary usage statistics
+
+              - **queryMerchantData:** Query MoMo Merchant kyc data and summary usage statistics'
+        operationValue:
+          description: set to 1 always
+          type: string
+    OperationName:
+      title: OperationName
+      description: 'Name assigned to the task to be performed. Below are the possible values;
+
+        - **queryData:** Query subscriber kyc data and summary usage statistics
+
+        - **queryMerchantData:** Query MoMo Merchant kyc data and summary usage statistics'
+      type: string
+      enum:
+      - queryData
+      - queryMerchantData
+    customerUsage:
+      title: customerUsage
+      type: object
+      properties:
+        APIStatus:
+          $ref: '#/components/schemas/APIStatus'
+        APIData:
+          description: Detailed information returned about the subscriber
+          type: array
+          items: {}
+    APIStatus:
+      title: APIStatus
+      type: object
+      properties:
+        msisdn:
+          description: MSISDN of the customer whose information has been returned
+          example: '256789999781'
+          type: string
+        requestId:
+          description: internally generated transaction Id from the backend
+          example: '4993609756309740126'
+          type: string
+        dateRange:
+          description: Date range of the returned information
+          type: array
+          items:
+            $ref: '#/components/schemas/DateRange'
+        maxRecs:
+          description: Maximum number of records available for the given date range
+          type: integer
+          format: int32
+        numRecs:
+          description: Number of records returned. 0 for no records returned.
+          type: number
+          format: double
+        pageNum:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/PageNum'
+          - description: Maximum number of records that can be returned in a single response
+        submittedTime:
+          description: Date time stamp when the request for information was made
+          example: 2020-09-01 17:08:38.549000
+          type: string
+        duration:
+          description: Duration taken to process the request in milliseconds
+          type: number
+          format: double
+        statusCode:
+          description: Response status code
+          example: 200
+          type: number
+          format: double
+        statusMsg:
+          description: Description for the response status code
+          example: OK
+          type: string
+    DateRange:
+      title: DateRange
+      type: object
+      properties:
+        startdate:
+          description: Format; YYYYMMDD
+          type: string
+        enddate:
+          description: Format; YYYYMMDD
+          type: string
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header

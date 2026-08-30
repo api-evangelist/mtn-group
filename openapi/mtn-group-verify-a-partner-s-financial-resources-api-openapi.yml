@@ -1,0 +1,230 @@
+openapi: 3.2.0
+info:
+  version: v1
+  title: MTN Accountholders Verify a Partner's FInancial Resources API
+  contact:
+    name: MTN API Support
+    email: api.support@mtn.com
+  description: The Accountholders API returns basic information of the Accountholder including MTN Mobile Money account status. i.e. ACTIVE, SUSPENDED, BLOCKED etc. It also support validation of a MoMo accountholder, as well as the verification of financial resourceinformation.
+servers:
+- url: https://api.mtn.com/v1
+security:
+- OAuth2: []
+tags:
+- name: Verify a Partner's FInancial Resources
+paths:
+  /accountholders/{id}/verify:
+    post:
+      tags:
+      - Verify a Partner's FInancial Resources
+      summary: Verify an accountholder's financial resource information.
+      description: Verifies an accountholder's (or list of accountholders) financial resource information.This is typically called before linking an accountholder to a specific resource in the consuming system. The response will return a boolean to indicate whether an accountholder and service resource is valid (true) in the service provider system. The extension variable is an open field where any additional information that needs to flow between the consumer and target system, can be specified.
+      parameters:
+      - name: id
+        in: path
+        description: ID value of the Accountholder in the Service Provider Systemi.e. MSISDN - the format must be E.123 - as this operation is typically used to link financial resources, the liset of accountholder id's in the input model, will be verified against this partner id.
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        description: Client generated Id to include for tracing requests, so that the API can easily trace the HTTP request all the way from a client to MTNs backend processes (via our proxies). Each time a request is made to an MTN API the client should include a unique request reference in the HTTP Header. The value must be between 5 and 20 characters, and consist of ASCII letters, digits, or the characters +, /, =, and -. Invalid or blank IDs will be ignored and replaced with generated ones. MTN may use this to detect duplicate transactions from the client, but this functionality is not always guaranteed, so clients must make their own efforts to prevent duplicate transactions. MTN will also log the transactionId in order to assist with debugging and to correlate transactions processed by the API to requests from the client.
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: X-Authorization
+        in: header
+        description: Encrypted ECW credentials
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountholderStatus'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/verifyRequest'
+        description: Request body
+        required: true
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the error occured.
+          example: 2018-05-01T00:00
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+        supportMessage:
+          type: string
+          description: Support Message
+        customerId:
+          type: string
+          description: Customer ID or msisdn
+        sequenceNo:
+          type: string
+          description: A unique id for tracing all requests
+          example: 12345
+        transactionId:
+          type: string
+          description: Message ID
+        _links:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links'
+    verifyRequest:
+      type: object
+      properties:
+        accountholderids:
+          type: array
+          items:
+            type: string
+        extension:
+          type: object
+        resource:
+          type: string
+      title: VerifyRequest
+    AccountholderProfileResponse__links:
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links_self'
+      description: Relevant links to the Accoutholder Profile.
+    AccountholderStatusResponse__links:
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/AccountholderStatusResponse__links_self'
+      description: Relevant links to the Accoutholder Profile.
+    validationData:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: First Name of the customer
+          example: John
+        lastName:
+          type: string
+          description: Last Name of the customer
+          example: Doe
+        gender:
+          type: string
+          description: Gender of the customer
+          example: FEMALE
+        dateOfBirth:
+          type: string
+          description: Date of birth of the customer
+          example: '1992-12-17'
+        isValid:
+          type: boolean
+          description: Indicates whether the accountholder is validated. True = yes.
+          example: false
+        extension:
+          type: array
+          description: List of additional values returned from the provider system
+          items:
+            type: string
+    AccountholderStatusResponse__links_self:
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://host:port/v1/accountholderstatus/12345
+          description: Hyperlink to access the Accountholder's Status.
+    AccountholderProfileResponse__links_self:
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://host:port/v1/accountholders/12345
+          description: Hyperlink to access the Accountholder's Profile.
+    AccountholderStatus:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+        statusMessage:
+          type: string
+          description: Status description of the response
+        customerId:
+          type: string
+          example: MTN123456
+          description: Id provided in the input
+        sequenceNo:
+          type: string
+          example: 1234
+          description: A unique id for tracing all requests
+        data:
+          $ref: '#/components/schemas/validationData'
+        _links:
+          $ref: '#/components/schemas/AccountholderStatusResponse__links'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

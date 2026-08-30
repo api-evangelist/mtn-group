@@ -1,0 +1,129 @@
+openapi: 3.2.0
+info:
+  version: Swagger 2.0
+  title: Logback Failure Service Query By Data API
+servers:
+- url: https://api.mtn.com/v1
+security:
+- OAuth2: []
+- ApiKeyAuth: []
+tags:
+- name: Query By Data
+paths:
+  /logback:
+    post:
+      operationId: Query logback failure
+      tags:
+      - Query By Data
+      summary: Query logback failure
+      description: Query logback failure
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/clientErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/serverErrorResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/queryData'
+        description: Query Data
+        required: true
+components:
+  schemas:
+    serverErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        data:
+          type: string
+    responseData:
+      type: object
+      properties:
+        requestType:
+          type: string
+        created:
+          type: string
+          format: date
+        payload:
+          type: object
+        header:
+          type: object
+        targetUrl:
+          type: string
+        error:
+          type: object
+        status:
+          type: string
+        source:
+          type: string
+        transactionId:
+          type: string
+        countryCode:
+          type: string
+    clientErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date
+        status:
+          type: string
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+    queryData:
+      type: object
+      required:
+      - targetUrl
+      - requestType
+      - countryCode
+      properties:
+        targetUrl:
+          type: string
+        requestType:
+          type: string
+        countryCode:
+          type: string
+    response:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/responseData'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

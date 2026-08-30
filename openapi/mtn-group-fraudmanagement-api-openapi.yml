@@ -1,0 +1,377 @@
+openapi: 3.2.0
+info:
+  description: This API assesses risks for an MTN customer as well as creates applications
+  version: 1.0.0
+  title: MTN Customer Risk Management Fraud Management API
+  contact:
+    email: developer-support@mtn.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://za.api.mtn.com/v1/riskManagement
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: fraudManagement
+paths:
+  /rts/order/returnToSender:
+    post:
+      summary: Creates a RTS request
+      description: This operation creates a RTS request entity for fraud management.
+      tags:
+      - fraudManagement
+      parameters:
+      - name: transactionId
+        description: transactionId
+        in: header
+        schema:
+          type: string
+      - name: sourceIdentifier
+        in: query
+        description: This field denotes the channel that is initiating request to SOA., ex-'Online, USSD, MyMTNApp, Payjoy'
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/returnToSender_Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error405'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error415'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/returnToSender_Request'
+        required: true
+  /order/returnToSender/dsv:
+    post:
+      summary: Creates a RTS request
+      description: This operation creates a RTS request entity for fraud management.
+      tags:
+      - fraudManagement
+      parameters:
+      - name: transactionId
+        description: transactionId
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/returnToSender_Response_dsv'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400dsv'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error405'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error415'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/returnToSender_Request_dsv'
+        required: true
+components:
+  schemas:
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 5000
+        statusMessage:
+          type: string
+          description: Text explaining the reason for the error
+          example: Invalid parameters
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Unable to process your request. Please try again
+        transactionId:
+          type: string
+          description: transaction Id from target system to indicate transaction status.
+          example: 00209948
+        httpStatus:
+          type: string
+          description: description of the hhtp status.
+          example: BAD_REQUEST
+    returnToSender_Response:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes', mapped from stausCode from backend(IOMS)
+          example: '0000'
+          maxLength: 30
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client. Success for 200. Mapped from statusMessage from backend (IOMS)
+          example: Success
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful), Mapped from statusMessage from backend (IOMS)
+          example: Transaction has been completed successfully.
+        transactionId:
+          type: string
+          description: Source's transaction reference sent in the request. Mapped from statusMessage from backend (IOMS)
+          example: '76679433'
+        httpStatus:
+          type: string
+          description: http response
+          example: OK
+    Error400dsv:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 5000
+        statusMessage:
+          type: string
+          description: Text explaining the reason for the error
+          example: Transaction Failed
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: '[ST05] StopOrder already exists for this item. Created on 11/1/2023 11:47:05 AM'
+        transactionId:
+          type: string
+          description: transaction Id from target system to indicate transaction status.
+          example: '42150905'
+        data:
+          type: object
+          properties:
+            orderNumber:
+              type: string
+              description: Order number
+              example: '3221111'
+            success:
+              type: string
+              description: success message represented as true or false.
+              example: 'false'
+    returnToSender_Response_dsv:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes',
+          example: '0000'
+          maxLength: 30
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client. Success for 200.
+          example: Success
+        supportMessage:
+          type: string
+          description: Map from Error messages of DSV.
+        transactionId:
+          type: string
+          description: Source's transaction reference sent in the request.
+          example: 01DE4A424-7520
+        data:
+          type: object
+          properties:
+            orderNumber:
+              type: string
+              description: sales order number of the RTS request.
+            uniqueReference:
+              type: string
+              description: Unique identifier of the RTS request.
+            success:
+              type: string
+              description: True or false status of the request
+              example: 'true'
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+          example: oauth.v2.InvalidApiKey
+    Error415:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 415
+        error:
+          type: string
+          description: error message
+          example: Unsupported Media Type
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    returnToSender_Request:
+      type: object
+      required:
+      - order_number
+      - case_closure_status
+      - analyst_comments
+      - ioms_order_id
+      properties:
+        order_number:
+          type: string
+          description: Unique identifier of the RTS request.
+          example: '12345'
+        case_closure_status:
+          type: string
+          description: status of the particular order.
+          example: Return to Warehouse
+        analyst_comments:
+          type: string
+          description: comments from the analyst about the order.
+          example: Delivery Address Modified
+        ioms_order_id:
+          type: string
+          description: IOMS order ID.
+          example: '5473212'
+    returnToSender_Request_dsv:
+      type: object
+      required:
+      - OrderNumber
+      - CustomerGroupCode
+      - StopType
+      properties:
+        OrderNumber:
+          type: string
+          description: sales order number of the RTS request.
+          example: OrderNum1
+        UniqueReference:
+          type: string
+          description: Unique identifier of the RTS request.
+        CustomerGroupCode:
+          type: string
+          description: customer code.
+          example: MTNM
+        StopType:
+          type: string
+          description: F is Fraud as the type of stop to be put onto the item
+          example: F
+    Error404:
+      properties:
+        fault:
+          properties:
+            faultstring:
+              type: string
+              description: ''
+              example: 'Unable to identify proxy for host: southafrica and url: /v9/products/productOffering/roaming'
+            detail:
+              properties:
+                errorcode:
+                  type: string
+                  description: ''
+                  example: messaging.adaptors.http.flow.ApplicationNotFound
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

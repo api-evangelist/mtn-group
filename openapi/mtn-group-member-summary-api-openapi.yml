@@ -1,0 +1,208 @@
+openapi: 3.2.0
+info:
+  version: v1.11
+  title: MTN Customer Profiles Member Summary API
+  description: An API to retrieve the profile of an MTN customer. Please refer to the reference guides https://developers.mtn.com/API-Reference-Guides and Response and Error Codes documents https://developers.mtn.com/ResponseCodes
+servers:
+- url: https://api.mtn.com/v2
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: Member Summary
+paths:
+  /customers/{customerId}/summary:
+    get:
+      tags:
+      - Member Summary
+      summary: Member Summary
+      description: Retrieves the acountholder's (member summary) from ayo .
+      parameters:
+      - name: customerId
+        in: path
+        description: ID value of the Accountholder/Customer i.e. MSISDN - ex-27123456788
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: header
+        description: id of the customer ex- SAID, Passportid etc
+        schema:
+          type: string
+      - name: transactionDate
+        in: header
+        description: Transaction date ex '2022-06-03T14:19:38.996Z'
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: transactionId is the unique identifier to track the request ex '202rtre5t5567trt67y89'
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        description: target system is backend for which the request is initiated ex- AYO-MTN-ZAF
+        required: true
+        schema:
+          type: string
+      - name: idType
+        in: header
+        description: idType defines the type of customerid ex- passport etc
+        schema:
+          type: string
+      - name: x-origin-channelId
+        in: header
+        description: information on originator ex-USSD
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ayoSummaryResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ayoSummaryError'
+        '401':
+          description: UnAuthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ayoSummaryError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ayoSummaryError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ayoSummaryError'
+components:
+  schemas:
+    ayocoverDetails:
+      type: object
+      properties:
+        benefit:
+          type: string
+          example: CARE365MYFAPH
+          description: Benefits are the additions information given to the customer as defined by AYO
+        policyNumber:
+          type: string
+          example: 7132669
+          description: Policy Number is string value defined in AYO
+        policyStatus:
+          type: string
+          example: In Force
+          description: Policy Status is defined in three different values 'Not Takenup', 'In Force', 'Termination Notice'
+        productCode:
+          type: string
+          example: MyMTN Prepaid Funeral Khava
+          description: product code is commercial name of the product used by the customer as defined in AYO
+        consents:
+          type: string
+          description: consent
+          example: y
+        coverPeriod:
+          type: integer
+          example: 6
+          description: Policy Cover Period is numerical value which defines the duration calculated in months
+        coverAmount:
+          $ref: '#/components/schemas/ayoAmount'
+        totalPremium:
+          $ref: '#/components/schemas/ayoAmount'
+    ayoAmount:
+      type: object
+      properties:
+        amount:
+          type: integer
+          example: 3000
+          description: amount is numerical value  defined in different features like premium and cover
+        currencyCode:
+          type: string
+          example: ZAR
+          description: Currecy code is currency in which amount is defined, for southAfrica it is ZAR
+    ayoSummaryResponse:
+      type: object
+      required:
+      - memberAggrementNumber
+      - coverDetails
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned.
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: success
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful), mapped to description from the response of AYO
+          example: Success
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        memberAggrementNumber:
+          type: string
+          example: 2120000059490612
+          description: Personal ID Number which is the unique value provided by ayo for every customer
+        coverDetails:
+          description: Cover details consist of all the information related to policy associated with the customer
+          $ref: '#/components/schemas/ayocoverDetails'
+    ayoSummaryError:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      - transactionId
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned.
+          example: '4001'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Bad request
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful), mapped to description from the response of AYO
+          example: No policy is found per the  id number.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        path:
+          type: string
+          description: The path that caused the error
+          example: /27831234567/summary
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+        type:
+          type: string
+          example: business error
+          description: type of error is shown for non 200 response and mapped from AYO response
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token

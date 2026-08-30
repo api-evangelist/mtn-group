@@ -1,0 +1,78 @@
+openapi: 3.2.0
+info:
+  version: v1.0
+  title: Customer Management - COE Customer Attribute API
+  description: An API to Create customers,create admin users,activate/deactivate,disable Sims.
+servers:
+- url: https://coe.api.mtn.com/customerManagement/v1
+tags:
+- name: Customer Attribute
+paths:
+  /customer/attribute:
+    patch:
+      operationId: partially update the attribute of a customer
+      summary: Update a Customer
+      description: This operation partially update a Customer entity.
+      tags:
+      - Customer Attribute
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer_Update_Response'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer_Update'
+        description: Customer Update
+        required: true
+components:
+  schemas:
+    Characteristic:
+      required:
+      - name
+      - value
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the characteristic
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
+      description: Describes a given characteristic of an object xor entity through a name/value pair.
+    Customer_Update_Response:
+      type: object
+      properties:
+        portfolioId:
+          type: string
+          example: PortfolioId
+        characteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic'
+          description: Describes the characteristic of a customer.
+    Customer_Update:
+      type: object
+      description: 'Skipped properties: id,href'
+      required:
+      - engagedParty
+      - name
+      properties:
+        portfolioId:
+          type: string
+          description: A word, term, or phrase by which the Customer is known and distinguished from other Customers.
+        characteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic'
+          description: Describes the characteristic of a customer.
+    Any: {}
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header

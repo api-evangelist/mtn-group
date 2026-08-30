@@ -1,0 +1,1011 @@
+openapi: 3.2.0
+info:
+  description: To facilitate the capability for customer to create/validate/change Pin Information.
+  version: 1.0.2
+  title: Customer Management PIN API
+servers:
+- url: https://api.mtn.com/customerPinManagement/v2
+security:
+- ApiKeyAuth: []
+- OAuth2: []
+tags:
+- name: PIN
+paths:
+  /customer/{customerId}/pin:
+    post:
+      tags:
+      - PIN
+      summary: To create Pin customer will provide mandatory(customerId, secret, alternateNumber, securityQuestion, tncDetails,channel,transId) attributes. Also will provide emailID as optional input
+      description: create Pin Details, user must enter the MSISDN/Service Number of Customer, the PIN number, alternate mobile Number , Answer for the Security Question and valid channel id. Finally the user will enter the Unique Trans ID as per below format yyyymmddhhmmss<UniqueSequenceNumber> i.e 20200711123459103
+      operationId: createCutomerPin
+      parameters:
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests.
+        required: false
+        x-example: 6f0bece6-7df3-4da4-af02-5e7f16e5e6fc
+        schema:
+          type: string
+      - name: customerId
+        in: path
+        required: true
+        description: Customer id will be act as serviceNumber and it can Customer's msisdn, serviceId, accountId, or invoiceId.
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        description: Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)
+        required: false
+        schema:
+          type: string
+          enum:
+          - NGA
+          - UGA
+          - ZAF
+          - RWA
+      - name: secret
+        in: header
+        description: PIN number to be set
+        required: true
+        x-example: MTIzNDU2Nzg5MTA=
+        schema:
+          type: string
+          format: base64
+      - name: repeatedSecret
+        in: header
+        description: A repeated secret to validate the provided  secret
+        required: false
+        x-example: '1234455'
+        schema:
+          type: string
+      - name: emailID
+        in: header
+        description: Customer’s Email ID
+        required: false
+        x-example: sharma.anuj@tecnotree.com
+        schema:
+          type: string
+      - name: alternateNumber
+        in: header
+        description: An alternative identifier associated with the customer, ie. a mobile number, a repeat of secret etc.
+        required: false
+        x-example: '12345678910'
+        schema:
+          type: string
+      - name: tncDetails
+        in: header
+        description: Terms & Condition should be “1.0” or as configured for the channel, not required if target system is EWP for PSB IVR
+        required: false
+        x-example: '1.0'
+        schema:
+          type: string
+      - name: channel
+        in: header
+        description: Name of the channel, can be a channel information, a credential type depending on the backend system
+        x-example: CONVIVA
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: query
+        description: The backend system expected to fulfil the request
+        schema:
+          type: string
+          enum:
+          - EWP
+      - name: X-Authorization
+        in: header
+        description: Client credentials to be authenticated by EWP or ECW
+        schema:
+          type: string
+      - name: description
+        in: header
+        description: A request info, can be a bank domain name etc.
+        x-example: TESTYDFS
+        schema:
+          type: string
+      - name: currency
+        in: query
+        description: A currency
+        x-example: NGN
+        schema:
+          type: string
+      - name: invitationCode
+        in: query
+        description: An invitation code associated with the PIN creation
+        x-example: '12345'
+        schema:
+          type: string
+      - name: segment
+        in: query
+        required: false
+        description: This is the type of customer doing the transaction. This can be customer, agent or admin
+        schema:
+          type: string
+      - name: idType
+        in: query
+        required: false
+        description: Type of the customerId in the path.
+        schema:
+          type: string
+          enum:
+          - MSISDN
+          - USER
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/CreatePinResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/SecurityQuestionAnswers'
+        description: Security Question and Answer Details, not required when target system is EWP for PSB IVR
+    get:
+      tags:
+      - PIN
+      summary: To validate Pin  Details  user will enter (customerId, secret, channel, transId) Attributes
+      description: To validate Pin Details, user must enter the MSISDN/Service Number of Customer, the PIN number, channel id. Finally the user will enter the Unique Trans ID as per below format yyyymmddhhmmss<UniqueSequenceNumber> i.e 20200711123459104
+      operationId: validateCutomerPin
+      parameters:
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests.
+        required: false
+        x-example: 6f0bece6-7df3-4da4-af02-5e7f16e5e6fc
+        schema:
+          type: string
+      - name: customerId
+        in: path
+        required: true
+        description: Customer id will be act as serviceNumber and it can Customer's msisdn, serviceId, accountId, or invoiceId.
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        description: Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)
+        required: false
+        schema:
+          type: string
+          enum:
+          - NGA
+          - UGA
+          - ZAF
+          - RWA
+      - name: secret
+        in: header
+        description: PIN number to be set
+        required: true
+        x-example: MTIzNDU2Nzg5MTA=
+        schema:
+          type: string
+          format: base64
+      - name: channel
+        in: header
+        description: channel
+        required: true
+        x-example: '12345678910'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ValidatePinResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+      - PIN
+      summary: To change Pin  Details user will enter (customerId, operationType, currentSecret, newSecret,channel,transId) Attributes
+      description: To change Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User has to enter the 'current Secret/PIN' and 'New Secret/PIN'. User will enter Security Answer selected during first time Secret/PIN Creation. Finally the user will enter the 'channel id' & 'Unique Trans ID as per below format yyyymmddhhmmss<UniqueSequenceNumber> i.e 20200711123459105
+      operationId: changeCutomerPin
+      parameters:
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests.
+        required: false
+        x-example: 6f0bece6-7df3-4da4-af02-5e7f16e5e6fc
+        schema:
+          type: string
+      - name: customerId
+        in: path
+        required: true
+        description: Customer id will be act as serviceNumber and it can Customer's msisdn, serviceId, accountId, or invoiceId.
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        description: Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)
+        required: false
+        schema:
+          type: string
+          enum:
+          - NGA
+          - UGA
+          - ZAF
+          - RWA
+      - name: currentSecret
+        in: header
+        description: Customers current secret/pin
+        required: false
+        x-example: MTIzNDU2Nzg5MTA=
+        schema:
+          type: string
+          format: base64
+      - name: repeatedSecret
+        in: header
+        description: Customers repeated password
+        required: false
+        x-example: '1234'
+        schema:
+          type: string
+      - name: newSecret
+        in: header
+        description: Customers new secret/pin
+        required: true
+        x-example: MTIzNDU2Nzg5MTA=
+        schema:
+          type: string
+          format: base64
+      - name: securityAnswer
+        in: header
+        description: Give secured answer
+        required: false
+        x-example: BMW
+        schema:
+          type: string
+      - name: channel
+        in: header
+        description: channel
+        required: false
+        x-example: '12345678910'
+        schema:
+          type: string
+      - name: targetSystem
+        in: query
+        required: false
+        description: The backend system expected to fulfil the request
+        schema:
+          type: string
+          enum:
+          - CIS
+          - EWP
+      - name: X-Authorization
+        in: header
+        description: Client credentials to be authenticated by EWP or ECW
+        schema:
+          type: string
+      - name: segment
+        in: query
+        required: false
+        description: This is the type of customer doing the transaction. This can be customer, agent or admin
+        schema:
+          type: string
+      - name: idType
+        in: query
+        required: false
+        description: Type of the customerId in the path.
+        schema:
+          type: string
+          enum:
+          - MSISDN
+          - USER
+      - name: requestType
+        in: query
+        description: The type of operation being performed in the change
+        schema:
+          type: string
+          enum:
+          - CHANGE_PIN
+          - RESET_PIN
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ChangePinResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+      - PIN
+      summary: To reset Pin  Details user will enter (customerId, operationType, validateAnswers, motherName,dateOfBirth,stateOfOrigin,channel,transId) Attributes
+      description: To reset Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User has to enter the Y-indicates validate security answer, N-indicates no validation for Validate Answers'. User will enter Mothers maiden name also will enter the Date of Birth in format YYYY-MM-DD and State of Origin code. Finally the user will enter the 'channel id' & 'Unique Trans ID as per below format yyyymmddhhmmss<UniqueSequenceNumber> i.e 20200711123459105
+      operationId: resetCutomerPin
+      parameters:
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests.
+        required: false
+        x-example: 6f0bece6-7df3-4da4-af02-5e7f16e5e6fc
+        schema:
+          type: string
+      - name: customerId
+        in: path
+        required: true
+        description: Customer id will be act as serviceNumber and it can Customer's msisdn, serviceId, accountId, or invoiceId.
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        description: Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)
+        required: false
+        schema:
+          type: string
+          enum:
+          - NGA
+          - UGA
+          - ZAF
+          - RWA
+      - name: validateAnswers
+        in: header
+        description: Y-indicates validate security answer, N-indicates no validation
+        required: false
+        x-example: Y
+        schema:
+          type: string
+      - name: motherName
+        in: query
+        description: Mothers maiden name
+        required: false
+        x-example: abcd
+        schema:
+          type: string
+      - name: dateOfBirth
+        in: query
+        description: Date of Birth in format YYYY-MM-DD
+        required: false
+        x-example: '2020-10-13'
+        schema:
+          type: string
+      - name: stateOfOrigin
+        in: query
+        description: State of Origin code
+        required: false
+        x-example: '+91'
+        schema:
+          type: string
+      - name: channel
+        in: header
+        description: channel
+        required: true
+        x-example: '12345678910'
+        schema:
+          type: string
+      - name: idNumber
+        in: query
+        description: Customer ID
+        required: false
+        x-example: '12345678910'
+        schema:
+          type: string
+      - name: description
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: targetSystem
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - CIS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/resetPinResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /customer/{customerId}/pinProfile:
+    put:
+      tags:
+      - PIN
+      summary: To change Pin  Details user will enter (customerId, operationType,securityQuestion,securityAnswer,channel,emailID,tncDetails) Attributes
+      description: To change Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User will enter Security Answer to be updated. Finally the user will enter the 'channel id'
+      operationId: chanageSecurityQnACutomerPin
+      parameters:
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests.
+        required: false
+        x-example: 6f0bece6-7df3-4da4-af02-5e7f16e5e6fc
+        schema:
+          type: string
+      - name: customerId
+        in: path
+        required: true
+        description: Customer id will be act as serviceNumber and it can Customer's msisdn, serviceId, accountId, or invoiceId.
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        description: Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)
+        required: false
+        schema:
+          type: string
+          enum:
+          - NGA
+          - UGA
+          - ZAF
+          - RWA
+      - name: channel
+        in: query
+        description: channel
+        required: false
+        x-example: '12345678910'
+        schema:
+          type: string
+      - name: operationType
+        in: query
+        description: Specify the operation of the request
+        required: true
+        x-example: updateQA
+        schema:
+          type: string
+          enum:
+          - UpdateQA
+          - UpdateEmailID
+          - UpdateTNC
+      - name: emailID
+        in: header
+        description: Customer’s Email ID
+        required: false
+        schema:
+          type: string
+      - name: tncDetails
+        in: header
+        description: Terms & Condition should be “1.0” or as configured for the channel
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ValidateSecurityAnswerResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/SecurityQuestionAnswers'
+        description: Security Question and Answer Details
+    get:
+      tags:
+      - PIN
+      summary: To get Pin profile Details user will enter (customerId, operationType,securityQuestion,securityAnswer,channel) Attributes
+      description: To get Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User will enter Security Answer to be updated. Finally the user will enter the 'channel id'
+      operationId: getProfileDetails
+      parameters:
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests.
+        required: false
+        x-example: 6f0bece6-7df3-4da4-af02-5e7f16e5e6fc
+        schema:
+          type: string
+      - name: customerId
+        in: path
+        required: true
+        description: Customer id will be act as serviceNumber and it can Customer's msisdn, serviceId, accountId, or invoiceId.
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        description: Country ISO code. Must be ISO 3166-1 alpha-3 codes (It is a 3 character string)
+        required: false
+        schema:
+          type: string
+          enum:
+          - NGA
+          - UGA
+          - ZAF
+          - RWA
+      - name: channel
+        in: query
+        description: channel
+        required: false
+        x-example: '12345678910'
+        schema:
+          type: string
+      - name: operationType
+        in: query
+        description: Specify the operation of the request
+        required: true
+        x-example: QueryTNC
+        schema:
+          type: string
+          enum:
+          - QueryProfile
+          - QueryTNC
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/GetProfileDetailsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ResetPinResponseData:
+      type: object
+      title: ResetPinResponseData
+      properties:
+        message:
+          type: string
+          example: pin changed and SMS sent to customer Successfully
+          description: API Success Message.i.e. Pin changed and SMS sent to customer Successfully
+        amountCharged:
+          type: object
+          properties:
+            value:
+              type: number
+            unit:
+              type: string
+    securityquestionAnswer:
+      type: object
+      required:
+      - name
+      properties:
+        securityQuestion:
+          type: string
+          example: string
+          description: user will enter security question
+        securityAnswer:
+          type: string
+          example: string
+          description: user will enter answer for security question
+    ValidateSecurityAnswerResponse:
+      type: object
+      required:
+      - name
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: Success API code. '0000' in case of success
+        statusMessage:
+          type: string
+          example: String
+        transactionId:
+          type: string
+          example: String
+        data:
+          type: object
+          $ref: '#/components/schemas/ValidateSecurityAnswerResponseData'
+    ChangePinResponse:
+      type: object
+      required:
+      - name
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: Success API code. '0000' in case of success
+        statusMessage:
+          type: string
+          example: String
+        transactionId:
+          type: string
+          example: String
+        customerId:
+          type: string
+          example: String
+        data:
+          type: object
+          $ref: '#/components/schemas/ChangePinResponseData'
+    ValidatePinResponseData:
+      type: object
+      title: ValidatePinResponseData
+      properties:
+        message:
+          type: string
+          example: Subscriber secret authenticated successfully
+          description: API Success Message. i.e. Subscriber secret authenticated successfully
+        forcePasswordChange:
+          type: string
+          example: 'false'
+          description: true/false
+        securityQuestionAvailable:
+          type: string
+          example: 'true'
+        emailID:
+          type: string
+          example: sharma.anuj@tecnotree.com
+        tncAccepted:
+          type: array
+          items:
+            type: string
+          example:
+          - Version: '2.0'
+            AcceptedDate: '2020-07-11T13:43:30.830Z'
+        tncLastUpdtdate:
+          type: string
+          example: '2020-07-01T10:10:11.830Z'
+        tncLastUpdtversion:
+          type: string
+          example: '2.0'
+    SecurityQuestionAnswers:
+      type: array
+      items:
+        type: object
+        properties:
+          SecurityQuestionAnswer:
+            $ref: '#/components/schemas/securityquestionAnswer'
+    ValidatePinResponse:
+      type: object
+      required:
+      - name
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: Success API code. '0000' in case of success
+        statusMessage:
+          type: string
+          example: String
+        transactionId:
+          type: string
+          example: String
+        data:
+          type: object
+          $ref: '#/components/schemas/ValidatePinResponseData'
+    GetProfileDetailsResponseData:
+      type: object
+      title: GetProfileDetailsResponseData
+      properties:
+        message:
+          type: string
+          example: Terms & Conditions retreived Successfully
+          description: API Success Message. i.e. This is Smartapp Terms & Conditions
+    CreatePinResponse:
+      type: object
+      required:
+      - name
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: Success API code. '0000' in case of success
+        statusMessage:
+          type: string
+          example: String
+        transactionId:
+          type: string
+          example: String
+        data:
+          type: object
+          $ref: '#/components/schemas/CreatePinResponseData'
+    CreatePinResponseData:
+      type: object
+      title: CreatePinResponseData
+      properties:
+        message:
+          type: string
+          example: Subscriber secret created successfully
+          description: API Success Message. i.e. Subscriber secret created successfully
+    ValidateSecurityAnswerResponseData:
+      type: object
+      title: ValidateSecurityAnswerResponseData
+      properties:
+        message:
+          type: string
+          example: Subscriber answer validated successfully
+          description: API Success Message.i.e. Subscriber answer validated successfully
+    ChangePinResponseData:
+      type: object
+      title: ChangePinResponseData
+      properties:
+        message:
+          type: string
+          example: Subscriber secret has been changed and SMS sent successfully
+          description: API Success Message.i.e. Subscriber secret has been changed and SMS sent successfully
+        amountCharged:
+          type: object
+          properties:
+            value:
+              type: number
+            unit:
+              type: string
+    resetPinResponse:
+      type: object
+      required:
+      - name
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: Success API code. '0000' in case of success
+        statusMessage:
+          type: string
+          example: String
+        transactionId:
+          type: string
+          example: String
+        data:
+          type: object
+          $ref: '#/components/schemas/ResetPinResponseData'
+    GetProfileDetailsResponse:
+      type: object
+      required:
+      - name
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: Success API code. '0000' in case of success
+        statusMessage:
+          type: string
+          example: String
+        transactionId:
+          type: string
+          example: String
+        data:
+          type: object
+          $ref: '#/components/schemas/GetProfileDetailsResponseData'
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /customers/234805738473/pin
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token/accesstoken?grant_type=client_credentials

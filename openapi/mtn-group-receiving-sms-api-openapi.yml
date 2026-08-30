@@ -1,0 +1,187 @@
+openapi: 3.2.0
+info:
+  version: '1.0'
+  title: Short Message Service (SMS) Receiving SMS API
+  description: Provides a RESTful API to expose SMS capability.
+servers:
+- url: https://api.mtn.com/v2/
+security:
+- OAuth2: []
+tags:
+- name: Receiving SMS
+paths:
+  /messages/sms/inbound/registrations/{requestId}/messages:
+    get:
+      tags:
+      - Receiving SMS
+      summary: Query for received SMS messages.
+      description: This interface is used to query for received SMS messages on the given requestId
+      parameters:
+      - in: path
+        name: requestId
+        required: true
+        description: It is typically a short-code or virtual MSISDN that is agreed with the mobile operator for receipt of SMS messages
+        x-example: '10111'
+        schema:
+          type: string
+      - in: query
+        name: maxBatchSize
+        description: It is the maximum number of messages to be retrieved in the request. The actual maximum batch size is also limited by SLA MaxReturnedSMS. System chooses the smaller value from the value of maxBatchSize and MaxReturnedSMS.
+        x-example: '10'
+        schema:
+          type: string
+      responses:
+        200:
+          description: Query sucessful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inboundSMSMessageResponse'
+        401:
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        407:
+          description: Proxy system not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - transactionId
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: MADAPI generated Id to include for tracing requests
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: https://api.mtn.com/v1/
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: POST
+    inboundSMSMessage:
+      type: object
+      required:
+      - registrationId
+      - senderAddress
+      - message
+      properties:
+        dateTime:
+          type: string
+          description: The time when the message is received.
+          example: 2012-08-01T09:25:55.815+0000
+        registrationId:
+          type: string
+          description: The number associated with service (for example, an agreed short code)
+          example: '10111'
+        message:
+          type: string
+          description: The SMS message itself
+          example: Hello MADAPI SMS receiver!!!
+        senderAddress:
+          type: string
+          description: The MSISDN or Anonymous Customer Reference of the sender
+          example: '27830000001'
+        messageID:
+          type: string
+          description: Server-generated message identifier
+          example: 4444aaz-ddsds-45
+          format: URL
+    inboundSMSMessageList:
+      type: object
+      properties:
+        numberOfMessagesInThisBatch:
+          type: string
+          description: The number of messages in the batch.
+          example: '10'
+        totalNumberOfPendingMessages:
+          type: string
+          description: Total number of messages in the gateway storage waiting for retrieval at the time of the request
+          example: '10'
+        inboundSMSMessage:
+          type: array
+          items:
+            $ref: '#/components/schemas/inboundSMSMessage'
+    inboundSMSMessageResponse:
+      type: object
+      required:
+      - data
+      - statusCode
+      - statusMessage
+      - transactionId
+      - _link
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+          example: Sucessful
+        transactionId:
+          type: string
+          description: MADAPI generated Id to include for tracing requests
+          example: 1365478abcz-fdhsdfh54351
+        data:
+          $ref: '#/components/schemas/inboundSMSMessageList'
+        _link:
+          type: object
+          required:
+          - self
+          properties:
+            self:
+              type: object
+              required:
+              - href
+              description: ''
+              properties:
+                href:
+                  type: string
+                  description: ''
+                  example: https://api.mtn.com/v1/messages/sms/inbound/registrations/10111/messages
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            SEND-SMS: Grants ability to send SMS messages to subscribers.
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token/accesstoken?grant_type=client_credentials

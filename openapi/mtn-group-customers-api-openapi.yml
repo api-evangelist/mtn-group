@@ -1,0 +1,5658 @@
+openapi: 3.2.0
+info:
+  title: Mtn Group Customers API
+  version: '1.0'
+  description: 'Operations tagged Customers across 6 of this provider''s published API definitions: mtn-group-loans-v2.yml, mtn-group-mtn-customer-locations-api-v1.yml, mtn-group-mtn-customer-plans-api-v2.yml, mtn-group-mtn-customer-profiles-api-v2-product.yml, mtn-group-mtn-customer-score.yml, mtn-group-mtn-subscription-api-v2.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.mtn.com/v2
+- url: https://api.mtn.com/v1
+tags:
+- name: Customers
+paths:
+  /customers/{customerId}/loans/advance:
+    post:
+      tags:
+      - Customers
+      summary: Gets a loan advance.
+      description: Get a loan advance for an MTN customer.
+      operationId: getLoanAdvance
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanAdvanceResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      deprecated: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanProvisioningDetails'
+        required: true
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}/loans/advance/status:
+    get:
+      tags:
+      - Customers
+      summary: Gets loan advance status.
+      description: Get a loan advance status for an MTN customer.
+      operationId: getLoanAdvanceStatus
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: The transaction Id used in making the loan advance request
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanStatusResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}/loans/eligibleBundle:
+    get:
+      tags:
+      - Customers
+      summary: Retrieves the list of eligible loan.
+      description: Retrieves loan eligibility status of an MTN customer.
+      operationId: checkLoanEligibility
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: Specify the type of eligibility to check for. Returns all if none is specified.
+        schema:
+          type: string
+          enum:
+          - AIRTIME
+          - DATA
+          - VOICE
+          - SMS
+          - ALL
+          default: ALL
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EligibilityResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}/locations:
+    get:
+      description: Retrieves the Location details of an MTN customer
+      summary: View customer locations
+      operationId: Retrieves the Location details of an MTN customer
+      tags:
+      - Customers
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Customer Locations object. For a successful request, the response will contain all the customers details. If the customer does not have any requested data, then those fields will be null. E.g. if the customer does not any location set, then Country and Operator will be null.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerLocations'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDefault'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDefault'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDefault'
+        404:
+          description: Customer not found
+          content:
+            The data object/envelope will be null:
+              example:
+                data: null
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_2'
+      security:
+      - ApiKeyAuth: []
+    servers:
+    - url: https://api.mtn.com/v1
+  /customers/{id}/plans/FRI:
+    get:
+      tags:
+      - Customers
+      summary: Retrieves a customers FRI
+      description: Retrieves FRI for MTN customer.
+      operationId: getFRIUsingPOST
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      - name: targetSystem
+        in: header
+        description: Target System
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: transactionId
+        required: true
+        schema:
+          type: string
+      - name: x-country-code
+        in: header
+        description: x-country-code
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFRIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '404':
+          description: Customer not found
+          content:
+            The data object/envelope will be null:
+              example:
+                data: null
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetFRIRequest'
+        description: Financial Resource Information
+        required: true
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{id}/plans/FRI/state:
+    patch:
+      tags:
+      - Customers
+      summary: Block and Unblock operations are initiated on Customer FRI
+      description: By Interpreting value for 'state' MADAPI initiates   Block and Unblock requests on Customer FRI
+      operationId: UpdateFRIUsingPATCH
+      parameters:
+      - name: id
+        in: path
+        description: ID of the customer. It could be MSISDN, email etc. combination of id and idType defines accountHolderId which will be sent to ECW System as identity
+        required: true
+        schema:
+          type: string
+      - name: idType
+        in: header
+        description: idtype defines the identification type being sent by the 3pp like MSISDN, customer id etc
+        schema:
+          type: string
+          enum:
+          - MSISDN
+      - name: targetSystem
+        in: header
+        description: Target System is the backend to which MADAPI Sends th request
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: transactionId is unique identifier for every request, it is sent by source system like SAS to MADAPI
+        schema:
+          type: string
+      - name: x-origin-channelId
+        in: header
+        description: Source System Details like SAS etc
+        schema:
+          type: string
+      - name: x-authorization
+        in: header
+        description: Encrypted ECW credentials
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateFRIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '404':
+          description: Customer not found
+          content:
+            The data object/envelope will be null:
+              example:
+                data: null
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFRIRequest'
+        description: Financial Resource Identifier
+        required: true
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}/plans:
+    get:
+      description: Retrieves the Billing Plan and related details of an MTN customer.
+      summary: View customer plans
+      tags:
+      - Customers
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be Eg.123
+        required: true
+        schema:
+          type: string
+      - name: fixedLine
+        in: query
+        description: Fixed line whose balances is fetched
+        required: false
+        schema:
+          type: string
+      - name: plan
+        in: query
+        description: Plan type to filter list of balances
+        required: false
+        schema:
+          type: string
+          enum:
+          - VOICE
+          - DATA
+          - SMS
+      - name: momo
+        in: query
+        description: Indicates whether to query balances for a MoMo Customer
+        required: false
+        schema:
+          type: boolean
+      - name: includeReservations
+        in: query
+        description: Indicates whether reservations should be included in the response. This parameter goes hand in hand with the momo query parameter and will have no use if supplied when momo is not true. Default is false.
+        required: false
+        schema:
+          type: boolean
+      - name: referenceid
+        in: query
+        description: This is required to handle the correlation between the 2 systems
+        required: false
+        schema:
+          type: string
+      - name: quoteid
+        in: query
+        description: Indicates whether a corresponding quote should be considered. This parameter goes hand-in-hand with the momo query parameter and will have no use if supplied when momo is not true.
+        required: false
+        schema:
+          type: string
+      - name: targetSystem
+        in: query
+        description: Name of the backend system
+        x-example: EWP
+        schema:
+          type: string
+      - name: segment
+        in: query
+        required: false
+        description: This is the type of customer doing the transaction. This can be  agent, admin , merchant or subscriber
+        schema:
+          type: string
+          enum:
+          - subscriber
+          - admin
+          - agent
+          - merchant
+      - name: idType
+        in: query
+        required: false
+        description: Type of the customerId in the path.
+        schema:
+          type: string
+          enum:
+          - MSISDN
+          - USER
+      - in: query
+        name: prefLanguage
+        required: false
+        description: The language in which the response is required
+        schema:
+          type: string
+          enum:
+          - En
+          - Fr
+      - in: query
+        name: amount
+        required: false
+        description: The threshold amount against which the actual balance will be compared
+        schema:
+          type: integer
+      - name: transactionId
+        in: header
+        description: unique ID generated for each transaction
+        required: false
+        schema:
+          type: string
+      - name: usageType
+        in: query
+        required: false
+        description: Type of usage to be fetched. 1 – All, 2 – Active, 3 – Inactive
+        schema:
+          type: number
+          enum:
+          - 1
+          - 2
+          - 3
+      - name: extRequest
+        in: query
+        required: false
+        description: Define if the request is external or not.
+        schema:
+          type: string
+          enum:
+          - true
+          - false
+      responses:
+        '200':
+          description: Customer Plans object. For a successful request, the response will contain all the customers details. If the customer does not have any requested data, then those fields will be null. E.g. if the customer does not have a startDate set, then it will be null. If the customer does not have any Balance set, then the Balance array will be null.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerPlans'
+        '207':
+          description: If there was an error retrieving some part of the request, then the successful request will be shown, and the remaining failed objects will be be excluded. E.g. if there was an error retrieving Balance information, then the balance object will be empty
+          content:
+            Partially Successfuls Response, showing valid plan data, but balance object is null:
+              example:
+                data:
+                  type: Postpaid
+                  status: Active
+                  startDate: '2019-04-12T14:31:21.810Z'
+                  endDate: '2021-04-12T14:31:21.810Z'
+                  language: '1'
+                  balance: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '404':
+          description: Customer not found
+          content:
+            The data object/envelope will be null:
+              example:
+                data: null
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    patch:
+      tags:
+      - Customers
+      summary: Tariff plan migration
+      description: Migrate the customer from one tariff plan to another
+      operationId: trariffMigration
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Client generated unique Id to include for tracing requests
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    description: HTTP error code extension
+                    example: '0000'
+                  statusMessage:
+                    type: string
+                    example: Success
+                  sequenceNo:
+                    type: string
+                    description: A unique identifier for tracking all requests
+                    example: '1239848898'
+                  data:
+                    type: object
+                    properties:
+                      responseType:
+                        example: PRODUCT
+                      action:
+                        example: PRODUCT_BUY
+                      planId:
+                        example: NACT_NG_others_2
+                      productId:
+                        example: '2'
+                      productName:
+                        example: Change Plan
+                      productType:
+                        example: others
+                      amount:
+                        type: string
+                        description: The whole units of the amount.
+                        example: '100'
+                      country:
+                        type: string
+                        example: NG
+                      notification:
+                        type: string
+                        example: You are successfully migrated to xyz paln.
+                  _link:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: https://api.mtn.com/v1/customers/2348064816493/plans/trariff
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '999':
+          description: Unknown Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - planId
+              properties:
+                planId:
+                  type: string
+                  example: NACT_NG_others_2
+                providerId:
+                  type: string
+                  enum:
+                  - CIS
+                  description: Target system meant to process the request
+        required: true
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}/plans/{productCode}:
+    get:
+      description: Retrieves plans for product
+      summary: View customer plans for product
+      tags:
+      - Customers
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: productCode
+        in: path
+        description: Product code for data package
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Customer Plans object. For a successful request, the response will contain all the plans details. If the customer does not have any requested data, then those fields will be null. E.g. if the customer does not have a startDate set, then it will be null. If the customer does not have any Balance set, then the Balance array will be null.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerPlans'
+        '207':
+          description: If there was an error retrieving some part of the request, then the successful request will be shown, and the remaining failed objects will be be excluded. E.g. if there was an error retrieving Balance information, then the balance object will be empty
+          content:
+            Partially Successfuls Response, showing valid plan data, but balance object is null:
+              example:
+                data:
+                  type: Postpaid
+                  status: Active
+                  startDate: '2019-04-12T14:31:21.810Z'
+                  endDate: '2021-04-12T14:31:21.810Z'
+                  language: '1'
+                  balance: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}/plans/refill:
+    patch:
+      tags:
+      - Customers
+      summary: Airtime Refill
+      description: Will be used by 3rd-party partners (3PP) for airtime recharge of a prepaid subscriber
+      operationId: refillAccount
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Client generated unique Id to include for tracing requests
+        required: false
+        schema:
+          type: string
+      - name: sourceSystemId
+        in: header
+        description: Source system Id to include for tracing requests
+        required: false
+        schema:
+          type: string
+      - name: channel
+        in: header
+        schema:
+          type: string
+          enum:
+          - MyMTNApp
+          - MOD
+      - name: partnerName
+        in: header
+        description: Partner Name
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    description: HTTP error code extension
+                  statusMessage:
+                    type: string
+                  sequenceNo:
+                    type: string
+                    description: A unique identifier for tracking all requests
+                    example: '1239948893'
+                  data:
+                    type: object
+                    properties:
+                      amount:
+                        type: string
+                        description: The whole units of the amount. For example if currency is NGN, then 100 unit is
+                      currencyCode:
+                        type: string
+                        description: The 3-letter currency code defined in ISO 4217.
+                      serialStatus:
+                        type: string
+                        description: Status of the voucher being loaded
+                      actionStatus:
+                        type: string
+                        description: Status of the action being taken
+                      status:
+                        type: string
+                        description: Status of the refill
+                      addtionalInformation:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Additional information name
+                          description:
+                            type: string
+                            description: Description of the additional information
+                  _link:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: https://api.mtn.com/v1/customers/2348064816493/refill
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+        '999':
+          description: Unknown Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_3'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - refillType
+              properties:
+                refillType:
+                  type: string
+                  description: Specify the refill type
+                  enum:
+                  - voucher
+                  - voucherless
+                voucherActivationCode:
+                  type: string
+                  description: Voucher Activation Code, Required if refillType is Voucher Base.
+                refillProfileId:
+                  type: string
+                  description: Refill Profile ID, Required if refillType is Voucherless.
+                transactionAmount:
+                  type: string
+                  description: Required if refillType is Voucherless
+                targetSystem:
+                  type: string
+                  description: Backend system expected to fulfil the request
+                  enum:
+                  - PPMS
+                  - AIR
+                serialNumber:
+                  type: string
+                  description: Serial number of the voucher incase the refill is voucher
+        required: true
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{id}/plans/provision:
+    post:
+      tags:
+      - Customers
+      summary: Provision the customer and return customer details along with MSISDN
+      description: Provision the customer and returns customer details along with MSISDN with SIM number as input.
+      operationId: getCustomerDetails
+      parameters:
+      - name: id
+        in: path
+        description: This could be either MSISDN or Serial number of the SIM of the customer for who the provision request is raised.
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Unique ID for the transaction.
+        required: true
+        schema:
+          type: string
+      - name: sourceIdentifier
+        in: query
+        description: This field denotes the channel that is initiating request to SOA., ex-'Online, USSD, MyMTNApp, Payjoy'
+        required: false
+        schema:
+          type: string
+      - name: idType
+        in: query
+        description: Mention the type of id- MSISDN or Serial number of the SIM.
+        required: true
+        schema:
+          type: string
+          enum:
+          - MSISDN
+          - SerialNumber
+      responses:
+        '200':
+          description: IBF Provision Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/provisionResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error415'
+        '500':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/customerDetails_Request'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}:
+    get:
+      description: 'Retrieves the customer profile of a MTN customer. The customer profile includes 4 main objects: Location (Country and Operator), Billing Plan and related details, Subscriptions for VAS and Digital Services, Loans details, and Transactions Summaries'
+      summary: View customer profile
+      tags:
+      - Customers
+      parameters:
+      - in: path
+        name: customerId
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: propset
+        description: the set of data to be retrieved. There are 2 options - `basic` will retrieve only the structure of the customer profile including the links to each resource, will `full` will retrieve all the data for each resource, which will be en expensive call. If not specified, the default will be `basic`
+        schema:
+          type: string
+          enum:
+          - basic
+          - full
+          - CustomerProfile
+      - name: x-authorization
+        in: header
+        description: Encrypted ECW credentials
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: pref language
+        required: false
+        description: The language in which the response is required
+        schema:
+          type: string
+          enum:
+          - En
+          - Fr
+      responses:
+        200:
+          description: Customer Profile object. For a successful request, it will contain all the customers details. If the customer does not have any requested data, then it will be null. E.g. if the customer does not any location set, then Country and Operator will be null.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        207:
+          description: If there was an error retrieving some part of the request, then the successful request will be shown, and the remaining failed objects will be be excluded. E.g. if there was an error retrieving Balance information, then the balance object will be empty
+          content:
+            Multi-Status Response, showing valid Locations data, but plan object is null:
+              example: "\"location\": {\n  \"data\": {\n    \"country\": \"ZA\",\n    \"operator\": \"MTN\"\n  },\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://api.mtn.com/customers/27832000046/locations\"\n    }\n  }\n} \"plan\": {\n  \"data\": null,\n   \"_links\": {\n    \"self\": {\n        \"href\": \"http://api.mtn.com/customers/27832000046/plans\"\n      }\n    }\n}\n"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDefault'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDefault'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDefault'
+        404:
+          description: Customer not found
+          content:
+            The data object/envelope will be null:
+              example: "{\n  \"data\": null\n}\n"
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_4'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_4'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/upgrade-eligibility/{customerId}:
+    get:
+      description: Retrieves the Customer’s Upgrade Eligibility
+      summary: Get customer’s upgrade eligibility
+      tags:
+      - Customers
+      parameters:
+      - in: path
+        name: customerId
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: For a successful request, it will contain the details like Eligibility Status, Date and URL.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerUpgradeEligibilityResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '415':
+          description: Unsopported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerProfile'
+        description: Profile of the customer (As stored in the 3PP Cache)
+        required: true
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}/tenure:
+    get:
+      description: Retrieves the Customer’s Tenure information
+      summary: Get customer’s tenure
+      tags:
+      - Customers
+      parameters:
+      - in: path
+        name: customerId
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: transactionId
+        required: false
+        description: A unique ID for tracking a particular transaction, optional and to be generated if not passed by the API caller
+        x-example: c125d1e7-843f-410f-9252-71a55ec7cb92
+        schema:
+          type: string
+      - name: targetSystem
+        in: query
+        description: Target system
+        required: false
+        x-example: EVA
+        schema:
+          type: string
+      responses:
+        200:
+          description: For a successful request, it will contain the Customer’s Tenure information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerTenureResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '415':
+          description: Unsopported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}/activityStatus:
+    get:
+      description: Retrieves the Customer’s Activity Status
+      summary: Get customer’s activity status
+      tags:
+      - Customers
+      parameters:
+      - in: path
+        name: customerId
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier. if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: transactionId
+        required: false
+        description: A unique ID for tracking a particular transaction, optional and to be generated if not passed by the API caller
+        x-example: c125d1e7-843f-410f-9252-71a55ec7cb92
+        schema:
+          type: string
+      - name: targetSystem
+        in: query
+        description: Target system
+        required: false
+        x-example: EVA
+        schema:
+          type: string
+      responses:
+        200:
+          description: For a successful request, it will contain the Customer’s activity status information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerStatusResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '405':
+          description: Method No Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '415':
+          description: Unsopported media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNew'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}/score:
+    get:
+      tags:
+      - Customers
+      summary: Get Customer score.
+      security:
+      - ApiKeyAuth: []
+      description: This Endpoint is used to determine the customer's score through an activities performed within a period of time.
+      operationId: getCustomerScore
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer. It could be MSISDN, email address, or any other customer identifier
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests, so that the API can easily trace the HTTP request all the way from a client to MTNs backend processes (via our proxies). Each time a request is made to an MTN API the client should include a unique request reference in the HTTP Header. The value must be between 5 and 20 characters, and consist of ASCII letters, digits. Invalid or blank IDs will be ignored and replaced with generated ones. MTN may use this to detect duplicate transactions from the client, but this functionality is not always guaranteed, so clients must make their own efforts to prevent duplicate transactions. MTN will also log the transactionId in order to assist with debugging and to correlate transactions processed by the API to requests from the client.
+        required: false
+        schema:
+          type: string
+      - name: type
+        description: Score Type
+        in: query
+        x-example: Loyalty
+        required: true
+        schema:
+          type: string
+          enum:
+          - Loyalty
+          - Eligibility
+          - Credit
+          - Merged_Credit
+          - Merged_Credit_Bio
+      - name: startDate
+        description: Start Date
+        in: query
+        x-example: '20200401'
+        required: false
+        schema:
+          type: string
+      - name: endDate
+        description: End Date
+        in: query
+        x-example: '20200430'
+        required: false
+        schema:
+          type: string
+      - name: reportId
+        description: This identifies the type in which the score report should be sent
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: idNumber
+        description: This is the customer's bank verification number
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: fullName
+        description: This is the customer's full name
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: dob
+        description: Customer's date of birth. format `'YYYY-MM-DD'`
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: targetSystem
+        in: query
+        schema:
+          type: string
+          enum:
+          - DAAS
+          - CRC
+      - name: userId
+        in: query
+        schema:
+          type: string
+      - name: x-country-code
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    description: Status Code
+                  statusMessage:
+                    type: string
+                    description: Status Message
+                  transactionId:
+                    type: string
+                    description: API generated Id to include for tracing requests
+                  sequenceNo:
+                    type: string
+                    description: This is the MADAPI auto generated reference for tracing purposes
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        firstScore:
+                          description: first Score
+                          type: string
+                          example: '9232'
+                        summaryAttributes:
+                          description: Summary Attribute
+                          type: string
+                          example: Been a customer for a period between 0.8410958904109589 and 1.8331506849315027 years, purchased airtime between 41.0 and 53.0 times, last transaction done within 159.0 and 161.0 days, spent amounts between 9300.0 and 13200.0 in the network
+                        loyaltyScore:
+                          description: Loyalty Score
+                          type: string
+                          example: '434.99999999999994'
+                        scoreClass:
+                          description: Score Class
+                          type: string
+                          example: '4'
+                        month:
+                          description: Month
+                          type: string
+                          example: '202004'
+                        MSISDN:
+                          description: Customer Id
+                          type: string
+                          example: 2348064816493
+                        amount:
+                          description: Amount
+                          type: integer
+                          example: 5000.0
+                        HasProlongation:
+                          description: True if client has AirTime Debt false else false
+                          type: boolean
+                          example: true
+                        SimDuration:
+                          description: 'Customer''s Age on network in days '
+                          type: integer
+                          example: 360
+                  _links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: https://api.mtn.com/v1/customers/2348076891321/score
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_5'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_5'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_5'
+      deprecated: false
+    servers:
+    - url: https://api.mtn.com/v1
+  /customers/{customerId}/score/creditinfo:
+    post:
+      tags:
+      - Customers
+      operationId: credit-info
+      summary: Sends Credit Information to CRC
+      description: This operation helps to send credit information to the backend
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        x-example: 2349859843
+        schema:
+          type: string
+      - name: requestType
+        in: header
+        required: true
+        x-example: individual
+        schema:
+          type: string
+          enum:
+          - individual
+          - corporate
+          - credit
+          - guarantor
+          - principal
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    example: '0000'
+                  statusMessage:
+                    type: string
+                    example: Success
+                  transactionId:
+                    type: string
+                    example: 020039300293993002
+                  sequenceNo:
+                    type: string
+                    description: This is the MADAPI auto generated reference for tracing purposes
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '5000'
+                - $ref: '#/components/schemas/ErrorResponseBody'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4000'
+                - $ref: '#/components/schemas/ErrorResponseBody'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '4001'
+                - $ref: '#/components/schemas/ErrorResponseBody'
+        '404':
+          description: Customer Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '1000'
+                - $ref: '#/components/schemas/ErrorResponseBody'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorResponseBody'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '1000'
+                - $ref: '#/components/schemas/ErrorResponseBody'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    statusCode:
+                      type: string
+                      description: MADAPI canonical code for success
+                      example: '3000'
+                - $ref: '#/components/schemas/ErrorResponseBody'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditInfoRequest'
+        required: true
+    servers:
+    - url: https://api.mtn.com/v1
+  /customers/{customerId}/subscriptions:
+    get:
+      tags:
+      - Customers
+      summary: List all Subscriptions
+      description: Get a Customer's Subscriptions given the Customer's id
+      operationId: List all Subscriptions
+      parameters:
+      - name: customerId
+        in: path
+        description: ID for the Customer
+        required: true
+        schema:
+          type: string
+      - name: subscriptionProviderId
+        in: query
+        description: Subscription Provider to query
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests
+        schema:
+          type: string
+      responses:
+        200:
+          description: List of customer's subscriptions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSubscription'
+        207:
+          description: Multi-Status response - Partial list of customer's subscriptions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSubscription'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        404:
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    post:
+      tags:
+      - Customers
+      summary: Subscribe the customer to a new service
+      description: Provision/add a new subscription to the customers account
+      operationId: Subscribe the customer to a new service
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests
+        schema:
+          type: string
+      - name: rules
+        in: query
+        description: rules
+        required: false
+        schema:
+          type: boolean
+          default: true
+      - name: isOptedData
+        in: query
+        description: The bundle containing data is required or not
+        required: false
+        schema:
+          type: boolean
+      responses:
+        201:
+          description: Created
+          headers:
+            Location:
+              description: Location header will include the link to the newly created subscription
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/subscription'
+        202:
+          description: Accepted
+          headers:
+            Location:
+              description: Location header will include the link to the status URL for the new subscription
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscribeAsync'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        404:
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/subscription'
+        required: true
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    delete:
+      tags:
+      - Customers
+      summary: Unsubscribe All Subscriptions for a Customer
+      description: Unsubscribe All Subscriptions for a Customer
+      operationId: Delete All subscriptions
+      parameters:
+      - name: customerId
+        in: path
+        description: id for the Customer
+        required: true
+        schema:
+          type: string
+      - name: subscriptionProviderId
+        in: query
+        description: Identity of the subscription provider hosting the subscription
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests
+        schema:
+          type: string
+      responses:
+        200:
+          description: Result of the unsubscribe action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unsubscribe'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        404:
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Callback'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}/subscriptions/{subscriptionId}:
+    get:
+      tags:
+      - Customers
+      summary: Get Subscription details
+      description: Retrieve specific subscription details for a customer
+      operationId: Get Subscription Details
+      parameters:
+      - name: customerId
+        in: path
+        description: id for the Customer; if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: subscriptionId
+        in: path
+        description: ID for the Subscription
+        required: true
+        schema:
+          type: string
+      - name: subscriptionProviderId
+        in: query
+        description: Identity of the subscription provider hosting the subscription
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests
+        schema:
+          type: string
+      responses:
+        200:
+          description: Subscription details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSubscription'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        404:
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    delete:
+      tags:
+      - Customers
+      summary: Unsubscribe a specific subscription
+      description: Delete a specific subscription
+      operationId: Delete a specific subscription
+      parameters:
+      - name: customerId
+        in: path
+        description: id of the Customer
+        required: true
+        schema:
+          type: string
+      - name: subscriptionId
+        in: path
+        description: ID for the Subscription
+        required: true
+        schema:
+          type: string
+      - name: subscriptionProviderId
+        in: query
+        description: Identity of the subscription provider hosting the subscription
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests
+        schema:
+          type: string
+      responses:
+        200:
+          description: Result of the unsubscribe action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unsubscribe'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        404:
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}/subscriptions/{subscriptionId}/status/{statusId}:
+    get:
+      tags:
+      - Customers
+      summary: Get provisioning status of a recently added Subscription
+      description: For certain provisioning requests to add a new subscription, the response will be asynchronous, with a status of PENDING. Use this query to poll the final status of the provisioning, using the transactionID that was used for the original provisioning request.
+      operationId: Get Subscription Provisioning Status
+      parameters:
+      - name: customerId
+        in: path
+        description: id for the Customer; if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: subscriptionId
+        in: path
+        description: ID for the Subscription
+        required: true
+        schema:
+          type: string
+      - name: subscriptionProviderId
+        in: query
+        description: Identity of the subscription provider hosting the subscription
+        required: true
+        schema:
+          type: string
+      - name: statusId
+        in: path
+        description: id for the provisioning request that needs to be queried
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests
+        schema:
+          type: string
+      responses:
+        200:
+          description: Subscription details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSubscription'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        404:
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/{customerId}/subscriptions-providers:
+    get:
+      tags:
+      - Customers
+      summary: Retrieve subscription providers
+      description: Show the list of all Subscription providers that a customer may have subscriptions with
+      operationId: Retrieve subscription providers
+      parameters:
+      - name: customerId
+        in: path
+        description: id for the Customer; if id is msisdn, format must be E.123
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests
+        schema:
+          type: string
+      responses:
+        200:
+          description: Subscription details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSubscriptionProvider'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        404:
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        405:
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_6'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+  /customers/list/subscriptions:
+    get:
+      tags:
+      - Customers
+      summary: List of offers per menu code
+      description: List of offers per menu code
+      operationId: List of offers per menu code
+      parameters:
+      - name: transactionId
+        in: header
+        description: Client generated Id to include for tracing requests
+        required: false
+        schema:
+          type: string
+      - name: nodeId
+        in: query
+        description: Third parties unique identifier. Can also be called channelId
+        required: false
+        schema:
+          type: string
+          default: MADAPI
+      - name: partnerName
+        in: header
+        description: partnerName
+        required: false
+        schema:
+          type: string
+      - name: menuCode
+        in: query
+        description: menuCode
+        schema:
+          type: string
+      - name: sequenceNo
+        in: header
+        description: sequenceNo
+        required: false
+        schema:
+          type: string
+      - name: subscriptionProviderId
+        in: query
+        description: subscriptionProviderId
+        required: false
+        schema:
+          type: string
+      - name: x-country-code
+        in: header
+        description: x-country-code
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of offers per menu code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OffersPerMenuCode'
+      security:
+      - ApiKeyAuth: []
+      - OAuth2: []
+    servers:
+    - url: https://api.mtn.com/v2
+components:
+  schemas:
+    LoanStatusResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Status Code
+        statusMessage:
+          type: string
+          description: Status Message
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+              - COMPLETED
+              - FAILED
+              - INITED
+              - PARTIAL_EXECUTED
+            timestamp:
+              type: string
+              description: Execution timestamp. example 1519980450143
+        _links:
+          type: object
+          properties:
+            self:
+              type: string
+              example: https://api.mtn.com/v1/customers/2348076891321/loans/advance/status
+    LoanAdvanceResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+          description: Status Message
+        transactionId:
+          type: string
+          description: API generated Id to include for tracing requests
+        loanDetails:
+          $ref: '#/components/schemas/LoanProvisioningDetails'
+        _links:
+          type: object
+          properties:
+            self:
+              type: string
+              example: https://api.mtn.com/v1/customers/2348076891321/loans/advance
+    Amount:
+      type: object
+      properties:
+        bundleName:
+          type: string
+          description: Name of eligible loan bundle
+        bundleValue:
+          type: string
+          description: Name of eligible loan bundle value
+        validity:
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - MONTHLY
+          - HOURLY
+        amount:
+          type: number
+          description: Price of loan bundle
+    LoanEligibilityTypes:
+      type: object
+      properties:
+        eligibilityType:
+          type: string
+          enum:
+          - Airtime
+          - Data
+          - Voice
+        bundles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Amount'
+    LoanProvisioningDetails:
+      type: object
+      properties:
+        bundleName:
+          type: string
+          description: Name of eligible loan bundle value
+        bundleValue:
+          type: string
+          description: Name of eligible loan bundle value
+        amount:
+          type: number
+          description: Price of loan bundle
+        bundleType:
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - MONTHLY
+          - HOURLY
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /loans/2348024008124/...
+    EligibilityResponse:
+      title: Eligibility
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Status Code
+        statusMessage:
+          type: string
+          description: Status Message
+        transactionId:
+          type: string
+          description: API generated Id to include for tracing requests
+        eligibilityStatus:
+          type: string
+          enum:
+          - ELIGIBLE
+          - NE_LOAN
+          - NE_TCL_REACHED
+          - NOT_ELIGIBLE
+          - HAS_LOAN_BALANCE
+          - HAS_QUEUED_REQUEST
+          - QUALIFIED_BUT_HAS_REACHED_MAXIMUM_LANDABLE_AMOUNT
+          - INVALID_SUBSCRIBER_NUMBER
+          - MISSING_PARAMETERS
+        eligible:
+          type: array
+          items:
+            $ref: '#/components/schemas/LoanEligibilityTypes'
+        _links:
+          type: object
+          properties:
+            self:
+              type: string
+              example: https://api.mtn.com/v1/customers/2348076891321/loans/eligibleBungles
+    CustomerLocations:
+      type: object
+      required:
+      - _link
+      properties:
+        data:
+          type: object
+          $ref: '#/components/schemas/Locations'
+        _link:
+          type: string
+          description: The link to retrieve the location of customer
+          $ref: '#/components/schemas/CustomerLinks'
+          example: https://api.mtn.com/v1/customers/27832000000/locations
+    ErrorDefault:
+      properties:
+        error:
+          type: string
+        error_description:
+          type: string
+    Locations:
+      type: object
+      required:
+      - country
+      - homeNetwork
+      - operator
+      properties:
+        country:
+          type: string
+          description: The country that the customer MSISDN is currently located in, and could be roaming in. ISO 3166-1 short name format
+          example: South Africa
+        homeNetwork:
+          type: string
+          description: The country that the customer MSISDN was provisioned in. ISO 3166-1 short name format
+          example: South Africa
+        operator:
+          type: string
+          description: The network operator that the customer MSISDN is currently located in.
+          enum:
+          - MTN
+          - Other
+          - 'null'
+          example: MTN
+    CustomerLinks:
+      type: object
+      required:
+      - self
+      properties:
+        self:
+          type: object
+          required:
+          - href
+          description: ''
+          properties:
+            href:
+              type: string
+              description: ''
+    Error_2:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+        status:
+          type: string
+          description: Text explaining the reason for the error
+        error:
+          type: string
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: ''
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        links:
+          type: array
+          items:
+            properties:
+              rel:
+                type: string
+              href:
+                type: string
+    UpdateFRIResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Success
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+          example: FRI Unblock Successful
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: '234321456789'
+    Plans:
+      type: object
+      required:
+      - type
+      - status
+      - startDate
+      - endDate
+      - language
+      - tariffPlan
+      - balance
+      description: The plan details for the customer.
+      properties:
+        offers:
+          $ref: '#/components/schemas/OfferDetails'
+        type:
+          type: string
+          description: The billing type of the plan.
+          enum:
+          - Prepaid
+          - Postpaid
+          - Hybrid
+        status:
+          type: string
+          description: The current status of the plan.
+          enum:
+          - Active
+          - Suspended
+          - Inactive
+          - RICA Barred
+          - Blacklisted
+        startDate:
+          type: string
+          description: The date the customer was created/provisioned
+          format: date-time
+        customerType:
+          type: string
+          description: To return the customer type of the number. E.g Staff, Contractor, etc.
+          example: Staff
+        endDate:
+          type: string
+          description: The date the plan will be deactivated.
+          format: date-time
+        language:
+          type: string
+          description: The customers language.
+        tariffPlan:
+          type: string
+          description: The customers active tariff plan.
+        balance:
+          type: array
+          description: The account balance details of a customer
+          items:
+            $ref: '#/components/schemas/CustomerBalance'
+        usageCounterAndThreshold:
+          type: array
+          description: Usage counter usage threshold
+          items:
+            $ref: '#/components/schemas/UsageCounterUsageThreshold'
+        accumulator:
+          type: array
+          description: Customer accumulators
+          items:
+            $ref: '#/components/schemas/Accumulator'
+    LoyaltyBalances:
+      type: object
+      description: Contains all the loyalty balances associated with a customer.
+      properties:
+        generatedAmount:
+          $ref: '#/components/schemas/Amount_2'
+        consumedAmount:
+          $ref: '#/components/schemas/Amount_2'
+        newBalance:
+          $ref: '#/components/schemas/Amount_2'
+    BalanceDetail:
+      type: object
+      required:
+      - type
+      - activeValue
+      - activeUnit
+      description: The details for a balance type.
+      properties:
+        type:
+          type: string
+          description: This is the type of the value.
+          enum:
+          - CURRENCY
+          - DATA
+          - MINUTES
+          - SMS
+        activeValue:
+          type: string
+          description: This is the aggregated formatted active value of a balance type.
+        activeUnit:
+          type: string
+          description: This is the unit of the aggregated active value.
+          enum:
+          - ZAR
+          - NGN
+          - GB
+          - MB
+          - MINUTES
+          - SMS
+        unusedValue:
+          type: string
+          description: This is the aggregated formatted unused value of a balance type.
+          example: 45.25
+        unusedUnit:
+          type: string
+          description: This is the unit of the aggregated unused value.
+          enum:
+          - ZAR
+          - NGN
+          - GB
+          - MB
+          - MINUTES
+          - SMS
+          example: NGN
+    UsageThreshold:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '622'
+          description: usage threshold ID
+        name:
+          type: string
+          example: 10MB Daily Plan
+          description: Product name
+        value:
+          type: string
+          example: '-738586'
+        unit:
+          type: string
+          description: Currency unit
+          example: NGN
+    GetFRIRequest:
+      type: object
+      properties:
+        accountHolderId:
+          type: string
+        extension:
+          type: object
+        resource:
+          type: string
+      title: GetFRIRequest
+    UsageCounterUsageThreshold:
+      type: object
+      properties:
+        usageCounter:
+          $ref: '#/components/schemas/UsageCounter'
+        usageThreshold:
+          $ref: '#/components/schemas/UsageThreshold'
+    Accumulator:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 41
+        name:
+          type: string
+          description: accumulator name
+          example: 10MB Daily Plan
+        value:
+          type: string
+          description: Accumulator value
+          example: 264844
+        unit:
+          type: string
+          description: accumulator value
+          example: NGN
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+    Error415:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 415
+        error:
+          type: string
+          description: error message
+          example: Unsupported Media Type
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    AdditionalInformationBody:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the property
+          example: profilename
+        value:
+          type: string
+          description: Value of the property
+          example: Normal Account Profile
+        callingParty:
+          type: string
+          description: Calling party number
+          example: '242065200075'
+        serviceType:
+          type: string
+          description: Type of service
+          example: MTN
+        serviceId:
+          type: string
+          description: Service id for the product
+          example: DATA_BUNDLE
+        offerName:
+          type: string
+          description: Name of the offer
+          example: Forfait Maxinet 30 jours 1.28GB
+        offerSubType:
+          type: string
+          description: Sub type of offer
+          example: HVC
+        maxBundelInCategory:
+          type: number
+          description: Maximum bundle category
+          example: 10
+        uaidCategory:
+          type: number
+          description: UA id category
+          example: 55
+        qos:
+          type: string
+          description: qos
+          example: Max
+        discount:
+          type: number
+          description: discount on the product
+          example: 0
+        discountThreshold:
+          type: number
+          description: Threshold for discount
+          example: 0
+        uaidDiscount:
+          type: number
+          description: ua id discount
+          example: -1
+        volume:
+          type: number
+          description: data volume
+          example: 1.28
+        volumeUnit:
+          type: string
+          description: data volume unit
+          example: GB
+        dailyVolume:
+          type: string
+          description: daily volume for the product
+          example: NA
+        validityUnit:
+          type: string
+          description: validity unit
+          example: DAY(S)
+        offerValidity:
+          type: number
+          description: offer validity
+          example: 30
+        autoRenewal:
+          type: string
+          description: auto renewal value
+          example: N
+        autoRenewalThreshold:
+          type: number
+          description: Threshold or auto renewal
+          example: 0
+        uaidAutoRenewal:
+          type: string
+          description: ua id for auto renewal
+          example: 'NULL'
+        maxSubscriptionThreshold:
+          type: number
+          description: maximum subscription threshold
+          example: -1
+        uaidMaxSubscription:
+          type: number
+          description: ua id subscription
+          example: 58
+        sharedOffer:
+          type: string
+          description: If the offer is shared
+          example: 'NO'
+        sharedOfferId:
+          type: string
+          description: Id for the shared offer
+          example: NA
+        freeOffer:
+          type: string
+          description: If the free offer
+          example: 'NO'
+        allowedChannels:
+          type: string
+          description: allowed channels
+          example: ANY
+        allowedSegements:
+          type: object
+          description: List of allowed segments
+          properties:
+            allowedSegement:
+              type: array
+              items:
+                type: string
+                description: allowed segment
+                example:
+                - HVC11
+                - HVC16
+        serviceClasses:
+          type: object
+          description: List of service classes
+          properties:
+            serviceClass:
+              type: array
+              items:
+                type: number
+                description: allowed service class
+                example:
+                - 1
+                - 2
+                - 222
+                - 3
+                - 6
+                - 75
+                - 79
+                - 80
+                - 81
+                - 82
+                - 83
+                - 84
+                - 85
+                - 86
+                - 87
+                - 88
+                - 89
+        location:
+          type: string
+          description: Location
+          example: '-1'
+        roamingPlan:
+          type: string
+          description: roaming Plan
+          example: 'NO'
+        associatedDAs:
+          type: object
+          description: List of associated DA
+          properties:
+            associatedDA:
+              type: object
+              description: Associated DA for the product
+              properties:
+                associatedDAID:
+                  type: number
+                  description: asscoiated DA ID
+                  example: -1
+                DAUnitType:
+                  type: number
+                  description: DA unit type
+                  example: 6
+                DAValue:
+                  type: number
+                  description: DA value
+                  example: 0
+        devices:
+          type: object
+          description: List of devices
+          properties:
+            device:
+              type: object
+              description: device
+              properties:
+                deviceType:
+                  type: number
+                  description: Device Type
+                  example: -1
+                deviceModel:
+                  type: number
+                  description: Device Model
+                  example: -1
+        pamServiceDetails:
+          type: object
+          description: List of pam services
+          properties:
+            pamServiceDetail:
+              type: object
+              description: pam service detail
+              properties:
+                pamService:
+                  type: number
+                  description: pam service
+                  example: 3
+                pamClasse:
+                  type: number
+                  description: pam Classe
+                  example: 3
+                pamScheduler:
+                  type: number
+                  description: pam scheduler
+                  example: 3
+                pamIndicator:
+                  type: number
+                  description: pam indicator
+                  example: 3
+        locationIds:
+          type: object
+          description: List of location id
+          properties:
+            locationId:
+              type: number
+              description: location id
+              example: -1
+        paymentOptions:
+          type: object
+          description: List of payment options
+          properties:
+            paymentOption:
+              type: array
+              items:
+                type: string
+                description: payment option
+                example:
+                - AIRTIME
+                - MOMO
+        bonus:
+          type: string
+          description: bonus if available
+          example: 'NO'
+        refillProfileID:
+          type: string
+          description: refill profile ID
+          example: DB00
+        refillType:
+          type: number
+          description: Type of refill
+          example: 2
+        transactionType:
+          type: string
+          description: Type of transaction
+          example: DATA_BUNDLEHVC
+        transactionCode:
+          type: number
+          description: transaction code
+          example: 35900
+        externalData1:
+          type: number
+          description: external Data 1
+          example: 3000
+        externalData2:
+          type: number
+          description: external Data 2
+          example: 35900
+        externalData3:
+          type: string
+          description: external Data 3
+          example: MOMO
+        externalData4:
+          type: string
+          description: external Data 4
+          example: '-1'
+        notificationMessage:
+          type: string
+          description: notification Message
+          example: SUBSCRIPTION_HVC_FAILURE
+        notificationMessagesRauto:
+          type: string
+          description: notification Messages R auto
+          example: SUBSCRIPTION_HVC_AUTORENEW_FAIL
+        notificationMessageAplan:
+          type: string
+          description: notification Message A plan
+          example: ADVANCE197
+        notificationMessageDplan:
+          type: string
+          description: notification Message D plan
+          example: UNSUBS197
+        notificationMessageUsage:
+          type: string
+          description: notification Message Usage
+          example: BE197
+        notificationMessageSubscriptionSuccess:
+          type: string
+          description: notification Message Subscription Success
+          example: SUBSCRIPTION_DATA_BUNDLE_SUCCESS
+        notificationMessageRenewSuccess:
+          type: string
+          description: notification Message Renew Success
+          example: SUBSCRIPTION_DATA_BUNDLE_AUTORENEW_SUCCESS
+        minumumForSharing:
+          type: string
+          description: minumum For Sharing
+          example: NA
+        maximumForSharing:
+          type: string
+          description: maximum For Sharing
+          example: NA
+        bundleSharingFee:
+          type: number
+          description: bundle Sharing Fee
+          example: 0
+        diySubscriptionFee:
+          type: number
+          description: diy Subscription Fee
+          example: 0
+        evdCommission:
+          type: number
+          description: evd Commission
+          example: 0
+        diyMultiplicator:
+          type: string
+          description: diy Multiplicator
+          example: NA
+        offerState:
+          type: number
+          description: offer State
+          example: 1
+        productID:
+          type: number
+          description: product ID
+          example: 120
+        subscription:
+          type: object
+          description: subscription details
+          properties:
+            bparty:
+              type: number
+              description: called number
+              example: '242065200075'
+            parentPlanId:
+              type: number
+              description: parent plan ID
+              example: -1
+            requestedPlanId:
+              type: number
+              description: requested Plan ID
+              example: 35900
+            requestedNextPlanId:
+              type: number
+              description: requested Next Plan ID
+              example: -1
+            serviceType:
+              type: string
+              description: service type
+              example: MTN
+            serviceId:
+              type: string
+              description: requested Next Plan ID
+              example: DATA_BUNDLE
+            firstActivationDate:
+              type: string
+              description: first activtion date
+              example: 2019-12-19:21:38:23
+            deActivationDate:
+              type: number
+              description: deactivation Date
+              example: 2019-12-02:18:48:57
+            chargeAmount:
+              type: number
+              description: charge amount
+              example: -1
+            customerStatus:
+              type: string
+              description: customer status
+              example: A
+            lastRenewalDate:
+              type: string
+              description: last renewal date
+              example: -1
+            nextRenewalDate:
+              type: string
+              description: next renewal date
+              example: 2020-01-18:09:38:23
+            graceExpiryDate:
+              type: string
+              description: grace expiry date
+              example: 2020-01-18:09:38:23
+            reminderDate:
+              type: string
+              description: requested Next Plan ID
+              example: -1
+            bearerId:
+              type: string
+              description: beared ID
+              example: USSD
+            languageId:
+              type: number
+              description: language id
+              example: fr
+            bundleFlag:
+              type: number
+              description: bundle flag
+              example: -1
+            retryCount:
+              type: number
+              description: retry count
+              example: 91
+            operation:
+              type: string
+              description: operation
+              example: SR
+            subsType:
+              type: number
+              description: subs type
+              example: -1
+            addDate:
+              type: string
+              description: add date
+              example: 2019-11-05:11:31:43
+            autoRen:
+              type: string
+              description: auto ren
+              example: N
+            validityUnits:
+              type: number
+              description: validity units
+              example: 0
+            suspendexpiryDate:
+              type: string
+              description: suspend expiry date
+              example: 2020-01-18:09:38:23
+            serviceNode:
+              type: string
+              description: service node
+              example: CONGOB
+            requestBy:
+              type: number
+              description: request by
+              example: -1
+            linkedServiceId:
+              type: number
+              description: linked service ID
+              example: -1
+            contentId:
+              type: number
+              description: content ID
+              example: 242065200075
+            category:
+              type: number
+              description: category
+              example: -1
+            reqSource:
+              type: number
+              description: requested source
+              example: -1
+            linkedServiceType:
+              type: number
+              description: linked service type
+              example: -1
+            renewalBundleType:
+              type: number
+              description: renewal bundle type
+              example: -1
+            modifiedOn:
+              type: string
+              description: modified on
+              example: 2019-12-19:21:38:23
+            chargeFlag:
+              type: number
+              description: charge flag
+              example: -1
+    CustomerBalance:
+      type: object
+      required:
+      - balanceType
+      - expiryDate
+      - balanceDetail
+      - wallets
+      description: The plan balance details for the customer.
+      properties:
+        balanceType:
+          type: string
+          description: Identifies the type of balance. A customer plan may have multiple types of balances for different usage, for example, voice, SMS, and game services.
+        expiryDate:
+          type: string
+          format: date-time
+          description: Expiry date of the wallet's value.
+        description:
+          type: string
+          description: A description
+          example: FRI:3370023/MM
+        category:
+          type: string
+          description: Identifies the category of the balance type.
+        balanceDetail:
+          $ref: '#/components/schemas/BalanceDetail'
+        momoBalance:
+          type: object
+          $ref: '#/components/schemas/MomoBalanceDetail'
+        wallets:
+          type: array
+          description: The different wallets used to compute the active and unused values of this balance.
+          items:
+            $ref: '#/components/schemas/Wallet'
+        additionalInformation:
+          type: array
+          description: Any other additional information to be added
+          items:
+            $ref: '#/components/schemas/AdditionalInformationBody'
+    Links:
+      type: object
+      properties:
+        empty:
+          type: boolean
+      title: Links
+    Error_3:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+        sequenceNo:
+          type: string
+          description: A unique identifier for tracking all requests
+          example: '12939993'
+    MomoBalanceDetail:
+      type: object
+      description: The MoMo Balance details for a requested customer.
+      properties:
+        status:
+          type: boolean
+          description: status of the user balance compared with threshold amount passed in request. FALSE if balance >= Amount sent in request. TRUE if  balance <Amount sent in request
+          default: false
+        balance:
+          $ref: '#/components/schemas/Amount_2'
+        positiveReservations:
+          $ref: '#/components/schemas/Amount_2'
+        negativeReservations:
+          $ref: '#/components/schemas/Amount_2'
+        loyaltyInformation:
+          $ref: '#/components/schemas/LoyaltyBalances'
+        overdraft:
+          $ref: '#/components/schemas/OverdraftInformation'
+    CustomerPlans:
+      type: object
+      required:
+      - _link
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        transactionId:
+          type: string
+          example: '21136326455582'
+        statusMessage:
+          type: string
+          example: Successfully Processed
+        supportMessage:
+          type: string
+          example: Successfully Processed request
+        sequenceNo:
+          type: string
+          description: A unique identifier for tracking all requests
+          example: '123433'
+        fttxError:
+          type: string
+          example: null
+        data:
+          $ref: '#/components/schemas/Plans'
+    UsageCounter:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '622'
+          description: usage counter ID
+        name:
+          type: string
+          example: 10MB Daily Plan
+          description: Product name
+        value:
+          type: string
+          example: '264844'
+        unit:
+          type: string
+          description: Currency unit
+          example: NGN
+    Wallet:
+      type: object
+      required:
+      - name
+      - status
+      - expiryDate
+      - amount
+      description: The details for a wallet account.
+      properties:
+        name:
+          type: string
+          description: The name of a wallet account.
+        status:
+          type: string
+          description: The status of a wallet's value.
+          enum:
+          - Active
+          - Unused
+          example: Active
+        expiryDate:
+          type: string
+          format: date-time
+          description: Expiry date of the wallet's value.
+        amount:
+          $ref: '#/components/schemas/Amount_2'
+    OfferDetails:
+      type: object
+      description: The Offer Details per customer.
+      properties:
+        offerId:
+          type: string
+          example: 123456
+          description: The Offer ID
+        offerType:
+          type: string
+          example: 2
+          description: The type of offer
+        startDate:
+          type: string
+          format: dateTime
+          example: 20210205T16:08:08+0530
+          description: The start date of offer
+        expiryDate:
+          type: string
+          format: dateTime
+          example: 20210205T16:08:08+0530
+          description: Date at which offer will expire
+        expiryDateValue:
+          type: string
+          example: 53402237800000
+          description: Value of the expiry date
+    Amount_2:
+      type: object
+      required:
+      - value
+      - type
+      - unit
+      description: The amount details for a wallet.
+      properties:
+        type:
+          type: string
+          description: This is the type of the wallet value.
+          enum:
+          - CURRENCY
+          - DATA
+          - MINUTES
+          - SMS
+        value:
+          type: string
+          description: This is the value of a balance wallet.
+        unit:
+          type: string
+          description: This is the unit of the wallet value.
+          enum:
+          - ZAR
+          - NGN
+          - GB
+          - MB
+          - MINUTES
+          - SMS
+          - FCFA
+          example: NGN
+    UpdateFRIRequest:
+      type: object
+      properties:
+        fri:
+          type: string
+          example: 2070218
+          description: resources are indivudual fri on which block and unblock actions are performed, MADAPI appends '/MM' to the fri and sends the request to backend
+        reason:
+          type: string
+          description: reason
+          example: Fraud Transction
+        state:
+          type: string
+          example: Unblock
+          description: Typical lifecycle values for an account are Blocked, Defined, Active, Suspended, pending Update, pending Closed, Closed etc,string value sent by 3PP  are used to initiate 'Block' and 'Unblock' action on  accounts(FRI)
+      title: UpddateFRIRequest
+    Error500:
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3001'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: method used by MADAPI to get the response
+    provisionResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes', mapped from stausCode from serviceError
+          example: '0000'
+          maxLength: 30
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client. Success for 200. Mapped from REASON from backend
+          example: There was an error processing your request
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+          example: API Validation error
+        transactionId:
+          type: string
+          description: Map from transId in the response. Unique IBS transaction sequence number for audit trace pruposes.
+          example: '100000172429605'
+        data:
+          type: object
+          properties:
+            processTime:
+              type: string
+              description: Indication of when the transaction was processed by IBS. Time in format ccyymmddhh24mmss.
+              example: '20230928144100'
+            msisdn:
+              type: string
+              description: The MSISDN for which the provisioning is done.
+              example: '2781677534810'
+            serviceResult:
+              type: string
+              description: The value will indicate the service result. 'F' will indicate that the IBS could not process the request. 'T' will indicate that the IBS has processed the request. 'C' will indicate that IBS has committed the request for processing.
+              example: T
+            serviceOptionId:
+              type: string
+              description: Service option identifier. SO1 for PAYJOYOPTIN and SO2 for PAYJOYSUSPEND. The <SO1> Payjoy Opt-in is 4620 and the <SO2> Payjoy suspended is 4621.
+              example: '4620'
+            newUser:
+              type: string
+              description: An indicator of whether the subscriber is a first time user
+              example: F
+            rate:
+              type: string
+              description: The provisioning fee applicable to specified service option
+              example: '0'
+            subscriberType:
+              type: string
+              description: The MSISDN subscriber type value. 'C' is contract subscriber. 'P' is prepaid subscriber. 'H' is hybrid subscriber and 'V' is converged.
+              example: P
+            pricePlan:
+              type: string
+              description: An indication of whether the service option has a price plan.
+              example: F
+            activationDate:
+              type: string
+              description: The last activation date of this service option. This is infact the last migration date to this service option. The value will be in CCYYMMDD format.
+              example: '20230928'
+            reprovisioningDate:
+              type: string
+              description: The re-provisioning date of this service option. The attribute will always be present in the packet. The attribute will only contain a date value (CCYYMMDD) if this is a recurring service option. If the service option is not recurring the value will be "-"
+              example: '20231028'
+            expiryDate:
+              type: string
+              description: The expiry date of this service option. The attribute will always be present in the packet. The attribute will only contain a date value (CCYYMMDD) if this is a service option that does expire. If the service option cannot expire, the value will be "-"
+              example: '20231028'
+            orderCompliant:
+              type: string
+              description: If the service option is OTN compliant.
+              example: T
+        links:
+          type: array
+          items:
+            properties:
+              rel:
+                type: string
+              href:
+                type: string
+                example: https://api.mtn.com/v1/customers/2348064816493/refill
+    OverdraftInformation:
+      type: object
+      description: Contains overdraft balances if available
+      properties:
+        balance:
+          $ref: '#/components/schemas/Amount_2'
+        limit:
+          $ref: '#/components/schemas/Amount_2'
+        accessFee:
+          $ref: '#/components/schemas/Amount_2'
+        interest:
+          $ref: '#/components/schemas/Amount_2'
+    customerDetails_Request:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          description: This indicates the what is required for the id.
+          example: INFORMATION
+        accessId:
+          type: string
+          description: Indicate the channel that was used to initiate the request.
+          example: agentx
+        serviceOptionId:
+          type: string
+          enum:
+          - '4620'
+          - '4621'
+          description: Service option identifier. SO1 for PAYJOYOPTIN and SO2 for PAYJOYSUSPEND. The <SO1> Payjoy Opt-in is 4620 and the <SO2> Payjoy suspended is 4621.
+          example: '4620'
+        cancel:
+          type: string
+          description: An indication of whether to cancel the service option. "F" indicates service option to be provisioned. "T" indicates service option will be removed from subscriber's portfolio.
+          example: F
+        charge:
+          type: string
+          description: An indication of whether to charge the subscriber of the service option provisioning cost. Possible values T and F. F for charge and T fornot charging.
+          example: F
+        recurring:
+          type: string
+          description: An indictaion of whether the service option should be provisioned as adhoc, recurring or auto-renewable. Supported values- T for recurring, F for adhoc and A for Auto renewable.
+          example: F
+        scheduleDate:
+          type: string
+          description: The date on which the scheduled event will be executed - e.g. the date on which a scheduled _DATE provision will take place. If the service option provision action is immediate this field can be filled out with a "_".
+          example: F
+        dedicatedAmount:
+          type: string
+          description: An additional value to add to the dedicated account that will be updated as a result of service option provisioning .
+          example: F
+        productCode:
+          type: string
+          description: The product code as per the product reference data. If not applicable can be filled out with a "-".
+          example: F
+        orderTrackingNumber:
+          type: string
+          description: Order Tracking Number. If not applicable can be filled out with a "-".
+          example: 20230915085941-2be154c2f530e69ab4fd9592e621fefff15bbfb2
+        information:
+          type: string
+          description: This attribute must allow for text values up to a max of 50 char. Where this attribute is present in the request, the contents must be used to populate the 'General 3* field of Service Option Provision EDRs (Rec Type=22) for the provisioned SO. This information is being used to run handset based promotions and it is expected that both iMEl and handset information will be used to populate this attribute in the request..
+          example: F
+    Error404:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        error:
+          type: string
+          description: error message
+          example: Not found
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    GetFRIResponse:
+      type: object
+      properties:
+        extension:
+          type: object
+        links:
+          $ref: '#/components/schemas/Links'
+        message:
+          type: string
+        sequenceNo:
+          type: string
+      title: GetFRIResponse
+    Plans_2:
+      type: object
+      required:
+      - type
+      - status
+      - startDate
+      - endDate
+      - balance
+      description: The plan details for the customer.
+      properties:
+        type:
+          type: string
+          description: The billing type of the plan.
+          enum:
+          - Prepaid
+          - Postpaid
+          - Hybrid
+        id:
+          type: string
+        status:
+          type: string
+          description: The current status of the plan.
+          enum:
+          - Active
+          - Suspended
+          - Inactive
+          - RICA Barred
+          - Blacklisted
+        startDate:
+          type: string
+          description: The date the customer was created/provisioned
+          format: date-time
+        endDate:
+          type: string
+          description: The date the plan will be deactivated.
+          format: date-time
+        maxModify:
+          type: string
+          description: Number of allowed max modifications. Used to fetch Caller Feel/Tune subscriber details
+          example: 5
+        usedModify:
+          type: string
+          description: Number of used modifications. Used to fetch Caller Feel/Tune subscriber details
+          example: 1
+        balance:
+          type: array
+          description: The account balance details of a customer
+          items:
+            $ref: '#/components/schemas/CustomerBalances'
+    Locations_2:
+      type: object
+      required:
+      - country
+      - operator
+      properties:
+        country:
+          type: string
+          description: The country that the customer MSISDN was provisioned in.
+          example: South Africa
+        operator:
+          type: string
+          description: The network operator that the customer MSISDN was provisioned for.
+          example: MTN
+    billPayments:
+      type: object
+      properties:
+        lastBillPaymentsDate:
+          type: string
+          format: date
+          description: 'the '
+          example: '2017'
+        maxBillPayments-6months:
+          type: string
+          description: 'the '
+        quantities:
+          type: object
+          properties:
+            numberOfBillPayments-1months:
+              type: string
+              description: 'the '
+            numberOfBillPayments-3months:
+              type: string
+              description: 'the '
+            numberOfBillPayments-6months:
+              type: string
+              description: 'the '
+        amounts:
+          type: object
+          properties:
+            amountOfBillPayments-1months:
+              type: string
+              description: 'the '
+            amountOfBillPayments-3months:
+              type: string
+              description: 'the '
+            amountOfBillPayments-6months:
+              type: string
+              description: 'the '
+        acceptors:
+          type: object
+          properties:
+            numberOfAcceptors-1months:
+              type: string
+              description: 'the '
+            numberOfAcceptors-3months:
+              type: string
+              description: 'the '
+            numberOfAcceptors-6months:
+              type: string
+              description: 'the '
+    received:
+      type: object
+      properties:
+        lastReceivedDate:
+          type: string
+          format: date
+          description: 'the '
+          example: '2017'
+        time-periods:
+          type: object
+          properties:
+            1-months:
+              type: object
+              properties:
+                totalReceived:
+                  type: string
+                  description: 'the '
+                totalAcceptors:
+                  type: string
+                  description: 'the '
+                quantityReceived:
+                  type: string
+                  description: 'the '
+            3-months:
+              type: object
+              properties:
+                totalReceived:
+                  type: string
+                  description: 'the '
+                totalAcceptors:
+                  type: string
+                  description: 'the '
+                quantityReceived:
+                  type: string
+                  description: 'the '
+            6-months:
+              type: object
+              properties:
+                totalReceived:
+                  type: string
+                  description: 'the '
+                totalAcceptors:
+                  type: string
+                  description: 'the '
+                quantityReceived:
+                  type: string
+                  description: 'the '
+                maxReceived:
+                  type: string
+                  description: 'the '
+    GenderEnum:
+      type: string
+      title: Gender Enum
+      example: Male
+      enum:
+      - Male
+      - Female
+    Loans:
+      type: object
+      required:
+      - customerId
+      description: The loans details of a customer, if it exists
+      properties:
+        _link:
+          type: array
+          xml:
+            name: link
+            attribute: false
+            wrapped: false
+          items:
+            $ref: '#/components/schemas/CustomerLinks'
+        status:
+          type: string
+          enum:
+          - FAILED
+          - COMPLETED
+          - INITED
+        transactionId:
+          type: string
+    ErrorNew:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+          example: 2019-08-23T07:29:25.593+0000
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/<path>
+    CustomerUpgradeEligibilityResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request Successfully processed
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        data:
+          $ref: '#/components/schemas/Upgrade'
+        _links:
+          type: string
+          description: The link to retrieve the Upgrade Eligibility for a customer.
+          $ref: '#/components/schemas/links'
+    transfers:
+      type: object
+      properties:
+        lastTransfersDate:
+          type: string
+          format: date
+          description: 'the '
+          example: '2017'
+        time-periods:
+          type: object
+          description: 'the '
+          properties:
+            1-months:
+              type: object
+              description: 'the '
+              properties:
+                totalTransfers:
+                  type: string
+                  description: 'the '
+                totalAcceptors:
+                  type: string
+                  description: 'the '
+                quantityTransfers:
+                  type: string
+                  description: 'the '
+            3-months:
+              type: object
+              properties:
+                totalTransfers:
+                  type: string
+                  description: 'the '
+                totalAcceptors:
+                  type: string
+                  description: 'the '
+                quantityTransfers:
+                  type: string
+                  description: 'the '
+            6-months:
+              type: object
+              properties:
+                totalTransfers:
+                  type: string
+                totalAcceptors:
+                  type: string
+                  description: 'the '
+                quantityTransfers:
+                  type: string
+                  description: 'the '
+                maxTransfers:
+                  type: string
+                  description: 'the '
+    tenure:
+      type: object
+      properties:
+        tenure:
+          type: integer
+          example: '12'
+    timePeriodEnum:
+      type: string
+      description: a time period for which data is available. Usually data is available for multiple time periods, like 1 month, 3 month, and 6 month. Each time period will be represented as a separate array
+      enum:
+      - month
+      - days
+    Any: {}
+    links:
+      type: object
+      properties:
+        self:
+          type: object
+          properties:
+            href:
+              type: string
+              example: https://api.mtn.com/v1/<path>
+    AccountRef:
+      properties:
+        data:
+          type: object
+          properties:
+            accountName:
+              type: string
+              example: MoMo
+            accountId:
+              type: string
+            description:
+              type: string
+              description: Detailed description of account
+            status:
+              type: string
+              enum:
+              - active
+              - inactive
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                type:
+                  type: string
+                  example: POST
+    send:
+      type: object
+      properties:
+        lastSendDate:
+          type: string
+          format: date
+          description: 'the '
+          example: '2017'
+        maxSend-6months:
+          type: string
+          description: 'the '
+        quantities:
+          type: object
+          properties:
+            numberOfSend-1months:
+              type: string
+              description: 'the '
+            numberOfSend-3months:
+              type: string
+              description: 'the '
+            numberOfSend-6months:
+              type: string
+              description: 'the '
+        amounts:
+          type: object
+          properties:
+            amountOfSend-1months:
+              type: string
+              description: 'the '
+            amountOfSend-3months:
+              type: string
+              description: 'the '
+            amountOfSend-6months:
+              type: string
+              description: 'the '
+        acceptors:
+          type: object
+          properties:
+            numberOfAcceptors-1months:
+              type: string
+              description: 'the '
+            numberOfAcceptors-3months:
+              type: string
+              description: 'the '
+            numberOfAcceptors-6months:
+              type: string
+              description: 'the '
+    Error_4:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+        status:
+          type: string
+          description: Text explaining the reason for the error
+        error:
+          type: string
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: ''
+    deposits:
+      type: object
+      properties:
+        lastDepositsDate:
+          type: string
+          format: date
+          description: 'the '
+          example: '2017'
+        maxDeposits-6months:
+          type: string
+          description: 'the '
+        quantities:
+          type: object
+          properties:
+            numberOfDeposits-1months:
+              type: string
+              description: 'the '
+            numberOfDeposits-3months:
+              type: string
+              description: 'the '
+            numberOfDeposits-6months:
+              type: string
+              description: 'the '
+        amounts:
+          type: object
+          properties:
+            amountOfDeposits-1months:
+              type: string
+              description: 'the '
+            amountOfDeposits-3months:
+              type: string
+              description: 'the '
+            amountOfDeposits-6months:
+              type: string
+              description: 'the '
+        acceptors:
+          type: object
+          properties:
+            numberOfAcceptors-1months:
+              type: string
+              description: 'the '
+            numberOfAcceptors-3months:
+              type: string
+              description: 'the '
+            numberOfAcceptors-6months:
+              type: string
+              description: 'the '
+    CustomerProfile:
+      type: object
+      required:
+      - customerId
+      - _links
+      properties:
+        transactionId:
+          type: string
+          description: Transaction Id of the request
+        customerId:
+          type: string
+        customerSystem:
+          type: string
+          description: Type of Customer
+        characteristics:
+          type: array
+          description: Customer characteristics
+          items:
+            $ref: '#/components/schemas/CustomerCharacteristics'
+        plans:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerPlans_2'
+        account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountRef'
+        kyc:
+          type: array
+          items:
+            $ref: '#/components/schemas/KYC'
+    status:
+      type: object
+      properties:
+        activityStatus:
+          type: string
+          example: Active
+    CustomerLoans:
+      type: object
+      required:
+      - _link
+      properties:
+        data:
+          type: object
+          $ref: '#/components/schemas/Loans'
+        _link:
+          type: string
+          description: The link to retrieve the customers MoMo details.
+          $ref: '#/components/schemas/CustomerLinks'
+          example: https://api.mtn.com/v1/customers/27832000000/loans
+    CustomerPlans_2:
+      type: object
+      required:
+      - _link
+      properties:
+        category:
+          type: string
+          description: Will contain the identifier for product line. Example - GSM, Digital Services, Mobile Money etc.
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Plans_2'
+        _link:
+          type: string
+          description: The link to retrieve the plan for a customer.
+          $ref: '#/components/schemas/CustomerLinks'
+          example: https://api.mtn.com/v1/customers/27832000000/plan
+    momo-loans:
+      type: object
+      title: loans object
+      properties:
+        time-periods:
+          type: object
+          properties:
+            1-months:
+              type: object
+              properties:
+                numberOfLoans:
+                  type: string
+                  description: Number of loans, for the last 1 month
+            3-months:
+              type: object
+              properties:
+                numberOfLoans:
+                  type: string
+                  description: Number of loans, for the last 1 month
+            6-months:
+              type: object
+              properties:
+                numberOfLoans:
+                  type: string
+                  description: Number of loans, for the last 1 month
+        totalLoansAmount:
+          type: string
+          description: tTotal loan amount
+        firstLoansDate:
+          type: string
+          format: date
+          description: First loan date
+        lastLoansDate:
+          type: string
+          format: date
+          description: Last loan date
+        numberOverdue:
+          type: string
+          description: Number of loans overdue
+        totalTerm:
+          type: string
+          description: Total loan term
+        maxTerm:
+          type: string
+          description: Maximum loan term
+        lastOverdueDate:
+          type: string
+          format: date
+          description: Last time loan was overdue
+    KYC:
+      properties:
+        data:
+          type: object
+          properties:
+            idType:
+              type: string
+              description: Legal ID Type
+              example: South African ID
+            idNumber:
+              type: string
+              description: Legal ID Number/Reference
+              example: '8002143987083'
+            dateOfBirth:
+              type: string
+              format: date
+              description: Date of Birth
+              pattern: YYYY-MM-DD
+              example: '1980-02-14'
+            gender:
+              $ref: '#/components/schemas/GenderEnum'
+            firstName:
+              type: string
+              description: Name
+              example: First n Middle
+            lastName:
+              type: string
+              description: Surname
+              example: Surname
+        _link:
+          type: string
+          description: The link to retrieve the customers KYC details.
+          $ref: '#/components/schemas/CustomerLinks'
+    UpgradeEligibilityParams:
+      type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          description: Name of the characteristic
+          example: Eligibility Date
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+          example: date-time
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
+          example: 2019-08-23T07:29:25.593+0000
+    CustomerCharacteristics:
+      type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          description: Name of the characteristic
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
+        _link:
+          type: string
+          description: The link to retrieve the characteristics for a customer.
+          $ref: '#/components/schemas/CustomerLinks'
+          example: https://api.mtn.com/v1/customers/27832000000/characterictics
+    CustomerBalances:
+      type: object
+      properties:
+        data:
+          type: object
+          required:
+          - balanceType
+          - amount
+          - currency
+          - expiryDate
+          properties:
+            balanceType:
+              type: string
+              description: Identifies the type of balance. A customer plan may have multiple types of balances for different usage, for example, voice, SMS, and game services.
+              example: VOICE
+            amount:
+              type: string
+              description: Amount of balance.
+              example: '26861'
+            currency:
+              type: string
+              description: ISO 4217 three-letter ISO code for the currency.
+              example: ZAR
+            expiryDate:
+              type: string
+              format: date-time
+              description: Expiry Date of the account.
+              example: '2019-12-31T12:00:00'
+    activity:
+      type: object
+      description: Actvity related to GSM calls, data bundles, and airtime
+      properties:
+        daysSinceLastActive:
+          type: string
+          description: Number of days since last activity
+        topupMethod:
+          type: string
+          description: Method used to topup airtime (and data?). Should this be a enum, of known types?
+        time-periods:
+          type: object
+          properties:
+            1-months:
+              type: object
+              properties:
+                numberOfActiveDays:
+                  type: string
+                  description: 'the '
+                numberOfTimesBlocked:
+                  type: string
+                  description: Number of times blocked (post-  paid), for the last 1 month
+                airtimeUtilisation:
+                  type: string
+                  description: 'the '
+                daysAirtimeBalanceBelow:
+                  type: string
+                  description: Days Airtime Below XX, based on UMD, for the last 1 month
+                topupAmount:
+                  type: string
+                  description: Network Topup Amount, for the last 1 month
+                averageTopupAmount:
+                  type: string
+                  description: 'the '
+                totalOutboundCalls:
+                  type: string
+                  description: 'Number of outbound calls, for the last 1 month '
+                distinctOutboundCalls:
+                  type: string
+                  description: 'Number of Number of distinct outbound B-Parties , for the last 1 month '
+                totalInboundCalls:
+                  type: string
+                  description: 'Number of inbound calls, for the last 1 month '
+                distinctInboundCalls:
+                  type: string
+                  description: 'Number of distinct inbound B-Parties , for the last 1 month '
+                dataUsage:
+                  type: string
+                  description: 'Data usage in MB, for the last 1 month '
+                lastDataBundlePurchaseDate:
+                  type: string
+                  description: 'Date of last data bundle purchase (any data bundle), for the last 1 month '
+                daysDataBalanceBelow:
+                  type: string
+                  description: Days bundle balance less then 2MB, for the last 1 month
+                averageDataBundleSize:
+                  type: string
+                  description: Average bundle size purchased, for the last 1 month
+                me2u:
+                  type: object
+                  properties:
+                    me2uNumberAirtimeReceived:
+                      type: string
+                      description: Number of MTN Me2U airtime received, for the last 1 month
+                    me2uAmountAirtimeReceived:
+                      type: string
+                      description: Amount of MTN Me2U airtime received, for the last 1 month
+    withdrawals:
+      type: object
+      properties:
+        lastWithdrawalsDate:
+          type: string
+          format: date
+          description: 'the '
+        maxWithdrawals-6months:
+          type: string
+          description: 'the '
+        quantities:
+          type: object
+          properties:
+            numberOfWithdrawals-1months:
+              type: string
+              description: 'the '
+            numberOfWithdrawals-3months:
+              type: string
+              description: 'the '
+            numberOfWithdrawals-6months:
+              type: string
+              description: 'the '
+        amounts:
+          type: object
+          properties:
+            totalWithdrawalsAmounts-1months:
+              type: string
+              description: 'the '
+            totalWithdrawalsAmounts-3months:
+              type: string
+              description: 'the '
+            totalWithdrawalsAmounts-6months:
+              type: string
+              description: 'the '
+        acceptors:
+          type: object
+          properties:
+            numberOfAcceptors-1months:
+              type: string
+              description: 'the '
+            numberOfAcceptors-3months:
+              type: string
+              description: 'the '
+            numberOfAcceptors-6months:
+              type: string
+              description: 'the '
+    CustomerStatusResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request Successfully processed
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+          example: '85499086'
+        customerId:
+          type: string
+          example: '234806589013'
+        data:
+          $ref: '#/components/schemas/status'
+    transactions-summaries:
+      properties:
+        requestId:
+          type: string
+          description: The requestId that was used by the client
+        dateRange:
+          type: string
+          description: The date range used by the client, to request customer data for a specific time period
+        data:
+          type: object
+          properties:
+            marketingFlag:
+              type: boolean
+              description: Flag set for this partner, or should this should be an object, of flags per partner
+            lendingFlag:
+              type: boolean
+              description: This should be an object, of flags per partner
+            momo:
+              type: object
+              properties:
+                withdrawals:
+                  $ref: '#/components/schemas/withdrawals'
+                deposits:
+                  $ref: '#/components/schemas/deposits'
+                billPayments:
+                  $ref: '#/components/schemas/billPayments'
+                send:
+                  $ref: '#/components/schemas/send'
+                received:
+                  $ref: '#/components/schemas/received'
+                transfers:
+                  $ref: '#/components/schemas/transfers'
+            gsm:
+              type: object
+              properties:
+                activity:
+                  $ref: '#/components/schemas/activity'
+            momo-loans:
+              $ref: '#/components/schemas/momo-loans'
+    Customer:
+      type: object
+      required:
+      - customerId
+      - _links
+      properties:
+        transactionId:
+          type: string
+          description: Transaction Id of the request
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        customerId:
+          type: string
+        customerSystem:
+          type: string
+          description: Type of Customer
+        characteristics:
+          type: array
+          description: Customer characteristics
+          items:
+            $ref: '#/components/schemas/CustomerCharacteristics'
+        locations:
+          type: object
+          description: The location of customer. Location includes Country and Network Operator
+          $ref: '#/components/schemas/CustomerLocations'
+        plans:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerPlans_2'
+        loans:
+          type: object
+          description: the customers loan and eligibility details
+          $ref: '#/components/schemas/CustomerLoans'
+        account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountRef'
+        kyc:
+          type: array
+          items:
+            $ref: '#/components/schemas/KYC'
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Devices'
+        transactions-summaries:
+          $ref: '#/components/schemas/transactions-summaries'
+        _links:
+          type: string
+          description: link to retrieve the customer profile
+          $ref: '#/components/schemas/CustomerLinks'
+    CustomerTenureResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request Successfully processed
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+          example: '85499086'
+        customerId:
+          type: string
+          example: '234806589013'
+        data:
+          $ref: '#/components/schemas/tenure'
+    Upgrade:
+      type: object
+      properties:
+        UpgradeEligibility:
+          type: array
+          description: The list of Upgrade Eligibility parameters
+          items:
+            $ref: '#/components/schemas/UpgradeEligibilityParams'
+    Devices:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            devices:
+              type: array
+              items:
+                properties:
+                  deviceId:
+                    type: string
+                    description: 'an identifier for each device. This will be a unique key per device, the format will be a string '
+                    example: Should
+                  deviceMake:
+                    type: string
+                    description: Make of current device
+                    example: Apple iPhone X
+                  IMSI:
+                    type: string
+                    description: Last known IMSI. Relates to the SIM used by the MSISDN
+                    example: '310150123456789'
+                  IMEI:
+                    type: string
+                    description: Last known IMEI. Unique identifier of Mobile Device used by the MSISDN
+                    example: '990000862471854'
+                  timePeriods:
+                    type: object
+                    properties:
+                      unit:
+                        $ref: '#/components/schemas/timePeriodEnum'
+                      value:
+                        type: string
+                        description: the value of the timePeriods 'unit' field. E.g. if unit is 'month', then this will represent how many months
+                        example: '1'
+                  numberOfIMSIs:
+                    type: string
+                    description: The number of unique IMSIs that was used by the MSISDN in the last measured period
+                    example: '4'
+                  numberOfIMEIs:
+                    type: string
+                    description: The number of unique IMEI’s that was used by the MSISDN in the last measured period
+                    example: '1'
+                  primaryUCID:
+                    type: string
+                    description: Primary Unique Customer Id
+                  primaryUSID:
+                    type: string
+                    description: Primary Unique Service Id
+                  secondaryUCID:
+                    type: string
+                    description: Secondary Unique Customer Id
+                  secondaryUSID:
+                    type: string
+                    description: Secondary Unique Service Id
+        _links:
+          $ref: '#/components/schemas/CustomerLinks'
+    businessInfo:
+      type: object
+      properties:
+        Id:
+          type: string
+          example: 4567890
+        name:
+          type: string
+          example: MikeMulti Print
+        type:
+          type: string
+          example: ''
+        category:
+          type: string
+          example: ''
+        dateOfIncorporation:
+          type: string
+          example: ''
+        customerId:
+          type: string
+          example: 2016110014
+        branchCode:
+          type: string
+          example: '01'
+        contactMedium:
+          type: array
+          items:
+            type: object
+            properties:
+              addressOne:
+                type: string
+                example: 45 Apata Street, By Shipeolu Street, Onipanu Lagos
+              addressTwo:
+                type: string
+                example: ''
+              lga:
+                type: string
+                example: ''
+              state:
+                type: string
+                example: ''
+              country:
+                type: string
+                example: Nigeria
+              preferred:
+                type: boolean
+                example: true
+    ErrorResponseBody:
+      type: object
+      description: An response body that defines the structure of an error
+      properties:
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        sequenceNo:
+          type: string
+          description: This is the MADAPI auto generated reference for tracing purposes
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/customers/2348024008124/score
+    guarantorInfo:
+      type: object
+      properties:
+        corporateName:
+          type: string
+          example: Modum Industries LTD
+        bizID:
+          type: string
+          example: ''
+        lastName:
+          type: string
+          example: Theodore
+        firstname:
+          type: string
+          example: ''
+        middleName:
+          type: string
+          example: Mark
+        date:
+          type: string
+          example: 2020/12/01
+        gender:
+          type: string
+          example: Male
+        nationalID:
+          type: string
+          example: ''
+        passportNo:
+          type: string
+          example: ''
+        driversLicence:
+          type: string
+          example: AWE23516273
+        BVN:
+          type: string
+          example: '22233344466'
+        otherID:
+          type: string
+          example: ''
+        addressOne:
+          type: string
+          example: Lagos
+        addressTwo:
+          type: string
+          example: ''
+        lga:
+          type: string
+          example: ''
+        state:
+          type: string
+          example: Nigeria
+        country:
+          type: string
+          example: ''
+        phoneNumber:
+          type: string
+          example: ''
+        emailAddress:
+          type: string
+          example: tester@gmail.com
+    CreditInfoRequest:
+      type: object
+      properties:
+        creditInfo:
+          type: array
+          items:
+            type: object
+            properties:
+              customerId:
+                type: string
+                example: '22220066989'
+                description: ''
+              branchCode:
+                type: string
+                example: NGHOBS01
+                description: ''
+              lastName:
+                type: string
+                example: NWANKWO
+                description: ''
+              firstName:
+                type: string
+                example: VINCENT
+                description: ''
+              middleName:
+                type: string
+                example: OLUWAFIKAYOMI
+                description: ''
+              dateOfBirth:
+                type: string
+                example: 15/02/1970
+                description: ''
+              nationalIdentityNumber:
+                type: string
+                example: 'NULL'
+                description: ''
+              driversLicense:
+                type: string
+                example: 'NULL'
+                description: ''
+              BVN:
+                type: string
+                example: ''
+                description: ''
+              passportNo:
+                type: string
+                example: 'NULL'
+                description: ''
+              gender:
+                type: string
+                example: Male
+                description: ''
+              nationality:
+                type: string
+                example: NG
+                description: ''
+              maritalStatus:
+                type: string
+                example: Married
+                description: ''
+              phoneNumberOne:
+                type: string
+                example: '8023314144'
+                description: ''
+              primaryAddressOne:
+                type: string
+                example: 30 EZEAGU STREET, OJO ROAD
+                description: ''
+              primaryAddressTwo:
+                type: string
+                example: 'AJEGUNLE, APAPA, LAGOS '
+                description: ''
+              countryLgaOne:
+                type: string
+                example: LAGOS
+                description: ''
+              countryStateOne:
+                type: string
+                example: LAGOS
+                description: ''
+              countryOne:
+                type: string
+                example: NG
+                description: ''
+              employmentStatus:
+                type: string
+                example: E
+                description: ''
+              occupation:
+                type: string
+                example: 'NULL'
+                description: ''
+              businessCategory:
+                type: string
+                example: ''
+                description: ''
+              businessSector:
+                type: string
+                example: 'NULL'
+                description: ''
+              BorrowerType:
+                type: string
+                example: I
+                description: ''
+              otherID:
+                type: string
+                example: 'NULL'
+                description: ''
+              taxID:
+                type: string
+                example: 'NULL'
+                description: ''
+              pictureFilePath:
+                type: string
+                example: ''
+                description: ''
+              emailAddress:
+                type: string
+                example: VINCHUKSNWANKWO@YAHOO.COM
+                description: ''
+              employerName:
+                type: string
+                example: C & I LEASING
+                description: ''
+              employerAddressOne:
+                type: string
+                example: 'NULL'
+                description: ''
+              employerAddressTwo:
+                type: string
+                example: 'NULL'
+                description: ''
+              employerLga:
+                type: string
+                example: 'NULL'
+                description: ''
+              employerState:
+                type: string
+                example: 'NULL'
+                description: ''
+              employerCountry:
+                type: string
+                example: Eti Osa
+                description: ''
+              title:
+                type: string
+                example: 'NULL'
+                description: ''
+              placeOfBirth:
+                type: string
+                example: ''
+                description: ''
+              phoneNumberTwo:
+                type: string
+                example: 'NULL'
+                description: ''
+              phoneNumberThree:
+                type: string
+                example: '2350000000000'
+                description: ''
+              secondaryAddressOne:
+                type: string
+                example: ''
+                description: ''
+              secondaryAddressTwo:
+                type: string
+                example: ''
+                description: ''
+              secondaryAddressLga:
+                type: string
+                example: ''
+                description: ''
+              secondaryAddressState:
+                type: string
+                example: ''
+                description: ''
+              secondaryAddressCountry:
+                type: string
+                example: ''
+                description: ''
+              spousesLastName:
+                type: string
+                example: ''
+                description: ''
+              spousesFirstName:
+                type: string
+                example: ''
+                description: ''
+              spousesMiddleName:
+                type: string
+                example: ''
+                description: ''
+              businessInfo:
+                type: object
+                $ref: '#/components/schemas/businessInfo'
+              guarantorInfo:
+                type: array
+                items:
+                  $ref: '#/components/schemas/guarantorInfo'
+              creditInfo:
+                type: object
+                $ref: '#/components/schemas/creditInfo'
+              principalInfo:
+                type: array
+                items:
+                  $ref: '#/components/schemas/principalInfo'
+              loanStatus:
+                type: string
+                example: ''
+                description: ''
+              guaranteeType:
+                type: string
+                example: ''
+                description: ''
+              accountNumber:
+                type: string
+                example: ''
+                description: ''
+              accountStatus:
+                type: string
+                example: ''
+                description: ''
+              accountStatusDate:
+                type: string
+                example: ''
+                description: ''
+              taxId:
+                type: string
+                example: ' '
+                description: ''
+    creditInfo:
+      type: object
+      properties:
+        dateOfLoan:
+          type: string
+          example: 31/08/2020
+        creditLimit:
+          type: string
+          example: 3600000
+        availedLimit:
+          type: string
+          example: 5000000
+        outstandingBalance:
+          type: string
+          example: 0
+        installmentAmount:
+          type: string
+          example: ''
+        currency:
+          type: string
+          example: Naira
+        daysInArrears:
+          type: string
+          example: 0
+        overDueAmount:
+          type: string
+          example: 0
+        loanType:
+          type: string
+          example: Commercial Overdraft
+        loanTenor:
+          type: string
+          example: ''
+        repaymentFrequency:
+          type: string
+          example: ''
+        lastPaymentDate:
+          type: string
+          example: ''
+        lastPaymentAmount:
+          type: string
+          example: ''
+        maturityDate:
+          type: string
+          example: 31/08/2021
+        loanClassification:
+          type: string
+          example: Performing
+        legalChallengeStatus:
+          type: string
+          example: ''
+        litigationDate:
+          type: string
+          example: ''
+        consentStatus:
+          type: string
+          example: ''
+        loanSecurityStatus:
+          type: string
+          example: 'NO'
+        collateralType:
+          type: string
+          example: ''
+        collateralDetails:
+          type: string
+          example: ''
+        previousAccountNumber:
+          type: string
+          example: ''
+        previousName:
+          type: string
+          example: ''
+        previousCustomerId:
+          type: string
+          example: ''
+        previousBranchCode:
+          type: string
+          example: ''
+    principalInfo:
+      type: object
+      properties:
+        lastName:
+          type: string
+          example: Michael
+        firstName:
+          type: string
+          example: Ewa
+        middleName:
+          type: string
+          example: ''
+        dateOfBirth:
+          type: string
+          example: 01/01/1900
+        gender:
+          type: string
+          example: Male
+        addressOne:
+          type: string
+          example: Suite 6, 45 Apata Street, By Ship...
+        addressTwo:
+          type: string
+          example: ''
+        lga:
+          type: string
+          example: ''
+        state:
+          type: string
+          example: ''
+        country:
+          type: string
+          example: Nigeria
+        nationalId:
+          type: string
+          example: ''
+        driversLicence:
+          type: string
+          example: ''
+        BVN:
+          type: string
+          example: ''
+        passportNo:
+          type: string
+          example: ''
+        phoneNumber:
+          type: string
+          example: ''
+        email:
+          type: string
+          example: ''
+        designation:
+          type: string
+          example: CEO
+    Error_5:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        sequenceNo:
+          type: string
+          description: This is the MADAPI auto generated reference for tracing purposes
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/customers/2348024008124/score
+    SubscriptionTypeEnum:
+      type: string
+      title: subscriptionTypeEnum
+      default: Adhoc
+      enum:
+      - Adhoc
+      - Recurring
+      x-enum-elements:
+      - name: Adhoc
+        description: Once off subscription, it wont recur or renew
+      - name: Recurring
+        description: Will renew at the end of the period
+    Callback:
+      type: object
+      title: Callback
+      properties:
+        callbackUrl:
+          type: string
+        description:
+          type: string
+    CustomerSubscriptionProvider:
+      type: object
+      properties:
+        customerId:
+          type: string
+        services:
+          additionalProperties:
+            $ref: '#/components/schemas/SubscriptionServicesProviders'
+          example:
+            imi:
+              subscriptionProviderName: MTN Play Services
+              subscriptionProviderDescription: MTN Play services
+    Subscription:
+      type: object
+      title: Subscription
+      required:
+      - subscriptionId
+      - subscriptionProviderId
+      - subscriptionName
+      properties:
+        subscriptionId:
+          type: string
+          default: 'null'
+          description: Unique system identifier for the Subscription
+        subscriptionProviderId:
+          type: string
+          default: 'null'
+          description: Identifier for the provider within which the Subscription lives
+        subscriptionName:
+          type: string
+          default: 'null'
+          description: Service the customer is subscribed to
+        subscriptionStatus:
+          $ref: '#/components/schemas/SubscriptionStatusEnum'
+        subscriptionDescription:
+          type: string
+          default: 'null'
+          description: Description of the service the customer is subscribed to
+        subscriptionType:
+          $ref: '#/components/schemas/SubscriptionTypeEnum'
+        subscriptionLength:
+          type: string
+          default: 'null'
+          description: Duration of the subscription the customer is subscribed to
+        registrationChannel:
+          type: string
+          default: 'null'
+          description: Channel through which the customer subscribed to the service
+        startDate:
+          type: string
+          format: date-time
+          default: 'null'
+          description: Start date of the Subscription; full-date notation RFC 3339
+        endDate:
+          type: string
+          format: date-time
+          default: 'null'
+          description: End date of the Subscription; full-date notation RFC 3339
+        subscriptionPaymentSource:
+          type: string
+          default: 'null'
+          description: 'Payment balance to use: Airtime, MoMo, EVDS, Loyalty'
+        sendSMSNotification:
+          type: boolean
+          default: 'true'
+          description: Should an SMS be sent to the subscriber to inform them of the subscription
+        beneficiaryId:
+          type: string
+          default: 'null'
+          description: Subscription will be added to the beneficiary msisdn, but payment deducted from the main customerId. format will be E.123
+        email:
+          type: string
+          default: 'null'
+          description: Email associated with the Subscription
+        auto-renew:
+          type: boolean
+          default: 'false'
+          description: Recurring subscription to auto-renew at the end of the expiry period
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+    ServiceDetails:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionDetails'
+        statusCode:
+          type: string
+          example: '0000'
+    StatusEnum:
+      type: string
+      title: statusEnum
+      example: Unsubscribe successful
+      enum:
+      - Unsubscribe successful
+      - Unsubscribe unsuccessful
+    SubscriptionStatusEnum:
+      type: string
+      title: subscriptionStatusEnum
+      default: 'null'
+      example: Active
+      enum:
+      - Active
+      - Inactive
+      - Pending
+      x-enum-elements:
+      - name: Active
+        description: Subscription is active
+      - name: Inactive
+        description: Subscription has been cancelled, paused, or set for deletion at the end of the period. It is listed because the period may still be valid
+      - name: Pending
+        description: Provisioning is still in progress
+    OffersPerMenuCode:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          example: OK
+        customerId:
+          type: string
+        services:
+          type: object
+          properties:
+            CIS:
+              $ref: '#/components/schemas/ServiceDetails'
+        statusCode:
+          type: string
+          example: '0000'
+    SubscriptionServices:
+      properties:
+        statusCode:
+          type: string
+        data:
+          type: object
+          properties:
+            subscriptions:
+              type: array
+              items:
+                $ref: '#/components/schemas/Subscription'
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+    Unsubscribe:
+      type: object
+      title: unsubscribe
+      required:
+      - status
+      - statusCode
+      - description
+      properties:
+        subscriptionId:
+          type: integer
+          description: ID for the Subscription
+        subscriptionProviderId:
+          type: integer
+          description: Identity of the subscription provider hosting the subscription
+        statusCode:
+          type: integer
+          description: Status Code
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        description:
+          type: string
+          description: Details of the result of the unsubscribe action
+    SubscriptionServicesProviders:
+      properties:
+        subscriptionProviderName:
+          type: string
+          default: 'null'
+          description: Service the customer is subscribed to
+        subscriptionProviderDescription:
+          type: string
+          default: 'null'
+          description: Description of the service the customer is subscribed to
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+    CustomerSubscription:
+      type: object
+      properties:
+        customerId:
+          type: string
+        services:
+          additionalProperties:
+            $ref: '#/components/schemas/SubscriptionServices'
+          example:
+            vas_hlr:
+              statusCode: '2000'
+              data:
+                subscriptionId: '4'
+                subscriptionProviderId: RBT
+                subscriptionName: CallerTunez
+                subscriptionDescription: null
+                subscriptionStatus: Inactive
+                subscriptionType: Adhoc
+                subscriptionLength: null
+                registrationChannel: null
+                startDate: '2019-04-30'
+                endDate: '2019-05-06'
+                subscriptionPaymentSource: Airtime
+                sendSMSNotification: true
+                beneficiaryId: null
+                auto-renew: true
+                email: null
+            _links:
+              self:
+                href: https://api.mtn.com/v2/customers/27832000000/subscriptions
+    SubscribeAsync:
+      type: object
+      title: SubscribeAsync
+      required:
+      - status
+      - statusCode
+      - description
+      properties:
+        subscriptionId:
+          type: integer
+          description: ID for the Subscription
+        subscriptionProviderId:
+          type: integer
+          description: Identity of the subscription provider hosting the subscription
+        statusCode:
+          type: integer
+          description: Status Code
+        status:
+          $ref: '#/components/schemas/SubscriptionStatusEnum'
+          default: Pending
+        description:
+          type: string
+          description: Details of the result of the unsubscribe action
+    subscription:
+      type: object
+      title: subscription
+      required:
+      - subscriptionId
+      - subscriptionProviderId
+      - subscriptionName
+      properties:
+        subscriptionId:
+          type: string
+          default: 'null'
+          description: Unique identifier for the Subscription
+        subscriptionProviderId:
+          type: string
+          default: 'null'
+          description: Identifier for the provider within which the Subscription lives
+        subscriptionName:
+          type: string
+          default: 'null'
+          description: Service the customer is subscribed to
+        subscriptionStatus:
+          $ref: '#/components/schemas/SubscriptionStatusEnum'
+        subscriptionDescription:
+          type: string
+          default: 'null'
+          description: Description of the service the customer is subscribed to
+        subscriptionType:
+          $ref: '#/components/schemas/SubscriptionTypeEnum'
+        subscriptionLength:
+          type: string
+          default: 'null'
+          description: Duration of the subscription the customer is subscribed to
+        registrationChannel:
+          type: string
+          default: 'null'
+          description: Channel through which the customer subscribed to the service
+        startDate:
+          type: string
+          format: date-time
+          default: 'null'
+          description: Start date of the Subscription; full-date notation RFC 3339
+        endDate:
+          type: string
+          format: date-time
+          default: 'null'
+          description: End date of the Subscription; full-date notation RFC 3339
+        subscriptionPaymentSource:
+          type: string
+          default: Airtime
+          description: 'Which payment balance to use to pay: Airtime, MoMo, EVDS, Loyalty'
+        sendSMSNotification:
+          type: boolean
+          default: 'true'
+          description: Should an SMS be sent to the subscriber to inform them of the subscription
+        beneficiaryId:
+          type: string
+          default: 'null'
+          description: Subscription will be added to the beneficiary, but payment deducted from the main customerId
+        auto-renew:
+          type: boolean
+          default: 'false'
+          description: Recurring subscription to auto-renew at the end of the expiry period
+        email:
+          type: string
+          default: 'null'
+          description: Email address associated with the Subscription
+    SubscriptionDetails:
+      type: object
+      properties:
+        subscriptionId:
+          type: string
+          example: BEN_Combo_1438
+        subscriptionProviderId:
+          type: string
+          example: CIS
+        subscriptionName:
+          type: string
+          example: 2500 (3500F/20J)
+        subscriptionDescription:
+          type: string
+          example: Forfaits Mois
+        subscriptionStatus:
+          type: string
+          example: Active
+        endDate:
+          type: string
+          example: 20Days
+        amountCharged:
+          type: number
+          format: double
+          example: 2500
+        subscriptionPaymentSource:
+          type: string
+          example: Combo
+        sendSMSNotification:
+          type: boolean
+          example: false
+        autoRenew:
+          type: boolean
+          example: false
+        amountBefore:
+          type: number
+          format: double
+          example: 0.0
+        amountAfter:
+          type: number
+          format: double
+          example: 0.0
+        nonGSM:
+          type: boolean
+          example: false
+        cvmoffer:
+          type: boolean
+          example: false
+        isDataConfirmationRequired:
+          type: boolean
+          example: true
+    Error_6:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+        status:
+          type: string
+          description: HTTP Status code
+        error:
+          type: string
+          description: Status description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token
+x-refined-from:
+- mtn-group-loans-v2.yml
+- mtn-group-mtn-customer-locations-api-v1.yml
+- mtn-group-mtn-customer-plans-api-v2.yml
+- mtn-group-mtn-customer-profiles-api-v2-product.yml
+- mtn-group-mtn-customer-score.yml
+- mtn-group-mtn-subscription-api-v2.yml

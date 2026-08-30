@@ -1,0 +1,538 @@
+openapi: 3.2.0
+info:
+  title: ServiceOrdering Service Order API
+  description: "## TMF API Reference : TMF 641 - Service Ordering Management\n\n Version 4.1 \n\n### TMF641 performs the following operations on service order resource :\n- Retrieval of a service order or a collection of service orders by id\n- Creation of a service order\n- Deletion of service order\n\nCopyright © TM Forum 2020. All Rights Reserved"
+  version: 4.1.0
+servers:
+- url: https://serverRoot/tmf-api/serviceOrdering/v4
+security:
+- OAuth2: []
+tags:
+- name: serviceOrder
+paths:
+  /serviceOrder:
+    post:
+      operationId: createServiceOrder
+      summary: Creates a ServiceOrder
+      description: This operation creates a ServiceOrder entity.
+      tags:
+      - serviceOrder
+      parameters:
+      - name: sourceIdentifier
+        in: query
+        description: source identifier toidentify the customer like 'MNS_Portal'
+        required: true
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        description: Transaction ID for tracing purposes. If not passed by API client, this value is generated internally
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/CreateServiceOrder_SuccessResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error405'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error500'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/ServiceOrder_Create'
+        description: The ServiceOrder to be created
+        required: true
+  /serviceOrder/{id}:
+    get:
+      operationId: retrieveServiceOrder
+      summary: Retrieves a ServiceOrder by ID
+      description: This operation retrieves a ServiceOrder entity. Attribute selection is enabled for all first level attributes.
+      tags:
+      - serviceOrder
+      parameters:
+      - name: id
+        description: Identifier of the ServiceOrder. This could be Partner ID or MSISDN.
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: sourceIdentifier
+        in: query
+        description: This field denotes the channel that is initiating request to SOA., ex-'Experian,TransUnion'
+        required: false
+        schema:
+          type: string
+      - name: idType
+        in: query
+        description: This field denotes whether the provided Id is Partner ID or MSISDN.
+        required: false
+        schema:
+          type: string
+          enum:
+          - PartnerId
+          - MSISDN
+      - name: transactionId
+        in: header
+        description: Transaction ID for tracing purposes. If not passed by API client, this value is generated internally
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/GetServiceOrderResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Error500'
+components:
+  schemas:
+    Feature:
+      type: object
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          example: ID
+          description: Name is used identify the name of the parameter
+        value:
+          type: string
+          example: '01575'
+          description: Value is used to get the incoming parameter value in the request
+    Error404:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        error:
+          type: string
+          description: error message
+          example: Not found
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        links:
+          type: array
+          items:
+            properties:
+              rel:
+                type: string
+              href:
+                type: string
+    Package:
+      type: object
+      required:
+      - id
+      properties:
+        action:
+          type: string
+          example: add
+          description: Acton --optional parameter is used to identify the action of the package such as add/remove
+          enum:
+          - add
+          - remove
+          - modify
+          - softSuspendOut
+          - hpbxSuspend
+          - hpbxUnsuspend
+          - softUnsuspendOut
+          - softSuspendIn
+          - softUnsuspendIn
+          - softSuspendOutOfBundle
+          - softUnsuspendOutOfBundle
+          - suspend
+          - groupSuspend
+          - unsuspend
+          - groupUnsuspend
+          - smsOnlyRoamingSuspend
+          - smsOnlyRoamingUnsuspend
+          - smsOOUnbar
+          - smsOOBar
+          - RICASuspend
+          - RICAUnsuspend
+          - Reserve
+          - Unreserve
+          - changePassword
+          - paymentHolidaySuspend
+          - paymentHolidayUnsuspend
+          - replace
+          - serviceDeactivate
+          - bindDeactivate
+          - productDeactivate
+          - updateCampaignDetail
+          - modifyRateChange
+          - rateChange
+          - productMigrationWithinSamePartner
+          - serviceMigrationFromActiveInstance
+          - serviceMigrationFromCancelledInstance
+          - serviceMigrationUSSDActiveInstance
+          - serviceMigrationUSSDCancelledInstance
+        features:
+          type: array
+          description: A List of features
+          items:
+            $ref: '#/components/schemas/Feature'
+        id:
+          type: string
+          example: ANCHOR
+          description: Used to identify the catalogue code of the package
+        product:
+          type: array
+          description: List of products which will be added or removed from the subscription
+          items:
+            $ref: '#/components/schemas/Product'
+        service:
+          type: array
+          description: List of service which includes equipment details such as MSISDN and SIM
+          items:
+            $ref: '#/components/schemas/Service'
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+    Error403:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '6000'
+        statusMessage:
+          type: string
+          description: Short description of the error
+          example: Forbidden
+        supportMessage:
+          type: string
+          description: Longer description of the error
+          example: Please verify token environment or access token or API key
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+    Error500:
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3001'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: method used by MADAPI to get the response
+    Service:
+      type: object
+      properties:
+        itemAction:
+          type: string
+          example: add
+          description: Item Action to determine the action of the equipment such add/remove
+          enum:
+          - add
+          - remove
+        type:
+          type: string
+          example: MSISDN
+          description: Service Type defines the equipment type such as MSISDN/SIM Card
+          enum:
+          - MSISDN
+          - SIM Card
+          - APN
+          - IP Address
+        value:
+          type: string
+          example: 27xxxxxxxxx
+          description: Service Value contains the value of the given equipment
+    ServiceOrderItem:
+      type: object
+      required:
+      - orderType
+      - packges
+      properties:
+        action:
+          type: string
+          example: add
+          description: Action of the oder item
+          enum:
+          - add
+          - remove
+        orderType:
+          type: string
+          example: Modify
+          description: Order type of oder item
+          enum:
+          - Create
+          - Modify
+          - Migrate
+          - SIM Swap
+          - MSISDN Swap
+        packages:
+          description: Packages details
+          $ref: '#/components/schemas/Package'
+    ServiceOrder_Create:
+      type: object
+      required:
+      - externalId
+      - operatorId
+      - serviceOrderItem
+      - sourceIdentifier
+      - sourceSystem
+      properties:
+        accessId:
+          type: string
+          example: PROVIDENT
+          description: Access Id as part of IBF RA
+        externalId:
+          type: string
+          example: '320055544792213'
+          description: Requestor reference number consumer uses for identifiy the order
+        operatorId:
+          type: string
+          example: Operator1
+          description: Operator Id is used to identify the user operates on the order
+        otn:
+          type: string
+          example: 20231209212028-320055544792213
+          description: OTN value as part of IBF RA
+        requestedStartDate:
+          type: string
+          example: 2019-09-16+02:00
+          description: Effective date is the date when will be order is provision from
+        serviceOrderItem:
+          type: array
+          description: Lis of service order items
+          items:
+            $ref: '#/components/schemas/ServiceOrderItem'
+        sourceSystem:
+          type: string
+          example: MADAPI
+          description: System where the SORB order was initiated
+          enum:
+          - MADAPI
+          - PROVIDENT
+    Product:
+      type: object
+      required:
+      - action
+      - id
+      properties:
+        action:
+          type: string
+          example: add
+          description: Product Action to determine the action of the product will be added or removed
+          enum:
+          - add
+          - remove
+        features:
+          type: array
+          description: List of feature
+          items:
+            $ref: '#/components/schemas/Feature'
+        id:
+          type: string
+          example: APN
+          description: Product offering code is used to identify the product
+      title: Product
+    GetServiceOrderResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '0000'
+        statusMessage:
+          type: string
+          description: Message.
+          example: Successful
+        transactionId:
+          type: string
+          description: transactionId from the backend or MADAPI generated during request.
+          example: 1f73e9a3-39fa-596a-a030-e03d8cb01a2c
+        supportMessage:
+          type: string
+          example: API Executed Successfully
+          description: Short description
+        apnDetails:
+          type: array
+          items:
+            properties:
+              apnId:
+                type: string
+                description: APN Id associated with Partner
+                example: '34345'
+              apnName:
+                type: string
+                description: APN name associated with Partner
+                example: apn_34345.co.za
+    CreateServiceOrder_SuccessResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '0000'
+        statusMessage:
+          type: string
+          description: status of Message.
+          example: Successful
+        transactionId:
+          type: string
+          description: transactionId from the backend or MADAPI generated during request.
+          example: 1f73e9a3-39fa-596a-a030-e03d8cb01a2c
+        supportMessage:
+          type: string
+          example: Order has been modified
+          description: Short description
+        requestorRefNum:
+          type: string
+          example: '320055544792213'
+          description: Requester reference number consumer uses for identify the order
+        sorbRefNum:
+          type: string
+          example: 1700037701915-n-0
+          description: Sorb reference number is the Id used to identify the SORB Order Request
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/v1/oauth/access_token/accesstoken?grant_type=client_credentials

@@ -1,0 +1,466 @@
+openapi: 3.2.0
+info:
+  title: MTN Messaging Communication API
+  version: 1.0.0
+  description: MTN SMS Messaging API allowing developers to include SMS messaging in their applications
+servers:
+- url: https://api.mtn.com/v1/messages/
+tags:
+- name: Communication
+paths:
+  /sms:
+    post:
+      description: 'Send an SMS Message to a single or multiple mobile number/s.
+
+        '
+      summary: Send SMS
+      tags:
+      - Communication
+      operationId: sendSMS
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageSentResponseSMS'
+        '400':
+          description: Bad request
+        '401':
+          description: Invalid access token. Please try with a valid token
+        '403':
+          description: 'Authorization credentials passed and accepted but account does forbidden to send SMSes
+
+            '
+        '404':
+          description: Not Found
+        '405':
+          description: The requested resource does not support the supplied verb
+        '415':
+          description: API does not support the requested content type
+        '500':
+          description: Internal Server Error
+        '501':
+          description: 'The HTTP method being used has not yet been implemented for
+
+            the requested resource
+
+            '
+        '503':
+          description: The service requested is currently unavailable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendSMS'
+        description: 'This is a JSON containing a list of SMS recipients and the SMS message
+
+          '
+        required: true
+    get:
+      description: Retrieve SMS messages one by one
+      summary: Receive SMS Responses
+      tags:
+      - Communication
+      operationId: Retrieve SMS Responses
+      parameters:
+      - name: batchSize
+        required: false
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceivePollResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Invalid access token. Please try with a valid token
+        '403':
+          description: 'Authorization credentials passed and accepted but account not allowed to send SMS
+
+            '
+        '404':
+          description: Not Found
+        '405':
+          description: The requested resource does not support the supplied verb
+        '415':
+          description: API does not support the requested content type
+        '500':
+          description: Internal server error
+        '501':
+          description: Not Implemeted
+        '503':
+          description: The service requested is currently unavailable
+  /sms/{messageId}/status:
+    get:
+      description: Get delivery status
+      summary: Delivery status
+      tags:
+      - Communication
+      operationId: Get SMS Status
+      parameters:
+      - name: messageId
+        in: path
+        required: true
+        description: 'Unique identifier of an SMS message; returned when sending an SMS
+
+          '
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OutboundPollResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Invalid access token. Please try with a valid token
+        '403':
+          description: 'Authorization credentials passed and accepted but account does
+
+            not have permission to make the request'
+        '404':
+          description: Not Found
+        '405':
+          description: The requested resource does not support the supplied verb
+        '415':
+          description: API does not support the requested content type
+        '500':
+          description: Internal server error
+        '501':
+          description: Not implemented
+        '503':
+          description: The service requested is currently unavailable
+        default:
+          description: An internal error occurred when processing the request
+  /sms-listeners:
+    post:
+      operationId: registerCallback
+      description: Callback endpoint to enable the consuming app to receive smses sent to short code assigned to the app
+      summary: Register listener
+      tags:
+      - Communication
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallbackResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallbackInfo'
+        description: callback endpoint for notifications
+        required: true
+  /sms-listeners/{accessCode}:
+    delete:
+      operationId: deregister Callback
+      summary: Remove callback listener
+      description: Remove endpoint used to send SMS notifications
+      tags:
+      - Communication
+      parameters:
+      - name: accessCode
+        required: true
+        in: path
+        description: The id of the registered listener
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Callback deleted
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method Not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    SendSMS:
+      title: SendSMS
+      type: object
+      required:
+      - to
+      - body
+      properties:
+        to:
+          description: Mobile number to send SMS to
+          type: array
+          items:
+            type: string
+          example:
+          - '+27832008963'
+          - '+27832008981'
+          - '+27832090015'
+        body:
+          description: text body of the SMS message
+          type: string
+          example: Welcome to the Bozza network
+        from:
+          description: Sender identity/address/code
+          type: string
+          example: '34001'
+        notificationURL:
+          description: callback URL to send status of the SMS send request
+          type: string
+          example: http://domian.co.za/callbackurl
+        clientId:
+          description: client app name
+          type: string
+          example: My_SMS_APP
+    MessageSentResponseSMS:
+      title: MessageSentResponse
+      type: object
+      properties:
+        messages:
+          description: An array of messages.
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+      required:
+      - messages
+    CallbackInfo:
+      required:
+      - callbackURL
+      properties:
+        callbackURL:
+          type: string
+          description: The callback being registered.
+        accessCode:
+          type: string
+          description: Developer assigned short code
+        clientId:
+          type: string
+          description: App ID
+    ReceivePollResponse:
+      title: ReceivePollResponse
+      description: 'Poll for incoming messages specifying the number of messages to receive
+
+        '
+      type: object
+      properties:
+        batchSize:
+          description: Number of SMSes returned
+          type: integer
+        messages:
+          description: List of returned SMSes
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                description: message status
+                type: string
+              to:
+                description: The mobile number (recipient) that the message was sent to (in E.164 format).
+                type: string
+              from:
+                description: The phone number (sender) that the message was sent from (in E.164 format).
+                type: string
+              message:
+                description: Text of the message that was sent
+                type: string
+              messageId:
+                description: Message Id
+                type: string
+              sentTimestamp:
+                description: The date and time when the message was sent by recipient.
+                type: string
+    Status:
+      title: Status
+      type: string
+      enum:
+      - PENDING
+      - SENT
+      - DELIVERED
+      - EXPIRED
+      - DELETED
+      - UNDELIVERABLE
+      - REJECTED
+      - READ
+      example: DELIVERED
+    Message:
+      title: Message
+      type: object
+      properties:
+        to:
+          description: The number the sms is sent to.
+          type: string
+          example: '+27832008963'
+        deliveryStatus:
+          description: 'Indicates whether or not the sms has been accepted for delivery
+
+            '
+          type: string
+          example: DeliveredToNetwork
+        messageId:
+          description: 'A unique id to check the messages status. Id generated during delivery
+
+            '
+          type: string
+          example: d997474900097a1f0000000008d7e18102cc0901
+        smsStatusURL:
+          description: 'This is the url that can be used to query sms delivery status
+
+            '
+          type: string
+          example: 'https://api.mtn.com/v1/messages/sms/d997474900097a1f0000000008d7e18102cc0901/status
+
+            '
+      required:
+      - to
+      - deliveryStatus
+      - messageId
+      - smsStatusUrl
+    CallbackResponse:
+      required:
+      - accessCode
+      - callbackUrl
+      properties:
+        accessCode:
+          type: string
+          description: Id of the registered callback
+        callbackUrl:
+          type: string
+          description: The callback being registered.
+        status:
+          type: string
+          enum:
+          - successful
+          - unsuccessful
+        message:
+          type: string
+    OutboundPollResponse:
+      title: OutboundPollResponse
+      type: object
+      properties:
+        to:
+          description: 'The phone number (recipient) the message was sent to (in E.164 format).
+
+            '
+          type: string
+          example: '+27832008963'
+        sentTimestamp:
+          description: The date and time when the message was sent.
+          type: string
+          format: date-time
+          example: {}
+        receivedTimestamp:
+          description: The date and time when the message was recieved by recipient.
+          type: string
+          format: date-time
+          example: {}
+        deliveryStatus:
+          $ref: '#/components/schemas/Status'
+    Error:
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: integer
+          description: Application related code.
+        reason:
+          type: integer
+          description: Text that explains the reason for error.
+        message:
+          type: string
+          description: (optional) Text that provide more details and corrective actions related to the error.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://api.mtn.com/oauth/client_credential/accesstoken
