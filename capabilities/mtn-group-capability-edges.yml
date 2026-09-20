@@ -1,0 +1,434 @@
+slug: mtn-group
+provider: MTN Group
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Telecommunications
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 41
+edges:
+- tag: Loyalty Balance
+  spec_file: mtn-group-loyalty-balance-api-openapi.yml
+  capability_id: BC-420.40
+  capability_id_l1: BC-420
+  capability_name: Loyalty & Retention Management
+  confidence: 0.9
+  evidence: '"List Member Balances", "Update Member Balance"; "The TMForum Loyalty API Specification";
+    schemas LoyaltyBalance, LoyaltyProgramProductSpecification'
+  reason: Explicitly a TM Forum Loyalty API managing loyalty member point balances — loyalty programme
+    administration.
+- tag: Loyalty Burn
+  spec_file: mtn-group-loyalty-burn-api-openapi.yml
+  capability_id: BC-420.40
+  capability_id_l1: BC-420
+  capability_name: Loyalty & Retention Management
+  confidence: 0.9
+  evidence: '"Burn Loyalty Balance", "List Burn Transactions"; schemas CreateLoyaltyBurn, LoyaltyCatalogueItemRef,
+    RedeemQuantity'
+  reason: Redemption (burn) of loyalty points against catalogue items — core loyalty programme operation.
+- tag: Loyalty Member
+  spec_file: mtn-group-loyalty-member-api-openapi.yml
+  capability_id: BC-420.40
+  capability_id_l1: BC-420
+  capability_name: Loyalty & Retention Management
+  confidence: 0.9
+  evidence: '"Create Member", "Delete Member" on /loyaltyProgramMember; schema CreateLoyaltyMemberRef'
+  reason: Enrolment and removal of loyalty programme members — loyalty programme membership management.
+- tag: serviceOrder
+  spec_file: mtn-group-serviceorder-api-openapi.yml
+  capability_id: BC-2620.10
+  capability_id_l1: BC-2620
+  capability_name: Service Order Capture
+  confidence: 0.88
+  evidence: TMF 641 - Service Ordering Management ... - Creation of a service order ... POST /serviceOrder
+    createServiceOrder Creates a ServiceOrder
+  reason: TMF641 service ordering surface for a telecom operator — capture/creation and retrieval of service
+    orders maps to Telecom Service Fulfilment, specifically Service Order Capture.
+- tag: Admin Suspend
+  spec_file: mtn-group-admin-suspend-api-openapi.yml
+  capability_id: BC-2640.20
+  capability_id_l1: BC-2640
+  capability_name: SIM & eSIM Lifecycle Management
+  confidence: 0.85
+  evidence: PATCH /sim/admin/suspend/{iccid} "to disable a sim"
+  reason: Operation suspends/disables a SIM identified by ICCID — a direct SIM lifecycle state change,
+    which is SIM & eSIM Lifecycle Management.
+- tag: Balance Management
+  spec_file: mtn-group-balance-management-api-openapi.yml
+  capability_id: BC-2660.20
+  capability_id_l1: BC-2660
+  capability_name: Charging & Rating Management
+  confidence: 0.85
+  evidence: '"allows a reseller to refill/credit a subscriber airtime account from the reseller''s account";
+    POST /accounts/{recipientPhoneNumber}/topUp'
+  reason: Airtime top-up/recharge of a subscriber balance is explicitly within Charging & Rating Management
+    (balance management and recharge across prepaid and postpaid models).
+- tag: Create Customer
+  spec_file: mtn-group-create-customer-api-openapi.yml
+  capability_id: BC-420.10
+  capability_id_l1: BC-420
+  capability_name: Customer Data Management
+  confidence: 0.85
+  evidence: POST /customer createCustomer 'Creates a Customer'; schemas Customer_Create, ContactMedium,
+    RelatedParty
+  reason: TMF-style customer record creation with contact media and related parties is customer master
+    data creation — Customer Data Management.
+- tag: Employee Leaves
+  spec_file: mtn-group-employee-leaves-api-openapi.yml
+  capability_id: BC-300.70
+  capability_id_l1: BC-300
+  capability_name: HR Operations Management
+  confidence: 0.85
+  evidence: GET /employee/leaveBalance  getLeave Balance  Returns leave balance of the employee
+  reason: Employee leave balance retrieval is HR operations/employee records administration, unambiguously
+    human capital management rather than any telecom capability.
+- tag: Loyalty Program Product
+  spec_file: mtn-group-loyalty-program-product-api-openapi.yml
+  capability_id: BC-420.40
+  capability_id_l1: BC-420
+  capability_name: Loyalty & Retention Management
+  confidence: 0.85
+  evidence: '"An API to manage customer loyalty operations ... to get a customer''s loyalty products and
+    rewards"; "List Products" under /loyaltyProgramMember/{memberId}/loyaltyProgramProduct'
+  reason: Retrieval of a loyalty member's enrolled loyalty products and rewards — loyalty programme capability
+    rather than general product catalogue.
+- tag: SimManagementService
+  spec_file: mtn-group-simmanagementservice-api-openapi.yml
+  capability_id: BC-2640.20
+  capability_id_l1: BC-2640
+  capability_name: SIM & eSIM Lifecycle Management
+  confidence: 0.85
+  evidence: '"Initiate the SIM swap process"; "Get sim swap eligibility"; "managing SIM-related operations,
+    including SIM swap initiation, status tracking, eligibility checks"'
+  reason: Clearly SIM lifecycle operations (swap initiation, eligibility, recycle status, starter-pack
+    registration, MSISDN reservation) for subscriber SIMs — Telecom Subscriber Management, SIM & eSIM
+    Lifecycle sub-capability.
+- tag: catalog
+  spec_file: mtn-group-catalog-api-openapi.yml
+  capability_id: BC-2650
+  capability_id_l1: BC-2650
+  capability_name: Telecom Product Catalogue Management
+  confidence: 0.85
+  evidence: '"List or find Catalog objects" / "Retrieves a ''Catalog'' by Id"; schemas ProductOffering_level_2,
+    ProductSpecCharacteristic, ProductOfferingPriceRef'
+  reason: TMF620 product catalogue surface of a mobile operator — catalogues, offerings, specifications
+    and offering prices. Clearly telecom product catalogue management; the specific sub-capability (design
+    vs publication) is not pinned down by read-only operations.
+- tag: salesLead
+  spec_file: mtn-group-saleslead-api-openapi.yml
+  capability_id: BC-410.30
+  capability_id_l1: BC-410
+  capability_name: Opportunity & Pipeline Management
+  confidence: 0.85
+  evidence: '"TMF 699 - Sales ... interfaces for Sales Lead, Sales Opportunity, Sales Quote ... prospect
+    customer"; POST /lead createSalesLead; schemas lead_leadDetails, lead_campaignDetails'
+  reason: Creates and records sales leads from prospects and campaigns — lead/opportunity pipeline management.
+- tag: customerBillOnDemand
+  spec_file: mtn-group-customerbillondemand-api-openapi.yml
+  capability_id: BC-2660
+  capability_id_l1: BC-2660
+  capability_name: Telecom Billing & Revenue Management
+  confidence: 0.82
+  evidence: '"this API allows to request in real-time a customer bill creation and to manage this request";
+    "Creates a CustomerBillOnDemand"'
+  reason: On-demand generation and retrieval of customer bills for a telecom operator sits squarely in
+    telecom billing and revenue management; it straddles bill production and presentment, so no L2 asserted.
+- tag: subscriberinfo
+  spec_file: mtn-group-subscriberinfo-api-openapi.yml
+  capability_id: BC-2640.10
+  capability_id_l1: BC-2640
+  capability_name: Subscriber Identity Management
+  confidence: 0.82
+  evidence: This API to be used to manage a Subscriber information ... Retrieves MTN numbers linked to
+    an ID; schemas SubscriberIdentification, SubscriberAsset
+  reason: Subscriber profile and linked-number retrieval with SubscriberIdentification schema is subscriber
+    identity/profile management in the operator's subscriber data layer.
+- tag: Balance Buckets Methods
+  spec_file: mtn-group-balance-buckets-methods-api-openapi.yml
+  capability_id: BC-2660.20
+  capability_id_l1: BC-2660
+  capability_name: Charging & Rating Management
+  confidence: 0.8
+  evidence: '"Prepay Balance Management"; GET /bucket retrieveBuckets "Retrieve balance information stored
+    in the server"; schema BucketBalance'
+  reason: Retrieval of prepaid balance buckets is core prepaid balance management, part of Charging &
+    Rating Management (balance management across prepaid models).
+- tag: BalanceTransfer
+  spec_file: mtn-group-balancetransfer-api-openapi.yml
+  capability_id: BC-2660.20
+  capability_id_l1: BC-2660
+  capability_name: Charging & Rating Management
+  confidence: 0.8
+  evidence: POST /balanceTransfer createTransfer "request a new transfer operation ... consuming the credit
+    held in a bucket"; schemas TransferBalance, BucketRef
+  reason: Transfer of prepaid credit between subscriber balance buckets is prepaid balance/recharge management
+    under telecom charging.
+- tag: Customer Attribute
+  spec_file: mtn-group-customer-attribute-api-openapi.yml
+  capability_id: BC-420.10
+  capability_id_l1: BC-420
+  capability_name: Customer Data Management
+  confidence: 0.8
+  evidence: PATCH /customer/attribute 'partially update the attribute of a customer' / 'Update a Customer';
+    schemas Customer_Update, Characteristic
+  reason: Maintenance of attributes on the customer master record is Customer Data Management.
+- tag: Mobile Ads Service
+  spec_file: mtn-group-mobile-ads-service-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.8
+  evidence: '"mobile advertisement management capabilities ... including ad targeting, content delivery,
+    campaign management, and performance analytics"; operation "Fetch Adverts"'
+  reason: Delivery of targeted mobile advertising and campaign management is digital marketing execution;
+    L2 choice between digital marketing and demand generation is the residual ambiguity.
+- tag: category
+  spec_file: mtn-group-category-api-openapi.yml
+  capability_id: BC-2650
+  capability_id_l1: BC-2650
+  capability_name: Telecom Product Catalogue Management
+  confidence: 0.8
+  evidence: '"Retrieves a Category by ID"; schemas Category, SubCategoryRef, ProductOfferingRef, ProductSpecificationRef'
+  reason: Category is the product-catalogue taxonomy node in the same TMF620 product catalog definitions,
+    referencing product offerings and specifications — telecom product catalogue management. Sub-capability
+    not determinable from a single read operation.
+- tag: service
+  spec_file: mtn-group-service-api-openapi.yml
+  capability_id: BC-2620
+  capability_id_l1: BC-2620
+  capability_name: Telecom Service Fulfilment Management
+  confidence: 0.8
+  evidence: '"TMF640 - Service Activation and Configuration ... goal is to provide the ability to activate
+    and configure Service"; POST /service createService, PATCH /service/{id} patchService; schemas ServiceStateType,
+    ServiceSpecificationRef'
+  reason: TMF640 instantiates and configures telecom services on the network, i.e. provisioning/activation
+    within service fulfilment. Straddles provisioning and activation sub-capabilities, so L1 only.
+- tag: trouble-ticket-aggregator-controller
+  spec_file: mtn-group-trouble-ticket-aggregator-controller-api-openapi.yml
+  capability_id: BC-2630.30
+  capability_id_l1: BC-2630
+  capability_name: Customer-Impacting Incident Management
+  confidence: 0.78
+  evidence: TMF621 Trouble Ticket Management Aggregator ... This operation Creates a trouble ticket ...
+    PATCH /incident/{id} updateIncidentCategory
+  reason: TMF621 trouble ticketing by customer id with incident categorisation is customer-impacting incident/trouble
+    handling in telecom service assurance; could also be read as generic complaints management, hence
+    0.78.
+- tag: OrderFulfillment
+  spec_file: mtn-group-orderfulfillment-api-openapi.yml
+  capability_id: BC-2620.10
+  capability_id_l1: BC-2620
+  capability_name: Service Order Capture
+  confidence: 0.75
+  evidence: '"Provides ability to buy offer and make payment through Payment Gateway"; "ability to digital
+    channel to purchase different offers"; schemas Order, productRef, customerRef'
+  reason: Digital-channel capture of a customer order for a telecom offer with payment — service order
+    capture within telecom service fulfilment. Some ambiguity as the payment-gateway element also touches
+    billing, so not higher.
+- tag: productOffering
+  spec_file: mtn-group-productoffering-api-openapi.yml
+  capability_id: BC-2650
+  capability_id_l1: BC-2650
+  capability_name: Telecom Product Catalogue Management
+  confidence: 0.75
+  evidence: '"API to provide capability to manage Offering specification of products"; GET /productOffering/deals
+    getDealsResponseUsingGET "Retrieve Deals"; schemas PricePlan, DealDevices, Deals'
+  reason: Exposes commercial offers, deals and price plans of a mobile operator — telecom product/offer
+    catalogue. Ambiguous between offer design and catalogue publication, so L1 only.
+- tag: productOrder
+  spec_file: mtn-group-productorder-api-openapi.yml
+  capability_id: BC-2620.10
+  capability_id_l1: BC-2620
+  capability_name: Service Order Capture
+  confidence: 0.75
+  evidence: POST /productOrder createProductOrder "Creates a ProductOrder"; GET /productOrder/{id} "Retrieves
+    a ProductOrder by customer ID"; schemas ProductOrderItem, ProductOfferingQualificationRef, BillingAccountRef
+  reason: TMF622 product ordering captures customer-facing service orders (with offering qualification
+    and billing account references), matching telecom service order capture.
+- tag: products
+  spec_file: mtn-group-products-api-openapi.yml
+  capability_id: BC-2650
+  capability_id_l1: BC-2650
+  capability_name: Telecom Product Catalogue Management
+  confidence: 0.75
+  evidence: GET /products "View product Catalog"; GET /products/{customerId}/eligibility/{productId} "Check
+    the eligibility of a customer to buy a product"; GET /products/productOffering/roaming "List of roaming
+    ProductOffering objects"
+  reason: Operations expose the operator's product/offer catalogue, bundle pricing, eligibility and roaming
+    offerings — telecom product catalogue management. Spread across catalogue publication and offer eligibility,
+    so L1 only.
+- tag: resource
+  spec_file: mtn-group-resource-api-openapi.yml
+  capability_id: BC-2600.40
+  capability_id_l1: BC-2600
+  capability_name: Network Inventory Management
+  confidence: 0.75
+  evidence: '"TMF639 - Resource Inventory ... Resource Inventory API goal is to provide the ability to
+    manage Resources"; schemas ResourceAdministrativeStateType, ResourceOperationalStateType, ResourceRelationship,
+    RelatedPlaceRefOrValue'
+  reason: TMF639 resource inventory maintains the authoritative record of logical and physical network
+    resources and their relationships — network inventory management for an operator.
+- tag: Sim Swap
+  spec_file: mtn-group-sim-swap-api-openapi.yml
+  capability_id: BC-2640.20
+  capability_id_l1: BC-2640
+  capability_name: SIM & eSIM Lifecycle Management
+  confidence: 0.72
+  evidence: '"This API is used to verify/validate SIM Swap status, SIM Activation status and SIM Recycle
+    status of a customer''s msisdn"'
+  reason: Operations expose SIM swap/activation/recycle status for a subscriber MSISDN — a SIM lifecycle
+    event state check, which sits in SIM & eSIM Lifecycle Management. (A fraud-prevention reading is possible
+    since SIM-swap checks are used for authentication uplift, but nothing in the context mentions fraud,
+    so the lifecycle capability is the grounded choice.)
+- tag: Unified Balance Enquiry
+  spec_file: mtn-group-unified-balance-enquiry-api-openapi.yml
+  capability_id: BC-2660.20
+  capability_id_l1: BC-2660
+  capability_name: Charging & Rating Management
+  confidence: 0.72
+  evidence: '"This API gives the Summary balance i.e., shared balances and personal balances of the customer
+    from IBF. It also returns the XtraTime usage and lonable amount"'
+  reason: Retrieval of prepaid main/dedicated account balances and airtime-credit (XtraTime) figures is
+    balance management within Charging & Rating Management.
+- tag: UsageManagementsSSd
+  spec_file: mtn-group-usagemanagementsssd-api-openapi.yml
+  capability_id: BC-2660
+  capability_id_l1: BC-2660
+  capability_name: Telecom Billing & Revenue Management
+  confidence: 0.72
+  evidence: GET /usage/{id} "consolidated usage history for a subscriber MSISDN ... including SMS, voice,
+    and data records"; GET /usageCharge/{id} "out-of-bundle usage charge lines ... returning rated beyond-bundle
+    consumption"
+  reason: Clearly telecom usage-record and rated-charge retrieval for subscribers, i.e. billing & revenue
+    management; sits between usage mediation and rating so the L2 is left unset.
+- tag: VAS Services
+  spec_file: mtn-group-vas-services-api-openapi.yml
+  capability_id: BC-2620.30
+  capability_id_l1: BC-2620
+  capability_name: Service Provisioning
+  confidence: 0.72
+  evidence: POST /v2/vas "Provision VAS services (applicable to prepaid and postpaid customers)"; GET
+    /v9/vas "Returns a list of applicable VAS services for subscribers"
+  reason: The dominant action is provisioning value-added services onto subscriber accounts, which is
+    telecom service provisioning; a catalogue-read operation is secondary.
+- tag: customerBill
+  spec_file: mtn-group-customerbill-api-openapi.yml
+  capability_id: BC-2660.40
+  capability_id_l1: BC-2660
+  capability_name: Bill Presentment & Inquiry Management
+  confidence: 0.72
+  evidence: '"List or find CustomerBills" / "Retrieves a CustomerBill by ID"; schemas BillCycle, BillingAccount,
+    AppliedPayment, TaxItem'
+  reason: TMF678-style customer bill retrieval and partial update for a mobile operator — bill presentment
+    and inquiry against billing accounts and bill cycles. Some ambiguity between presentment and billing
+    operations, hence 0.72.
+- tag: subscriber-attributes-controller
+  spec_file: mtn-group-subscriber-attributes-controller-api-openapi.yml
+  capability_id: BC-2640.10
+  capability_id_l1: BC-2640
+  capability_name: Subscriber Identity Management
+  confidence: 0.72
+  evidence: GET /v2/subscriber-attributes  Retrieves Subscriber Attributes V2 Details.
+  reason: Retrieval of subscriber attribute profiles from the subscriber data layer of a mobile operator
+    fits Subscriber Identity Management, though operations are read-only and thinly described.
+- tag: Customer Characteristics
+  spec_file: mtn-group-customer-characteristics-api-openapi.yml
+  capability_id: BC-420.10
+  capability_id_l1: BC-420
+  capability_name: Customer Data Management
+  confidence: 0.7
+  evidence: '''An API to retrieve the profile of an MTN customer''; PUT /customers/{customerId}/set-lang
+    ''Sets the Customer’s Language Preference'''
+  reason: Setting a preference attribute on the customer profile maintains customer master data; the single
+    operation is narrow, hence moderate confidence.
+- tag: Customer Mobile Carrier Data
+  spec_file: mtn-group-customer-mobile-carrier-data-api-openapi.yml
+  capability_id: BC-2640.20
+  capability_id_l1: BC-2640
+  capability_name: SIM & eSIM Lifecycle Management
+  confidence: 0.7
+  evidence: '''Get last SIM Swap date of an MSISDN''; GET /subscribers/{subscriberId}/simswap-date ''Retrieve
+    sim-swap date.'''
+  reason: Exposes SIM swap events for a subscriber's MSISDN, which is data produced by SIM lifecycle management.
+    Note it is frequently consumed as a fraud signal, so an alternative reading (fraud prevention controls)
+    exists — confidence moderate.
+- tag: Organizations
+  spec_file: mtn-group-organizations-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.7
+  evidence: '"Assign one or more roles to a member of an organization"; "Digital Identity Management API
+    goal is to provide the ability to manage a digital identity ... associated with credential/authentification
+    method"'
+  reason: Operations manage organization membership invitations and role assignment within a digital-identity
+    service — identity and access management, not a telecom-specific subscriber capability. Some ambiguity
+    between enterprise IAM and developer-platform identity, hence moderate confidence.
+- tag: SIM & MSISDN Availability APIs
+  spec_file: mtn-group-sim-msisdn-availability-apis-api-openapi.yml
+  capability_id: BC-2640.30
+  capability_id_l1: BC-2640
+  capability_name: Numbering Resource Management
+  confidence: 0.7
+  evidence: '"This API provides the option to reserver MSISDN for registration and also validate starter
+    pack pairing"; POST /reservation, POST /availabilityCheck'
+  reason: Reservation and availability checking of MSISDNs (telephone numbering resources) plus SIM/starter-pack
+    pairing validation — stewardship and assignment of numbering resources. Some overlap with SIM lifecycle,
+    so not maximal confidence.
+- tag: Sim Activation
+  spec_file: mtn-group-sim-activation-api-openapi.yml
+  capability_id: BC-2640.20
+  capability_id_l1: BC-2640
+  capability_name: SIM & eSIM Lifecycle Management
+  confidence: 0.7
+  evidence: GET /customers/{customerId}/simActivation/verifyStatus — "Verify sim activation status as
+    true or false."; schema SIMActivationStatus
+  reason: Operations verify and validate the activation state of a customer's SIM, i.e. querying SIM lifecycle
+    state in the subscriber domain. Read-only verification keeps confidence below the top band.
+- tag: TMF632 Party Management
+  spec_file: mtn-group-tmf632-party-management-api-openapi.yml
+  capability_id: BC-420.10
+  capability_id_l1: BC-420
+  capability_name: Customer Data Management
+  confidence: 0.7
+  evidence: '"party management capabilities for MTN customers including individual and organization management";
+    "Register Individual Subscriber"'
+  reason: TMF632 party CRUD over individuals and organizations is customer/party master-record management
+    (create, retrieve, update, delete individual party records) — Customer Data Management. Some ambiguity
+    with subscriber identity management, hence 0.7.
+- tag: individual
+  spec_file: mtn-group-individual-api-openapi.yml
+  capability_id: BC-420.10
+  capability_id_l1: BC-420
+  capability_name: Customer Data Management
+  confidence: 0.7
+  evidence: GET /individual listIndividual List or find Individual details; schemas Individual, IndividualIdentification,
+    ContactMedium, PartyCreditProfile
+  reason: TMF Party Management individual party records with identification, contact medium and credit
+    profile — a customer/party master data surface. Read-only party lookup, so mapped to Customer Data
+    Management with moderate confidence.
+- tag: service-activation-controller
+  spec_file: mtn-group-service-activation-controller-api-openapi.yml
+  capability_id: BC-2620.40
+  capability_id_l1: BC-2620
+  capability_name: Service Activation
+  confidence: 0.7
+  evidence: '"Service Activation and Configuration API goal is to provide the ability to activate and
+    configure Service"; PUT /service/{id} updateStatus "Updates the status of a Service"; schema ActHLRfresh'
+  reason: Aggregator that turns up and updates service activation status (including HLR refresh for mobile
+    subscribers), matching final service turn-up in fulfilment.
+- tag: shoppingCart
+  spec_file: mtn-group-shoppingcart-api-openapi.yml
+  capability_id: BC-2620.10
+  capability_id_l1: BC-2620
+  capability_name: Service Order Capture
+  confidence: 0.7
+  evidence: Creates a ShoppingCart order ... patchSubmitOrder Updates an order for submission ... patchShoppingCartShippingInfo
+  reason: Cart-to-order submission channel for telecom offers (product/price/cart items, shipping info)
+    — multi-channel order capture. Some ambiguity with generic digital commerce, hence moderate confidence.
