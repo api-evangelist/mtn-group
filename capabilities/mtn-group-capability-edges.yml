@@ -11,7 +11,7 @@ capability_model:
   attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
     CC BY 4.0
   notice: NOTICE
-edge_count: 41
+edge_count: 45
 edges:
 - tag: Loyalty Balance
   spec_file: mtn-group-loyalty-balance-api-openapi.yml
@@ -210,6 +210,19 @@ edges:
     ServiceSpecificationRef'
   reason: TMF640 instantiates and configures telecom services on the network, i.e. provisioning/activation
     within service fulfilment. Straddles provisioning and activation sub-capabilities, so L1 only.
+- tag: appliedCustomerBillingRate
+  spec_file: mtn-group-appliedcustomerbillingrate-api-openapi.yml
+  capability_id: BC-4250
+  capability_id_l1: BC-4250
+  capability_name: Subscription Billing & Revenue Management
+  confidence: 0.78
+  evidence: '"The Customer Bill Management API allows to find and retrieve one or several customer bills
+    (also called invoices) produced for a customer"; "applied customer billing rates generated during
+    the rating and billing processes"; schemas AppliedCustomerBillingRate, AppliedBillingTaxRate, BillRef'
+  reason: TMF678 customer bill surface exposing rated charge lines on customer invoices — recurring-billing
+    invoicing and rating. L1 only because the evidence spans both rating/charging and invoicing/statement
+    presentation without clearly naming one sub-capability.
+  recovered_from: sweep-20260828T235257Z-edges.json
 - tag: trouble-ticket-aggregator-controller
   spec_file: mtn-group-trouble-ticket-aggregator-controller-api-openapi.yml
   capability_id: BC-2630.30
@@ -233,6 +246,18 @@ edges:
   reason: Digital-channel capture of a customer order for a telecom offer with payment — service order
     capture within telecom service fulfilment. Some ambiguity as the payment-gateway element also touches
     billing, so not higher.
+- tag: payment methods
+  spec_file: mtn-group-payment-methods-api-openapi.yml
+  capability_id: BC-4250.40
+  capability_id_l1: BC-4250
+  capability_name: Payment Collection & Dunning
+  confidence: 0.75
+  evidence: A suite of apis for customer payment method details; GET /paymentMethod  retrievePaymentMethods;
+    DELETE /paymentMethod/{paymentMethodId}; schemas TokenizedCard, bankDetails
+  reason: Lifecycle management of stored customer payment methods (tokenised cards, bank details), which
+    is explicitly part of Payment Collection & Dunning ('Payment-method management'). No authorisation
+    or dunning operations, hence not higher.
+  recovered_from: sweep-20260828T235257Z-edges.json
 - tag: productOffering
   spec_file: mtn-group-productoffering-api-openapi.yml
   capability_id: BC-2650
@@ -309,6 +334,19 @@ edges:
     consumption"
   reason: Clearly telecom usage-record and rated-charge retrieval for subscribers, i.e. billing & revenue
     management; sits between usage mediation and rating so the L2 is left unset.
+- tag: Users
+  spec_file: mtn-group-users-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.72
+  evidence: '"Digital Identity Management API goal is to provide the ability to manage a digital identity
+    ... A digital identity is associated with credential/authentification method"; GET /users/identity
+    — "search users for their identity details"'
+  reason: TMF720 digital identity operations manage user identity records and their associated credentials/authentication
+    methods, which is identity and access management. Some ambiguity remains between end-customer identity
+    and workforce IAM, hence not top confidence.
+  recovered_from: sweep-20260828T235257Z-edges.json
 - tag: VAS Services
   spec_file: mtn-group-vas-services-api-openapi.yml
   capability_id: BC-2620.30
@@ -416,6 +454,18 @@ edges:
   reason: TMF Party Management individual party records with identification, contact medium and credit
     profile — a customer/party master data surface. Read-only party lookup, so mapped to Customer Data
     Management with moderate confidence.
+- tag: netflix-integration-controller
+  spec_file: mtn-group-netflix-integration-controller-api-openapi.yml
+  capability_id: BC-4240
+  capability_id_l1: BC-4240
+  capability_name: Subscription Lifecycle Management
+  confidence: 0.7
+  evidence: POST /service  netflixIntegrationEnroll  This operation creates a Service entity; PATCH /service/{id}  netflixIntegrationUpgrade;
+    DELETE /service/{id}  This operation deletes a Subscriber; schemas Subscription, Plan, Bundle
+  reason: Enrol, upgrade and terminate a subscriber on a bundled partner service with Subscription/Plan/Bundle
+    schemas — subscription lifecycle across provisioning, modification and cancellation, so L1 only rather
+    than one sub-capability.
+  recovered_from: sweep-20260828T235257Z-edges.json
 - tag: service-activation-controller
   spec_file: mtn-group-service-activation-controller-api-openapi.yml
   capability_id: BC-2620.40
