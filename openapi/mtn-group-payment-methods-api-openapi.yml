@@ -1,6 +1,18 @@
 openapi: 3.2.0
 info:
-  description: "A suite of apis for customer payment method details and its data type.\n\n**07-July-21: ChangeID: 00000**\n- Updated the response body for the /paymentMethod endpoint\n\n**06-December-21:**\n- Added a new method for updating the payment method details, as below:\n  PUT /paymentMethod"
+  description: 'A suite of apis for customer payment method details and its data type.
+
+
+    **07-July-21: ChangeID: 00000**
+
+    - Updated the response body for the /paymentMethod endpoint
+
+
+    **06-December-21:**
+
+    - Added a new method for updating the payment method details, as below:
+
+    PUT /paymentMethod'
   title: Management payment methods API
   version: '1.1'
 servers:
@@ -9,7 +21,7 @@ security:
 - ApiKeyAuth: []
 - OAuth2: []
 tags:
-- name: payment methods
+- name: Payment Methods
 paths:
   /paymentMethod:
     get:
@@ -120,7 +132,7 @@ paths:
                 $ref: '#/components/schemas/Error'
       summary: Retrieve a list of payment methods
       tags:
-      - payment methods
+      - Payment Methods
   /paymentMethod/{paymentMethodId}:
     delete:
       operationId: deletePaymentMethod
@@ -177,7 +189,7 @@ paths:
           description: Internal Server Error
       summary: Delete a payment method
       tags:
-      - payment methods
+      - Payment Methods
     put:
       operationId: updatePaymentMethod
       parameters:
@@ -295,7 +307,7 @@ paths:
                 $ref: '#/components/schemas/Error'
       summary: Update a payment method
       tags:
-      - payment methods
+      - Payment Methods
       requestBody:
         content:
           application/json:
@@ -304,120 +316,6 @@ paths:
         required: true
 components:
   schemas:
-    TokenizedCard:
-      description: Representation of a tokenized card
-      properties:
-        brand:
-          type: string
-          example: MASTERCARD
-        value:
-          type: string
-          description: 'This is the card tokenized string '
-          example: FLdduzYEwOYwdEaC0D5z/vjc/iwQ/P8q3oAdAtvTTg4=
-        tokenType:
-          type: string
-          description: This is an indicator whether it is a debit or credit card
-          example: DEBIT
-        token:
-          type: string
-          description: Masked card number
-          example: 511111xxxxxx1118
-        issuer:
-          type: string
-          description: Card issuer
-          example: FISERV SOLUTIONS, LLC
-        expiry:
-          type: string
-          description: Expiry of a card
-          example: '0423'
-        id:
-          type: string
-          description: can be customer id associated with the token
-          example: 00039930433
-        expired:
-          type: boolean
-          description: Shows if the card is expired or not
-          example: false
-        recurring:
-          type: boolean
-          description: Shows if the card is reccuring or not
-          example: false
-        date:
-          type: string
-          description: a registration date associated with the token
-          example: '2022-04-15T15:39:33.881Z'
-    PaymentMethodType:
-      description: Representation of a payment method
-      properties:
-        id:
-          type: string
-          description: Unique id of the payment method in the server
-        type:
-          type: string
-          enum:
-          - bank
-          - bankCard
-          - tokenizedCard
-          description: Payment method type. The content of the details field depends on the value of this one
-        details:
-          type: object
-          properties:
-            tokenizedCard:
-              description: List of tokenized cards
-              type: array
-              items:
-                $ref: '#/components/schemas/TokenizedCard'
-            bank:
-              description: List of tokenized cards
-              type: array
-              items:
-                $ref: '#/components/schemas/Banks'
-      required:
-      - id
-      - type
-      - details
-    Banks:
-      description: Representation of a tokenized card
-      properties:
-        bankName:
-          type: string
-          example: Zenith
-        accountNumber:
-          type: string
-          description: bank account number
-        bankAccountHolderName:
-          type: string
-          description: bankAccountHolderName
-          example: LINDA HLATSHWAYO
-        bankAccountType:
-          type: string
-          description: bankAccountType
-          example: Savings
-        bankBranchCode:
-          type: string
-          description: bankBranchCode
-          example: '051001'
-        value:
-          type: string
-          description: Account UID
-          example: rEUcjfh+RQysxSJpuFtOddMTYA28G3GI=
-        issuer:
-          type: string
-          description: Account issuer
-          example: Guarantee Trust Bank Plc
-        logoUrl:
-          type: string
-          description: URL Pointing to the logo resource
-          example: https://cdn.pay.mtn.com/bank/fcmb.png
-        reccuring:
-          type: boolean
-          description: Shows if the account is reccuring or not
-          example: false
-        paymentDay:
-          type: string
-          format: date
-          description: Payment date in YYYY-MM-DD
-          example: '2022-02-22'
     bankDetails:
       type: object
       description: Bank details of the customer. Mandatory if paymentMethod is Debit Order
@@ -493,6 +391,120 @@ components:
           type: string
           description: The HTTP method type that was used
           example: PUT
+    Banks:
+      description: Representation of a tokenized card
+      properties:
+        bankName:
+          type: string
+          example: Zenith
+        accountNumber:
+          type: string
+          description: bank account number
+        bankAccountHolderName:
+          type: string
+          description: bankAccountHolderName
+          example: LINDA HLATSHWAYO
+        bankAccountType:
+          type: string
+          description: bankAccountType
+          example: Savings
+        bankBranchCode:
+          type: string
+          description: bankBranchCode
+          example: '051001'
+        value:
+          type: string
+          description: Account UID
+          example: rEUcjfh+RQysxSJpuFtOddMTYA28G3GI=
+        issuer:
+          type: string
+          description: Account issuer
+          example: Guarantee Trust Bank Plc
+        logoUrl:
+          type: string
+          description: URL Pointing to the logo resource
+          example: https://cdn.pay.mtn.com/bank/fcmb.png
+        reccuring:
+          type: boolean
+          description: Shows if the account is reccuring or not
+          example: false
+        paymentDay:
+          type: string
+          format: date
+          description: Payment date in YYYY-MM-DD
+          example: '2022-02-22'
+    PaymentMethodType:
+      description: Representation of a payment method
+      properties:
+        id:
+          type: string
+          description: Unique id of the payment method in the server
+        type:
+          type: string
+          enum:
+          - bank
+          - bankCard
+          - tokenizedCard
+          description: Payment method type. The content of the details field depends on the value of this one
+        details:
+          type: object
+          properties:
+            tokenizedCard:
+              description: List of tokenized cards
+              type: array
+              items:
+                $ref: '#/components/schemas/TokenizedCard'
+            bank:
+              description: List of tokenized cards
+              type: array
+              items:
+                $ref: '#/components/schemas/Banks'
+      required:
+      - id
+      - type
+      - details
+    TokenizedCard:
+      description: Representation of a tokenized card
+      properties:
+        brand:
+          type: string
+          example: MASTERCARD
+        value:
+          type: string
+          description: 'This is the card tokenized string '
+          example: FLdduzYEwOYwdEaC0D5z/vjc/iwQ/P8q3oAdAtvTTg4=
+        tokenType:
+          type: string
+          description: This is an indicator whether it is a debit or credit card
+          example: DEBIT
+        token:
+          type: string
+          description: Masked card number
+          example: 511111xxxxxx1118
+        issuer:
+          type: string
+          description: Card issuer
+          example: FISERV SOLUTIONS, LLC
+        expiry:
+          type: string
+          description: Expiry of a card
+          example: '0423'
+        id:
+          type: string
+          description: can be customer id associated with the token
+          example: 00039930433
+        expired:
+          type: boolean
+          description: Shows if the card is expired or not
+          example: false
+        recurring:
+          type: boolean
+          description: Shows if the card is reccuring or not
+          example: false
+        date:
+          type: string
+          description: a registration date associated with the token
+          example: '2022-04-15T15:39:33.881Z'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

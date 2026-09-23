@@ -89,7 +89,7 @@ paths:
   /messages/ussd/subscription/{subscriptionId}:
     delete:
       description: This function enables 3PP to unsubscribe from receiving MO-generated messages from MADAPI.
-      summary: The 3PP unsubscribes/de-registers from receiving/sending USSD MO/MT messages via MADAPI
+      summary: The 3PP unsubscribes/de-registers from receiving/sending USSD MO/MT messages…
       tags:
       - Accessible to 3PP
       parameters:
@@ -161,6 +161,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: deleteMessagesUssdSubscriptionBySubscriptionId
+      x-operation-id-source: derived
   /messages/ussd/outbound:
     post:
       description: This function is used to send/push USSD MT Message to USSDGW for 3PPs with subscription on MADAPI.
@@ -238,34 +240,48 @@ paths:
         required: true
 components:
   schemas:
-    OutboundRequest:
+    SubscriptionResponse:
       type: object
       required:
-      - sessionId
-      - messageType
-      - msisdn
-      - serviceCode
-      - ussdString
+      - data
+      - statusCode
+      - statusMessage
+      - transactionId
+      - _link
       properties:
-        sessionId:
+        statusCode:
           type: string
-          description: Unique identifier of the session.
-          example: '01235'
-        messageType:
+          example: '0000'
+        statusMessage:
           type: string
-          description: Message type. 0-Begin|1-Continue|2-End|3-Notification|4-Cancel|5-Timeout.
-          example: '0'
-        msisdn:
+          example: Created
+        transactionId:
           type: string
-          description: Mobile number of the message recipient.
-          example: '2252312345'
-        serviceCode:
-          type: string
-          example: '321123'
-        ussdString:
-          type: string
-          description: USSD message content. If messageType is of type 4-Abort, this attribute will contain the abort reason or message.
-          example: Please vote for xxx.
+          example: xyz-0hij0hjh0-9y6
+        data:
+          type: object
+          properties:
+            subscriptionId:
+              type: string
+              description: The value is a random number defined by MADAPI and must be unique. Associated with the registered USSD.
+              example: 123-xyz-456
+        _link:
+          $ref: '#/components/schemas/Links'
+    Links:
+      type: object
+      required:
+      - self
+      properties:
+        self:
+          type: object
+          required:
+          - href
+          description: ''
+          properties:
+            href:
+              type: string
+              description: ''
+              example: https://api.mtn.com/v1/messages/ussd/send
     OutboundResponse:
       type: object
       required:
@@ -305,6 +321,34 @@ components:
               example: '2341234567'
         _link:
           $ref: '#/components/schemas/Links'
+    OutboundRequest:
+      type: object
+      required:
+      - sessionId
+      - messageType
+      - msisdn
+      - serviceCode
+      - ussdString
+      properties:
+        sessionId:
+          type: string
+          description: Unique identifier of the session.
+          example: '01235'
+        messageType:
+          type: string
+          description: Message type. 0-Begin|1-Continue|2-End|3-Notification|4-Cancel|5-Timeout.
+          example: '0'
+        msisdn:
+          type: string
+          description: Mobile number of the message recipient.
+          example: '2252312345'
+        serviceCode:
+          type: string
+          example: '321123'
+        ussdString:
+          type: string
+          description: USSD message content. If messageType is of type 4-Abort, this attribute will contain the abort reason or message.
+          example: Please vote for xxx.
     SubscriptionRequest:
       type: object
       required:
@@ -323,48 +367,6 @@ components:
           type: string
           description: Name of the destined system for the callback url.
           example: AYO
-    Links:
-      type: object
-      required:
-      - self
-      properties:
-        self:
-          type: object
-          required:
-          - href
-          description: ''
-          properties:
-            href:
-              type: string
-              description: ''
-              example: https://api.mtn.com/v1/messages/ussd/send
-    SubscriptionResponse:
-      type: object
-      required:
-      - data
-      - statusCode
-      - statusMessage
-      - transactionId
-      - _link
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Created
-        transactionId:
-          type: string
-          example: xyz-0hij0hjh0-9y6
-        data:
-          type: object
-          properties:
-            subscriptionId:
-              type: string
-              description: The value is a random number defined by MADAPI and must be unique. Associated with the registered USSD.
-              example: 123-xyz-456
-        _link:
-          $ref: '#/components/schemas/Links'
     Error:
       type: object
       required:

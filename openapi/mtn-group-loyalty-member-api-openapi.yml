@@ -39,6 +39,8 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateLoyaltyMemberRef'
         required: true
+      summary: Create member
+      x-summary-source: derived
   /loyaltyProgramMember/{memberId}:
     delete:
       description: This operation deletes a loyalty program member.
@@ -64,18 +66,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      summary: Delete member
+      x-summary-source: derived
 components:
   schemas:
-    ValidFor:
-      title: ValidFor
-      type: object
-      properties:
-        startDateTime:
-          type: string
-        endDateTime:
-          type: string
-      required:
-      - startDateTime
     EngagedPartyRef:
       title: EngagedPartyRef
       type: object
@@ -86,14 +80,59 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ContactMediumRef'
-    MediumRef:
-      title: MediumRef
+    LoyaltySuccessResponse:
+      title: LoyaltyBalanceTransferResponse
+      required:
+      - code
+      - message
+      properties:
+        code:
+          description: An integer coding the error type. This is given to caller so he can translate them if required.
+          type: integer
+        message:
+          description: A short localized string that describes the error.
+          type: string
+        description:
+          description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
+          type: string
+    CharecteristicRef:
+      title: CharecteristicRef
       type: object
       properties:
-        type:
+        name:
           type: string
         value:
           type: string
+    CreateLoyaltyMemberRef:
+      title: CreateLoyaltyMember
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        name:
+          type: string
+        validFor:
+          $ref: '#/components/schemas/ValidFor'
+        charecteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/CharecteristicRef'
+        engageParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/EngagedPartyRef'
+    ValidFor:
+      title: ValidFor
+      type: object
+      properties:
+        startDateTime:
+          type: string
+        endDateTime:
+          type: string
+      required:
+      - startDateTime
     ErrorDetail:
       required:
       - code
@@ -121,46 +160,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MediumRef'
-    CreateLoyaltyMemberRef:
-      title: CreateLoyaltyMember
+    MediumRef:
+      title: MediumRef
       type: object
       properties:
-        id:
-          type: string
-        status:
-          type: string
-        name:
-          type: string
-        validFor:
-          $ref: '#/components/schemas/ValidFor'
-        charecteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/CharecteristicRef'
-        engageParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/EngagedPartyRef'
-    LoyaltySuccessResponse:
-      title: LoyaltyBalanceTransferResponse
-      required:
-      - code
-      - message
-      properties:
-        code:
-          description: An integer coding the error type. This is given to caller so he can translate them if required.
-          type: integer
-        message:
-          description: A short localized string that describes the error.
-          type: string
-        description:
-          description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
-          type: string
-    CharecteristicRef:
-      title: CharecteristicRef
-      type: object
-      properties:
-        name:
+        type:
           type: string
         value:
           type: string

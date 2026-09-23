@@ -74,24 +74,36 @@ paths:
             schema:
               $ref: '#/components/schemas/refundRequest'
         required: true
+      operationId: postBillRefund
+      x-operation-id-source: derived
 components:
   schemas:
-    refundResponse:
+    Error:
       type: object
+      title: Error
+      required:
+      - status
+      - message
       properties:
         statusCode:
           type: string
+          description: Status code returned by provider system
         statusMessage:
           type: string
+          description: Status description
         supportMessage:
           type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
         transactionId:
           type: string
-        data:
-          type: object
-          properties:
-            msn:
-              type: string
+          description: Transaction id returned by the provider system.
     refundRequest:
       type: object
       properties:
@@ -143,32 +155,22 @@ components:
         currency:
           type: string
           description: The currency for the transaction. This value can be hardcoded to "RANDS".
-    Error:
+    refundResponse:
       type: object
-      title: Error
-      required:
-      - status
-      - message
       properties:
         statusCode:
           type: string
-          description: Status code returned by provider system
         statusMessage:
           type: string
-          description: Status description
         supportMessage:
           type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
         transactionId:
           type: string
-          description: Transaction id returned by the provider system.
+        data:
+          type: object
+          properties:
+            msn:
+              type: string
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

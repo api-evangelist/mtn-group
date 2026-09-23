@@ -9,14 +9,14 @@ security:
 - ApiKeyAuth: []
 - OAuth2: []
 tags:
-- name: agents
+- name: Agents
 paths:
   /{agentId}:
     get:
       description: Retrieves the profile of a MTN field agent.
       summary: View agent profile
       tags:
-      - agents
+      - Agents
       parameters:
       - in: path
         name: agentId
@@ -83,12 +83,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getByAgentId
+      x-operation-id-source: derived
   /{customerId}/agentFlag:
     get:
-      summary: To know if any given customer Id (MSISDN) is registered as an MTN field Agent or not
+      summary: To know if any given customer Id (MSISDN) is registered as an MTN field Agent…
       description: To know if any given customer Id (MSISDN) is registered as an MTN field Agent or not
       tags:
-      - agents
+      - Agents
       parameters:
       - in: path
         name: customerId
@@ -144,12 +146,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getByCustomerIdAgentFlag
+      x-operation-id-source: derived
   /{agentId}/devices:
     patch:
       summary: Update device information of a registered MTN Agent
       description: Update device information of a registered MTN Agent. E.g. Updating the IMEI the Agent's assigned Point-of-Sale device
       tags:
-      - agents
+      - Agents
       parameters:
       - in: path
         name: agentId
@@ -238,13 +242,15 @@ paths:
                   geoTag:
                     $ref: '#/components/schemas/geoTagging'
         description: Device Information
+      operationId: patchByAgentIdDevices
+      x-operation-id-source: derived
   /{agentId}/tracking/:
     post:
       operationId: addAppInstallationConfirmationDetails
-      summary: submit app installation confirmation details to the API.
+      summary: submit app installation confirmation details to the API
       description: This endpoint is used to submit app installation confirmation details to the API.
       tags:
-      - agents
+      - Agents
       parameters:
       - in: path
         name: agentId
@@ -310,6 +316,105 @@ paths:
         required: true
 components:
   schemas:
+    Devices:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            devices:
+              type: array
+              items:
+                properties:
+                  IMEI:
+                    type: string
+                    description: Last known IMEI. Unique identifier of Mobile Device used by the MSISDN
+                    example: '990000862471854'
+                  timePeriods:
+                    type: object
+                    properties:
+                      startDateTime:
+                        type: string
+                        format: date-time
+                      endDateTime:
+                        type: string
+                        format: date-time
+    Wallet:
+      type: object
+      required:
+      - name
+      - amount
+      description: Contributing wallets to the aggregated balance
+      properties:
+        name:
+          type: string
+          description: The name of a wallet account. E.g. registrationCommission, simswapCommission
+          example: registrationCommission
+        amount:
+          $ref: '#/components/schemas/Amount'
+    AgentLinks:
+      type: object
+      required:
+      - self
+      properties:
+        self:
+          type: object
+          required:
+          - href
+          description: ''
+          properties:
+            href:
+              type: string
+              description: ''
+              example: https://api.mtn.com/v1/agents/256779999781
+    AGENTPLANS:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            balance:
+              type: array
+              description: The account balance details of an agent
+              items:
+                properties:
+                  balanceType:
+                    type: string
+                    description: Identifies the type of balance. An agent plan may have multiple types of balances for different usage, for example, AgentCommission, voice, SMS, and game services.
+                    example: AgentCommission
+                  category:
+                    type: string
+                    description: Identifies the category of the balance type.
+                    example: AgentCommission
+                  balanceDetail:
+                    $ref: '#/components/schemas/BalanceDetail'
+                  wallets:
+                    type: array
+                    description: The different wallets used to compute the active and unused values of this balance.
+                    items:
+                      $ref: '#/components/schemas/Wallet'
+    installationConfirmationDetailsRequest:
+      type: object
+      required:
+      - appCode
+      - installerCode
+      - msisdn
+      - imei
+      properties:
+        appCode:
+          type: string
+        msisdn:
+          type: string
+        imei:
+          type: string
+        phoneOSVersion:
+          type: string
+        imsi:
+          type: string
+        sourceChannel:
+          type: string
+        deviceLocation:
+          type: string
     installationConfirmationDetailsResponse:
       type: object
       properties:
@@ -321,37 +426,33 @@ components:
           type: string
           format: date-time
           description: Error response code
-    Agent:
+    agentFLAG:
       type: object
       properties:
         statusCode:
           type: string
-          description: Canonical response code. '0000' for success response
           example: '0000'
+        message:
+          type: string
+          description: Response description from the backend system
+          example: Yello, Requestor should be an agent.
+        transactionId:
+          type: string
+          description: Response Id from the backend
         agentId:
           type: string
-          example: '2568810000034'
-        agentKyc:
-          type: array
-          items:
-            $ref: '#/components/schemas/AGENTKYC'
-        agentPlans:
+          description: ID of the agent. It could be MSISDN, email address, or any other agent identifier. if id is msisdn, format must be E.123
+          example: '256789999781'
+        data:
           type: object
-          $ref: '#/components/schemas/AGENTPLANS'
-        activityReport:
-          type: object
-          $ref: '#/components/schemas/ACTIVITYREPORT'
-        _link:
-          type: object
+          properties:
+            isAgent:
+              type: boolean
+              example: false
+        _links:
           allOf:
-          - description: The link to retrieve the Agent KYC details.
+          - description: Links used to access the agent information
           - $ref: '#/components/schemas/AgentLinks'
-    ErrorDefault:
-      properties:
-        error:
-          type: string
-        error_description:
-          type: string
     Amount:
       type: object
       required:
@@ -384,89 +485,30 @@ components:
           - MINUTES
           - SMS
           - FCFA
-    AGENTPLANS:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            balance:
-              type: array
-              description: The account balance details of an agent
-              items:
-                properties:
-                  balanceType:
-                    type: string
-                    description: Identifies the type of balance. An agent plan may have multiple types of balances for different usage, for example, AgentCommission, voice, SMS, and game services.
-                    example: AgentCommission
-                  category:
-                    type: string
-                    description: Identifies the category of the balance type.
-                    example: AgentCommission
-                  balanceDetail:
-                    $ref: '#/components/schemas/BalanceDetail'
-                  wallets:
-                    type: array
-                    description: The different wallets used to compute the active and unused values of this balance.
-                    items:
-                      $ref: '#/components/schemas/Wallet'
-    BalanceDetail:
-      type: object
-      required:
-      - type
-      - activeValue
-      - activeUnit
-      description: The details for a balance type.
-      properties:
-        type:
-          type: string
-          description: This is the type of the value.
-          enum:
-          - CURRENCY
-          - DATA
-          - MINUTES
-          - SMS
-        activeValue:
-          type: string
-          description: This is the aggregated formatted active value of a balance type.
-          example: '136271'
-        activeUnit:
-          type: string
-          description: This is the unit of the aggregated active value.
-          enum:
-          - UGX
-          - ZAR
-          - NGN
-          - GB
-          - MB
-          - MINUTES
-          - SMS
-    agentFLAG:
+    Agent:
       type: object
       properties:
         statusCode:
           type: string
+          description: Canonical response code. '0000' for success response
           example: '0000'
-        message:
-          type: string
-          description: Response description from the backend system
-          example: Yello, Requestor should be an agent.
-        transactionId:
-          type: string
-          description: Response Id from the backend
         agentId:
           type: string
-          description: ID of the agent. It could be MSISDN, email address, or any other agent identifier. if id is msisdn, format must be E.123
-          example: '256789999781'
-        data:
+          example: '2568810000034'
+        agentKyc:
+          type: array
+          items:
+            $ref: '#/components/schemas/AGENTKYC'
+        agentPlans:
           type: object
-          properties:
-            isAgent:
-              type: boolean
-              example: false
-        _links:
+          $ref: '#/components/schemas/AGENTPLANS'
+        activityReport:
+          type: object
+          $ref: '#/components/schemas/ACTIVITYREPORT'
+        _link:
+          type: object
           allOf:
-          - description: Links used to access the agent information
+          - description: The link to retrieve the Agent KYC details.
           - $ref: '#/components/schemas/AgentLinks'
     AGENTKYC:
       type: object
@@ -510,19 +552,6 @@ components:
               type: string
             lastName:
               type: string
-    Wallet:
-      type: object
-      required:
-      - name
-      - amount
-      description: Contributing wallets to the aggregated balance
-      properties:
-        name:
-          type: string
-          description: The name of a wallet account. E.g. registrationCommission, simswapCommission
-          example: registrationCommission
-        amount:
-          $ref: '#/components/schemas/Amount'
     ACTIVITYREPORT:
       type: object
       properties:
@@ -534,21 +563,6 @@ components:
           type: integer
           description: Number of new customers registered by the agent that have done their first airtime recharge
           example: 90
-    AgentLinks:
-      type: object
-      required:
-      - self
-      properties:
-        self:
-          type: object
-          required:
-          - href
-          description: ''
-          properties:
-            href:
-              type: string
-              description: ''
-              example: https://api.mtn.com/v1/agents/256779999781
     geoTagging:
       type: object
       properties:
@@ -571,27 +585,42 @@ components:
           type: string
           format: date-time
           description: datetime when the agent KYC capture/update happened, using IETC-RFC-3339 format
-    installationConfirmationDetailsRequest:
+    BalanceDetail:
       type: object
       required:
-      - appCode
-      - installerCode
-      - msisdn
-      - imei
+      - type
+      - activeValue
+      - activeUnit
+      description: The details for a balance type.
       properties:
-        appCode:
+        type:
           type: string
-        msisdn:
+          description: This is the type of the value.
+          enum:
+          - CURRENCY
+          - DATA
+          - MINUTES
+          - SMS
+        activeValue:
           type: string
-        imei:
+          description: This is the aggregated formatted active value of a balance type.
+          example: '136271'
+        activeUnit:
           type: string
-        phoneOSVersion:
+          description: This is the unit of the aggregated active value.
+          enum:
+          - UGX
+          - ZAR
+          - NGN
+          - GB
+          - MB
+          - MINUTES
+          - SMS
+    ErrorDefault:
+      properties:
+        error:
           type: string
-        imsi:
-          type: string
-        sourceChannel:
-          type: string
-        deviceLocation:
+        error_description:
           type: string
     Error:
       properties:
@@ -610,29 +639,6 @@ components:
         path:
           type: string
           description: ''
-    Devices:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            devices:
-              type: array
-              items:
-                properties:
-                  IMEI:
-                    type: string
-                    description: Last known IMEI. Unique identifier of Mobile Device used by the MSISDN
-                    example: '990000862471854'
-                  timePeriods:
-                    type: object
-                    properties:
-                      startDateTime:
-                        type: string
-                        format: date-time
-                      endDateTime:
-                        type: string
-                        format: date-time
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

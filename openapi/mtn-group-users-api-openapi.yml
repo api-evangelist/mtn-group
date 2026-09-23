@@ -192,6 +192,8 @@ paths:
           application/json;charset=utf-8:
             schema:
               $ref: '#/components/schemas/UserReqObject'
+      operationId: patchUpdateUsersById
+      x-operation-id-source: derived
   /users/{id}:
     get:
       tags:
@@ -254,9 +256,36 @@ paths:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/Error500'
+      operationId: getUsersById
+      x-operation-id-source: derived
 components:
   schemas:
-    userIdentityResponse:
+    Error401:
+      properties:
+        error:
+          type: string
+          description: error message from target system to indicate transaction status.
+          example: missing_authorization
+        error_description:
+          type: string
+          description: detailed error message from target system to indicate transaction status.
+          example: Missing Authorization header
+    UserReqObject:
+      type: object
+      additionalProperties: false
+      properties:
+        appMetadata:
+          type: object
+          description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
+          properties:
+            dpoMetadata:
+              type: object
+              allOf:
+              - $ref: '#/components/schemas/DPOMetadataObject'
+        clientId:
+          type: string
+          description: The ID of the client (application) for which the invitation is being sent.
+    getUserResponse:
       type: object
       properties:
         statusCode:
@@ -274,41 +303,37 @@ components:
         data:
           type: object
           properties:
-            users:
-              type: array
-              items:
-                properties:
-                  appMetadata:
-                    type: object
-                    description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
-                    properties:
-                      profile:
-                        type: object
-                        properties:
-                          encodedUsername:
-                            type: string
-                            description: username in encoded format
-                            example: bWFraGlsMDA2QGdtYWlsLmNvbQ
-                          phoneVerified:
-                            type: boolean
-                            description: Whether the user's phone number is verified
-                            example: 'false'
-                          profileType:
-                            type: string
-                            description: profile communication
-                            example: email_only
-                          unwantedPatterns:
-                            type: boolean
-                            description: any pattern identified
-                            example: 'false'
-                          emailAlreadyExist:
-                            type: boolean
-                            description: Checks if user email already exit in active directory
-                            example: false
-                      dpoMetadata:
-                        type: object
-                        allOf:
-                        - $ref: '#/components/schemas/DPOMetadataObject'
+            user:
+              type: object
+              allOf:
+              - $ref: '#/components/schemas/UserObject'
+            userId:
+              type: string
+              description: The user's unique identifier
+              example: auth0|5f22f7f57f5d4b45c5c3292a
+            createdAt:
+              type: string
+              format: date-time
+              description: When the user was created
+              example: '2020-07-30T14:35:33.782Z'
+            updatedAt:
+              type: string
+              format: date-time
+              description: When the user was last updated
+              example: '2020-07-30T14:35:33.782Z'
+            lastIP:
+              type: string
+              description: The last IP address from which the user logged in
+              example: 192.0.2.0
+            lastLogin:
+              type: string
+              format: date-time
+              description: The last time the user logged in
+              example: '2020-07-30T14:35:33.782Z'
+            loginCount:
+              type: integer
+              description: The number of times the user has logged in
+              example: 42
     Error400:
       properties:
         statusCode:
@@ -323,21 +348,41 @@ components:
         transactionId:
           type: string
           description: This is the same transactionId that is sent in the request
-    UserReqObject:
+    DPOMetadataObject:
       type: object
       additionalProperties: false
       properties:
-        appMetadata:
-          type: object
-          description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
-          properties:
-            dpoMetadata:
-              type: object
-              allOf:
-              - $ref: '#/components/schemas/DPOMetadataObject'
-        clientId:
-          type: string
-          description: The ID of the client (application) for which the invitation is being sent.
+        services:
+          type: array
+          items:
+            type: object
+            properties:
+              asset:
+                type: string
+                example: partner
+              assetId:
+                type: string
+                description: Permanent or temporary Partner ID
+                example: '23456'
+              roles:
+                type: array
+                items:
+                  type: string
+                  example: Admin
+              metadata:
+                type: object
+                properties:
+                  tempId:
+                    type: string
+                    description: Temporary Partner ID
+                    example: '56353'
+                  status:
+                    type: string
+                    example: Enabled
+                  termsAccepted:
+                    type: boolean
+                    description: Whether the terms have been accepted
+                    example: false
     Error405:
       properties:
         timestamp:
@@ -359,16 +404,16 @@ components:
         path:
           type: string
           description: The path that caused the error
-    Error401:
+    Error500:
       properties:
-        error:
+        statusMessage:
           type: string
-          description: error message from target system to indicate transaction status.
-          example: missing_authorization
-        error_description:
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        statusCode:
           type: string
-          description: detailed error message from target system to indicate transaction status.
-          example: Missing Authorization header
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3001'
     UserObject:
       type: object
       properties:
@@ -451,17 +496,7 @@ components:
           type: string
           description: The user's family name
           example: Doe
-    Error500:
-      properties:
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: Internal Server Error
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '3001'
-    getUserResponse:
+    userIdentityResponse:
       type: object
       properties:
         statusCode:
@@ -479,72 +514,41 @@ components:
         data:
           type: object
           properties:
-            user:
-              type: object
-              allOf:
-              - $ref: '#/components/schemas/UserObject'
-            userId:
-              type: string
-              description: The user's unique identifier
-              example: auth0|5f22f7f57f5d4b45c5c3292a
-            createdAt:
-              type: string
-              format: date-time
-              description: When the user was created
-              example: '2020-07-30T14:35:33.782Z'
-            updatedAt:
-              type: string
-              format: date-time
-              description: When the user was last updated
-              example: '2020-07-30T14:35:33.782Z'
-            lastIP:
-              type: string
-              description: The last IP address from which the user logged in
-              example: 192.0.2.0
-            lastLogin:
-              type: string
-              format: date-time
-              description: The last time the user logged in
-              example: '2020-07-30T14:35:33.782Z'
-            loginCount:
-              type: integer
-              description: The number of times the user has logged in
-              example: 42
-    DPOMetadataObject:
-      type: object
-      additionalProperties: false
-      properties:
-        services:
-          type: array
-          items:
-            type: object
-            properties:
-              asset:
-                type: string
-                example: partner
-              assetId:
-                type: string
-                description: Permanent or temporary Partner ID
-                example: '23456'
-              roles:
-                type: array
-                items:
-                  type: string
-                  example: Admin
-              metadata:
-                type: object
+            users:
+              type: array
+              items:
                 properties:
-                  tempId:
-                    type: string
-                    description: Temporary Partner ID
-                    example: '56353'
-                  status:
-                    type: string
-                    example: Enabled
-                  termsAccepted:
-                    type: boolean
-                    description: Whether the terms have been accepted
-                    example: false
+                  appMetadata:
+                    type: object
+                    description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
+                    properties:
+                      profile:
+                        type: object
+                        properties:
+                          encodedUsername:
+                            type: string
+                            description: username in encoded format
+                            example: bWFraGlsMDA2QGdtYWlsLmNvbQ
+                          phoneVerified:
+                            type: boolean
+                            description: Whether the user's phone number is verified
+                            example: 'false'
+                          profileType:
+                            type: string
+                            description: profile communication
+                            example: email_only
+                          unwantedPatterns:
+                            type: boolean
+                            description: any pattern identified
+                            example: 'false'
+                          emailAlreadyExist:
+                            type: boolean
+                            description: Checks if user email already exit in active directory
+                            example: false
+                      dpoMetadata:
+                        type: object
+                        allOf:
+                        - $ref: '#/components/schemas/DPOMetadataObject'
     Error404:
       properties:
         status:

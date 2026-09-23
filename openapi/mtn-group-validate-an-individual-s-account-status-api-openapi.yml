@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
   version: v1
-  title: MTN Accountholders Validate an Individual's Account Status API
+  title: MTN Accountholders Validate an Individual's Account Status…
   contact:
     name: MTN API Support
     email: api.support@mtn.com
@@ -117,41 +117,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getAccountholdersByIdValidate
+      x-operation-id-source: derived
 components:
   schemas:
-    AccountholderStatus:
+    AccountholderStatusResponse__links_self:
       type: object
       properties:
-        statusCode:
+        href:
           type: string
-          description: HTTP error code extension
-        statusMessage:
-          type: string
-          description: Status description of the response
-        customerId:
-          type: string
-          example: MTN123456
-          description: Id provided in the input
-        sequenceNo:
-          type: string
-          example: 1234
-          description: A unique id for tracing all requests
-        data:
-          $ref: '#/components/schemas/validationData'
-        _links:
-          $ref: '#/components/schemas/AccountholderStatusResponse__links'
-    AccountholderProfileResponse__links:
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/AccountholderProfileResponse__links_self'
-      description: Relevant links to the Accoutholder Profile.
-    AccountholderStatusResponse__links:
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/AccountholderStatusResponse__links_self'
-      description: Relevant links to the Accoutholder Profile.
+          example: https://host:port/v1/accountholderstatus/12345
+          description: Hyperlink to access the Accountholder's Status.
     validationData:
       type: object
       properties:
@@ -180,13 +156,6 @@ components:
           description: List of additional values returned from the provider system
           items:
             type: string
-    AccountholderStatusResponse__links_self:
-      type: object
-      properties:
-        href:
-          type: string
-          example: https://host:port/v1/accountholderstatus/12345
-          description: Hyperlink to access the Accountholder's Status.
     AccountholderProfileResponse__links_self:
       type: object
       properties:
@@ -194,6 +163,39 @@ components:
           type: string
           example: https://host:port/v1/accountholders/12345
           description: Hyperlink to access the Accountholder's Profile.
+    AccountholderStatusResponse__links:
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/AccountholderStatusResponse__links_self'
+      description: Relevant links to the Accoutholder Profile.
+    AccountholderStatus:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+        statusMessage:
+          type: string
+          description: Status description of the response
+        customerId:
+          type: string
+          example: MTN123456
+          description: Id provided in the input
+        sequenceNo:
+          type: string
+          example: 1234
+          description: A unique id for tracing all requests
+        data:
+          $ref: '#/components/schemas/validationData'
+        _links:
+          $ref: '#/components/schemas/AccountholderStatusResponse__links'
+    AccountholderProfileResponse__links:
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links_self'
+      description: Relevant links to the Accoutholder Profile.
     Error:
       type: object
       required:

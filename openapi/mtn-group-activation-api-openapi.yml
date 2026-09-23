@@ -154,34 +154,107 @@ paths:
             schema:
               $ref: '#/components/schemas/ActivateTokenRequest'
         required: true
+      operationId: postBillActivateToken
+      x-operation-id-source: derived
 components:
   schemas:
-    RelatedParty:
+    ErrorSvcNotFound:
       type: object
-      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      title: Error
       required:
-      - '@referredType'
-      - id
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 3000
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Service Not Found'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ErrorSvcIdSvcRefNotFound:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 3004
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Service ID or Service Ref Not Found'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ProductTerm:
+      type: object
+      description: Description of a productTerm linked to this product. This represent a commitment with a duration
+      properties:
+        description:
+          type: string
+          description: Description of the productTerm
+        name:
+          type: string
+          description: Name of the productTerm
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    ProductOfferingRef:
+      type: object
+      description: ProductOffering reference. A product offering represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
       properties:
         id:
           type: string
-          description: Unique identifier of a related entity eg MSISDN.
-          example: 9994746
-        role:
+          description: Unique identifier of a related entity.
+        name:
           type: string
-          description: Role played by the related party
-          example: Customer
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-    Price:
+          description: Name of unique identifier of related entity
+    ProductOrderItem2:
       type: object
-      description: Provides all amounts (tax included, duty free, tax rate), used currency and percentage to apply for Price Alteration.
+      description: An identified part of the order. A product order is decomposed into one or more order items.
       properties:
-        taxIncludedAmount:
-          $ref: '#/components/schemas/Money'
-          description: All taxes included amount (expressed in the given currency)
-    ErrorActSubsEx:
+        product:
+          $ref: '#/components/schemas/ProductRefOrValue2'
+    ProductRefOrValue2:
+      type: object
+      description: A product to be created defined by value or existing defined by reference. The polymorphic attributes @type, @schemaLocation & @referredType are related to the product entity and not the RelatedProductRefOrValue class itself
+      properties:
+        characteristic:
+          type: array
+          description: product characteristics such as amount, type, etc
+          items:
+            $ref: '#/components/schemas/productCharacteristic2'
+    Error:
       type: object
       title: Error
       required:
@@ -191,15 +264,12 @@ components:
         statusCode:
           type: string
           description: Status code returned by provider system
-          example: 1002
         statusMessage:
           type: string
           description: Status description
-          example: 'DEP ::: Active Subscription Exists'
         supportMessage:
           type: string
           description: More error details and corrective measures
-          example: Backend specific response
         path:
           type: string
           description: The path that caused the error
@@ -210,64 +280,14 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
-    ErrorInvBillRate:
+    ProductOrderItem:
       type: object
-      title: Error
-      required:
-      - status
-      - message
+      description: An identified part of the order. A product order is decomposed into one or more order items.
       properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 1006
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Invalid Billing Rate'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-    ErrorSubNotActive:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 1003
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Subscription Not Active'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
+        product:
+          $ref: '#/components/schemas/ProductRefOrValue'
+        itemTotalPrice:
+          $ref: '#/components/schemas/OrderPrice'
     CreateOrderResponse:
       required:
       - statusCode
@@ -341,86 +361,6 @@ components:
                   example: '2023-02-22'
             subscription:
               $ref: '#/components/schemas/ProductOrder2'
-    ProductRefOrValue2:
-      type: object
-      description: A product to be created defined by value or existing defined by reference. The polymorphic attributes @type, @schemaLocation & @referredType are related to the product entity and not the RelatedProductRefOrValue class itself
-      properties:
-        characteristic:
-          type: array
-          description: product characteristics such as amount, type, etc
-          items:
-            $ref: '#/components/schemas/productCharacteristic2'
-    ErrorInvMsisdn:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 1008
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Invalid MSISDN'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-    ErrorPendingSubEx:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 1005
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Pending Subscription Exists'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-    ProductTerm:
-      type: object
-      description: Description of a productTerm linked to this product. This represent a commitment with a duration
-      properties:
-        description:
-          type: string
-          description: Description of the productTerm
-        name:
-          type: string
-          description: Name of the productTerm
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
     ErrorBadReq:
       type: object
       title: Error
@@ -450,35 +390,6 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
-    ErrorSubChanNotFound:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 1007
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Subscription Channel Not Found'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
     RelatedChannel:
       type: object
       description: Related channel to another entity. May be online web, mobile app, social ,etc.
@@ -494,7 +405,7 @@ components:
         href:
           type: string
           description: Reference of the related entity.
-    ErrorMsisdnNotProvided:
+    ErrorActSubsEx:
       type: object
       title: Error
       required:
@@ -504,11 +415,11 @@ components:
         statusCode:
           type: string
           description: Status code returned by provider system
-          example: 4003
+          example: 1002
         statusMessage:
           type: string
           description: Status description
-          example: 'DEP ::: MSISDN Not Provided'
+          example: 'DEP ::: Active Subscription Exists'
         supportMessage:
           type: string
           description: More error details and corrective measures
@@ -523,7 +434,7 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
-    ErrorSubNotFound:
+    ErrorInvMsisdn:
       type: object
       title: Error
       required:
@@ -533,11 +444,11 @@ components:
         statusCode:
           type: string
           description: Status code returned by provider system
-          example: 1000
+          example: 1008
         statusMessage:
           type: string
           description: Status description
-          example: 'DEP ::: Subscription Not Found'
+          example: 'DEP ::: Invalid MSISDN'
         supportMessage:
           type: string
           description: More error details and corrective measures
@@ -552,15 +463,7 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
-    ProductOrderItem:
-      type: object
-      description: An identified part of the order. A product order is decomposed into one or more order items.
-      properties:
-        product:
-          $ref: '#/components/schemas/ProductRefOrValue'
-        itemTotalPrice:
-          $ref: '#/components/schemas/OrderPrice'
-    Error:
+    ErrorInvBillRate:
       type: object
       title: Error
       required:
@@ -570,12 +473,15 @@ components:
         statusCode:
           type: string
           description: Status code returned by provider system
+          example: 1006
         statusMessage:
           type: string
           description: Status description
+          example: 'DEP ::: Invalid Billing Rate'
         supportMessage:
           type: string
           description: More error details and corrective measures
+          example: Backend specific response
         path:
           type: string
           description: The path that caused the error
@@ -586,7 +492,50 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
-    ErrorInvAPIVersion:
+    RelatedParty:
+      type: object
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      required:
+      - '@referredType'
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity eg MSISDN.
+          example: 9994746
+        role:
+          type: string
+          description: Role played by the related party
+          example: Customer
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    ProductStatusType:
+      type: string
+      description: Possible values for the status of the product
+      enum:
+      - created
+      - pendingActive
+      - cancelled
+      - active
+      - pendingTerminate
+      - terminated
+      - suspended
+      - 'aborted '
+    Price:
+      type: object
+      description: Provides all amounts (tax included, duty free, tax rate), used currency and percentage to apply for Price Alteration.
+      properties:
+        taxIncludedAmount:
+          $ref: '#/components/schemas/Money'
+          description: All taxes included amount (expressed in the given currency)
+    productCharacteristic2:
+      type: object
+      properties:
+        name:
+          type: string
+          example: hulaya data
+    ErrorSubNotActive:
       type: object
       title: Error
       required:
@@ -596,11 +545,11 @@ components:
         statusCode:
           type: string
           description: Status code returned by provider system
-          example: 3001
+          example: 1003
         statusMessage:
           type: string
           description: Status description
-          example: 'DEP ::: Invalid API Version'
+          example: 'DEP ::: Subscription Not Active'
         supportMessage:
           type: string
           description: More error details and corrective measures
@@ -624,35 +573,6 @@ components:
         id:
           type: string
           description: Unique identifier of a related entity.
-    ErrorSvcIdSvcRefNotFound:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 3004
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Service ID or Service Ref Not Found'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
     ProductOrder2:
       type: object
       description: A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
@@ -716,13 +636,155 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
-    AgreementItemRef2:
+    Money:
       type: object
-      description: Agreement reference. An agreement represents a contract or arrangement, either written or verbal and sometimes enforceable by law, such as a service level agreement or a customer price agreement. An agreement involves a number of other business entities, such as products, services, and resources and/or their specifications.
+      description: A base / value business entity used to represent money
       properties:
-        id:
+        unit:
           type: string
-          description: Unique identifier of a related entity.
+          description: Currency (ISO4217 norm uses 3 letters to define the currency)
+        value:
+          type: number
+          format: float
+          description: A positive floating point number
+    productCharacteristic:
+      type: object
+      properties:
+        name:
+          type: string
+          example: hulaya data
+        value:
+          type: number
+          example: 6
+    ErrorInvAPIVersion:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 3001
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Invalid API Version'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ErrorPendingSubEx:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1005
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Pending Subscription Exists'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    OrderPrice:
+      type: object
+      description: An amount, usually of money, that represents the actual price paid by the Customer for this item or this order
+      properties:
+        priceType:
+          type: string
+          description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth
+        recurringChargePeriod:
+          type: string
+          description: Could be month, week...
+        price:
+          $ref: '#/components/schemas/Price'
+          description: a structure used to define price amount
+    ErrorMsisdnNotProvided:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 4003
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: MSISDN Not Provided'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ErrorSubNotFound:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1000
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Subscription Not Found'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
     ProductRefOrValue:
       type: object
       description: A product to be created defined by value or existing defined by reference. The polymorphic attributes @type, @schemaLocation & @referredType are related to the product entity and not the RelatedProductRefOrValue class itself
@@ -757,71 +819,6 @@ components:
         terminationDate:
           type: string
           description: Is the date when the product was terminated.
-    productCharacteristic2:
-      type: object
-      properties:
-        name:
-          type: string
-          example: hulaya data
-    Money:
-      type: object
-      description: A base / value business entity used to represent money
-      properties:
-        unit:
-          type: string
-          description: Currency (ISO4217 norm uses 3 letters to define the currency)
-        value:
-          type: number
-          format: float
-          description: A positive floating point number
-    productCharacteristic:
-      type: object
-      properties:
-        name:
-          type: string
-          example: hulaya data
-        value:
-          type: number
-          example: 6
-    ProductOfferingRef:
-      type: object
-      description: ProductOffering reference. A product offering represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity.
-        name:
-          type: string
-          description: Name of unique identifier of related entity
-    ErrorSvcNotFound:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 3000
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Service Not Found'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
     ActivateTokenRequest:
       type: object
       properties:
@@ -876,37 +873,42 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/RelatedChannel'
-    ProductOrderItem2:
+    ErrorSubChanNotFound:
       type: object
-      description: An identified part of the order. A product order is decomposed into one or more order items.
+      title: Error
+      required:
+      - status
+      - message
       properties:
-        product:
-          $ref: '#/components/schemas/ProductRefOrValue2'
-    ProductStatusType:
-      type: string
-      description: Possible values for the status of the product
-      enum:
-      - created
-      - pendingActive
-      - cancelled
-      - active
-      - pendingTerminate
-      - terminated
-      - suspended
-      - 'aborted '
-    OrderPrice:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1007
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Subscription Channel Not Found'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    AgreementItemRef2:
       type: object
-      description: An amount, usually of money, that represents the actual price paid by the Customer for this item or this order
+      description: Agreement reference. An agreement represents a contract or arrangement, either written or verbal and sometimes enforceable by law, such as a service level agreement or a customer price agreement. An agreement involves a number of other business entities, such as products, services, and resources and/or their specifications.
       properties:
-        priceType:
+        id:
           type: string
-          description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth
-        recurringChargePeriod:
-          type: string
-          description: Could be month, week...
-        price:
-          $ref: '#/components/schemas/Price'
-          description: a structure used to define price amount
+          description: Unique identifier of a related entity.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

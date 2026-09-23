@@ -15,7 +15,7 @@ paths:
     post:
       tags:
       - Get access token
-      summary: Endpoint to request an access token for use in subsequent api calls that require a bearer token in the authorization header.
+      summary: Endpoint to request an access token for use in subsequent api calls that…
       description: OAuth2 endpoint that provides an access token for consumers of other endpoints.
       parameters:
       - name: grant_type
@@ -57,8 +57,22 @@ paths:
                 client_secret:
                   type: string
                   description: The client secret / password.
+      operationId: postAccessToken
+      x-operation-id-source: derived
 components:
   schemas:
+    BadRequest:
+      type: object
+      properties:
+        error:
+          type: string
+          example: unsupported_grant_type
+    Unauthorized:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_client
     SuccessToken:
       type: object
       properties:
@@ -107,15 +121,3 @@ components:
         status:
           description: N/A
           type: string
-    BadRequest:
-      type: object
-      properties:
-        error:
-          type: string
-          example: unsupported_grant_type
-    Unauthorized:
-      type: object
-      properties:
-        error:
-          type: string
-          example: invalid_client

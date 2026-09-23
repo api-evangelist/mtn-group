@@ -1,16 +1,15 @@
 openapi: 3.2.0
 info:
-  title: Mtn Group Catalog API
+  title: Product Management Catalog API
+  description: API to provide capability to manage catalog, category, Offerings, Offering price and specification of products.
   version: 1.0.0
-  description: 'Operations tagged catalog across 4 of this provider''s published API definitions: mtn-group-product-catalog-coe.yml, mtn-group-product-catalog-management-v1.yml, mtn-group-product-catalogue-management.yml, mtn-group-tmf-product-catalog-tmf620.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.mtn.com/tmf-api/productcatalog/v1
-- url: https://api.mtn.com/productCatalogManagement/v1/
 security:
 - ApiKeyAuth: []
 - OAuth2: []
 tags:
-- name: catalog
+- name: Catalog
 paths:
   /catalog:
     get:
@@ -18,7 +17,7 @@ paths:
       summary: List or find Catalog objects
       description: This operation list or find Catalog entities
       tags:
-      - catalog
+      - Catalog
       parameters:
       - name: transactionId
         in: header
@@ -1083,14 +1082,12 @@ paths:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/Error'
-    servers:
-    - url: https://api.mtn.com/tmf-api/productcatalog/v1
   /catalog/{id}:
     get:
       operationId: retrieveCatalog
       summary: Retrieves a 'Catalog' by Id
       tags:
-      - catalog
+      - Catalog
       parameters:
       - name: id
         description: Identifier of the Category
@@ -1172,192 +1169,8 @@ paths:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/Error'
-    servers:
-    - url: https://api.mtn.com/tmf-api/productcatalog/v1
 components:
   schemas:
-    ProductTerm:
-      type: object
-      description: Description of a productTerm linked to this product. This represent a commitment with a duration
-      properties:
-        validFor:
-          $ref: '#/components/schemas/validity'
-    Response_Catalog:
-      type: object
-      required:
-      - resultCode
-      - resultDescription
-      - catalog
-      properties:
-        resultCode:
-          type: string
-          description: Result code. Example- '0000'
-        resultDescription:
-          type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-        catalog:
-          type: array
-          items:
-            $ref: '#/components/schemas/Catalog_level-1'
-    Catalog_level-1:
-      type: object
-      description: A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the Catalog
-          example: 63514374jfgfs
-        name:
-          type: string
-          description: Name of the catalog
-          example: Ketir Bundles
-    validity:
-      type: object
-      properties:
-        amount:
-          type: number
-          description: number representing the validity
-          example: 7
-        unitofmeasure:
-          type: string
-          description: amount unit of mesure e.g days, month, weekly
-          example: days
-    ProductOffering_level_2:
-      type: object
-      required:
-      - productSpecification
-      - id
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        productSpecification:
-          $ref: '#/components/schemas/productSpecification'
-        productOfferingTerm:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductTerm'
-        productOfferingPrice:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductOfferingPriceRef'
-    TimePeriod:
-      type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
-      properties:
-        endDateTime:
-          type: string
-          format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
-          type: string
-          format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
-    price:
-      type: object
-      properties:
-        value:
-          type: number
-          description: number representing value of the price/amount
-          example: 10
-        unit:
-          type: string
-          description: unit of mesureof the value/amount eg. SSP
-          example: SSP
-    Catalog_level-2:
-      type: object
-      required:
-      - category
-      properties:
-        name:
-          type: string
-        businessType:
-          type: string
-        version:
-          type: string
-        lifecycleStatus:
-          type: string
-        category:
-          $ref: '#/components/schemas/Category_level_2'
-    ProdSpecCharValueUse:
-      type: object
-      description: A use of the ProdSpecCharacteristicValue by a ProductOffering to which additional properties (attributes) apply or override the properties of similar properties contained in ProdSpecCharacteristicValue. It should be noted that characteristics which their value(s) addressed by this object must exist in corresponding product specification. The available characteristic values for a ProductSpecCharacteristic in a Product specification can be modified at the ProductOffering level. For example, a characteristic 'Color' might have values White, Blue, Green, and Red. But, the list of values can be restricted to e.g. White and Blue in an associated product offering. It should be noted that the list of values in 'ProdSpecCharValueUse' is a strict subset of the list of values as defined in the corresponding product specification characteristics.
-      properties:
-        name:
-          type: string
-          description: Name of the associated productSpecCharacteristic
-        description:
-          type: string
-          description: A narrative that explains in detail what the productSpecCharacteristic is
-        valueType:
-          type: string
-          description: A kind of value that the characteristic can take on, such as numeric, text and so forth
-        minCardinality:
-          type: integer
-          description: The minimum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where zero is the value for the minCardinality.
-        maxCardinality:
-          type: integer
-          description: The maximum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where five is the value for the maxCardinality.
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the productSpecCharacteristic is valid
-        productSpecCharacteristicValue:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductSpecCharacteristicRef'
-    productSpecification:
-      type: array
-      items:
-        $ref: '#/components/schemas/productSpecificationRef'
-    Response_Catalog2:
-      type: object
-      required:
-      - resultCode
-      - resultDescription
-      - catalog
-      properties:
-        resultCode:
-          type: string
-          description: Result code. Example- '0000'
-        resultDescription:
-          type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-        catalog:
-          $ref: '#/components/schemas/Catalog_level-2'
-    productSpecificationRef:
-      type: object
-      required:
-      - productSpecCharacteristic
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        lifeCycleStatus:
-          type: string
-        href:
-          type: string
-        version:
-          type: string
-        lastUpdate:
-          type: string
-        type:
-          type: string
-        productSpecCharacteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductSpecCharacteristic'
-    ProductSpecCharacteristic:
-      type: array
-      items:
-        $ref: '#/components/schemas/ProductSpecCharacteristicRef'
     ProductOfferingPriceRef:
       type: object
       properties:
@@ -1388,6 +1201,119 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/price'
+    TimePeriod:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          type: string
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+    Catalog_level-2:
+      type: object
+      required:
+      - category
+      properties:
+        name:
+          type: string
+        businessType:
+          type: string
+        version:
+          type: string
+        lifecycleStatus:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category_level_2'
+    validity:
+      type: object
+      properties:
+        amount:
+          type: number
+          description: number representing the validity
+          example: 7
+        unitofmeasure:
+          type: string
+          description: amount unit of mesure e.g days, month, weekly
+          example: days
+    Response_Catalog2:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      - catalog
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        catalog:
+          $ref: '#/components/schemas/Catalog_level-2'
+    price:
+      type: object
+      properties:
+        value:
+          type: number
+          description: number representing value of the price/amount
+          example: 10
+        unit:
+          type: string
+          description: unit of mesureof the value/amount eg. SSP
+          example: SSP
+    Response_Catalog:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      - catalog
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        catalog:
+          type: array
+          items:
+            $ref: '#/components/schemas/Catalog_level-1'
+    ProdSpecCharValueUse:
+      type: object
+      description: A use of the ProdSpecCharacteristicValue by a ProductOffering to which additional properties (attributes) apply or override the properties of similar properties contained in ProdSpecCharacteristicValue. It should be noted that characteristics which their value(s) addressed by this object must exist in corresponding product specification. The available characteristic values for a ProductSpecCharacteristic in a Product specification can be modified at the ProductOffering level. For example, a characteristic 'Color' might have values White, Blue, Green, and Red. But, the list of values can be restricted to e.g. White and Blue in an associated product offering. It should be noted that the list of values in 'ProdSpecCharValueUse' is a strict subset of the list of values as defined in the corresponding product specification characteristics.
+      properties:
+        name:
+          type: string
+          description: Name of the associated productSpecCharacteristic
+        description:
+          type: string
+          description: A narrative that explains in detail what the productSpecCharacteristic is
+        valueType:
+          type: string
+          description: A kind of value that the characteristic can take on, such as numeric, text and so forth
+        minCardinality:
+          type: integer
+          description: The minimum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where zero is the value for the minCardinality.
+        maxCardinality:
+          type: integer
+          description: The maximum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where five is the value for the maxCardinality.
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the productSpecCharacteristic is valid
+        productSpecCharacteristicValue:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSpecCharacteristicRef'
     Category_level_2:
       type: object
       required:
@@ -1395,6 +1321,98 @@ components:
       properties:
         productoffering:
           $ref: '#/components/schemas/ProductOffering_level_2'
+    ProductOffering_level_2:
+      type: object
+      required:
+      - productSpecification
+      - id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        productSpecification:
+          $ref: '#/components/schemas/productSpecification'
+        productOfferingTerm:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductTerm'
+        productOfferingPrice:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOfferingPriceRef'
+    productSpecificationRef:
+      type: object
+      required:
+      - productSpecCharacteristic
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        lifeCycleStatus:
+          type: string
+        href:
+          type: string
+        version:
+          type: string
+        lastUpdate:
+          type: string
+        type:
+          type: string
+        productSpecCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSpecCharacteristic'
+    ProductSpecCharacteristic:
+      type: array
+      items:
+        $ref: '#/components/schemas/ProductSpecCharacteristicRef'
+    ProductTerm:
+      type: object
+      description: Description of a productTerm linked to this product. This represent a commitment with a duration
+      properties:
+        validFor:
+          $ref: '#/components/schemas/validity'
+    productSpecification:
+      type: array
+      items:
+        $ref: '#/components/schemas/productSpecificationRef'
+    Catalog_level-1:
+      type: object
+      description: A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the Catalog
+          example: 63514374jfgfs
+        name:
+          type: string
+          description: Name of the catalog
+          example: Ketir Bundles
+    ProductSpecCharacteristicRef:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        maxCardinality:
+          type: string
+        minCardinality:
+          type: string
+        value:
+          type: string
+          description: A discrete value that the characteristic can take on. the value type is defined by 'valueType' characteristic
+        unitOfMeasure:
+          type: string
+          description: Could be minutes, GB, SMS, minutes
+        '@type':
+          type: string
+          description: description on the type of the resouce eg data, voice,SMS,
+        '@schemaLocation':
+          type: string
+          description: Hyperlink reference to schema describing this object
     Error:
       type: object
       title: Error
@@ -1428,659 +1446,6 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    ProductSpecCharacteristicRef:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        maxCardinality:
-          type: string
-        minCardinality:
-          type: string
-        value:
-          type: string
-          description: A discrete value that the characteristic can take on. the value type is defined by 'valueType' characteristic
-        unitOfMeasure:
-          type: string
-          description: Could be minutes, GB, SMS, minutes
-        '@type':
-          type: string
-          description: description on the type of the resouce eg data, voice,SMS,
-        '@schemaLocation':
-          type: string
-          description: Hyperlink reference to schema describing this object
-    Error_2:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        status:
-          type: string
-          description: Status/Error code returned from the provider system
-        error:
-          type: string
-          description: Status/Error description
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: the path that caused the error
-    RelatedParty:
-      type: object
-      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
-      required:
-      - id
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity.
-        name:
-          type: string
-          description: Name of the related entity.
-        role:
-          type: string
-          description: Role played by the related party
-        baseType:
-          type: string
-          description: When sub-classing, this defines the super-class
-        type:
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        referredType:
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-    Catalog:
-      type: object
-      description: A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the Catalog
-        href:
-          type: string
-          description: Unique reference of the catalog
-        catalogType:
-          type: string
-          description: Indicates if the catalog is a product, service or resource catalog
-        description:
-          type: string
-          description: Description of this catalog
-        lastUpdate:
-          type: string
-          format: date-time
-          description: Date and time of the last update
-        lifecycleStatus:
-          type: string
-          description: Used to indicate the current lifecycle status
-        name:
-          type: string
-          description: Name of the catalog
-        version:
-          type: string
-          description: Catalog version
-        category:
-          type: array
-          items:
-            $ref: '#/components/schemas/CategoryRef'
-          description: List of root categories contained in this catalog
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedParty'
-          description: List of parties involved in this catalog
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the catalog is valid
-        baseType:
-          type: string
-          description: When sub-classing, this defines the super-class
-        type:
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    Response_Catalog_2:
-      type: object
-      required:
-      - resultCode
-      - resultDescription
-      - data
-      properties:
-        resultCode:
-          type: string
-          description: Result code. Example- '0000'
-        resultDescription:
-          type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Catalog'
-    CategoryRef:
-      type: object
-      description: The category for grouping recommendations
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity
-        href:
-          type: string
-          description: Holds URI.
-        name:
-          type: string
-          description: Name of the related entity.
-        description:
-          type: string
-          description: Description of the related entity.
-        lifecycleStatus:
-          type: string
-          description: Used to indicate the current lifecycle status
-        version:
-          type: string
-          description: Category version
-        baseType:
-          type: string
-          description: When sub-classing, this defines the super-class
-        type:
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        referredType:
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id
-    Error_3:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        status:
-          type: string
-          description: Status/Error code returned from the provider system
-        error:
-          type: string
-          description: Status/Error description
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: the path that caused the error
-    PlanMessage:
-      type: object
-      properties:
-        msgTypeId:
-          type: string
-        msgTypeName:
-          type: string
-        isFrequencyRequest:
-          type: string
-          enum:
-          - '0'
-          - '1'
-        frequencyId:
-          type: string
-        frequency:
-          type: string
-        active:
-          type: string
-        msgList:
-          type: array
-          items:
-            $ref: '#/components/schemas/MessageList'
-    MessageList:
-      type: object
-      properties:
-        msgId:
-          type: string
-        msgTypeId:
-          type: string
-        languageCode:
-          type: string
-        language:
-          type: string
-        message:
-          type: string
-        isFilled:
-          type: string
-        renewalMessage:
-          type: string
-    PlanMetaData:
-      type: object
-      properties:
-        planMetadataId:
-          type: string
-        planId:
-          type: string
-        planName:
-          type: string
-        promoText:
-          type: string
-        description:
-          type: string
-        discountText:
-          type: string
-        validityType:
-          type: string
-        languageId:
-          type: string
-        searchKeyword:
-          type: string
-    ServiceMetaData:
-      type: object
-      properties:
-        serviceName:
-          type: string
-          example: Zoom Package
-        serviceDesc:
-          type: string
-          example: Zoom Package
-        languageId:
-          type: string
-          example: '1'
-        languageName:
-          type: string
-          example: en
-        keyword:
-          type: string
-          example: English
-        image:
-          type: string
-          example: []
-    Catalog_2:
-      type: object
-      description: A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the Catalog
-        href:
-          type: string
-          description: Unique reference of the catalog
-        catalogType:
-          type: string
-          description: Indicates if the catalog is a product, service or resource catalog
-        description:
-          type: string
-          description: Description of this catalog
-        lastUpdate:
-          type: string
-          format: date-time
-          description: Date and time of the last update
-        lifecycleStatus:
-          type: string
-          description: Used to indicate the current lifecycle status
-        name:
-          type: string
-          description: Name of the catalog
-        version:
-          type: string
-          description: Catalog version
-        primaryURL:
-          type: string
-        category:
-          type: array
-          items:
-            $ref: '#/components/schemas/CategoryRef_2'
-          description: List of root categories contained in this catalog
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedParty'
-          description: List of parties involved in this catalog
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the catalog is valid
-        serviceMetadata:
-          type: array
-          items:
-            $ref: '#/components/schemas/ServiceMetaData'
-          description: List of root service meta data contained in this catalog
-        baseType:
-          type: string
-          description: When sub-classing, this defines the super-class
-        type:
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        serviceType:
-          type: string
-          description: Service type
-        serviceName:
-          type: string
-          description: Service name
-        tenantId:
-          type: string
-          description: Tenant id
-        tenantName:
-          type: string
-          description: Tenant name
-        requestType:
-          type: string
-          description: Request type
-        catalogCategory:
-          type: string
-          description: Category
-        chargingMode:
-          type: string
-          description: Mode of charging
-        serviceValidity:
-          type: string
-          description: Validity of the service
-        serviceMsgList:
-          type: string
-          description: Service type Message List
-        status:
-          type: string
-          description: service status
-        activeStatus:
-          type: string
-          description: Active state of Service
-        consentKeywords:
-          type: string
-          description: Consent keywords
-        typeOfService:
-          type: string
-          description: Type of service
-        consentRequired:
-          type: boolean
-          description: Is Consent Required
-        gatewayCharging:
-          type: string
-          description: Gateway charging
-        freeCounter:
-          type: string
-        priceQueryReq:
-          type: boolean
-          description: Price query required
-        balanceQueryReq:
-          type: boolean
-          description: Balance query required
-        access:
-          type: string
-          description: Access
-        freeMOService:
-          type: string
-          description: Free MO Service
-        ready:
-          type: string
-          description: State
-        subMtCpDaily:
-          type: string
-        mtPushEnabled:
-          type: string
-        shortCode:
-          type: string
-        directSubscription:
-          type: string
-        thirdConsentRequired:
-          type: string
-        planLinked:
-          type: string
-        spId:
-          type: string
-        dndCheck:
-          type: string
-        fallbackConsentRequired:
-          type: string
-        servicePausable:
-          type: string
-        promoContentMtLimited:
-          type: string
-        familyPlanReq:
-          type: string
-        fBreqFamilyPlan:
-          type: string
-        notificationReqFamilyPlan:
-          type: string
-        offNet:
-          type: string
-        callbackRegRequired:
-          type: string
-        amountBasedChargingReq:
-          type: string
-        consentReqFreePlan:
-          type: string
-        chargingReqFreePlan:
-          type: string
-        dndCategory:
-          type: string
-        dndCategoryMap:
-          type: object
-        serviceValidityMap:
-          type: object
-        typeOfServiceMap:
-          type: object
-        userTypeMap:
-          type: object
-        cli:
-          type: string
-        secondarySpId:
-          type: string
-        secondarySpName:
-          type: string
-        isServicePauseable:
-          type: string
-        promoContentMtLimitEnabled:
-          type: string
-        isFamilyPlanReq:
-          type: string
-        isFbReqFamilyPlan:
-          type: string
-        isNotifReqFamilyPlan:
-          type: string
-        noOfFamilyMembersList:
-          type: array
-          items:
-            type: string
-        serviceImageList:
-          type: array
-          items:
-            type: string
-        isAmountBasedChargingReq:
-          type: string
-        isPackRequired:
-          type: string
-        isConsentReqFreePlan:
-          type: string
-        isChargingReqFreePlan:
-          type: string
-        giftOptionEnabled:
-          type: string
-        isDirectCallbackReq:
-          type: string
-    Response_Catalog_3:
-      type: object
-      required:
-      - resultCode
-      - resultDescription
-      - data
-      properties:
-        resultCode:
-          type: string
-          description: Result code. Example- '0000'
-        resultDescription:
-          type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-        pageSize:
-          type: string
-          description: Catalog Page Size
-          example: 1
-        next:
-          type: string
-          example: 5
-        previous:
-          type: string
-          example: 0
-        responseCount:
-          type: string
-          description: Catalog Response Size - Actual Number of catalog items returned
-          example: 4
-        offset:
-          type: string
-          description: Catalog offset
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Catalog_2'
-    CategoryRef_2:
-      type: object
-      description: The category for grouping recommendations
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity
-        href:
-          type: string
-          description: Holds URI.
-        name:
-          type: string
-          description: Name of the related entity.
-        description:
-          type: string
-          description: Description of the related entity.
-        lifecycleStatus:
-          type: string
-          description: Used to indicate the current lifecycle status
-        version:
-          type: string
-          description: Category version
-        baseType:
-          type: string
-          description: When sub-classing, this defines the super-class
-        type:
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        referredType:
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-        haSubCategory:
-          type: string
-          description: Sub category flag . Valid values are 1 for 'has child' and 0 for 'no child'
-        level:
-          type: string
-          description: Level of navigation at the menu will be displayed.
-        renewalPrice:
-          type: string
-        renewalPricePoint:
-          type: string
-        pricePoint:
-          type: string
-        renewalLifecycleId:
-          type: string
-        lifecycleId:
-          type: string
-        validityPeriod:
-          type: string
-        gracePeriod:
-          type: string
-        suspendPeriod:
-          type: string
-        parkingPeriod:
-          type: string
-        allowInGrace:
-          type: string
-        disableFallback:
-          type: string
-        autoRenew:
-          type: string
-        isfallBackReq:
-          type: string
-        startDate:
-          type: string
-        endDate:
-          type: string
-        isFoc:
-          type: string
-        timeDurationList:
-          type: array
-          items:
-            type: string
-          maxItems: 0
-        specialDaysList:
-          type: array
-          items:
-            type: string
-          maxItems: 0
-        focDaysList:
-          type: array
-          items:
-            type: string
-          maxItems: 0
-        renValPeriod:
-          type: string
-        planMsgList:
-          type: array
-          items:
-            $ref: '#/components/schemas/PlanMessage'
-        isRenFbReg:
-          type: string
-        isGraceChargeble:
-          type: string
-        isSuspendChargeable:
-          type: string
-        allowInSuspend:
-          type: string
-        isParkingChargeable:
-          type: string
-        allowInParking:
-          type: string
-        deactivationMode:
-          type: string
-        periodicityPlan:
-          type: string
-        periodicityPeriod:
-          type: string
-        resubsAllowed:
-          type: string
-        renewalPlanId:
-          type: string
-        validityType:
-          type: string
-        microChargingEnabled:
-          type: string
-        preRenewalConsent:
-          type: string
-        isOneOffReq:
-          type: string
-        failAction:
-          type: string
-        isFamilyPlan:
-          type: string
-        discountAmount:
-          type: string
-        discountPercentage:
-          type: string
-        discountText:
-          type: string
-        promoText:
-          type: string
-        subPrice:
-          type: string
-        planMetadata:
-          type: array
-          items:
-            $ref: '#/components/schemas/PlanMetaData'
-      required:
-      - id
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
@@ -2092,8 +1457,3 @@ components:
         clientCredentials:
           scopes: {}
           tokenUrl: https://api.mtn.com/v1/oauth/access_token
-x-refined-from:
-- mtn-group-product-catalog-coe.yml
-- mtn-group-product-catalog-management-v1.yml
-- mtn-group-product-catalogue-management.yml
-- mtn-group-tmf-product-catalog-tmf620.yml

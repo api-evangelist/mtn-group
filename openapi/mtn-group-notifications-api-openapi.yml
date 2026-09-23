@@ -16,7 +16,7 @@ paths:
     post:
       tags:
       - Notifications
-      summary: Send notification to 3PP by id.
+      summary: Send notification to 3PP by id
       description: Send notification to 3PP by id.
       operationId: notification3PPByIdUsingPOST
       parameters:
@@ -77,7 +77,7 @@ paths:
     post:
       tags:
       - Notifications
-      summary: Send notification to 3PP by name, code and notification type.
+      summary: Send notification to 3PP by name, code and notification type
       description: Send notificaion to 3PP by name, code and notification type.
       operationId: notification3PPByNameAndCodeAndnotificonTypeUsingPOST
       parameters:
@@ -148,6 +148,30 @@ paths:
     - url: https://api.mtn.com/v1
 components:
   schemas:
+    Success:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        AdditionalData:
+          $ref: '#/components/schemas/Data'
     Data:
       type: object
       properties:
@@ -221,30 +245,6 @@ components:
           type: string
           description: The HTTP method type that was used
           example: GET
-    Success:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        AdditionalData:
-          $ref: '#/components/schemas/Data'
     SendNotificationResponse:
       type: object
       description: The response expected after triggering a notification

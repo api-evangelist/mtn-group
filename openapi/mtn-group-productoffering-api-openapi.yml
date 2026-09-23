@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
   title: MTN G2M Product Offering API
-  description: 'API to provide capability to manage Offering specification of  products. '
+  description: API to provide capability to manage Offering specification of products.
   version: 1.0.0
 servers:
 - url: https://api.mtn.com/v1/g2m
@@ -101,6 +101,29 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    Deals:
+      type: object
+      properties:
+        dealId:
+          type: string
+        dealType:
+          type: string
+        dealName:
+          type: string
+        contractTerm:
+          type: string
+        dealPriceWithVAT:
+          type: string
+        dealPriceWithoutVAT:
+          type: string
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/DealDevices'
+        pricePlan:
+          type: array
+          items:
+            $ref: '#/components/schemas/PricePlan'
     PricePlan:
       type: object
       properties:
@@ -124,6 +147,17 @@ components:
         deviceMRCWithVAT:
           type: string
         deviceMRCWithoutVAT:
+          type: string
+    Products:
+      type: object
+      properties:
+        productid:
+          type: string
+        productName:
+          type: string
+        serviceMRC:
+          type: string
+        productType:
           type: string
     GetDealsResponse:
       type: object
@@ -161,17 +195,6 @@ components:
                 $ref: '#/components/schemas/Products'
             sourceApplicationID:
               type: string
-    Products:
-      type: object
-      properties:
-        productid:
-          type: string
-        productName:
-          type: string
-        serviceMRC:
-          type: string
-        productType:
-          type: string
     Error:
       type: object
       title: Error
@@ -195,29 +218,6 @@ components:
         path:
           type: string
           description: the path that caused the error
-    Deals:
-      type: object
-      properties:
-        dealId:
-          type: string
-        dealType:
-          type: string
-        dealName:
-          type: string
-        contractTerm:
-          type: string
-        dealPriceWithVAT:
-          type: string
-        dealPriceWithoutVAT:
-          type: string
-        devices:
-          type: array
-          items:
-            $ref: '#/components/schemas/DealDevices'
-        pricePlan:
-          type: array
-          items:
-            $ref: '#/components/schemas/PricePlan'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

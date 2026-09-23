@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Device Swap API
   version: 0.1.2
-  description: "The Device Swap API is designed to detect changes in the International Mobile Equipment Identity (IMEI) associated with a mobile subscriber's number (MSISDN) within a specific period, typically the last 30 days.  \n## Supported Operations \n1.Checks if the IMEI linked to an MSISDN has changed.\n2.Returns the date of the latest IMEI change.\n3.Helps detect suspicious behavior, such as device swaps preceding transactions or access attempts.\n4.It helps know how many times a device swap activity has occurred.\n5.Enables clients to query changes over a defined date range."
+  description: The Device Swap API is designed to detect changes in the International Mobile Equipment Identity (IMEI) associated with a mobile subscriber's number (MSISDN) within a specific period, typically the last 30 days.
 servers:
 - url: https://api.mtn.com/v1/devices
 security:
@@ -14,7 +14,7 @@ paths:
     post:
       tags:
       - Device Swap API
-      summary: Retrieve device swap details.
+      summary: Retrieve device swap details
       description: The Device Swap API uses MSISDN to track changes in the IMEI linked to a subscriber's device
       responses:
         '200':
@@ -89,11 +89,13 @@ paths:
               $ref: '#/components/schemas/deviceSwapRequest'
         description: Request body
         required: true
+      operationId: postDeviceSwap
+      x-operation-id-source: derived
   /deviceSwap/{id}:
     get:
       tags:
       - Device Swap API
-      summary: Retrieve last device change details within a certain period.
+      summary: Retrieve last device change details within a certain period
       description: The Device Swap API uses MSISDN to get the last device change that happened in a certain period of time
       parameters:
       - name: id
@@ -180,8 +182,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
+      operationId: getDeviceSwapById
+      x-operation-id-source: derived
 components:
   schemas:
+    Error401:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '4000'
+        statusMessage:
+          type: string
+          description: Short description of the error
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: Longer description of the error
+          example: Please verify token environment or access token or API key
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+    Error408:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '3003'
+        statusMessage:
+          type: string
+          description: The request timed out.
+          example: Timeout
+        supportMessage:
+          type: string
+          description: The server took too long to respond.
+          example: Request timed out
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
     Error400:
       type: object
       properties:
@@ -204,6 +246,88 @@ components:
           type: string
           description: Id for tracing.
           example: fg545f-cf4gg4fd55-fdg85hg6
+    Error500:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '3001'
+        statusMessage:
+          type: string
+          description: Internal Server Error
+          example: Internal Server Error
+        supportMessage:
+          type: string
+          description: Error
+          example: Internal Server Error
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+    Error405:
+      type: object
+      description: Method not Allowed
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '4001'
+        statusMessage:
+          type: string
+          example: Not Allowed
+        supportMessage:
+          type: string
+          example: Method Not Allowed
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+    deviceSwapRequest:
+      type: object
+      required:
+      - MSISDN
+      properties:
+        MSISDN:
+          type: string
+          description: The mobile number of the subscriber
+        start_date:
+          type: string
+          format: date
+          description: (DD-MM-YYYY) Start of the date range
+        end_date:
+          type: string
+          format: date
+          description: (DD-MM-YYYY) End of the date range
+    Error415:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '5000'
+        statusMessage:
+          type: string
+          description: Short description of the error
+          example: Unsupported Media Type
+        supportMessage:
+          type: string
+          description: Longer description of the error
+          example: Unsupported Media Type. It should be application/json
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+    lastChangeDateData:
+      type: object
+      properties:
+        dateChanged:
+          type: string
+          description: The date of the last device change, if applicable.
+          example: '2025-04-13 11:50:01'
+        swapStatus:
+          type: boolean
+          description: Indicates whether a device swap occurred (true or false).
     lastChangeDateResponse:
       required:
       - customerId
@@ -233,93 +357,50 @@ components:
           example: CHENOOSIS-123
         data:
           $ref: '#/components/schemas/lastChangeDateData'
-    Error408:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '3003'
-        statusMessage:
-          type: string
-          description: The request timed out.
-          example: Timeout
-        supportMessage:
-          type: string
-          description: The server took too long to respond.
-          example: Request timed out
-        transactionId:
-          type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
-    deviceSwapRequest:
-      type: object
+    deviceSwapResponse:
       required:
-      - MSISDN
-      properties:
-        MSISDN:
-          type: string
-          description: The mobile number of the subscriber
-        start_date:
-          type: string
-          format: date
-          description: (DD-MM-YYYY) Start of the date range
-        end_date:
-          type: string
-          format: date
-          description: (DD-MM-YYYY) End of the date range
-    Error405:
+      - customerId
+      - data
+      - statusCode
+      - statusMessage
       type: object
-      description: Method not Allowed
       properties:
         statusCode:
           type: string
-          description: HTTP error code extension
-          example: '4001'
+          enum:
+          - '0000'
+          - '1022'
+          description: "HTTP error code extension:\n * `0000` - Success Response\n"
+          example: '0000'
         statusMessage:
           type: string
-          example: Not Allowed
-        supportMessage:
+          description: Message.
+          example: Successful
+        customerId:
           type: string
-          example: Method Not Allowed
+          description: MSISDN of the customer provided in the input as customerId
+          example: '234789999781'
         transactionId:
           type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
-    Error401:
+          description: transaction ID From the backend provider system for tracing.
+          example: 232TXYZ-212
+        data:
+          $ref: '#/components/schemas/deviceSwapData'
+    Error403:
       type: object
       properties:
         statusCode:
           type: string
           description: HTTP error code extension
-          example: '4000'
+          example: '6000'
         statusMessage:
           type: string
           description: Short description of the error
-          example: Unauthorised
+          example: Forbidden
         supportMessage:
           type: string
           description: Longer description of the error
           example: Please verify token environment or access token or API key
-        transactionId:
-          type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
-    Error415:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '5000'
-        statusMessage:
-          type: string
-          description: Short description of the error
-          example: Unsupported Media Type
-        supportMessage:
-          type: string
-          description: Longer description of the error
-          example: Unsupported Media Type. It should be application/json
         transactionId:
           type: string
           description: Id for tracing.
@@ -365,83 +446,6 @@ components:
           type: string
           description: Table snapshot date
           example: '20250901'
-    Error403:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '6000'
-        statusMessage:
-          type: string
-          description: Short description of the error
-          example: Forbidden
-        supportMessage:
-          type: string
-          description: Longer description of the error
-          example: Please verify token environment or access token or API key
-        transactionId:
-          type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
-    lastChangeDateData:
-      type: object
-      properties:
-        dateChanged:
-          type: string
-          description: The date of the last device change, if applicable.
-          example: '2025-04-13 11:50:01'
-        swapStatus:
-          type: boolean
-          description: Indicates whether a device swap occurred (true or false).
-    Error500:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '3001'
-        statusMessage:
-          type: string
-          description: Internal Server Error
-          example: Internal Server Error
-        supportMessage:
-          type: string
-          description: Error
-          example: Internal Server Error
-        transactionId:
-          type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
-    deviceSwapResponse:
-      required:
-      - customerId
-      - data
-      - statusCode
-      - statusMessage
-      type: object
-      properties:
-        statusCode:
-          type: string
-          enum:
-          - '0000'
-          - '1022'
-          description: "HTTP error code extension:\n * `0000` - Success Response\n"
-          example: '0000'
-        statusMessage:
-          type: string
-          description: Message.
-          example: Successful
-        customerId:
-          type: string
-          description: MSISDN of the customer provided in the input as customerId
-          example: '234789999781'
-        transactionId:
-          type: string
-          description: transaction ID From the backend provider system for tracing.
-          example: 232TXYZ-212
-        data:
-          $ref: '#/components/schemas/deviceSwapData'
     Error404:
       type: object
       description: phoneNumber not found

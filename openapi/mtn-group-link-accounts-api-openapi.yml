@@ -61,8 +61,73 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LinkAccountData'
+      operationId: postMomoTier0ByIdLinkAccount
+      x-operation-id-source: derived
 components:
   schemas:
+    AdditionalInformationListData:
+      type: object
+      description: Any other information of the account holder
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        contactNumber:
+          type: string
+        otherName:
+          type: string
+          description: Other name of the account holder
+        residentialAddress:
+          type: string
+    LinkAccountData:
+      type: object
+      required:
+      - registrationDetails
+      properties:
+        registrationDetails:
+          type: object
+          description: Information of the account holder's secondary account to be created and linked to an existing account
+          $ref: '#/components/schemas/AccountHolderRegistrationData'
+        languageCode:
+          type: string
+          description: An optional valid language code
+        quoteId:
+          type: string
+          description: ID of the quote to use
+        additionInformationList:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalInformationListData'
+        docReferenceInformationList:
+          type: array
+          description: Contains reference information about a KYC document stored on an external document system
+          items:
+            $ref: '#/components/schemas/DocumentReferenceInformationListData'
+    MomoRegistrationResponse:
+      type: object
+      required:
+      - accountHolderIdentity
+      - accountHolderIdentityType
+      - statusCode
+      - transactionId
+      properties:
+        accountHolderIdentity:
+          type: string
+          description: The ID of resource created
+          example: '9230088'
+        accountHolderIdentityType:
+          type: string
+          description: The type of ID for the resource created
+          example: ID
+        statusCode:
+          type: string
+          description: The status code for operation
+          example: '0000'
+        transactionId:
+          type: string
+          description: The transaction Id created for the request
+          example: A3344098765456
     AccountHolderRegistrationData:
       type: object
       required:
@@ -85,6 +150,13 @@ components:
           type: string
           description: Name of the bank eg. EcoBank
           example: EcoBank, AccessBank
+    DocumentReferenceInformationListData:
+      type: object
+      properties:
+        documentReferenceNumber:
+          type: string
+        documentName:
+          type: string
     APIError:
       type: object
       required:
@@ -111,76 +183,6 @@ components:
           type: string
           description: HTTP Method used to make request
           example: GET
-    MomoRegistrationResponse:
-      type: object
-      required:
-      - accountHolderIdentity
-      - accountHolderIdentityType
-      - statusCode
-      - transactionId
-      properties:
-        accountHolderIdentity:
-          type: string
-          description: The ID of resource created
-          example: '9230088'
-        accountHolderIdentityType:
-          type: string
-          description: The type of ID for the resource created
-          example: ID
-        statusCode:
-          type: string
-          description: The status code for operation
-          example: '0000'
-        transactionId:
-          type: string
-          description: The transaction Id created for the request
-          example: A3344098765456
-    DocumentReferenceInformationListData:
-      type: object
-      properties:
-        documentReferenceNumber:
-          type: string
-        documentName:
-          type: string
-    LinkAccountData:
-      type: object
-      required:
-      - registrationDetails
-      properties:
-        registrationDetails:
-          type: object
-          description: Information of the account holder's secondary account to be created and linked to an existing account
-          $ref: '#/components/schemas/AccountHolderRegistrationData'
-        languageCode:
-          type: string
-          description: An optional valid language code
-        quoteId:
-          type: string
-          description: ID of the quote to use
-        additionInformationList:
-          type: array
-          items:
-            $ref: '#/components/schemas/AdditionalInformationListData'
-        docReferenceInformationList:
-          type: array
-          description: Contains reference information about a KYC document stored on an external document system
-          items:
-            $ref: '#/components/schemas/DocumentReferenceInformationListData'
-    AdditionalInformationListData:
-      type: object
-      description: Any other information of the account holder
-      properties:
-        firstName:
-          type: string
-        lastName:
-          type: string
-        contactNumber:
-          type: string
-        otherName:
-          type: string
-          description: Other name of the account holder
-        residentialAddress:
-          type: string
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

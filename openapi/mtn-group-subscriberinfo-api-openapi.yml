@@ -195,42 +195,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Error:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        status:
-          type: string
-          description: Status/Error code returned from the provider system
-        error:
-          type: string
-          description: Status/Error description
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: the path that caused the error
-    TimePeriod:
-      type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
-      properties:
-        endDate:
-          example: '1985-04-12'
-          type: string
-          description: End of the time period,represented as an [ISO8601-2004] YYYY-MM-DD format
-        startDate:
-          example: '1985-04-10'
-          type: string
-          format: date
-          description: Start of the time period,represented as an [ISO8601-2004] YYYY-MM-DD format
     Address:
       type: object
       properties:
@@ -273,28 +237,14 @@ components:
           type: string
         streetLine3:
           type: string
-    Response_LinkedNumber:
-      type: object
-      required:
-      - resultCode
-      - resultDescription
-      properties:
-        resultCode:
-          type: string
-          description: Result code. Example- '0000'
-        resultDescription:
-          type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-        data:
-          type: object
-          properties:
-            linkedNumbers:
-              type: array
-              items:
-                type: string
+    StatusType:
+      type: string
+      enum:
+      - Active
+      - Inactive
+      - One-Way Block
+      - Two-Way Block
+      - Termination
     SubscriberAsset:
       type: object
       required:
@@ -321,6 +271,24 @@ components:
           example: owner
           type: string
           description: 'Represents the part played by an individual in relation to being granted a set of entitlements for manageable assets (e.g.: owner, user, viewer, ...)'
+    Response_Subscriber:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      - data
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          $ref: '#/components/schemas/Subscriber'
     Subscriber:
       type: object
       properties:
@@ -369,44 +337,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SubscriberAsset'
-    SubscriberIdentification:
-      type: object
-      description: Represents our registration of information used as proof of identity by a subscriber (passport, national identity card, drivers license, social security number, birth certificate etc.)
-      properties:
-        identificationId:
-          type: string
-          description: Value of the chosen identification type
-        identificationType:
-          type: string
-          description: Identification type (passport, national identity card, drivers license, social security number, birth certificate etc.)
-        issuingAuthority:
-          type: string
-          description: 'Authority which has issued the identifier, such as: social security,town hall etc.'
-        issuingDate:
-          type: string
-          format: date
-          description: Date at which the identifier was issued
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the identification information is valid.
-    Response_Subscriber:
-      type: object
-      required:
-      - resultCode
-      - resultDescription
-      - data
-      properties:
-        resultCode:
-          type: string
-          description: Result code. Example- '0000'
-        resultDescription:
-          type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-        data:
-          $ref: '#/components/schemas/Subscriber'
     Subscriberinfo:
       type: object
       required:
@@ -484,14 +414,84 @@ components:
           example: America/Los_Angeles
           type: string
           description: String from zoneinfo time zone database representing the End-User's time zone. For example, Europe/Paris or America/Los_Angeles
-    StatusType:
-      type: string
-      enum:
-      - Active
-      - Inactive
-      - One-Way Block
-      - Two-Way Block
-      - Termination
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        status:
+          type: string
+          description: Status/Error code returned from the provider system
+        error:
+          type: string
+          description: Status/Error description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
+    Response_LinkedNumber:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          type: object
+          properties:
+            linkedNumbers:
+              type: array
+              items:
+                type: string
+    SubscriberIdentification:
+      type: object
+      description: Represents our registration of information used as proof of identity by a subscriber (passport, national identity card, drivers license, social security number, birth certificate etc.)
+      properties:
+        identificationId:
+          type: string
+          description: Value of the chosen identification type
+        identificationType:
+          type: string
+          description: Identification type (passport, national identity card, drivers license, social security number, birth certificate etc.)
+        issuingAuthority:
+          type: string
+          description: 'Authority which has issued the identifier, such as: social security,town hall etc.'
+        issuingDate:
+          type: string
+          format: date
+          description: Date at which the identifier was issued
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the identification information is valid.
+    TimePeriod:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDate:
+          example: '1985-04-12'
+          type: string
+          description: End of the time period,represented as an [ISO8601-2004] YYYY-MM-DD format
+        startDate:
+          example: '1985-04-10'
+          type: string
+          format: date
+          description: Start of the time period,represented as an [ISO8601-2004] YYYY-MM-DD format
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

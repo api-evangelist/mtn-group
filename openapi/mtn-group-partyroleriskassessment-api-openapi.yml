@@ -77,6 +77,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PartyRoleRiskAssessment_Create'
         required: true
+      operationId: postPartyRoleRiskAssessmentCreateApplication
+      x-operation-id-source: derived
   /partyRoleRiskAssessment/fraudRiskAssessment:
     post:
       summary: Creates a fraudRiskAssessment
@@ -138,6 +140,8 @@ paths:
             schema:
               $ref: '#/components/schemas/fraudRiskAssessment'
         required: true
+      operationId: postPartyRoleRiskAssessmentFraudRiskAssessment
+      x-operation-id-source: derived
   /partyRoleRiskAssessment/fullVet:
     post:
       summary: Creates a Full Vet request
@@ -199,6 +203,8 @@ paths:
             schema:
               $ref: '#/components/schemas/fullVetAssessment'
         required: true
+      operationId: postPartyRoleRiskAssessmentFullVet
+      x-operation-id-source: derived
   /partyRoleRiskAssessment/affordability:
     post:
       summary: Checks application affordability
@@ -261,6 +267,8 @@ paths:
               $ref: '#/components/schemas/AffordabilityRequest'
         description: The partyRoleRiskAssessment to be created
         required: true
+      operationId: postPartyRoleRiskAssessmentAffordability
+      x-operation-id-source: derived
   /partyRoleRiskAssessment/avs:
     get:
       summary: AVS Decision
@@ -353,6 +361,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getPartyRoleRiskAssessmentAvs
+      x-operation-id-source: derived
   /partyRoleRiskAssessment/orderVet:
     post:
       summary: Creates an Order Vet request
@@ -415,10 +425,12 @@ paths:
               $ref: '#/components/schemas/orderVetAssessment'
         description: The partyRoleRiskAssessment to be created
         required: true
+      operationId: postPartyRoleRiskAssessmentOrderVet
+      x-operation-id-source: derived
   /partyRoleRiskAssessment/ntu:
     get:
       summary: Request to confirm customer NTU
-      description: Request to confirm the client has not continued with the order.  If order is cancelled before a fullvet call (ApplicationID, Affordability or fraud call) is made then this call needs to be made to Provenir.
+      description: Request to confirm the client has not continued with the order. If order is cancelled before a fullvet call (ApplicationID, Affordability or fraud call) is made then this call needs to be made to Provenir.
       tags:
       - partyRoleRiskAssessment
       parameters:
@@ -482,10 +494,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getPartyRoleRiskAssessmentNtu
+      x-operation-id-source: derived
   /partyRoleRiskAssessment/query:
     get:
       summary: Query Application ID
-      description: Query Application ID
       tags:
       - partyRoleRiskAssessment
       parameters:
@@ -549,53 +562,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getPartyRoleRiskAssessmentQuery
+      x-operation-id-source: derived
 components:
   schemas:
-    orderVetAssessment:
-      type: object
-      properties:
-        applicationId:
-          type: string
-          description: Application reference number
-        requestedStartDate:
-          type: string
-          format: date-time
-        currentOrderDetails:
-          title: orderDetails
-          type: object
-          properties:
-            orderLineCount:
-              type: string
-              description: Current Order - Number of contracts taken up
-            orderNumber:
-              maxLength: 30
-              type: string
-              description: unique identifier for an order Mandatory for orderType="Prepaid" Optional for orderType="Postpaid"
-            currentOrderLineItems:
-              type: array
-              items:
-                type: object
-                properties:
-                  orderOffsetMRC:
-                    type: string
-                    description: Current Order - Voluntary and Mandatory Upfront payment distributed to reduce total MRC
-                  orderSPUL:
-                    type: string
-                    description: Positive value representing the Total out of bundle spend required on all contract summed up
-                  msisdn:
-                    type: string
-                    description: Needs to be sent where applicationType = “Upgrade”
-                  dealID:
-                    type: string
-                    description: Deal Id of the Product
-                  products:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        productid:
-                          type: string
-                          description: The code associated with the product the applicant has selected e.g. “1234”
     avsResponse:
       type: object
       properties:
@@ -637,45 +607,7 @@ components:
                 attemptsRemaining:
                   type: integer
                   description: Number of attempts left to change bank details
-    fraudServiceBlock:
-      type: object
-      properties:
-        fraudCheckType:
-          type: string
-          description: Fraud check type as passed in the original request
-        fraudResStartTime:
-          type: string
-          description: Date and Timestamp of the Request start time in the Provenir system
-        fraudResEndTime:
-          type: string
-          description: Date and Timestamp of the Response End in the Provenir system
-        fraudDecision:
-          type: string
-          description: DE decision on call (Approve/Refer/Decline)
-        fraudReasons:
-          type: array
-          items:
-            $ref: '#/components/schemas/fraudReason'
-    phone:
-      type: object
-      properties:
-        phoneType:
-          type: string
-          description: Type of the number – Mobile/Home/Business
-          example: Mobile
-        areaCode:
-          type: string
-          description: Area code for the phone number
-          example: 9
-        countryCode:
-          type: string
-          description: Country code for the phone number
-          example: 27
-        value:
-          type: string
-          description: Type of the number – Mobile/Home/Business
-          example: 0214700080
-    orderVetAssessmentResponse:
+    fullVetAssessmentResponse:
       type: object
       properties:
         statusCode:
@@ -698,10 +630,22 @@ components:
             id:
               type: string
               description: Unique identifier of the application
+            caseNumber:
+              type: string
+              description: Case Management ref no. as received from the MTN API
             decision:
               type: string
               description: Decision engine decision on call ("Approve"/"Decline"/"Refer")
               example: Decline
+            finalReason:
+              type: object
+              properties:
+                reasonCode:
+                  type: string
+                  description: Code to uniquely identify each reason returned
+                reasonDescription:
+                  type: string
+                  description: Text to be displayed to Siebel for reason of decision
             declineReviewInd:
               type: boolean
               description: Is decline review allowed (“true” / “false”)
@@ -726,37 +670,57 @@ components:
                 conditionReasonDesc:
                   type: string
                   description: Description of Condition to be met
-    fraudRiskAssessmentResponse:
+            expiry:
+              type: string
+              description: Expiry date of Fullvet call, if expired order should auto cancel – UTC ISO 8601
+              example: 1981-06-02
+    phone:
       type: object
+      properties:
+        phoneType:
+          type: string
+          description: Type of the number – Mobile/Home/Business
+          example: Mobile
+        areaCode:
+          type: string
+          description: Area code for the phone number
+          example: 9
+        countryCode:
+          type: string
+          description: Country code for the phone number
+          example: 27
+        value:
+          type: string
+          description: Type of the number – Mobile/Home/Business
+          example: 0214700080
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
       properties:
         statusCode:
           type: string
           description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-          maxLength: 30
+          example: '1000'
         statusMessage:
           type: string
           description: More details and corrective actions related to the error which can be shown to a client
         supportMessage:
           type: string
           description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        errorIndicator:
-          type: boolean
-          description: If data validation from the calling system call is valid (“true” / “false”) e.g., false
-        data:
-          type: object
-          properties:
-            id:
-              type: string
-              description: Unique identifier of the application
-            overallFraudDecision:
-              type: string
-              description: Overall DE decision on application (Continue OR Decline)
-              example: Decline
-            fraudServiceBlocks:
-              type: array
-              items:
-                $ref: '#/components/schemas/fraudServiceBlock'
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /loans/2348024008124/...
     queryResponse:
       type: object
       properties:
@@ -974,34 +938,203 @@ components:
                     attemptsRemaining:
                       type: integer
                       description: Number of attempts left to change bank details
-    Error:
+    fullVetAssessment:
       type: object
-      required:
-      - statusCode
-      - statusMessage
+      properties:
+        applicationId:
+          type: string
+          description: Application reference number
+        requestedStartDate:
+          type: string
+          format: date-time
+          description: Date and Timestamp of the Request start time in the Provenir system.  Java Zoned Date and time - Africa/Johannesburg (UTC+02:00)
+        suspectedFraudInd:
+          type: boolean
+          description: Does sales agent suspect fraud (“true” / “false”)
+        authenticationType:
+          type: string
+          description: The authentication type passed for the application to progress to FULLVET.
+          example: BIO
+        biometricsColour:
+          type: string
+          description: Biometrics colour for the application (“Green”/ ”Yellow”).
+          example: Yellow
+        currentOrderDetails:
+          title: orderDetails
+          type: object
+          properties:
+            orderLineCount:
+              type: string
+              description: Current Order - Number of contracts taken up
+            orderNumber:
+              maxLength: 30
+              type: string
+              description: unique identifier for an order Mandatory for orderType="Prepaid" Optional for orderType="Postpaid"
+            currentOrderLineItems:
+              type: array
+              items:
+                type: object
+                properties:
+                  orderOffsetMRC:
+                    type: string
+                    description: Current Order - Voluntary and Mandatory Upfront payment distributed to reduce total MRC
+                  orderSPUL:
+                    type: string
+                    description: Positive value representing the Total out of bundle spend required on all contract summed up
+                  msisdn:
+                    type: string
+                    description: Needs to be sent where applicationType = “Upgrade”
+                  dealID:
+                    type: string
+                    description: Deal Id of the Product
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        productid:
+                          type: string
+                          description: The code associated with the product the applicant has selected e.g. “1234”
+    PartyRoleRiskAssessment:
+      type: object
       properties:
         statusCode:
           type: string
           description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
+          example: '0000'
+          maxLength: 30
         statusMessage:
           type: string
           description: More details and corrective actions related to the error which can be shown to a client
         supportMessage:
           type: string
           description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
+        errorIndicator:
+          type: boolean
+          description: If data validation from the calling system call is valid (“true” / “false”) e.g., false
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the application
+            requestedStartDate:
+              type: string
+              format: date-time
+              description: Date and Timestamp of the Provenir system.  Java Zoned Date and time - Africa/Johannesburg (UTC+02:00)
+            requestedCompletionDate:
+              type: string
+              format: date-time
+              description: Date and Timestamp of the Provenir system.  Java Zoned Date and time - Africa/Johannesburg (UTC+02:00)
+    ntuResponse:
+      type: object
+      properties:
+        statusCode:
           type: string
-          description: This is the same transactionId that is sent in the request
-        timestamp:
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        errorIndicator:
+          type: boolean
+          description: If data validation from the calling system call is valid
+        data:
+          type: object
+          properties:
+            requestedStartDate:
+              type: string
+              format: date-time
+            requestedCompletionDate:
+              type: string
+              format: date-time
+    fraudReason:
+      type: object
+      properties:
+        reasonCode:
+          type: string
+          description: Code to uniquely identify each reason returned
+        reasonDescription:
+          type: string
+          description: Text to be displayed to calling system for reason of decision
+    fraudRiskAssessment:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: Application reference number
+        requestedStartDate:
           type: string
           format: date-time
-          description: Timestamp that the error occurred
-          example: 2020-08-01T12:34
-        path:
+          description: Date and Timestamp of the requesting system.  Java Zoned Date and time - Africa/Johannesburg (UTC+02:00)
+        partyRole:
+          required:
+          - party
+          type: object
+          properties:
+            type:
+              maxLength: 30
+              type: string
+              description: Individual or Enterprise
+              enum:
+              - Individual
+              - Enterprise
+        fraudCheckType:
           type: string
-          description: The path that caused the error
-          example: /loans/2348024008124/...
+          description: The fraud type request to be executed A - DeviceVerfication B - WatchList, FPM&SAFPS, Mobile Verfication C - EmailVerification D - MTNInternalHotList E - MobileVerfication
+          example: A,B,C,D
+        relatedParty:
+          type: object
+          properties:
+            email:
+              type: string
+              description: Contact email address for the applicant.
+            firstName:
+              maxLength: 30
+              type: string
+              description: 'First full name of the subscriber as per RSA ID or Passport. This field is mandatory while creating a customer.  '
+            lastName:
+              maxLength: 30
+              type: string
+              description: Surname name of the subscriber as per RSA ID or Passport. This field is mandatory while creating a customer. Character length 50
+            gender:
+              type: string
+              description: subscriber's Gender. This field is mandatory while creating a customer.
+              enum:
+              - M
+              - F
+              - O
+            dateOfBirth:
+              maxLength: 10
+              type: string
+              description: subscriber's date of birth. This field is mandatory while creating a customer. Date Format "YYYY-MM-DD"
+              format: date
+            surname:
+              type: string
+              description: Surname of the subscriber
+            addresses:
+              type: array
+              items:
+                $ref: '#/components/schemas/address'
+            phones:
+              type: array
+              items:
+                $ref: '#/components/schemas/phone'
+            dealerCode:
+              type: string
+              description: SABC code of originating dealer
+            agentID:
+              type: string
+              description: ID of originating Agent
+            ipAddress:
+              type: string
+              description: IPV4 or IPV6 address from where the transaction is being submitted
+            blackboxString:
+              type: string
+              description: Iovation black box value (generated via JavaScript on web/SDK on app).Encoded string up to 4KB.
     AffordabilityResponse:
       type: object
       properties:
@@ -1188,7 +1321,26 @@ components:
               type: string
               description: subscriber's date of birth. This field is mandatory while creating a customer. Date Format "YYYY-MM-DD"
               format: date
-    fullVetAssessment:
+    fraudServiceBlock:
+      type: object
+      properties:
+        fraudCheckType:
+          type: string
+          description: Fraud check type as passed in the original request
+        fraudResStartTime:
+          type: string
+          description: Date and Timestamp of the Request start time in the Provenir system
+        fraudResEndTime:
+          type: string
+          description: Date and Timestamp of the Response End in the Provenir system
+        fraudDecision:
+          type: string
+          description: DE decision on call (Approve/Refer/Decline)
+        fraudReasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/fraudReason'
+    orderVetAssessment:
       type: object
       properties:
         applicationId:
@@ -1197,18 +1349,6 @@ components:
         requestedStartDate:
           type: string
           format: date-time
-          description: Date and Timestamp of the Request start time in the Provenir system.  Java Zoned Date and time - Africa/Johannesburg (UTC+02:00)
-        suspectedFraudInd:
-          type: boolean
-          description: Does sales agent suspect fraud (“true” / “false”)
-        authenticationType:
-          type: string
-          description: The authentication type passed for the application to progress to FULLVET.
-          example: BIO
-        biometricsColour:
-          type: string
-          description: Biometrics colour for the application (“Green”/ ”Yellow”).
-          example: Yellow
         currentOrderDetails:
           title: orderDetails
           type: object
@@ -1245,6 +1385,14 @@ components:
                         productid:
                           type: string
                           description: The code associated with the product the applicant has selected e.g. “1234”
+    Money:
+      type: object
+      description: A base / value business entity used to represent money
+      properties:
+        value:
+          type: number
+          format: float
+          description: A positive floating point number
     address:
       type: object
       properties:
@@ -1276,81 +1424,6 @@ components:
           type: string
           description: Postal of the address
           example: 2196
-    fraudRiskAssessment:
-      type: object
-      properties:
-        applicationId:
-          type: string
-          description: Application reference number
-        requestedStartDate:
-          type: string
-          format: date-time
-          description: Date and Timestamp of the requesting system.  Java Zoned Date and time - Africa/Johannesburg (UTC+02:00)
-        partyRole:
-          required:
-          - party
-          type: object
-          properties:
-            type:
-              maxLength: 30
-              type: string
-              description: Individual or Enterprise
-              enum:
-              - Individual
-              - Enterprise
-        fraudCheckType:
-          type: string
-          description: The fraud type request to be executed A - DeviceVerfication B - WatchList, FPM&SAFPS, Mobile Verfication C - EmailVerification D - MTNInternalHotList E - MobileVerfication
-          example: A,B,C,D
-        relatedParty:
-          type: object
-          properties:
-            email:
-              type: string
-              description: Contact email address for the applicant.
-            firstName:
-              maxLength: 30
-              type: string
-              description: 'First full name of the subscriber as per RSA ID or Passport. This field is mandatory while creating a customer.  '
-            lastName:
-              maxLength: 30
-              type: string
-              description: Surname name of the subscriber as per RSA ID or Passport. This field is mandatory while creating a customer. Character length 50
-            gender:
-              type: string
-              description: subscriber's Gender. This field is mandatory while creating a customer.
-              enum:
-              - M
-              - F
-              - O
-            dateOfBirth:
-              maxLength: 10
-              type: string
-              description: subscriber's date of birth. This field is mandatory while creating a customer. Date Format "YYYY-MM-DD"
-              format: date
-            surname:
-              type: string
-              description: Surname of the subscriber
-            addresses:
-              type: array
-              items:
-                $ref: '#/components/schemas/address'
-            phones:
-              type: array
-              items:
-                $ref: '#/components/schemas/phone'
-            dealerCode:
-              type: string
-              description: SABC code of originating dealer
-            agentID:
-              type: string
-              description: ID of originating Agent
-            ipAddress:
-              type: string
-              description: IPV4 or IPV6 address from where the transaction is being submitted
-            blackboxString:
-              type: string
-              description: Iovation black box value (generated via JavaScript on web/SDK on app).Encoded string up to 4KB.
     AffordabilityRequest:
       type: object
       properties:
@@ -1403,7 +1476,7 @@ components:
               bouncedDebitOrders:
                 type: number
                 description: Total bounced debit orders verified from the Bank Statement raw data.  Default to zero if unavailable.
-    PartyRoleRiskAssessment:
+    orderVetAssessmentResponse:
       type: object
       properties:
         statusCode:
@@ -1426,53 +1499,10 @@ components:
             id:
               type: string
               description: Unique identifier of the application
-            requestedStartDate:
-              type: string
-              format: date-time
-              description: Date and Timestamp of the Provenir system.  Java Zoned Date and time - Africa/Johannesburg (UTC+02:00)
-            requestedCompletionDate:
-              type: string
-              format: date-time
-              description: Date and Timestamp of the Provenir system.  Java Zoned Date and time - Africa/Johannesburg (UTC+02:00)
-    fullVetAssessmentResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-          maxLength: 30
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        errorIndicator:
-          type: boolean
-          description: If data validation from the calling system call is valid (“true” / “false”) e.g., false
-        data:
-          type: object
-          properties:
-            id:
-              type: string
-              description: Unique identifier of the application
-            caseNumber:
-              type: string
-              description: Case Management ref no. as received from the MTN API
             decision:
               type: string
               description: Decision engine decision on call ("Approve"/"Decline"/"Refer")
               example: Decline
-            finalReason:
-              type: object
-              properties:
-                reasonCode:
-                  type: string
-                  description: Code to uniquely identify each reason returned
-                reasonDescription:
-                  type: string
-                  description: Text to be displayed to Siebel for reason of decision
             declineReviewInd:
               type: boolean
               description: Is decline review allowed (“true” / “false”)
@@ -1497,34 +1527,14 @@ components:
                 conditionReasonDesc:
                   type: string
                   description: Description of Condition to be met
-            expiry:
-              type: string
-              description: Expiry date of Fullvet call, if expired order should auto cancel – UTC ISO 8601
-              example: 1981-06-02
-    Money:
-      type: object
-      description: A base / value business entity used to represent money
-      properties:
-        value:
-          type: number
-          format: float
-          description: A positive floating point number
-    fraudReason:
-      type: object
-      properties:
-        reasonCode:
-          type: string
-          description: Code to uniquely identify each reason returned
-        reasonDescription:
-          type: string
-          description: Text to be displayed to calling system for reason of decision
-    ntuResponse:
+    fraudRiskAssessmentResponse:
       type: object
       properties:
         statusCode:
           type: string
           description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
           example: '0000'
+          maxLength: 30
         statusMessage:
           type: string
           description: More details and corrective actions related to the error which can be shown to a client
@@ -1533,16 +1543,21 @@ components:
           description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
         errorIndicator:
           type: boolean
-          description: If data validation from the calling system call is valid
+          description: If data validation from the calling system call is valid (“true” / “false”) e.g., false
         data:
           type: object
           properties:
-            requestedStartDate:
+            id:
               type: string
-              format: date-time
-            requestedCompletionDate:
+              description: Unique identifier of the application
+            overallFraudDecision:
               type: string
-              format: date-time
+              description: Overall DE decision on application (Continue OR Decline)
+              example: Decline
+            fraudServiceBlocks:
+              type: array
+              items:
+                $ref: '#/components/schemas/fraudServiceBlock'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

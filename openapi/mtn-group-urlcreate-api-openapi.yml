@@ -73,6 +73,8 @@ paths:
             schema:
               $ref: '#/components/schemas/createUrlRequest'
         required: true
+      operationId: postBillUrlCreate
+      x-operation-id-source: derived
 components:
   schemas:
     createUrlRequest:
@@ -92,6 +94,25 @@ components:
         customerId:
           type: string
           description: MSISDN of the customer
+    createUrlResponse:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        data:
+          type: object
+          properties:
+            redirectUrl:
+              type: string
+              description: This will have the encrypted url that will be route to pay portal on click.In case of "Paylink" URL will be sent part of response.
     Error:
       type: object
       title: Error
@@ -118,25 +139,6 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
-    createUrlResponse:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      - supportMessage
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        data:
-          type: object
-          properties:
-            redirectUrl:
-              type: string
-              description: This will have the encrypted url that will be route to pay portal on click.In case of "Paylink" URL will be sent part of response.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

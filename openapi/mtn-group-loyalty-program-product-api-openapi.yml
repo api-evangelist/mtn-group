@@ -2,7 +2,11 @@ openapi: 3.2.0
 info:
   version: 1.0.0
   title: Customer Loyalty Management Loyalty Program Product API
-  description: "An API to manage customer loyalty operations. Can also be used by 3rd-party partners (3PP) to get a customer's loyalty products and rewards\n**04-Oct-21 ChangeID:  0000000000235**\n  -Branched off from the original TMF document."
+  description: 'An API to manage customer loyalty operations. Can also be used by 3rd-party partners (3PP) to get a customer''s loyalty products and rewards
+
+    **04-Oct-21 ChangeID: 0000000000235**
+
+    -Branched off from the original TMF document.'
 servers:
 - url: http://api.mtn.com/v1/loyaltyManagement
 security:
@@ -108,6 +112,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       security: []
+      summary: List products
+      x-summary-source: derived
   /loyaltyProgramMember/{memberId}/loyaltyProgramProduct/{programProductId}:
     get:
       description: This operation is used to retrieve the loyalty member's merchants based on the categories the member is eligible for
@@ -173,8 +179,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       security: []
+      summary: Get product
+      x-summary-source: derived
 components:
   schemas:
+    LoyaltyAccountCreate:
+      title: LoyaltyAccountCreate
+      type: object
+      properties:
+        id:
+          type: string
+        loyaltyBalance:
+          $ref: '#/components/schemas/CreateLoyaltyBalance'
+    Quantity:
+      title: Quantity
+      type: object
+      properties:
+        unit:
+          type: string
+        balance:
+          type: number
+          format: double
+      required:
+      - unit
+      - balance
+    ProductCharacteristics:
+      title: ProductLinkRef
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
     ProductProgramRef:
       title: ProductProgram
       type: object
@@ -204,22 +240,6 @@ components:
       required:
       - name
       - productSpecId
-    CreateLoyaltyBalance:
-      title: CreateLoyaltyBalance
-      type: object
-      properties:
-        quantity:
-          $ref: '#/components/schemas/Quantity'
-      required:
-      - quantity
-    LoyaltyAccountCreate:
-      title: LoyaltyAccountCreate
-      type: object
-      properties:
-        id:
-          type: string
-        loyaltyBalance:
-          $ref: '#/components/schemas/CreateLoyaltyBalance'
     ProductProgramCategoriesResponseData:
       title: ProductProgramUpdate
       type: object
@@ -236,26 +256,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProductCharacteristics'
-    Quantity:
-      title: Quantity
+    CreateLoyaltyBalance:
+      title: CreateLoyaltyBalance
       type: object
       properties:
-        unit:
-          type: string
-        balance:
-          type: number
-          format: double
+        quantity:
+          $ref: '#/components/schemas/Quantity'
       required:
-      - unit
-      - balance
-    ProductCharacteristics:
-      title: ProductLinkRef
-      type: object
-      properties:
-        name:
-          type: string
-        value:
-          type: string
+      - quantity
     Error:
       type: object
       required:

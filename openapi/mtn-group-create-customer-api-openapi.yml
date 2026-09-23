@@ -31,6 +31,83 @@ paths:
         required: true
 components:
   schemas:
+    Any: {}
+    Characteristic:
+      required:
+      - name
+      - value
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the characteristic
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
+      description: Describes a given characteristic of an object xor entity through a name/value pair.
+    Customer_Create_Response:
+      type: object
+      properties:
+        name:
+          type: string
+          example: joe
+        characteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic'
+          description: Describes the characteristic of a customer.
+        contactMedium:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactMedium'
+        engagedParty:
+          $ref: '#/components/schemas/RelatedParty'
+          description: The party - an organization or an individual - that is engaged as a customer.
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+    Customer_Create:
+      type: object
+      description: 'Skipped properties: id,href'
+      required:
+      - engagedParty
+      - name
+      properties:
+        name:
+          type: string
+          description: A word, term, or phrase by which the Customer is known and distinguished from other Customers.
+        mailAddress:
+          type: string
+          description: a mailing address.
+        mediumType:
+          type: string
+          description: 'medium Type.   preferred '
+        preferred:
+          type: string
+          description: 'preferred mailing Address.    '
+        characteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic'
+          description: Describes the characteristic of a customer.
+        contactMedium:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactMedium'
+        engagedParty:
+          $ref: '#/components/schemas/RelatedParty'
+          description: The party - an organization or an individual - that is engaged as a customer.
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+    ContactMedium:
+      type: object
+      properties:
+        characteristic:
+          $ref: '#/components/schemas/ContactMediumCharacteristic'
+      description: Indicates the contact medium that could be used to contact the party.
     ContactMediumCharacteristic:
       type: object
       properties:
@@ -86,83 +163,6 @@ components:
           type: string
           description: Name of the related entity
       description: Related Entity reference. A related party defines party or party role linked to a specific entity.
-    Customer_Create_Response:
-      type: object
-      properties:
-        name:
-          type: string
-          example: joe
-        characteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/Characteristic'
-          description: Describes the characteristic of a customer.
-        contactMedium:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactMedium'
-        engagedParty:
-          $ref: '#/components/schemas/RelatedParty'
-          description: The party - an organization or an individual - that is engaged as a customer.
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedParty'
-    Any: {}
-    ContactMedium:
-      type: object
-      properties:
-        characteristic:
-          $ref: '#/components/schemas/ContactMediumCharacteristic'
-      description: Indicates the contact medium that could be used to contact the party.
-    Customer_Create:
-      type: object
-      description: 'Skipped properties: id,href'
-      required:
-      - engagedParty
-      - name
-      properties:
-        name:
-          type: string
-          description: A word, term, or phrase by which the Customer is known and distinguished from other Customers.
-        mailAddress:
-          type: string
-          description: a mailing address.
-        mediumType:
-          type: string
-          description: 'medium Type.   preferred '
-        preferred:
-          type: string
-          description: 'preferred mailing Address.    '
-        characteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/Characteristic'
-          description: Describes the characteristic of a customer.
-        contactMedium:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactMedium'
-        engagedParty:
-          $ref: '#/components/schemas/RelatedParty'
-          description: The party - an organization or an individual - that is engaged as a customer.
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedParty'
-    Characteristic:
-      required:
-      - name
-      - value
-      type: object
-      properties:
-        name:
-          type: string
-          description: Name of the characteristic
-        value:
-          $ref: '#/components/schemas/Any'
-          description: The value of the characteristic
-      description: Describes a given characteristic of an object xor entity through a name/value pair.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

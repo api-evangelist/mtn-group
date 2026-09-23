@@ -9,7 +9,7 @@ security:
 - ApiKeyAuth: []
 - OAuth2: []
 tags:
-- name: partners
+- name: Partners
 paths:
   /partners:
     get:
@@ -17,7 +17,7 @@ paths:
       summary: List or find Organization details
       description: This operation list or find Organization entities
       tags:
-      - partners
+      - Partners
       parameters:
       - required: false
         in: header
@@ -144,7 +144,7 @@ paths:
       summary: Creates a Organization
       description: This operation creates a Organization entity.
       tags:
-      - partners
+      - Partners
       parameters:
       - name: transactionId
         description: A unique identifier for tracking request/response
@@ -223,7 +223,7 @@ paths:
       summary: Retrieves a Organization by ID
       description: This operation retrieves a Organization entity. Attribute selection is enabled for all first level attributes.
       tags:
-      - partners
+      - Partners
       parameters:
       - required: true
         name: id
@@ -333,7 +333,7 @@ paths:
       summary: Updates partially a Organization
       description: This operation updates partially a Organization entity.
       tags:
-      - partners
+      - Partners
       parameters:
       - required: true
         name: id
@@ -413,104 +413,18 @@ paths:
         required: true
 components:
   schemas:
-    RelatedParty:
+    Organization:
       type: object
-      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      description: Organization represents a group of people identified by shared interests or purpose. Examples include business, department and enterprise. Because of the complex nature of many businesses, both organizations and organization units are represented by the same data.
       required:
-      - '@referredType'
       - id
       properties:
         id:
           type: string
-          description: Unique identifier of a related entity.
+          description: Unique identifier of the organization
         href:
           type: string
-          description: Reference of the related entity.
-        name:
-          type: string
-          description: Name of the related entity.
-        role:
-          type: string
-          description: Role played by the related party
-        description:
-          type: string
-        status:
-          type: string
-        value:
-          type: string
-        isRef:
-          type: boolean
-          description: This is a boolean indicating whether an activity should be performed or not. Eg. Activating an account, a wallet etc.
-        isMinor:
-          type: boolean
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-    OrganizationParentRelationship:
-      type: object
-      description: Parent references of an organization in a structure of organizations.
-      properties:
-        relationshipType:
-          type: string
-          description: Type of the relationship. Could be juridical, hierarchical, geographical, functional for example.
-        organization:
-          $ref: '#/components/schemas/OrganizationRef'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    OrganizationRef:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity.
-        href:
-          type: string
-          description: Reference of the related entity.
-        name:
-          type: string
-          description: Name of the related entity.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id
-    Organization_Create:
-      type: object
-      description: 'Organization represents a group of people identified by shared interests or purpose. Examples include business, department and enterprise. Because of the complex nature of many businesses, both organizations and organization units are represented by the same data. Skipped properties: id,href'
-      required:
-      - id
-      - tradingName
-      properties:
+          description: Hyperlink to access the organization
         isHeadOffice:
           type: boolean
           description: If value is true, the organization is the head office
@@ -523,23 +437,45 @@ components:
         nameType:
           type: string
           description: 'Type of the name : Co, Inc, Ltd,…'
-        description:
-          type: string
-          description: Could be the description of the entity etc.
         organizationType:
           type: string
           description: Type of Organization (company, department...)
         tradingName:
           type: string
           description: Name that the organization (unit) trades under
+        totalMemberCount:
+          type: integer
+          description: Number of total memebers
+        memberList:
+          $ref: '#/components/schemas/MemberList'
+        contactMedium:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactMedium'
+        creditRating:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartyCreditProfile'
         existsDuring:
           $ref: '#/components/schemas/TimePeriod'
+        externalReference:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExternalReference'
+        organizationChildRelationship:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationChildRelationship'
         organizationIdentification:
           type: array
           items:
             $ref: '#/components/schemas/OrganizationIdentification'
         organizationParentRelationship:
           $ref: '#/components/schemas/OrganizationParentRelationship'
+        otherName:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtherNameOrganization'
         partyCharacteristic:
           type: array
           items:
@@ -551,193 +487,10 @@ components:
         status:
           $ref: '#/components/schemas/OrganizationStateType'
           description: Status of the organization
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    OrganizationStateType:
-      type: string
-      description: Valid values for the lifecycle state of the organization
-      enum:
-      - initialized
-      - validated
-      - closed
-      - active
-      - suspend
-      - resume
-    Result:
-      type: object
-      required:
-      - resultCode
-      - resultDescription
-      properties:
-        resultCode:
-          type: string
-          description: Result code. Example- '0000'
-        resultDescription:
-          type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-        sequenceNo:
-          type: string
-          description: A unique identifier used in tracking each request
-          example: 12345
-    PartyCreditProfile:
-      type: object
-      description: An individual might be evaluated for its worthiness and this evaluation might be based on a credit rating given by a credit agency.
-      properties:
-        creditAgencyName:
-          type: string
-          description: Name of the credit agency giving the score
-        creditAgencyType:
-          type: string
-          description: Type of the credit agency giving the score
-        ratingReference:
-          type: string
-          description: Reference corresponding to the credit rating
-        ratingReason:
-          type: string
-        ratingReason2:
-          type: string
-        ratingReason3:
-          type: string
-        ratingReason4:
-          type: string
-        ratingScore:
-          type: integer
-          description: A measure of a party’s creditworthiness calculated on the basis of a combination of factors such as their income and credit history
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    AttachmentRefOrValue:
-      type: object
-      description: An attachment by value or by reference. An attachment complements the description of an element, for example through a document, a video, a picture.
-      properties:
-        id:
-          type: string
-          description: Unique identifier for this particular attachment
-        href:
-          type: string
-          description: URI for this Attachment
-        attachmentType:
-          type: string
-          description: Attachment type such as video, picture
-        content:
-          type: string
-          description: The actual contents of the attachment object, if embedded, encoded as base64
-        description:
-          type: string
-          description: A narrative text describing the content of the attachment
-        mimeType:
-          type: string
-          description: Attachment mime type such as extension file for video, picture and document
-        name:
-          type: string
-          description: The name of the attachment
-        url:
-          type: string
-          description: Uniform Resource Locator, is a web page address (a subset of URI)
-        size:
-          $ref: '#/components/schemas/Quantity'
-          description: The size of the attachment.
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period of time for which the attachment is valid
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-    DueDetail:
-      type: array
-      items:
-        type: object
-        properties:
-          id:
-            type: string
-            description: Unique identifier. It can be customer id or account id or invoice number etc.
-          description:
-            type: string
-            description: Description of the due detail
-          validFor:
-            $ref: '#/components/schemas/TimePeriod'
-          dueDate:
-            type: string
-            format: date-time
-          unpaidAmount:
-            $ref: '#/components/schemas/Money'
-            description: Unpaid bill amount.
-          advanceAmount:
-            $ref: '#/components/schemas/Money'
-            description: Advance payment of the customer.
-          taxExcludedAmount:
-            $ref: '#/components/schemas/Money'
-            description: Tax exempted amount.
-          taxIncludedAmount:
-            $ref: '#/components/schemas/Money'
-            description: Taxable amount.
-          totalDueAmount:
-            $ref: '#/components/schemas/Money'
-            description: total payable amount,i.e. unpaidAmount plus advance amount after taxable amount
-    MemberList:
-      type: array
-      items:
-        type: object
-        properties:
-          id:
-            type: string
-            description: ID used for unique identification
-          name:
-            type: string
-            description: Name of the member
-          serviceNumber:
-            type: string
-            description: Service number. In case of msisdn as service number, form will be 'countryCode+ msisdn'. example- 2507685432
-          serviceType:
-            type: string
-            description: type of service used by member. example - GSM,Fixed Line etc.
-          status:
-            type: string
-    OtherNameOrganization:
-      type: object
-      description: Keeps track of other names, for example the old name of an organization.
-      properties:
-        name:
-          type: string
-          description: Organization name (department name for example)
-        nameType:
-          type: string
-          description: Co. , Inc. , Ltd. , Pty Ltd. , Plc; , Gmbh
-        tradingName:
-          type: string
-          description: The name that the organization trades under
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
+        taxExemptionCertificate:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxExemptionCertificate'
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -845,6 +598,73 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
+    ContactMedium:
+      type: object
+      description: Indicates the contact medium that could be used to contact the party.
+      properties:
+        role:
+          type: string
+        contactName:
+          type: string
+        partyRoleType:
+          type: string
+        mediumType:
+          type: string
+          description: 'Type of the contact medium, such as: CONTACT_ADDRESS, DIRECTOR_DETAIL, CONTACT_DETAIL, physicalAdress,postalAddress,contactPerson etc.'
+        verified:
+          type: boolean
+          description: Determines whether the contact details is verified or not
+          example: false
+        preferred:
+          type: boolean
+          description: If true, indicates that is the preferred contact medium
+        characteristic:
+          $ref: '#/components/schemas/MediumCharacteristic'
+          description: Any additional characteristic(s) of this contact medium
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The time period that the contact medium is valid for
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    DueDetail:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier. It can be customer id or account id or invoice number etc.
+          description:
+            type: string
+            description: Description of the due detail
+          validFor:
+            $ref: '#/components/schemas/TimePeriod'
+          dueDate:
+            type: string
+            format: date-time
+          unpaidAmount:
+            $ref: '#/components/schemas/Money'
+            description: Unpaid bill amount.
+          advanceAmount:
+            $ref: '#/components/schemas/Money'
+            description: Advance payment of the customer.
+          taxExcludedAmount:
+            $ref: '#/components/schemas/Money'
+            description: Tax exempted amount.
+          taxIncludedAmount:
+            $ref: '#/components/schemas/Money'
+            description: Taxable amount.
+          totalDueAmount:
+            $ref: '#/components/schemas/Money'
+            description: total payable amount,i.e. unpaidAmount plus advance amount after taxable amount
     Error:
       type: object
       title: Error
@@ -874,6 +694,364 @@ components:
         path:
           type: string
           description: the path that caused the error
+    MemberList:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: ID used for unique identification
+          name:
+            type: string
+            description: Name of the member
+          serviceNumber:
+            type: string
+            description: Service number. In case of msisdn as service number, form will be 'countryCode+ msisdn'. example- 2507685432
+          serviceType:
+            type: string
+            description: type of service used by member. example - GSM,Fixed Line etc.
+          status:
+            type: string
+    OrganizationParentRelationship:
+      type: object
+      description: Parent references of an organization in a structure of organizations.
+      properties:
+        relationshipType:
+          type: string
+          description: Type of the relationship. Could be juridical, hierarchical, geographical, functional for example.
+        organization:
+          $ref: '#/components/schemas/OrganizationRef'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Note:
+      type: array
+      items:
+        type: string
+    OtherNameOrganization:
+      type: object
+      description: Keeps track of other names, for example the old name of an organization.
+      properties:
+        name:
+          type: string
+          description: Organization name (department name for example)
+        nameType:
+          type: string
+          description: Co. , Inc. , Ltd. , Pty Ltd. , Plc; , Gmbh
+        tradingName:
+          type: string
+          description: The name that the organization trades under
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    OrganizationChildRelationship:
+      type: object
+      description: Child references of an organization in a structure of organizations.
+      properties:
+        relationshipType:
+          type: string
+          description: Type of the relationship. Could be juridical, hierarchical, geographical, functional for example.
+        organization:
+          $ref: '#/components/schemas/OrganizationRef'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Quantity:
+      type: object
+      description: An amount in a given unit
+      properties:
+        amount:
+          default: 1
+          type: number
+          format: float
+          description: Numeric value in a given unit
+        units:
+          type: string
+          description: Unit
+    Result:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        sequenceNo:
+          type: string
+          description: A unique identifier used in tracking each request
+          example: 12345
+    RelatedParty:
+      type: object
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      required:
+      - '@referredType'
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: Name of the related entity.
+        role:
+          type: string
+          description: Role played by the related party
+        description:
+          type: string
+        status:
+          type: string
+        value:
+          type: string
+        isRef:
+          type: boolean
+          description: This is a boolean indicating whether an activity should be performed or not. Eg. Activating an account, a wallet etc.
+        isMinor:
+          type: boolean
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    PartyCreditProfile:
+      type: object
+      description: An individual might be evaluated for its worthiness and this evaluation might be based on a credit rating given by a credit agency.
+      properties:
+        creditAgencyName:
+          type: string
+          description: Name of the credit agency giving the score
+        creditAgencyType:
+          type: string
+          description: Type of the credit agency giving the score
+        ratingReference:
+          type: string
+          description: Reference corresponding to the credit rating
+        ratingReason:
+          type: string
+        ratingReason2:
+          type: string
+        ratingReason3:
+          type: string
+        ratingReason4:
+          type: string
+        ratingScore:
+          type: integer
+          description: A measure of a party’s creditworthiness calculated on the basis of a combination of factors such as their income and credit history
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    ExternalReference:
+      type: object
+      description: External reference of the individual or reference in other system
+      properties:
+        externalReferenceType:
+          type: string
+          description: Type of the external reference
+        name:
+          type: string
+          description: External reference name
+        accountType:
+          type: string
+          description: Type of account current or savings, checking etc.
+        accountName:
+          type: string
+          description: Name of account.
+        accountNumber:
+          type: string
+          description: Bank account number.
+        bankName:
+          type: string
+          description: Name ofthe bank where account is domiciled.
+        branchCode:
+          type: string
+          description: Bank branch code.
+        iban:
+          type: string
+          description: Bank iban number.
+        swiftCode:
+          type: string
+          description: Bank swift code.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    TaxExemptionCertificate:
+      type: object
+      description: A tax exemption certificate represents a tax exemption granted to a party (individual or organization) by a tax jurisdiction which may be a city, state, country,... An exemption has a certificate identifier (received from the jurisdiction that levied the tax) and a validity period. An exemption is per tax types and determines for each type of tax what portion of the tax is exempted (partial by percentage or complete) via the tax definition.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the certificate of the tax exemption
+        attachment:
+          $ref: '#/components/schemas/AttachmentRefOrValue'
+        taxDefinition:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxDefinition'
+        amountDueDetail:
+          $ref: '#/components/schemas/DueDetail'
+          description: Detail of the due amount.
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Money:
+      required:
+      - amount
+      - unit
+      type: object
+      properties:
+        amount:
+          type: string
+        unit:
+          type: string
+    AttachmentRefOrValue:
+      type: object
+      description: An attachment by value or by reference. An attachment complements the description of an element, for example through a document, a video, a picture.
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this particular attachment
+        href:
+          type: string
+          description: URI for this Attachment
+        attachmentType:
+          type: string
+          description: Attachment type such as video, picture
+        content:
+          type: string
+          description: The actual contents of the attachment object, if embedded, encoded as base64
+        description:
+          type: string
+          description: A narrative text describing the content of the attachment
+        mimeType:
+          type: string
+          description: Attachment mime type such as extension file for video, picture and document
+        name:
+          type: string
+          description: The name of the attachment
+        url:
+          type: string
+          description: Uniform Resource Locator, is a web page address (a subset of URI)
+        size:
+          $ref: '#/components/schemas/Quantity'
+          description: The size of the attachment.
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period of time for which the attachment is valid
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    OrganizationIdentification:
+      type: object
+      description: Represents our registration of information used as proof of identity by an organization
+      properties:
+        identificationId:
+          type: string
+          description: Identifier
+        identificationType:
+          type: string
+          description: Type of identification information used to identify the company in a country or internationally
+        issuingAuthority:
+          type: string
+          description: Authority which has issued the identifier (chamber of commerce...)
+        issuingDate:
+          type: string
+          format: date-time
+          description: Date at which the identifier was issued
+        attachment:
+          $ref: '#/components/schemas/AttachmentRefOrValue'
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the identification information is valid.
+        note:
+          $ref: '#/components/schemas/Note'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
     TaxDefinition:
       type: object
       description: Reference of a tax definition. A tax is levied by an authorized tax jurisdiction. There are many different types of tax (Federal Tax levied by the US Government, State Tax levied by the State of California,…).
@@ -900,18 +1078,45 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
-    TimePeriod:
+    Characteristic:
       type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
       properties:
-        endDateTime:
+        id:
           type: string
-          format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
+          description: Unique identifier
+        name:
           type: string
-          format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+          description: Name of the characteristic
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+        value:
+          type: string
+          description: The value of the characteristic
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        recurring:
+          type: boolean
+          example: false
+        recurringCount:
+          type: number
+          example: 1
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
     Organization_Update:
       type: object
       description: 'Organization represents a group of people identified by shared interests or purpose. Examples include business, department and enterprise. Because of the complex nature of many businesses, both organizations and organization units are represented by the same data. Skipped properties: id,href'
@@ -989,117 +1194,23 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    Characteristic:
+    OrganizationStateType:
+      type: string
+      description: Valid values for the lifecycle state of the organization
+      enum:
+      - initialized
+      - validated
+      - closed
+      - active
+      - suspend
+      - resume
+    Organization_Create:
       type: object
-      description: Describes a given characteristic of an object or entity through a name/value pair.
-      required:
-      - name
-      - value
-      properties:
-        id:
-          type: string
-          description: Unique identifier
-        name:
-          type: string
-          description: Name of the characteristic
-        valueType:
-          type: string
-          description: Data type of the value of the characteristic
-        value:
-          type: string
-          description: The value of the characteristic
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedParty'
-        recurring:
-          type: boolean
-          example: false
-        recurringCount:
-          type: number
-          example: 1
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    OrganizationChildRelationship:
-      type: object
-      description: Child references of an organization in a structure of organizations.
-      properties:
-        relationshipType:
-          type: string
-          description: Type of the relationship. Could be juridical, hierarchical, geographical, functional for example.
-        organization:
-          $ref: '#/components/schemas/OrganizationRef'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    ExternalReference:
-      type: object
-      description: External reference of the individual or reference in other system
-      properties:
-        externalReferenceType:
-          type: string
-          description: Type of the external reference
-        name:
-          type: string
-          description: External reference name
-        accountType:
-          type: string
-          description: Type of account current or savings, checking etc.
-        accountName:
-          type: string
-          description: Name of account.
-        accountNumber:
-          type: string
-          description: Bank account number.
-        bankName:
-          type: string
-          description: Name ofthe bank where account is domiciled.
-        branchCode:
-          type: string
-          description: Bank branch code.
-        iban:
-          type: string
-          description: Bank iban number.
-        swiftCode:
-          type: string
-          description: Bank swift code.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    Organization:
-      type: object
-      description: Organization represents a group of people identified by shared interests or purpose. Examples include business, department and enterprise. Because of the complex nature of many businesses, both organizations and organization units are represented by the same data.
+      description: 'Organization represents a group of people identified by shared interests or purpose. Examples include business, department and enterprise. Because of the complex nature of many businesses, both organizations and organization units are represented by the same data. Skipped properties: id,href'
       required:
       - id
+      - tradingName
       properties:
-        id:
-          type: string
-          description: Unique identifier of the organization
-        href:
-          type: string
-          description: Hyperlink to access the organization
         isHeadOffice:
           type: boolean
           description: If value is true, the organization is the head office
@@ -1112,45 +1223,23 @@ components:
         nameType:
           type: string
           description: 'Type of the name : Co, Inc, Ltd,…'
+        description:
+          type: string
+          description: Could be the description of the entity etc.
         organizationType:
           type: string
           description: Type of Organization (company, department...)
         tradingName:
           type: string
           description: Name that the organization (unit) trades under
-        totalMemberCount:
-          type: integer
-          description: Number of total memebers
-        memberList:
-          $ref: '#/components/schemas/MemberList'
-        contactMedium:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactMedium'
-        creditRating:
-          type: array
-          items:
-            $ref: '#/components/schemas/PartyCreditProfile'
         existsDuring:
           $ref: '#/components/schemas/TimePeriod'
-        externalReference:
-          type: array
-          items:
-            $ref: '#/components/schemas/ExternalReference'
-        organizationChildRelationship:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrganizationChildRelationship'
         organizationIdentification:
           type: array
           items:
             $ref: '#/components/schemas/OrganizationIdentification'
         organizationParentRelationship:
           $ref: '#/components/schemas/OrganizationParentRelationship'
-        otherName:
-          type: array
-          items:
-            $ref: '#/components/schemas/OtherNameOrganization'
         partyCharacteristic:
           type: array
           items:
@@ -1162,10 +1251,6 @@ components:
         status:
           $ref: '#/components/schemas/OrganizationStateType'
           description: Status of the organization
-        taxExemptionCertificate:
-          type: array
-          items:
-            $ref: '#/components/schemas/TaxExemptionCertificate'
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -1176,86 +1261,18 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    Quantity:
+    OrganizationRef:
       type: object
-      description: An amount in a given unit
-      properties:
-        amount:
-          default: 1
-          type: number
-          format: float
-          description: Numeric value in a given unit
-        units:
-          type: string
-          description: Unit
-    Money:
-      required:
-      - amount
-      - unit
-      type: object
-      properties:
-        amount:
-          type: string
-        unit:
-          type: string
-    ContactMedium:
-      type: object
-      description: Indicates the contact medium that could be used to contact the party.
-      properties:
-        role:
-          type: string
-        contactName:
-          type: string
-        partyRoleType:
-          type: string
-        mediumType:
-          type: string
-          description: 'Type of the contact medium, such as: CONTACT_ADDRESS, DIRECTOR_DETAIL, CONTACT_DETAIL, physicalAdress,postalAddress,contactPerson etc.'
-        verified:
-          type: boolean
-          description: Determines whether the contact details is verified or not
-          example: false
-        preferred:
-          type: boolean
-          description: If true, indicates that is the preferred contact medium
-        characteristic:
-          $ref: '#/components/schemas/MediumCharacteristic'
-          description: Any additional characteristic(s) of this contact medium
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The time period that the contact medium is valid for
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    Note:
-      type: array
-      items:
-        type: string
-    TaxExemptionCertificate:
-      type: object
-      description: A tax exemption certificate represents a tax exemption granted to a party (individual or organization) by a tax jurisdiction which may be a city, state, country,... An exemption has a certificate identifier (received from the jurisdiction that levied the tax) and a validity period. An exemption is per tax types and determines for each type of tax what portion of the tax is exempted (partial by percentage or complete) via the tax definition.
       properties:
         id:
           type: string
-          description: Unique identifier of the certificate of the tax exemption
-        attachment:
-          $ref: '#/components/schemas/AttachmentRefOrValue'
-        taxDefinition:
-          type: array
-          items:
-            $ref: '#/components/schemas/TaxDefinition'
-        amountDueDetail:
-          $ref: '#/components/schemas/DueDetail'
-          description: Detail of the due amount.
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: Name of the related entity.
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -1266,40 +1283,23 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    OrganizationIdentification:
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    TimePeriod:
       type: object
-      description: Represents our registration of information used as proof of identity by an organization
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
       properties:
-        identificationId:
-          type: string
-          description: Identifier
-        identificationType:
-          type: string
-          description: Type of identification information used to identify the company in a country or internationally
-        issuingAuthority:
-          type: string
-          description: Authority which has issued the identifier (chamber of commerce...)
-        issuingDate:
+        endDateTime:
           type: string
           format: date-time
-          description: Date at which the identifier was issued
-        attachment:
-          $ref: '#/components/schemas/AttachmentRefOrValue'
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the identification information is valid.
-        note:
-          $ref: '#/components/schemas/Note'
-        '@baseType':
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
           type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

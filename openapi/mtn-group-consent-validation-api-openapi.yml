@@ -16,7 +16,7 @@ paths:
     post:
       tags:
       - Consent Validation
-      summary: Provides an easy way for double opt-in to their traditional channel applications like USSD.
+      summary: Provides an easy way for double opt-in to their traditional channel…
       description: Confirms next action based on subscriber consent mostly for traditional channels.
       operationId: consentValidation
       parameters:
@@ -88,12 +88,35 @@ paths:
         required: true
 components:
   schemas:
-    SuccessConsentResponseLink:
+    ConsentRequest:
       type: object
+      required:
+      - flowType
+      - confirmationMessage
+      - callbackUrl
       properties:
-        self:
+        confirmationMessage:
           type: string
-          example: https://api.mtn.com/v1/consent
+          example: Do you consent to making this purchase? . Press 1 to accept , Press 2 to reject.
+        flowType:
+          type: string
+          example: ussd
+          description: ussd or sms
+          enum:
+          - ussd
+          - sms
+        callbackUrl:
+          type: string
+          example: https://your-domain/notification
+          description: The callback url where the user's consent will be posted to
+        customData:
+          type: array
+          items:
+            type: string
+          example:
+          - custom data 1
+          - custom data 2
+          description: This is a custom list of strings that you want to be sent back to you when the user's consent is posted back in ConsentNotificationResponse object.
     SuccessConsentResponse:
       type: object
       required:
@@ -130,35 +153,12 @@ components:
         transactionId:
           type: string
           description: Message ID
-    ConsentRequest:
+    SuccessConsentResponseLink:
       type: object
-      required:
-      - flowType
-      - confirmationMessage
-      - callbackUrl
       properties:
-        confirmationMessage:
+        self:
           type: string
-          example: Do you consent to making this purchase? . Press 1 to accept , Press 2 to reject.
-        flowType:
-          type: string
-          example: ussd
-          description: ussd or sms
-          enum:
-          - ussd
-          - sms
-        callbackUrl:
-          type: string
-          example: https://your-domain/notification
-          description: The callback url where the user's consent will be posted to
-        customData:
-          type: array
-          items:
-            type: string
-          example:
-          - custom data 1
-          - custom data 2
-          description: This is a custom list of strings that you want to be sent back to you when the user's consent is posted back in ConsentNotificationResponse object.
+          example: https://api.mtn.com/v1/consent
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

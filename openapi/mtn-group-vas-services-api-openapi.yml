@@ -20,7 +20,7 @@ paths:
     post:
       tags:
       - VAS Services
-      summary: This is used to provision Variable VAS servcies.
+      summary: This is used to provision Variable VAS servcies
       description: This service is used to provision variable VAS bundles.This version of the service does the variable provisiong along with the promotions that are combined with the rewards and enables notification to the target channel. This service will also have the recurrence of the offers that are configured on Neon that will be provisioned.
       operationId: offerProvisionv2
       responses:
@@ -53,8 +53,8 @@ paths:
     post:
       tags:
       - VAS Services
-      summary: Provision VAS services (applicable to prepaid and postpaid customers).
-      description: Function used to provision a VAS service on a customer's account.  This version of the service does the provisoning for autorenew and micro bundles; it also aligns the interface to the current CAMEL case standard being followed.
+      summary: Provision VAS services (applicable to prepaid and postpaid customers)
+      description: Function used to provision a VAS service on a customer's account. This version of the service does the provisoning for autorenew and micro bundles; it also aligns the interface to the current CAMEL case standard being followed.
       operationId: postVASV3
       responses:
         200:
@@ -86,7 +86,7 @@ paths:
     get:
       tags:
       - VAS Services
-      summary: Returns a list of applicable VAS services for subscribers.
+      summary: Returns a list of applicable VAS services for subscribers
       description: Returns a list of applicable VAS services for a customer to provision on their account. Current source systems is IBF and SAAE for this i.e. you can do "Card" and "Airtime" purchases. In this version additional feilds have been added to support simple, complex and extreme cards for the UI/UX i.e. to cater for different naming standards, and to return the SAAE ID where configured.V9 Vas service retruns standard VAS , top selling and personalised.
       operationId: getCatalogueV9
       parameters:
@@ -191,7 +191,7 @@ paths:
     post:
       tags:
       - VAS Services
-      summary: This is used to provision Variable VAS servcies.
+      summary: This is used to provision Variable VAS servcies
       description: This service is used to provision variable VAS bundles.This version of the service does the variable provisiong along with the promotions that are combined with the rewards and enables notification to the target channel. This service will also have the recurrence of the offers that are configured on Neon that will be provisioned.
       operationId: createVarVASV3
       responses:
@@ -224,7 +224,7 @@ paths:
     post:
       tags:
       - VAS Services
-      summary: This is used to provision Variable VAS servcies.
+      summary: This is used to provision Variable VAS servcies
       description: This service is used to provision variable VAS bundles.This version of the service does the variable provisiong along with the promotions that are combined with the rewards and enables notification to the target channel. This service will also have the recurrence of the offers that are configured on Neon that will be provisioned.
       operationId: vasVariableSubscriptionV5
       responses:
@@ -255,32 +255,27 @@ paths:
         required: true
 components:
   schemas:
-    PostVASResponseV3:
-      allOf:
-      - required:
-        - statusCode
-        - statusMessage
-        - supportMessage
-        - transactionId
-        type: object
-        properties:
-          statusCode:
-            type: integer
-            description: Back end status code.
-            format: int32
-            example: '0000'
-          statusMessage:
-            type: string
-            description: User friendly error message.
-            example: success
-          supportMessage:
-            type: string
-            description: Description message for Support teams
-            example: success
-          transactionId:
-            type: string
-            description: Unique identifier for the transaction.
-            example: 564trgf567ytg
+    Notify:
+      type: object
+      properties:
+        notifyChannel:
+          type: string
+          description: 'This indicates if on succesful purchase of bundle which channel has to notify. '
+        offerType:
+          type: string
+          description: This is the type of "offer" being requested by the service.  Currently it can be set to one of the following; "myMTN Offers","Summer Surprise" or "Recharge Rewards".
+        offerCategory:
+          type: string
+          description: When "offerType" is set to "myMTN Offers", this value can be one of the following; "All", "myMTN Data", "myMTN Voice" or "myMTN Social".  When its set to "Recharge Rewards"  this value does not have to be passed.  If this value is not passed for any "offerType", its defaulted to "All".If "offerType" is set to "Summer Surprise" than sub type can be "Monthly","Weekly","All" etc.Currently it has been configured for "All" .The summer surprise depends also on the sourceIdentifier as SOA invokes corresponding target system to retreive the product details.
+        notify:
+          type: string
+          description: This indicates if on succesful purchase of bundle do we need to notify the target channel.
+        offerId:
+          type: string
+          description: This value will be the offer id given for the bundle in the getMTN offer response.
+        offerSubCategory:
+          type: string
+          description: Currently this field is optional.  Its a field that can in future be used to filter the offers that you get back. In case of "Summer Surprise" the subType could be "CVM","Wave" and "Others", Currently target channel has catered for "CVM" and "Wave" This field is only mandatory if the offer type is "Summer Surprise".
     PostVASRequestV3:
       allOf:
       - required:
@@ -337,27 +332,386 @@ components:
                 offerSubCategory:
                   type: string
                   description: Currently this field is optional.  Its a field that can in future be used to filter the offers that you get back. In case of "Summer Surprise" the subType could be "CVM","Wave" and "Others", Currently target channel has catered for "CVM" and "Wave" This field is only mandatory if the offer type is "Summer Surprise".
-    Notify:
+    createVASRequestV6:
+      allOf:
+      - required:
+        - cycles
+        - description
+        - frequency
+        - msisdn
+        - notify
+        - offerId
+        - provisionMedium
+        - price
+        - priceUOM
+        - services
+        - soId
+        - sourceIdentifier
+        - transactionId
+        - validity
+        - merchantId
+        type: object
+        properties:
+          transactionId:
+            type: string
+            description: Unique identifier for the transaction.
+          sourceIdentifier:
+            type: string
+            description: Identifier of the system sending the OTP.  Currently it can be set to one of the following values; "Siebel", "Eppix", "myMTN App", "Online Store".
+          msisdn:
+            type: string
+            description: MSISDN in international format.  For example "27832227009"
+          soId:
+            type: string
+            description: VAS Code that indentifies the VAS service on the back-ends.  This can be obtained from the GET "mtnOffer" V2 service - its the "soId" field.
+          offerType:
+            type: string
+            description: This field will determine if the service is Normal or Variable. This field will be a place holder to orchestrate the call to different provision service on IBF
+            enum:
+            - Normal
+            - Variable
+          provisionMedium:
+            type: string
+            description: Tjis field will determine the medium of purchase that the customer opts to buy the bundles.
+            enum:
+            - CARD
+            - AIRTIME
+          merchantId:
+            type: string
+            description: merchant Id used on the backend while fetching offers.
+          validity:
+            type: string
+            description: Validity of an offer. For example "24 Days", “7 Weeks” or “1 Day”.
+          frequency:
+            type: string
+            description: This field determines if the offer is recurring or not. This can also be useful to set the flag for recurring.
+          reprovisionCharge:
+            type: string
+            description: For Recurring bundles PRICE will specify the initial purchase charge and reprovisionCaharge will specify the re-provision charge. If not specified, reprovisionCaharge will assume the value specified for PRICE. The value will be in cents
+          cycles:
+            type: string
+            description: This field determines the number of cycles that the offer will be recurring
+          subscriberType:
+            type: string
+            description: Currently this field is optional. It is used to determine if the subscriber is prepaid, postpaid, Coverged, hybrid etc. The channels will be sending the value if they have the context of the subscribers msisdn if it is prepaid or postpaid.The values are P for prepaid ,C for postpaid,H for hybrid,V for converged
+          cyclesUOM:
+            type: string
+            description: This field indicates the unit of measure of the cycles that is returned for the offers. Sample values could be Days, Months. The value is returned from the cycles unit of mesaure from the get offers call to Neon
+          description:
+            type: string
+            description: Description of the bundle like 1GB-MTN-NightPlan.  This is obtaianed from the GET "mtnOffer" V2 service, its the "offerShortDescription" field.
+          offerId:
+            type: string
+            description: This is the unique bundle id which can be obtained from the GET "mtnOffer" V2 service - its the "offerId" field
+          price:
+            type: string
+            description: Price of the bundle which can be obtained from the GET "mtnOffer" V2 service - its the "offerPrice" field
+          priceUOM:
+            type: string
+            description: This is currently always set as R
+          services:
+            type: array
+            description: List of services used to provision the variable VAS service.
+            items:
+              type: object
+              properties:
+                serviceValue:
+                  type: integer
+                  description: This is the service value of the offer.  This is the "serviceValue" parameter obtained from the GET "mtnoffer" v2 service.
+                serviceValidity:
+                  type: string
+                  description: The validity of the service returned from GET "mtnoffer".Returned from VALIDITY field under services
+                effectiveRate:
+                  type: string
+                  description: The effective rate of the bundle , the price in amount like R200.  This is the "effectiveRate" parameter obtained from the GET "mtnoffer" v2 service.
+                serviceSubType:
+                  type: string
+                  description: Can be MIN or DATA or SMS.
+                serviceUom:
+                  type: string
+                  description: Can be GB or MB for data, and Minutes for minute values.  This is the serviceUOM parameter obtained from the GET service.
+                validityUom:
+                  type: string
+                  description: The validity of the services that us returned from "mtnoffer". Values can be "Days", "Weeks", "Hours".
+                promotion:
+                  type: string
+                  description: This field defines if the service returned from the GET ofefr service.The values can be T or F
+          notify:
+            type: array
+            description: List of attributes to be passed for notification.
+            items:
+              type: object
+              properties:
+                notifyChannel:
+                  type: string
+                  description: This indicates if on succesful purchase of bundle which channel has to notify.
+                notify:
+                  type: string
+                  description: This indicates if on succesful purchase of bundle do we need to notify the target channel.
+                offerMenuId:
+                  type: string
+                  description: This will have the menu from which the offers are retrieved and to which menu should the opt in notification be sent to Neon.
+    Service:
       type: object
       properties:
-        notifyChannel:
+        serviceValue:
+          type: integer
+          description: This is the service value of the offer.  This is the "serviceValue" parameter obtained from the GET "mtnoffer" v2 service.
+        serviceValidity:
           type: string
-          description: 'This indicates if on succesful purchase of bundle which channel has to notify. '
-        offerType:
+          description: The validity of the service returned from GET "mtnoffer".Returned from VALIDITY field under services
+        effectiveRate:
           type: string
-          description: This is the type of "offer" being requested by the service.  Currently it can be set to one of the following; "myMTN Offers","Summer Surprise" or "Recharge Rewards".
-        offerCategory:
+          description: The effective rate of the bundle , the price in amount like R200.  This is the "effectiveRate" parameter obtained from the GET "mtnoffer" v2 service.
+        serviceSubType:
           type: string
-          description: When "offerType" is set to "myMTN Offers", this value can be one of the following; "All", "myMTN Data", "myMTN Voice" or "myMTN Social".  When its set to "Recharge Rewards"  this value does not have to be passed.  If this value is not passed for any "offerType", its defaulted to "All".If "offerType" is set to "Summer Surprise" than sub type can be "Monthly","Weekly","All" etc.Currently it has been configured for "All" .The summer surprise depends also on the sourceIdentifier as SOA invokes corresponding target system to retreive the product details.
-        notify:
+          description: Can be 'MIN' or 'DATA' or 'SMS'.  This is the "offerSubType" parameter obtained from the GET "mtnoffer" v2 service.
+        serviceUom:
           type: string
-          description: This indicates if on succesful purchase of bundle do we need to notify the target channel.
-        offerId:
+          description: Can be 'GB' or 'MB' for data, and 'Minutes' for minute values.  This is the "serviceUOM" parameter obtained from the GET "mtnoffer" v3 service.
+        validityUom:
           type: string
-          description: This value will be the offer id given for the bundle in the getMTN offer response.
-        offerSubCategory:
+          description: The validity of the services that us returned from "mtnoffer". Values can be "Days", "Weeks", "Hours".
+        promotion:
           type: string
-          description: Currently this field is optional.  Its a field that can in future be used to filter the offers that you get back. In case of "Summer Surprise" the subType could be "CVM","Wave" and "Others", Currently target channel has catered for "CVM" and "Wave" This field is only mandatory if the offer type is "Summer Surprise".
+          description: This field defines if the service returned from "mtnoffer". The values can be 'T' or 'F'
+    PostVASResponseV2:
+      allOf:
+      - required:
+        - statusCode
+        - statusMessage
+        - supportMessage
+        - transactionId
+        type: object
+        properties:
+          statusCode:
+            type: integer
+            description: Back end status code.
+            format: int32
+            example: oooo
+          statusMessage:
+            type: string
+            description: User friendly error message.
+            example: success
+          supportMessage:
+            type: string
+            description: Description message for Support teams
+            example: success
+          transactionId:
+            type: string
+            description: Unique identifier for the transaction.
+            example: 3456tret7ytr657
+    createVASRequestV5:
+      allOf:
+      - required:
+        - cycles
+        - description
+        - frequency
+        - msisdn
+        - notify
+        - offerId
+        - provisionMedium
+        - price
+        - priceUOM
+        - services
+        - soId
+        - sourceIdentifier
+        - transactionId
+        - validity
+        type: object
+        properties:
+          transactionId:
+            type: string
+            description: Unique identifier for the transaction.
+          sourceIdentifier:
+            type: string
+            description: Identifier of the system sending the OTP.  Currently it can be set to one of the following values; "Siebel", "Eppix", "myMTN App", "Online Store".
+          msisdn:
+            type: string
+            description: MSISDN in international format.  For example "27832227009"
+          soId:
+            type: string
+            description: VAS Code that indentifies the VAS service on the back-ends.  This can be obtained from the GET "mtnOffer" V2 service - its the "soId" field.
+          provisionMedium:
+            type: string
+            description: Tjis field will determine the medium of purchase that the customer opts to buy the bundles.
+            enum:
+            - CARD
+            - AIRTIME
+          validity:
+            type: string
+            description: Validity of an offer. For example "24 Days", “7 Weeks” or “1 Day”.
+          frequency:
+            type: string
+            description: This field determines if the offer is recurring or not. This can also be useful to set the flag for recurring. This will be returned from 'offer recurrence' of get mtn offerS. Sample values could be 'Adhoc' or 'recurring'
+          reprovisionCharge:
+            type: string
+            description: For Recurring bundles PRICE will specify the initial purchase charge and reprovisionCaharge will specify the re-provision charge. If not specified, reprovisionCaharge will assume the value specified for PRICE. The value will be in cents
+          cycles:
+            type: string
+            description: This field determines the number of cycles that the offer will be recurring
+          subscriberType:
+            type: string
+            description: Currently this field is optional. It is used to determine if the subscriber is prepaid, postpaid, Coverged, hybrid etc. The channels will be sending the value if they have the context of the subscriber's msisdn if it is prepaid or postpaid.The values are 'P' for prepaid ,'C' for postpaid, 'H' for hybrid, 'V' for converged
+          cyclesUOM:
+            type: string
+            description: This field indicates the unit of measure of the cycles that is returned for the offers. Sample values could be 'Days', 'Months'. The value is returned from the cycles unit of mesaure from the get offers call to Neon
+          description:
+            type: string
+            description: Description of the bundle like 1GB-MTN-NightPlan.  This is obtaianed from the GET "mtnOffer" V2 service, its the "offerShortDescription" field.
+          offerId:
+            type: string
+            description: This is the unique bundle id which can be obtained from the GET "mtnOffer" V2 service - its the "offerId" field
+          price:
+            type: string
+            description: Price of the bundle which can be obtained from the GET "mtnOffer" V2 service - its the "offerPrice" field
+          priceUOM:
+            type: string
+            description: This is currently always set as "R", as the GET "mtnOffer" service doesn't returne the price UOM.
+          services:
+            type: array
+            description: List of services used to provision the variable VAS service.
+            items:
+              type: object
+              properties:
+                serviceValue:
+                  type: integer
+                  description: This is the service value of the offer.  This is the "serviceValue" parameter obtained from the GET "mtnoffer" v2 service.
+                serviceValidity:
+                  type: string
+                  description: The validity of the service returned from GET "mtnoffer".Returned from VALIDITY field under services
+                effectiveRate:
+                  type: string
+                  description: The effective rate of the bundle , the price in amount like R200.  This is the "effectiveRate" parameter obtained from the GET "mtnoffer" v2 service.
+                serviceSubType:
+                  type: string
+                  description: Can be 'MIN' or 'DATA' or 'SMS'.  This is the "offerSubType" parameter obtained from the GET "mtnoffer" v2 service.
+                serviceUom:
+                  type: string
+                  description: Can be 'GB' or 'MB' for data, and 'Minutes' for minute values.  This is the "serviceUOM" parameter obtained from the GET "mtnoffer" v3 service.
+                validityUom:
+                  type: string
+                  description: The validity of the services that us returned from "mtnoffer". Values can be "Days", "Weeks", "Hours".
+                promotion:
+                  type: string
+                  description: This field defines if the service returned from "mtnoffer". The values can be 'T' or 'F'
+          notify:
+            type: array
+            description: List of attributes to be passed for notification.
+            items:
+              type: object
+              properties:
+                notifyChannel:
+                  type: string
+                  description: 'This indicates if on succesful purchase of bundle which channel has to notify. '
+                offerType:
+                  type: string
+                  description: This is the type of "offer" being requested by the service.  Currently it can be set to one of the following; "myMTN Offers","Summer Surprise" or "Recharge Rewards".
+                offerCategory:
+                  type: string
+                  description: When "offerType" is set to "myMTN Offers", this value can be one of the following; "All", "myMTN Data", "myMTN Voice" or "myMTN Social".  When its set to "Recharge Rewards"  this value does not have to be passed.  If this value is not passed for any "offerType", its defaulted to "All".If "offerType" is set to "Summer Surprise" than sub type can be "Monthly","Weekly","All" etc.Currently it has been configured for "All" .The summer surprise depends also on the sourceIdentifier as SOA invokes corresponding target system to retreive the product details.
+                notify:
+                  type: string
+                  description: This indicates if on succesful purchase of bundle do we need to notify the target channel.
+                offerSubCategory:
+                  type: string
+                  description: Currently this field is optional.  Its a field that can in future be used to filter the offers that you get back. In case of "Summer Surprise" the subType could be "CVM","Wave" and "Others", Currently target channel has catered for "CVM" and "Wave" This field is only mandatory if the offer type is "Summer Surprise".
+    PostVASResponseV3:
+      allOf:
+      - required:
+        - statusCode
+        - statusMessage
+        - supportMessage
+        - transactionId
+        type: object
+        properties:
+          statusCode:
+            type: integer
+            description: Back end status code.
+            format: int32
+            example: '0000'
+          statusMessage:
+            type: string
+            description: User friendly error message.
+            example: success
+          supportMessage:
+            type: string
+            description: Description message for Support teams
+            example: success
+          transactionId:
+            type: string
+            description: Unique identifier for the transaction.
+            example: 564trgf567ytg
+    createVASRequestV4:
+      allOf:
+      - required:
+        - cycles
+        - description
+        - frequency
+        - msisdn
+        - notify
+        - offerId
+        - price
+        - priceUOM
+        - services
+        - soId
+        - sourceIdentifier
+        - transactionId
+        - validity
+        type: object
+        properties:
+          transactionId:
+            type: string
+            description: Unique identifier for the transaction.
+          sourceIdentifier:
+            type: string
+            description: Identifier of the system sending the OTP.  Currently it can be set to one of the following values; "Siebel", "Eppix", "myMTN App", "Online Store".
+          msisdn:
+            type: string
+            description: MSISDN in international format.  For example "27832227009"
+          soId:
+            type: string
+            description: VAS Code that indentifies the VAS service on the back-ends.  This can be obtained from the GET "mtnOffer" V2 service - its the "soId" field.
+          validity:
+            type: string
+            description: Validity of an offer. For example "24 Days", “7 Weeks” or “1 Day”.
+          frequency:
+            type: string
+            description: This field determines if the offer is recurring or not. This can also be useful to set the flag for recurring. This will be returned from 'offer recurrence' of get mtn offerS. Sample values could be 'Adhoc' or 'recurring'
+          reprovisionCharge:
+            type: string
+            description: For Recurring bundles PRICE will specify the initial purchase charge and reprovisionCaharge will specify the re-provision charge. If not specified, reprovisionCaharge will assume the value specified for PRICE. The value will be in cents
+          cycles:
+            type: string
+            description: This field determines the number of cycles that the offer will be recurring
+          subscriberType:
+            type: string
+            description: Currently this field is optional. It is used to determine if the subscriber is prepaid, postpaid, Coverged, hybrid etc. The channels will be sending the value if they have the context of the subscriber's msisdn if it is prepaid or postpaid.The values are 'P' for prepaid ,'C' for postpaid, 'H' for hybrid, 'V' for converged
+          cyclesUOM:
+            type: string
+            description: This field indicates the unit of measure of the cycles that is returned for the offers. Sample values could be 'Days', 'Months'. The value is returned from the cycles unit of mesaure from the get offers call to Neon
+          description:
+            type: string
+            description: Description of the bundle like 1GB-MTN-NightPlan.  This is obtaianed from the GET "mtnOffer" V2 service, its the "offerShortDescription" field.
+          offerId:
+            type: string
+            description: This is the unique bundle id which can be obtained from the GET "mtnOffer" V2 service - its the "offerId" field
+          price:
+            type: string
+            description: Price of the bundle which can be obtained from the GET "mtnOffer" V2 service - its the "offerPrice" field
+          priceUOM:
+            type: string
+            description: This is currently always set as "R", as the GET "mtnOffer" service doesn't returne the price UOM.
+          services:
+            type: array
+            description: List of services used to provision the variable VAS service.
+            items:
+              $ref: '#/components/schemas/Service'
+          notify:
+            type: array
+            description: List of attributes to be passed for notification.
+            items:
+              $ref: '#/components/schemas/Notify'
     VASResponseV9:
       allOf:
       - required:
@@ -908,360 +1262,6 @@ components:
                         type: string
                         description: Platform name where the digital products are to be provisioned on.
                         example: DEP,SDP
-    createVASRequestV5:
-      allOf:
-      - required:
-        - cycles
-        - description
-        - frequency
-        - msisdn
-        - notify
-        - offerId
-        - provisionMedium
-        - price
-        - priceUOM
-        - services
-        - soId
-        - sourceIdentifier
-        - transactionId
-        - validity
-        type: object
-        properties:
-          transactionId:
-            type: string
-            description: Unique identifier for the transaction.
-          sourceIdentifier:
-            type: string
-            description: Identifier of the system sending the OTP.  Currently it can be set to one of the following values; "Siebel", "Eppix", "myMTN App", "Online Store".
-          msisdn:
-            type: string
-            description: MSISDN in international format.  For example "27832227009"
-          soId:
-            type: string
-            description: VAS Code that indentifies the VAS service on the back-ends.  This can be obtained from the GET "mtnOffer" V2 service - its the "soId" field.
-          provisionMedium:
-            type: string
-            description: Tjis field will determine the medium of purchase that the customer opts to buy the bundles.
-            enum:
-            - CARD
-            - AIRTIME
-          validity:
-            type: string
-            description: Validity of an offer. For example "24 Days", “7 Weeks” or “1 Day”.
-          frequency:
-            type: string
-            description: This field determines if the offer is recurring or not. This can also be useful to set the flag for recurring. This will be returned from 'offer recurrence' of get mtn offerS. Sample values could be 'Adhoc' or 'recurring'
-          reprovisionCharge:
-            type: string
-            description: For Recurring bundles PRICE will specify the initial purchase charge and reprovisionCaharge will specify the re-provision charge. If not specified, reprovisionCaharge will assume the value specified for PRICE. The value will be in cents
-          cycles:
-            type: string
-            description: This field determines the number of cycles that the offer will be recurring
-          subscriberType:
-            type: string
-            description: Currently this field is optional. It is used to determine if the subscriber is prepaid, postpaid, Coverged, hybrid etc. The channels will be sending the value if they have the context of the subscriber's msisdn if it is prepaid or postpaid.The values are 'P' for prepaid ,'C' for postpaid, 'H' for hybrid, 'V' for converged
-          cyclesUOM:
-            type: string
-            description: This field indicates the unit of measure of the cycles that is returned for the offers. Sample values could be 'Days', 'Months'. The value is returned from the cycles unit of mesaure from the get offers call to Neon
-          description:
-            type: string
-            description: Description of the bundle like 1GB-MTN-NightPlan.  This is obtaianed from the GET "mtnOffer" V2 service, its the "offerShortDescription" field.
-          offerId:
-            type: string
-            description: This is the unique bundle id which can be obtained from the GET "mtnOffer" V2 service - its the "offerId" field
-          price:
-            type: string
-            description: Price of the bundle which can be obtained from the GET "mtnOffer" V2 service - its the "offerPrice" field
-          priceUOM:
-            type: string
-            description: This is currently always set as "R", as the GET "mtnOffer" service doesn't returne the price UOM.
-          services:
-            type: array
-            description: List of services used to provision the variable VAS service.
-            items:
-              type: object
-              properties:
-                serviceValue:
-                  type: integer
-                  description: This is the service value of the offer.  This is the "serviceValue" parameter obtained from the GET "mtnoffer" v2 service.
-                serviceValidity:
-                  type: string
-                  description: The validity of the service returned from GET "mtnoffer".Returned from VALIDITY field under services
-                effectiveRate:
-                  type: string
-                  description: The effective rate of the bundle , the price in amount like R200.  This is the "effectiveRate" parameter obtained from the GET "mtnoffer" v2 service.
-                serviceSubType:
-                  type: string
-                  description: Can be 'MIN' or 'DATA' or 'SMS'.  This is the "offerSubType" parameter obtained from the GET "mtnoffer" v2 service.
-                serviceUom:
-                  type: string
-                  description: Can be 'GB' or 'MB' for data, and 'Minutes' for minute values.  This is the "serviceUOM" parameter obtained from the GET "mtnoffer" v3 service.
-                validityUom:
-                  type: string
-                  description: The validity of the services that us returned from "mtnoffer". Values can be "Days", "Weeks", "Hours".
-                promotion:
-                  type: string
-                  description: This field defines if the service returned from "mtnoffer". The values can be 'T' or 'F'
-          notify:
-            type: array
-            description: List of attributes to be passed for notification.
-            items:
-              type: object
-              properties:
-                notifyChannel:
-                  type: string
-                  description: 'This indicates if on succesful purchase of bundle which channel has to notify. '
-                offerType:
-                  type: string
-                  description: This is the type of "offer" being requested by the service.  Currently it can be set to one of the following; "myMTN Offers","Summer Surprise" or "Recharge Rewards".
-                offerCategory:
-                  type: string
-                  description: When "offerType" is set to "myMTN Offers", this value can be one of the following; "All", "myMTN Data", "myMTN Voice" or "myMTN Social".  When its set to "Recharge Rewards"  this value does not have to be passed.  If this value is not passed for any "offerType", its defaulted to "All".If "offerType" is set to "Summer Surprise" than sub type can be "Monthly","Weekly","All" etc.Currently it has been configured for "All" .The summer surprise depends also on the sourceIdentifier as SOA invokes corresponding target system to retreive the product details.
-                notify:
-                  type: string
-                  description: This indicates if on succesful purchase of bundle do we need to notify the target channel.
-                offerSubCategory:
-                  type: string
-                  description: Currently this field is optional.  Its a field that can in future be used to filter the offers that you get back. In case of "Summer Surprise" the subType could be "CVM","Wave" and "Others", Currently target channel has catered for "CVM" and "Wave" This field is only mandatory if the offer type is "Summer Surprise".
-    Service:
-      type: object
-      properties:
-        serviceValue:
-          type: integer
-          description: This is the service value of the offer.  This is the "serviceValue" parameter obtained from the GET "mtnoffer" v2 service.
-        serviceValidity:
-          type: string
-          description: The validity of the service returned from GET "mtnoffer".Returned from VALIDITY field under services
-        effectiveRate:
-          type: string
-          description: The effective rate of the bundle , the price in amount like R200.  This is the "effectiveRate" parameter obtained from the GET "mtnoffer" v2 service.
-        serviceSubType:
-          type: string
-          description: Can be 'MIN' or 'DATA' or 'SMS'.  This is the "offerSubType" parameter obtained from the GET "mtnoffer" v2 service.
-        serviceUom:
-          type: string
-          description: Can be 'GB' or 'MB' for data, and 'Minutes' for minute values.  This is the "serviceUOM" parameter obtained from the GET "mtnoffer" v3 service.
-        validityUom:
-          type: string
-          description: The validity of the services that us returned from "mtnoffer". Values can be "Days", "Weeks", "Hours".
-        promotion:
-          type: string
-          description: This field defines if the service returned from "mtnoffer". The values can be 'T' or 'F'
-    PostVASResponseV2:
-      allOf:
-      - required:
-        - statusCode
-        - statusMessage
-        - supportMessage
-        - transactionId
-        type: object
-        properties:
-          statusCode:
-            type: integer
-            description: Back end status code.
-            format: int32
-            example: oooo
-          statusMessage:
-            type: string
-            description: User friendly error message.
-            example: success
-          supportMessage:
-            type: string
-            description: Description message for Support teams
-            example: success
-          transactionId:
-            type: string
-            description: Unique identifier for the transaction.
-            example: 3456tret7ytr657
-    createVASRequestV6:
-      allOf:
-      - required:
-        - cycles
-        - description
-        - frequency
-        - msisdn
-        - notify
-        - offerId
-        - provisionMedium
-        - price
-        - priceUOM
-        - services
-        - soId
-        - sourceIdentifier
-        - transactionId
-        - validity
-        - merchantId
-        type: object
-        properties:
-          transactionId:
-            type: string
-            description: Unique identifier for the transaction.
-          sourceIdentifier:
-            type: string
-            description: Identifier of the system sending the OTP.  Currently it can be set to one of the following values; "Siebel", "Eppix", "myMTN App", "Online Store".
-          msisdn:
-            type: string
-            description: MSISDN in international format.  For example "27832227009"
-          soId:
-            type: string
-            description: VAS Code that indentifies the VAS service on the back-ends.  This can be obtained from the GET "mtnOffer" V2 service - its the "soId" field.
-          offerType:
-            type: string
-            description: This field will determine if the service is Normal or Variable. This field will be a place holder to orchestrate the call to different provision service on IBF
-            enum:
-            - Normal
-            - Variable
-          provisionMedium:
-            type: string
-            description: Tjis field will determine the medium of purchase that the customer opts to buy the bundles.
-            enum:
-            - CARD
-            - AIRTIME
-          merchantId:
-            type: string
-            description: merchant Id used on the backend while fetching offers.
-          validity:
-            type: string
-            description: Validity of an offer. For example "24 Days", “7 Weeks” or “1 Day”.
-          frequency:
-            type: string
-            description: This field determines if the offer is recurring or not. This can also be useful to set the flag for recurring.
-          reprovisionCharge:
-            type: string
-            description: For Recurring bundles PRICE will specify the initial purchase charge and reprovisionCaharge will specify the re-provision charge. If not specified, reprovisionCaharge will assume the value specified for PRICE. The value will be in cents
-          cycles:
-            type: string
-            description: This field determines the number of cycles that the offer will be recurring
-          subscriberType:
-            type: string
-            description: Currently this field is optional. It is used to determine if the subscriber is prepaid, postpaid, Coverged, hybrid etc. The channels will be sending the value if they have the context of the subscribers msisdn if it is prepaid or postpaid.The values are P for prepaid ,C for postpaid,H for hybrid,V for converged
-          cyclesUOM:
-            type: string
-            description: This field indicates the unit of measure of the cycles that is returned for the offers. Sample values could be Days, Months. The value is returned from the cycles unit of mesaure from the get offers call to Neon
-          description:
-            type: string
-            description: Description of the bundle like 1GB-MTN-NightPlan.  This is obtaianed from the GET "mtnOffer" V2 service, its the "offerShortDescription" field.
-          offerId:
-            type: string
-            description: This is the unique bundle id which can be obtained from the GET "mtnOffer" V2 service - its the "offerId" field
-          price:
-            type: string
-            description: Price of the bundle which can be obtained from the GET "mtnOffer" V2 service - its the "offerPrice" field
-          priceUOM:
-            type: string
-            description: This is currently always set as R
-          services:
-            type: array
-            description: List of services used to provision the variable VAS service.
-            items:
-              type: object
-              properties:
-                serviceValue:
-                  type: integer
-                  description: This is the service value of the offer.  This is the "serviceValue" parameter obtained from the GET "mtnoffer" v2 service.
-                serviceValidity:
-                  type: string
-                  description: The validity of the service returned from GET "mtnoffer".Returned from VALIDITY field under services
-                effectiveRate:
-                  type: string
-                  description: The effective rate of the bundle , the price in amount like R200.  This is the "effectiveRate" parameter obtained from the GET "mtnoffer" v2 service.
-                serviceSubType:
-                  type: string
-                  description: Can be MIN or DATA or SMS.
-                serviceUom:
-                  type: string
-                  description: Can be GB or MB for data, and Minutes for minute values.  This is the serviceUOM parameter obtained from the GET service.
-                validityUom:
-                  type: string
-                  description: The validity of the services that us returned from "mtnoffer". Values can be "Days", "Weeks", "Hours".
-                promotion:
-                  type: string
-                  description: This field defines if the service returned from the GET ofefr service.The values can be T or F
-          notify:
-            type: array
-            description: List of attributes to be passed for notification.
-            items:
-              type: object
-              properties:
-                notifyChannel:
-                  type: string
-                  description: This indicates if on succesful purchase of bundle which channel has to notify.
-                notify:
-                  type: string
-                  description: This indicates if on succesful purchase of bundle do we need to notify the target channel.
-                offerMenuId:
-                  type: string
-                  description: This will have the menu from which the offers are retrieved and to which menu should the opt in notification be sent to Neon.
-    createVASRequestV4:
-      allOf:
-      - required:
-        - cycles
-        - description
-        - frequency
-        - msisdn
-        - notify
-        - offerId
-        - price
-        - priceUOM
-        - services
-        - soId
-        - sourceIdentifier
-        - transactionId
-        - validity
-        type: object
-        properties:
-          transactionId:
-            type: string
-            description: Unique identifier for the transaction.
-          sourceIdentifier:
-            type: string
-            description: Identifier of the system sending the OTP.  Currently it can be set to one of the following values; "Siebel", "Eppix", "myMTN App", "Online Store".
-          msisdn:
-            type: string
-            description: MSISDN in international format.  For example "27832227009"
-          soId:
-            type: string
-            description: VAS Code that indentifies the VAS service on the back-ends.  This can be obtained from the GET "mtnOffer" V2 service - its the "soId" field.
-          validity:
-            type: string
-            description: Validity of an offer. For example "24 Days", “7 Weeks” or “1 Day”.
-          frequency:
-            type: string
-            description: This field determines if the offer is recurring or not. This can also be useful to set the flag for recurring. This will be returned from 'offer recurrence' of get mtn offerS. Sample values could be 'Adhoc' or 'recurring'
-          reprovisionCharge:
-            type: string
-            description: For Recurring bundles PRICE will specify the initial purchase charge and reprovisionCaharge will specify the re-provision charge. If not specified, reprovisionCaharge will assume the value specified for PRICE. The value will be in cents
-          cycles:
-            type: string
-            description: This field determines the number of cycles that the offer will be recurring
-          subscriberType:
-            type: string
-            description: Currently this field is optional. It is used to determine if the subscriber is prepaid, postpaid, Coverged, hybrid etc. The channels will be sending the value if they have the context of the subscriber's msisdn if it is prepaid or postpaid.The values are 'P' for prepaid ,'C' for postpaid, 'H' for hybrid, 'V' for converged
-          cyclesUOM:
-            type: string
-            description: This field indicates the unit of measure of the cycles that is returned for the offers. Sample values could be 'Days', 'Months'. The value is returned from the cycles unit of mesaure from the get offers call to Neon
-          description:
-            type: string
-            description: Description of the bundle like 1GB-MTN-NightPlan.  This is obtaianed from the GET "mtnOffer" V2 service, its the "offerShortDescription" field.
-          offerId:
-            type: string
-            description: This is the unique bundle id which can be obtained from the GET "mtnOffer" V2 service - its the "offerId" field
-          price:
-            type: string
-            description: Price of the bundle which can be obtained from the GET "mtnOffer" V2 service - its the "offerPrice" field
-          priceUOM:
-            type: string
-            description: This is currently always set as "R", as the GET "mtnOffer" service doesn't returne the price UOM.
-          services:
-            type: array
-            description: List of services used to provision the variable VAS service.
-            items:
-              $ref: '#/components/schemas/Service'
-          notify:
-            type: array
-            description: List of attributes to be passed for notification.
-            items:
-              $ref: '#/components/schemas/Notify'
     Error:
       type: object
       required:

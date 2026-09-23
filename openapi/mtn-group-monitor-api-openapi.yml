@@ -1,12 +1,18 @@
 openapi: 3.2.0
 info:
   title: Service Activation and Configuration Monitor API
-  description: "## TMF API Reference: TMF640 - Service Activation and Configuration\n\n Version 4.0 \n\nService Activation and Configuration API goal is to provide the ability to activate and configure Service. This API features Monitor pattern allowing to manage service configuration/activation asynchronous request (server side will provide monitor as POST/PATCH response) \n\n### TMF640 performs the following Operations on service resource :\n- Retrieve a service or a collection of services depending on filter criteria\n- Partial update of an service\n- Create a service (including default values and creation rules)\n- Delete a service (for administration purposes)\n- Manage notification of events\n\n### Monitor Resource\n\nMonitor resource is used to track and log activation and/or configuration request\n\n### TMF640 provides following operation on Monitor resource:\n\n- Retrieval of a monitor or a collection of monitor\n\nCopyright © TM Forum 2019; All Rights Reserved"
+  description: '## TMF API Reference: TMF640 - Service Activation and Configuration
+
+
+    Version 4.0
+
+
+    Service Activation and Configuration API goal is to provide the ability to activate and configure Service.'
   version: 4.0.0
 servers:
 - url: http://api.mtn.com/v1
 tags:
-- name: monitor
+- name: Monitor
 paths:
   /monitor:
     get:
@@ -14,7 +20,7 @@ paths:
       summary: List or find Monitor objects
       description: This operation list or find Monitor entities
       tags:
-      - monitor
+      - Monitor
       parameters:
       - name: fields
         description: Comma-separated properties to be provided in response
@@ -100,7 +106,7 @@ paths:
       summary: Retrieves a Monitor by ID
       description: This operation retrieves a Monitor entity. Attribute selection is enabled for all first level attributes.
       tags:
-      - monitor
+      - Monitor
       parameters:
       - name: id
         description: Identifier of the Monitor
@@ -165,6 +171,35 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    Response:
+      type: object
+      description: A response to a request
+      required:
+      - body
+      - header
+      properties:
+        body:
+          type: string
+          description: The body of the response. For example for an HTTP response might contain HTML for rendering.
+        statusCode:
+          type: string
+          description: The status of the response. For example for an HTTP response would be codes such as 200, 400, etc.
+        header:
+          type: array
+          items:
+            $ref: '#/components/schemas/HeaderItem'
+          minItems: 1
+          description: Items included in the header of the response. For example for an HTTP response might contain negotiated locale.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
     Monitor:
       type: object
       description: Monitoring of resources
@@ -210,35 +245,6 @@ components:
         value:
           type: string
           description: The value of the header item, e.g. en-us
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    Response:
-      type: object
-      description: A response to a request
-      required:
-      - body
-      - header
-      properties:
-        body:
-          type: string
-          description: The body of the response. For example for an HTTP response might contain HTML for rendering.
-        statusCode:
-          type: string
-          description: The status of the response. For example for an HTTP response would be codes such as 200, 400, etc.
-        header:
-          type: array
-          items:
-            $ref: '#/components/schemas/HeaderItem'
-          minItems: 1
-          description: Items included in the header of the response. For example for an HTTP response might contain negotiated locale.
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class

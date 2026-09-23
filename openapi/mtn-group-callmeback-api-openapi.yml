@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  description: callmeback API  will be used to post a request in AYO, when initiated by  Users via different Applications like "portal", "IVR" etc.
+  description: callmeback API will be used to post a request in AYO, when initiated by Users via different Applications like "portal", "IVR" etc.
   version: v1.0
   title: V1 Callmeback API
 servers:
@@ -85,64 +85,10 @@ paths:
               $ref: '#/components/schemas/CallMeBackRequest'
         description: Callmeback data
         required: true
+      summary: Callmeback using POST
+      x-summary-source: derived
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      - transactionId
-      - supportMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned.
-          example: '1000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client mapped to message from AYO Response
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful), mapped to description from the response of AYO
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
-        path:
-          type: string
-          description: The path that caused the error
-          example: /test/27831234567
-        method:
-          type: string
-          description: The HTTP method type that was used
-          example: POST
-        type:
-          type: string
-          example: business error
-          description: type of error is shown for non 200 response and mapped from AYO response
-    CallMeBackRequest:
-      required:
-      - id
-      - idType
-      - name
-      - reason
-      - information
-      description: Callmeback
-      properties:
-        id:
-          description: id is a string which countains a value, if  id is msisdn (MADAPI Encrypts msisdn as per AYO encryption Requirement), In the logs Msisdn can be shown as encrypted and nonencrypted format(DTqlExQCSuW7K+hoes45mg==)
-          example: '2345676788'
-          type: string
-        idType:
-          enum:
-          - MSISDN
-          type: string
-          description: type of id
-          example: MSISDN
-        information:
-          type: string
-          $ref: '#/components/schemas/information'
     information:
       type: object
       description: defines all the fields for callmeback request for AYO
@@ -186,6 +132,28 @@ components:
           type: boolean
           description: CustomerInfoShareConsent is a boolean value which will be sent by channels and  MADAPI Sends to backend
           example: 'true'
+    CallMeBackRequest:
+      required:
+      - id
+      - idType
+      - name
+      - reason
+      - information
+      description: Callmeback
+      properties:
+        id:
+          description: id is a string which countains a value, if  id is msisdn (MADAPI Encrypts msisdn as per AYO encryption Requirement), In the logs Msisdn can be shown as encrypted and nonencrypted format(DTqlExQCSuW7K+hoes45mg==)
+          example: '2345676788'
+          type: string
+        idType:
+          enum:
+          - MSISDN
+          type: string
+          description: type of id
+          example: MSISDN
+        information:
+          type: string
+          $ref: '#/components/schemas/information'
     Success:
       type: object
       required:
@@ -210,6 +178,40 @@ components:
           type: string
           example: success
           description: Message will hold success for 200 response
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - transactionId
+      - supportMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned.
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client mapped to message from AYO Response
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful), mapped to description from the response of AYO
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        path:
+          type: string
+          description: The path that caused the error
+          example: /test/27831234567
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: POST
+        type:
+          type: string
+          example: business error
+          description: type of error is shown for non 200 response and mapped from AYO response
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

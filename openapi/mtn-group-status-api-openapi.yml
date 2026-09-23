@@ -7,12 +7,12 @@ servers:
 - url: https://api.mtn.com/v1
 - url: https://api.mtn.com/v1/customer
 tags:
-- name: status
+- name: Status
 paths:
   /accountholders/{id}:
     get:
       tags:
-      - status
+      - Status
       summary: View accountholder's profile
       description: Retrieves the acountholder's profile of a MTN customer.
       parameters:
@@ -146,12 +146,14 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - OAuth2: []
+      operationId: getAccountholdersById
+      x-operation-id-source: derived
     servers:
     - url: https://api.mtn.com/v1
   /bill/transactionStatus:
     get:
       tags:
-      - status
+      - Status
       summary: Query transaction status
       description: Query the transaction status for refunds, order and debit transactions.
       parameters:
@@ -238,12 +240,14 @@ paths:
       security:
       - ApiKeyAuth: []
       - OAuth2: []
+      operationId: getBillTransactionStatus
+      x-operation-id-source: derived
     servers:
     - url: https://api.mtn.com/v1/customer
   /bill/tokenStatus:
     get:
       tags:
-      - status
+      - Status
       summary: Query token status
       description: Query the status of registered token
       parameters:
@@ -320,57 +324,12 @@ paths:
       security:
       - ApiKeyAuth: []
       - OAuth2: []
+      operationId: getBillTokenStatus
+      x-operation-id-source: derived
     servers:
     - url: https://api.mtn.com/v1/customer
 components:
   schemas:
-    ParentAttributes:
-      type: object
-      description: Describes a given characteristic of an object or entity through a name/value pair.
-      required:
-      - name
-      - value
-      properties:
-        name:
-          type: string
-          description: Name of the characteristic
-        valueType:
-          type: string
-          description: Data type of the value of the characteristic
-        value:
-          $ref: '#/components/schemas/Any'
-          description: The value of the characteristic
-    AccountholderProfile:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-        statusMessage:
-          type: string
-          description: Message of the transaction. Either Success or Failure.
-        transactionId:
-          type: string
-          description: Unique identifier for every request to the backend. Mapped from input request.
-          example: 5345345
-        customerId:
-          type: string
-          example: MTN123456
-          description: Id provided in the input, could be an MSISDN or an account id that was used in getting the info.
-        sequenceNo:
-          type: string
-          description: A unique id used in tracing all requests
-          example: 12345
-        data:
-          $ref: '#/components/schemas/data'
-        _links:
-          $ref: '#/components/schemas/AccountholderProfileResponse__links'
-    AccountholderProfileResponse__links:
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/AccountholderProfileResponse__links_self'
-      description: Relevant links to the Accoutholder Profile.
     data:
       type: object
       properties:
@@ -490,6 +449,47 @@ components:
             code:
               type: string
     Any: {}
+    AccountholderProfile:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+        statusMessage:
+          type: string
+          description: Message of the transaction. Either Success or Failure.
+        transactionId:
+          type: string
+          description: Unique identifier for every request to the backend. Mapped from input request.
+          example: 5345345
+        customerId:
+          type: string
+          example: MTN123456
+          description: Id provided in the input, could be an MSISDN or an account id that was used in getting the info.
+        sequenceNo:
+          type: string
+          description: A unique id used in tracing all requests
+          example: 12345
+        data:
+          $ref: '#/components/schemas/data'
+        _links:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links'
+    ParentAttributes:
+      type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          description: Name of the characteristic
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
     AccountholderProfileResponse__links_self:
       type: object
       properties:
@@ -497,6 +497,12 @@ components:
           type: string
           example: https://host:port/v1/accountholders/12345
           description: Hyperlink to access the Accountholder's Profile.
+    AccountholderProfileResponse__links:
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links_self'
+      description: Relevant links to the Accoutholder Profile.
     Error:
       type: object
       required:
@@ -529,38 +535,6 @@ components:
           description: Message ID
         _links:
           $ref: '#/components/schemas/AccountholderProfileResponse__links'
-    tokenStatResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-        data:
-          type: object
-          properties:
-            msn:
-              type: string
-              minLength: 16
-              maxLength: 64
-              description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
-              example: '5115314911298406'
-            contentToken:
-              type: string
-              minLength: 16
-              maxLength: 96
-              description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
-              example: 81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058
-            tokenState:
-              type: string
-              minLength: 1
-              maxLength: 64
-              description: The status of the token.
-              example: Pending
     transStatResponse:
       type: object
       required:
@@ -603,6 +577,38 @@ components:
               type: string
               format: date-time
               description: Time stamp of the error
+    tokenStatResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            msn:
+              type: string
+              minLength: 16
+              maxLength: 64
+              description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+              example: '5115314911298406'
+            contentToken:
+              type: string
+              minLength: 16
+              maxLength: 96
+              description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+              example: 81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058
+            tokenState:
+              type: string
+              minLength: 1
+              maxLength: 64
+              description: The status of the token.
+              example: Pending
     Error_2:
       type: object
       title: Error

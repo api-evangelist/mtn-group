@@ -18,7 +18,7 @@ paths:
     post:
       tags:
       - channel-vas-controller
-      summary: Gets a loan advance.
+      summary: Gets a loan advance
       description: Get a loan advance for an MTN customer.
       operationId: getLoanAdvanceUsingPOST
       parameters:
@@ -59,7 +59,7 @@ paths:
     get:
       tags:
       - channel-vas-controller
-      summary: Retrieves a the loan eligibility status.
+      summary: Retrieves a the loan eligibility status
       description: Retrieves a the loan eligibility status of an MTN customer.
       operationId: checkEligibilityUsingGET
       parameters:
@@ -85,6 +85,26 @@ paths:
       deprecated: false
 components:
   schemas:
+    Loan:
+      type: object
+      properties:
+        _links:
+          type: array
+          xml:
+            name: link
+            attribute: false
+            wrapped: false
+          items:
+            $ref: '#/components/schemas/Link'
+        status:
+          type: string
+          enum:
+          - FAILED
+          - COMPLETED
+          - INITED
+        transactionId:
+          type: string
+      title: Loan
     Band:
       type: object
       properties:
@@ -164,23 +184,3 @@ components:
           - NE_LOAN
           - NE_TCL_REACHED
       title: Eligibility
-    Loan:
-      type: object
-      properties:
-        _links:
-          type: array
-          xml:
-            name: link
-            attribute: false
-            wrapped: false
-          items:
-            $ref: '#/components/schemas/Link'
-        status:
-          type: string
-          enum:
-          - FAILED
-          - COMPLETED
-          - INITED
-        transactionId:
-          type: string
-      title: Loan

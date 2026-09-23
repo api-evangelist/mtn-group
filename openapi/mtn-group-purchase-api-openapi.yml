@@ -15,7 +15,7 @@ paths:
     post:
       tags:
       - Purchase
-      summary: Used to purchase airtime/bundles.
+      summary: Used to purchase airtime/bundles
       description: Used to purchase airtime/bundles. In addition an Auto Top Up (isAutoTopUp) field has been introduced for Bundle or Airtime Recharges. When isAutoTopUp=true, paymentId must be set.
       operationId: purchase
       parameters:
@@ -83,6 +83,45 @@ paths:
         required: true
 components:
   schemas:
+    value:
+      type: object
+      properties:
+        serviceType:
+          description: Auto Top Up
+          type: boolean
+          example: true
+        uom:
+          type: string
+          description: Unit of measure
+          enum:
+          - MB/GB
+          - UNITS
+          - MINUTES
+          - SECONDS
+          - RANDS/CENTS
+          example: RANDS/CENTS
+        value:
+          description: The value of the product
+          type: string
+          example: R16
+        effectiveRate:
+          description: The effective rate of the product. If value of “0” sent in, then default effective rates configured against “product” apply.
+          type: string
+          example: '0'
+        validity:
+          description: Used in conjunction with VALIDITY_UOM to calculate “period” of a service benefit.
+          type: string
+          example: '1'
+        validityUOM:
+          description: Unit of measure
+          enum:
+          - Seconds
+          - Hours
+          - Days
+          - Weeks
+          - Months
+          type: string
+          example: Days
     ValidateCustomerResponse:
       type: object
       properties:
@@ -224,45 +263,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/value'
-    value:
-      type: object
-      properties:
-        serviceType:
-          description: Auto Top Up
-          type: boolean
-          example: true
-        uom:
-          type: string
-          description: Unit of measure
-          enum:
-          - MB/GB
-          - UNITS
-          - MINUTES
-          - SECONDS
-          - RANDS/CENTS
-          example: RANDS/CENTS
-        value:
-          description: The value of the product
-          type: string
-          example: R16
-        effectiveRate:
-          description: The effective rate of the product. If value of “0” sent in, then default effective rates configured against “product” apply.
-          type: string
-          example: '0'
-        validity:
-          description: Used in conjunction with VALIDITY_UOM to calculate “period” of a service benefit.
-          type: string
-          example: '1'
-        validityUOM:
-          description: Unit of measure
-          enum:
-          - Seconds
-          - Hours
-          - Days
-          - Weeks
-          - Months
-          type: string
-          example: Days
     Error:
       type: object
       title: Error

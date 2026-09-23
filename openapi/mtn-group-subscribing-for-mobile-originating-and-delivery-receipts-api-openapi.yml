@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
   version: '1.0'
-  title: Short Message Service (SMS) Subscribing for Mobile Originating and Delivery Receipts API
+  title: Short Message Service (SMS) Subscribing for Mobile…
   description: Provides a Restful API to expose SMS capability for sending of messages , Mobile originating messages and Delivery Receipts.
 servers:
 - url: https://api.mtn.com/v3/sms/
@@ -14,7 +14,7 @@ paths:
     post:
       tags:
       - Subscribing for Mobile Originating and Delivery Receipts
-      summary: Create subscription to register a serviceCode, callback url and a delivery report url for mobile originating and Delivery Receipts.
+      summary: Create subscription to register a serviceCode, callback url and a delivery…
       description: This is the interface used to register callbackUrl (For Mobile originating Messages ) and deliveryReportUrl (for Delivery Receipts ) for a shortCode/serviceCode/senderAddress.
       parameters:
       - in: header
@@ -66,11 +66,13 @@ paths:
               $ref: '#/components/schemas/ShortCodeSubscription'
         description: Request body
         required: true
+      operationId: postMessagesSmsSubscription
+      x-operation-id-source: derived
   /messages/sms/subscription/{subscriptionId}:
     patch:
       tags:
       - Subscribing for Mobile Originating and Delivery Receipts
-      summary: Update a subscription information based on an already existing subscriptionId.
+      summary: Update a subscription information based on an already existing subscriptionId
       description: Patch or update an existing subscription based on the subscriptionId , The subscriptionId is generated at the point of registering a short code for Mobile originating messages or Delivery Receipts with the /messages/sms/subscription endpoint above.
       parameters:
       - in: header
@@ -122,10 +124,12 @@ paths:
               $ref: '#/components/schemas/UpdateSubscriptionRequest'
         description: Request body
         required: true
+      operationId: patchMessagesSmsSubscriptionBySubscriptionId
+      x-operation-id-source: derived
     delete:
       tags:
       - Subscribing for Mobile Originating and Delivery Receipts
-      summary: Delete subscription or registration details based on the provided subscriptionId.
+      summary: Delete subscription or registration details based on the provided subscriptionId
       description: This interface will stop our systems from sending Mobile originating messages and Delivery status reports to the provided delivery report and callback urls for a configured serviceCode.
       parameters:
       - in: header
@@ -171,35 +175,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: deleteMessagesSmsSubscriptionBySubscriptionId
+      x-operation-id-source: derived
 components:
   schemas:
-    subscriptionResponse:
-      type: object
-      required:
-      - data
-      - statusCode
-      - statusMessage
-      - transactionId
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client.
-          example: Sms Subscriptions successful Please keep the subscription id safely 6328...., if you need to delete it later.
-        transactionId:
-          type: string
-          description: MADAPI generated Id to include for tracing requests
-          example: 1365478abcz-fdhsdfh54351
-        data:
-          type: object
-          properties:
-            subscriptionId:
-              type: string
-              description: Unique identifier for the subscription
-              example: sub123456
     ForbiddenResponse:
       type: object
       required:
@@ -219,6 +198,65 @@ components:
           type: string
           description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
           example: Service code 711 has been used by WEB-ONLINE !.
+        transactionId:
+          type: string
+          description: MADAPI generated Id to include for tracing requests
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: https://api.mtn.com/v1/
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: POST
+    outboundSubscriptionDeleteResponse:
+      type: object
+      required:
+      - data
+      - statusCode
+      - statusMessage
+      - transactionId
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+          example: Successful
+        transactionId:
+          type: string
+          description: MADAPI generated Id to include for tracing requests
+          example: 1365478abcz-fdhsdfh54351
+        data:
+          type: object
+          properties:
+            subscriptionId:
+              type: string
+              example: 63284250bde7cd4938630ada
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - transactionId
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
         transactionId:
           type: string
           description: MADAPI generated Id to include for tracing requests
@@ -257,32 +295,6 @@ components:
         serviceCode:
           type: string
           description: This is the service code that is being registered for Mobile originating and delivery receipt calls
-    outboundSubscriptionDeleteResponse:
-      type: object
-      required:
-      - data
-      - statusCode
-      - statusMessage
-      - transactionId
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client.
-          example: Successful
-        transactionId:
-          type: string
-          description: MADAPI generated Id to include for tracing requests
-          example: 1365478abcz-fdhsdfh54351
-        data:
-          type: object
-          properties:
-            subscriptionId:
-              type: string
-              example: 63284250bde7cd4938630ada
     UpdateSubscriptionRequest:
       type: object
       properties:
@@ -304,9 +316,10 @@ components:
           items:
             type: string
           description: Keywords applies to a shared short code . This is applicable only for the Nigeria opco.
-    Error:
+    subscriptionResponse:
       type: object
       required:
+      - data
       - statusCode
       - statusMessage
       - transactionId
@@ -314,29 +327,22 @@ components:
         statusCode:
           type: string
           description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
+          example: '0000'
         statusMessage:
           type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+          description: More details and corrective actions related to the error which can be shown to a client.
+          example: Sms Subscriptions successful Please keep the subscription id safely 6328...., if you need to delete it later.
         transactionId:
           type: string
           description: MADAPI generated Id to include for tracing requests
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: 2020-08-01T12:34
-        path:
-          type: string
-          description: The path that caused the error
-          example: https://api.mtn.com/v1/
-        method:
-          type: string
-          description: The HTTP method type that was used
-          example: POST
+          example: 1365478abcz-fdhsdfh54351
+        data:
+          type: object
+          properties:
+            subscriptionId:
+              type: string
+              description: Unique identifier for the subscription
+              example: sub123456
   securitySchemes:
     OAuth2:
       type: oauth2

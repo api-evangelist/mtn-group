@@ -1003,219 +1003,26 @@ paths:
     - url: https://serverRoot/tmf-api/event/v4/
 components:
   schemas:
-    OrderItemActionType:
-      type: string
-      description: action to be performed on the product
-      enum:
-      - add
-      - modify
-      - delete
-      - noChange
-    RelatedParty:
-      type: object
-      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
-      required:
-      - '@referredType'
-      - id
-      properties:
-        id:
-          type: string
-          description: unique identifier
-        href:
-          type: string
-          format: uri
-          description: Hyperlink reference
-        name:
-          type: string
-          description: Name of the related entity.
-        role:
-          type: string
-          description: Role played by the related party
-        '@baseType':
-          example: ResourceSpecification
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          example: https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          example: LogicalResourceSpecification
-          type: string
-          description: When sub-classing, this defines the sub-class Extensible name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-    MonitorDeleteEvent:
-      type: object
-      description: The notification data structure
-      properties:
-        event:
-          description: The event payload linked to the involved resource object
-          $ref: '#/components/schemas/MonitorDeleteEventPayload'
-        eventId:
-          type: string
-          description: The identifier of the notification.
-        eventTime:
-          type: string
-          format: date-time
-          description: Time of the event occurrence.
-        eventType:
-          type: string
-          description: The type of the notification.
-        correlationId:
-          type: string
-          description: The correlation id for this event.
-        domain:
-          type: string
-          description: The domain of the event.
-        title:
-          type: string
-          description: The title of the event.
-        description:
-          type: string
-          description: An explnatory of the event.
-        priority:
-          type: string
-          description: A priority.
-        timeOcurred:
-          type: string
-          format: date-time
-          description: The time the event occured.
-    ServiceSpecificationRef:
-      type: object
-      description: 'Service specification reference: ServiceSpecification(s) required to realize a ProductSpecification.'
-      properties:
-        id:
-          type: string
-          description: unique identifier
-        href:
-          type: string
-          format: uri
-          description: Hyperlink reference
-        name:
-          type: string
-          description: Name of the related entity.
-        version:
-          type: string
-          description: Service specification version
-        '@baseType':
-          example: ResourceSpecification
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          example: https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          example: LogicalResourceSpecification
-          type: string
-          description: When sub-classing, this defines the sub-class Extensible name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id
-    MonitorAttributeValueChangeEvent:
-      type: object
-      description: The notification data structure
-      properties:
-        eventId:
-          type: string
-          description: The identifier of the notification.
-        eventTime:
-          type: string
-          format: date-time
-          description: Time of the event occurrence.
-        eventType:
-          type: string
-          description: The type of the notification.
-        correlationId:
-          type: string
-          description: The correlation id for this event.
-        domain:
-          type: string
-          description: The domain of the event.
-        title:
-          type: string
-          description: The title of the event.
-        description:
-          type: string
-          description: An explnatory of the event.
-        priority:
-          type: string
-          description: A priority.
-        timeOcurred:
-          type: string
-          format: date-time
-          description: The time the event occured.
-        fieldPath:
-          type: string
-          description: The path identifying the object field concerned by this notification.
-        event:
-          description: The event payload linked to the involved resource object
-          $ref: '#/components/schemas/MonitorAttributeValueChangeEventPayload'
-    ServiceCreateEvent:
-      type: object
-      description: The notification data structure
-      properties:
-        event:
-          description: The event payload linked to the involved resource object
-          $ref: '#/components/schemas/ServiceCreateEventPayload'
-        eventId:
-          type: string
-          description: The identifier of the notification.
-        eventTime:
-          type: string
-          format: date-time
-          description: Time of the event occurrence.
-        eventType:
-          type: string
-          description: The type of the notification.
-        correlationId:
-          type: string
-          description: The correlation id for this event.
-        domain:
-          type: string
-          description: The domain of the event.
-        title:
-          type: string
-          description: The title of the event.
-        description:
-          type: string
-          description: An explnatory of the event.
-        priority:
-          type: string
-          description: A priority.
-        timeOcurred:
-          type: string
-          format: date-time
-          description: The time the event occured.
-    ServiceStateChangeEventPayload:
+    MonitorDeleteEventPayload:
       type: object
       description: The event data structure
       properties:
-        service:
+        monitor:
           description: The involved resource data for the event
-          $ref: '#/components/schemas/Service'
-    ConstraintRef:
+          $ref: '#/components/schemas/Monitor'
+    ServiceRelationship:
       type: object
-      description: Constraint reference. The Constraint resource represents a policy/rule applied to an entity or entity spec.
+      required:
+      - relationshipType
       properties:
-        id:
+        relationshipType:
           type: string
-          description: reference id to the target constraint
-        href:
-          type: string
-          description: Hyperlink reference to the target constraint
-        name:
-          type: string
-          description: Name given to the constraint
-        version:
-          type: string
-          description: constraint version
+        ServiceRelationshipCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic'
+        service:
+          $ref: '#/components/schemas/ServiceRefOrValue'
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -1226,25 +1033,29 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The (class) type of the referred constraint
+    ServiceStateChangeEventPayload:
+      type: object
+      description: The event data structure
+      properties:
+        service:
+          description: The involved resource data for the event
+          $ref: '#/components/schemas/Service'
+    EventSubscription:
+      type: object
+      description: Sets the communication endpoint address the service instance must use to deliver notification information
       required:
       - id
-    MonitorStateChangeEventPayload:
-      type: object
-      description: The event data structure
+      - callback
       properties:
-        monitor:
-          description: The involved resource data for the event
-          $ref: '#/components/schemas/Monitor'
-    MonitorDeleteEventPayload:
-      type: object
-      description: The event data structure
-      properties:
-        monitor:
-          description: The involved resource data for the event
-          $ref: '#/components/schemas/Monitor'
+        id:
+          type: string
+          description: Id of the listener
+        callback:
+          type: string
+          description: The callback being registered.
+        query:
+          type: string
+          description: additional data to be passed
     ResourceRef:
       type: object
       properties:
@@ -1276,138 +1087,6 @@ components:
           description: The actual type of the target instance when needed for disambiguation.
       required:
       - id
-    MonitorStateChangeEvent:
-      type: object
-      description: The notification data structure
-      properties:
-        event:
-          description: The event payload linked to the involved resource object
-          $ref: '#/components/schemas/MonitorStateChangeEventPayload'
-        eventId:
-          type: string
-          description: The identifier of the notification.
-        eventTime:
-          type: string
-          format: date-time
-          description: Time of the event occurrence.
-        eventType:
-          type: string
-          description: The type of the notification.
-        correlationId:
-          type: string
-          description: The correlation id for this event.
-        domain:
-          type: string
-          description: The domain of the event.
-        title:
-          type: string
-          description: The title of the event.
-        description:
-          type: string
-          description: An explnatory of the event.
-        priority:
-          type: string
-          description: A priority.
-        timeOcurred:
-          type: string
-          format: date-time
-          description: The time the event occured.
-    MonitorCreateEventPayload:
-      type: object
-      description: The event data structure
-      properties:
-        monitor:
-          description: The involved resource data for the event
-          $ref: '#/components/schemas/Monitor'
-    FeatureRelationship:
-      type: object
-      description: Configuration feature
-      required:
-      - name
-      - relationshipType
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the target feature.
-        name:
-          type: string
-          description: This is the name of the target feature.
-        relationshipType:
-          type: string
-          description: This is the type of the feature relationship.
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which this feature relationship is valid.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    ServiceDeleteEvent:
-      type: object
-      description: The notification data structure
-      properties:
-        event:
-          description: The event payload linked to the involved resource object
-          $ref: '#/components/schemas/ServiceDeleteEventPayload'
-        eventId:
-          type: string
-          description: The identifier of the notification.
-        eventTime:
-          type: string
-          format: date-time
-          description: Time of the event occurrence.
-        eventType:
-          type: string
-          description: The type of the notification.
-        correlationId:
-          type: string
-          description: The correlation id for this event.
-        domain:
-          type: string
-          description: The domain of the event.
-        title:
-          type: string
-          description: The title of the event.
-        description:
-          type: string
-          description: An explnatory of the event.
-        priority:
-          type: string
-          description: A priority.
-        timeOcurred:
-          type: string
-          format: date-time
-          description: The time the event occured.
-    HeaderItem:
-      type: object
-      description: An item typically included in a request or response
-      required:
-      - name
-      - value
-      properties:
-        name:
-          type: string
-          description: The name of the header item, e.g. locale
-        value:
-          type: string
-          description: The value of the header item, e.g. en-us
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    Any: {}
     ServiceStateType:
       type: string
       description: Valid values for the lifecycle state of the service
@@ -1418,6 +1097,148 @@ components:
       - inactive
       - active
       - terminated
+    Error:
+      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+      type: object
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name.
+    ServiceDeleteEventPayload:
+      type: object
+      description: The event data structure
+      properties:
+        service:
+          description: The involved resource data for the event
+          $ref: '#/components/schemas/Service'
+    ServiceAttributeValueChangeEventPayload:
+      type: object
+      description: The event data structure
+      properties:
+        service:
+          description: The involved resource data for the event
+          $ref: '#/components/schemas/Service'
+    Any: {}
+    ConstraintRef:
+      type: object
+      description: Constraint reference. The Constraint resource represents a policy/rule applied to an entity or entity spec.
+      properties:
+        id:
+          type: string
+          description: reference id to the target constraint
+        href:
+          type: string
+          description: Hyperlink reference to the target constraint
+        name:
+          type: string
+          description: Name given to the constraint
+        version:
+          type: string
+          description: constraint version
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The (class) type of the referred constraint
+      required:
+      - id
+    Response:
+      type: object
+      description: A response to a request
+      required:
+      - body
+      - header
+      properties:
+        body:
+          type: string
+          description: The body of the response. For example for an HTTP response might contain HTML for rendering.
+        statusCode:
+          type: string
+          description: The status of the response. For example for an HTTP response would be codes such as 200, 400, etc.
+        header:
+          type: array
+          items:
+            $ref: '#/components/schemas/HeaderItem'
+          minItems: 1
+          description: Items included in the header of the response. For example for an HTTP response might contain negotiated locale.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Note:
+      type: object
+      description: Extra information about a given entity
+      properties:
+        id:
+          type: string
+          description: Identifier of the note within its containing entity (may or may not be globally unique, depending on provider implementation)
+        author:
+          type: string
+          description: Author of the note
+        date:
+          type: string
+          format: date-time
+          description: Date of the note
+        text:
+          type: string
+          description: Text of the note
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    MonitorStateChangeEventPayload:
+      type: object
+      description: The event data structure
+      properties:
+        monitor:
+          description: The involved resource data for the event
+          $ref: '#/components/schemas/Monitor'
     Service:
       type: object
       description: 'Service is a base class for defining the Service hierarchy. All Services are characterized as either being possibly visible and usable by a Customer or not. This gives rise to the two subclasses of Service: CustomerFacingService and ResourceFacingService.'
@@ -1532,92 +1353,237 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    Error:
-      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+    Request:
       type: object
+      description: A response to a request
       required:
-      - code
-      - reason
+      - body
+      - header
       properties:
-        code:
+        body:
           type: string
-          description: Application relevant detail, defined in the API or a common list.
-        reason:
+          description: The body of the request. For example for an HTTP request might contain content of a form .
+        method:
           type: string
-          description: Explanation of the reason for the error which can be shown to a client user.
-        message:
+          description: The protocol of the request, e.g. http
+        to:
           type: string
-          description: More details and corrective actions related to the error which can be shown to a client user.
-        status:
-          type: string
-          description: HTTP Error code extension
-        referenceError:
-          type: string
-          format: uri
-          description: URI of documentation describing the error.
+          description: The target of the request, e.g. a URL for an HTTP request
+        header:
+          type: array
+          items:
+            $ref: '#/components/schemas/HeaderItem'
+          minItems: 1
+          description: Items included in the header of the request. For example for an HTTP request might contain requested locale, basic authentication.
         '@baseType':
           type: string
-          description: When sub-classing, this defines the super-class.
+          description: When sub-classing, this defines the super-class
         '@schemaLocation':
           type: string
           format: uri
           description: A URI to a JSON-Schema file that defines additional attributes and relationships
         '@type':
           type: string
-          description: When sub-classing, this defines the sub-class entity name.
-    ServiceCreateEventPayload:
+          description: When sub-classing, this defines the sub-class entity name
+    Feature:
       type: object
-      description: The event data structure
-      properties:
-        service:
-          description: The involved resource data for the event
-          $ref: '#/components/schemas/Service'
-    Monitor:
-      type: object
-      description: Monitoring of resources
+      description: Configuration feature.
+      required:
+      - featureCharacteristic
+      - name
       properties:
         id:
           type: string
-          description: Identifier of an instance of the monitor. Required to be unique within the resource type.  Used in URIs as the identifier for specific instances of a type
+          description: Unique identifier of the feature.
+        isBundle:
+          type: boolean
+          description: True if this is a feature group. Default is false.
+        isEnabled:
+          type: boolean
+          description: True if this feature is enabled. Default is true.
+        name:
+          type: string
+          description: This is the name for the feature.
+        constraint:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConstraintRef'
+          description: This is a list of feature constraints.
+        featureCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic'
+          minItems: 1
+          description: This is a list of Characteristics for a particular feature.
+        featureRelationship:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeatureRelationship'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    CharacteristicRelationship:
+      type: object
+      description: Another Characteristic that is related to the current Characteristic;
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the characteristic
+        relationshipType:
+          type: string
+          description: The type of relationship
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    OrderItemActionType:
+      type: string
+      description: action to be performed on the product
+      enum:
+      - add
+      - modify
+      - delete
+      - noChange
+    RelatedParty:
+      type: object
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      required:
+      - '@referredType'
+      - id
+      properties:
+        id:
+          type: string
+          description: unique identifier
         href:
           type: string
-          description: reference to this monitor
-        sourceHref:
+          format: uri
+          description: Hyperlink reference
+        name:
           type: string
-          description: The monitored resource href
-        state:
+          description: Name of the related entity.
+        role:
           type: string
-          description: The Monitor state of the resource.  InProgress, InError, Completed
-        request:
-          $ref: '#/components/schemas/Request'
-          description: Represents the request
-        response:
-          $ref: '#/components/schemas/Response'
-          description: Represents the response
+          description: Role played by the related party
         '@baseType':
+          example: ResourceSpecification
           type: string
           description: When sub-classing, this defines the super-class
         '@schemaLocation':
+          example: https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json
           type: string
           format: uri
           description: A URI to a JSON-Schema file that defines additional attributes and relationships
         '@type':
+          example: LogicalResourceSpecification
           type: string
-          description: When sub-classing, this defines the sub-class entity name
-    TimePeriod:
+          description: When sub-classing, this defines the sub-class Extensible name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    ServiceCreateEvent:
       type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      description: The notification data structure
       properties:
-        endDateTime:
-          example: '1985-04-12T23:20:50.52Z'
+        event:
+          description: The event payload linked to the involved resource object
+          $ref: '#/components/schemas/ServiceCreateEventPayload'
+        eventId:
+          type: string
+          description: The identifier of the notification.
+        eventTime:
           type: string
           format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
-          example: '1985-04-12T23:20:50.52Z'
+          description: Time of the event occurrence.
+        eventType:
+          type: string
+          description: The type of the notification.
+        correlationId:
+          type: string
+          description: The correlation id for this event.
+        domain:
+          type: string
+          description: The domain of the event.
+        title:
+          type: string
+          description: The title of the event.
+        description:
+          type: string
+          description: An explnatory of the event.
+        priority:
+          type: string
+          description: A priority.
+        timeOcurred:
           type: string
           format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+          description: The time the event occured.
+    MonitorStateChangeEvent:
+      type: object
+      description: The notification data structure
+      properties:
+        event:
+          description: The event payload linked to the involved resource object
+          $ref: '#/components/schemas/MonitorStateChangeEventPayload'
+        eventId:
+          type: string
+          description: The identifier of the notification.
+        eventTime:
+          type: string
+          format: date-time
+          description: Time of the event occurrence.
+        eventType:
+          type: string
+          description: The type of the notification.
+        correlationId:
+          type: string
+          description: The correlation id for this event.
+        domain:
+          type: string
+          description: The domain of the event.
+        title:
+          type: string
+          description: The title of the event.
+        description:
+          type: string
+          description: An explnatory of the event.
+        priority:
+          type: string
+          description: A priority.
+        timeOcurred:
+          type: string
+          format: date-time
+          description: The time the event occured.
+    FeatureRelationship:
+      type: object
+      description: Configuration feature
+      required:
+      - name
+      - relationshipType
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the target feature.
+        name:
+          type: string
+          description: This is the name of the target feature.
+        relationshipType:
+          type: string
+          description: This is the type of the feature relationship.
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which this feature relationship is valid.
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -1628,21 +1594,44 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    RelatedPlaceRefOrValue:
+    HeaderItem:
       type: object
-      description: Related Entity reference. A related place defines a place described by reference or by value linked to a specific entity. The polymorphic attributes @type, @schemaLocation & @referredType are related to the place entity and not the RelatedPlaceRefOrValue class itself
+      description: An item typically included in a request or response
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          description: The name of the header item, e.g. locale
+        value:
+          type: string
+          description: The value of the header item, e.g. en-us
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    RelatedEntityRefOrValue:
+      type: object
+      description: A reference to an entity, where the type of the entity is not known in advance. A related entity defines a entity described by reference or by value linked to a specific entity. The polymorphic attributes @type, @schemaLocation & @referredType are related to the Entity and not the RelatedEntityRefOrValue class itself
       required:
       - role
       properties:
         id:
           type: string
-          description: Unique identifier of the place
+          description: Unique identifier of a related entity.
         href:
           type: string
-          description: Unique reference of the place
+          description: Reference of the related entity.
         name:
           type: string
-          description: A user-friendly name for the place, such as [Paris Store], [London Store], [Main Home]
+          description: Name of the related entity.
         role:
           type: string
         '@baseType':
@@ -1661,29 +1650,6 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
-    ServiceRelationship:
-      type: object
-      required:
-      - relationshipType
-      properties:
-        relationshipType:
-          type: string
-        ServiceRelationshipCharacteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/Characteristic'
-        service:
-          $ref: '#/components/schemas/ServiceRefOrValue'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
     MonitorCreateEvent:
       type: object
       description: The notification data structure
@@ -1720,130 +1686,6 @@ components:
           type: string
           format: date-time
           description: The time the event occured.
-    RelatedEntityRefOrValue:
-      type: object
-      description: A reference to an entity, where the type of the entity is not known in advance. A related entity defines a entity described by reference or by value linked to a specific entity. The polymorphic attributes @type, @schemaLocation & @referredType are related to the Entity and not the RelatedEntityRefOrValue class itself
-      required:
-      - role
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity.
-        href:
-          type: string
-          description: Reference of the related entity.
-        name:
-          type: string
-          description: Name of the related entity.
-        role:
-          type: string
-        '@baseType':
-          example: ResourceSpecification
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          example: https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          example: LogicalResourceSpecification
-          type: string
-          description: When sub-classing, this defines the sub-class Extensible name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-    Request:
-      type: object
-      description: A response to a request
-      required:
-      - body
-      - header
-      properties:
-        body:
-          type: string
-          description: The body of the request. For example for an HTTP request might contain content of a form .
-        method:
-          type: string
-          description: The protocol of the request, e.g. http
-        to:
-          type: string
-          description: The target of the request, e.g. a URL for an HTTP request
-        header:
-          type: array
-          items:
-            $ref: '#/components/schemas/HeaderItem'
-          minItems: 1
-          description: Items included in the header of the request. For example for an HTTP request might contain requested locale, basic authentication.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    EventSubscription:
-      type: object
-      description: Sets the communication endpoint address the service instance must use to deliver notification information
-      required:
-      - id
-      - callback
-      properties:
-        id:
-          type: string
-          description: Id of the listener
-        callback:
-          type: string
-          description: The callback being registered.
-        query:
-          type: string
-          description: additional data to be passed
-    ServiceDeleteEventPayload:
-      type: object
-      description: The event data structure
-      properties:
-        service:
-          description: The involved resource data for the event
-          $ref: '#/components/schemas/Service'
-    Characteristic:
-      type: object
-      description: Describes a given characteristic of an object or entity through a name/value pair.
-      required:
-      - name
-      - value
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the characteristic
-        name:
-          type: string
-          description: Name of the characteristic
-        valueType:
-          type: string
-          description: Data type of the value of the characteristic
-        characteristicRelationship:
-          type: array
-          items:
-            $ref: '#/components/schemas/CharacteristicRelationship'
-        value:
-          $ref: '#/components/schemas/Any'
-          description: The value of the characteristic
-        '@baseType':
-          example: ResourceSpecification
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          example: https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          example: LogicalResourceSpecification
-          type: string
-          description: When sub-classing, this defines the sub-class Extensible name
     ServiceAttributeValueChangeEvent:
       type: object
       description: The notification data structure
@@ -1883,16 +1725,292 @@ components:
         event:
           description: The event payload linked to the involved resource object
           $ref: '#/components/schemas/ServiceAttributeValueChangeEventPayload'
-    CharacteristicRelationship:
+    ServiceCreateEventPayload:
       type: object
-      description: Another Characteristic that is related to the current Characteristic;
+      description: The event data structure
+      properties:
+        service:
+          description: The involved resource data for the event
+          $ref: '#/components/schemas/Service'
+    RelatedPlaceRefOrValue:
+      type: object
+      description: Related Entity reference. A related place defines a place described by reference or by value linked to a specific entity. The polymorphic attributes @type, @schemaLocation & @referredType are related to the place entity and not the RelatedPlaceRefOrValue class itself
+      required:
+      - role
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the place
+        href:
+          type: string
+          description: Unique reference of the place
+        name:
+          type: string
+          description: A user-friendly name for the place, such as [Paris Store], [London Store], [Main Home]
+        role:
+          type: string
+        '@baseType':
+          example: ResourceSpecification
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          example: https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          example: LogicalResourceSpecification
+          type: string
+          description: When sub-classing, this defines the sub-class Extensible name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    MonitorAttributeValueChangeEventPayload:
+      type: object
+      description: The event data structure
+      properties:
+        monitor:
+          description: The involved resource data for the event
+          $ref: '#/components/schemas/Monitor'
+    ServiceSpecificationRef:
+      type: object
+      description: 'Service specification reference: ServiceSpecification(s) required to realize a ProductSpecification.'
+      properties:
+        id:
+          type: string
+          description: unique identifier
+        href:
+          type: string
+          format: uri
+          description: Hyperlink reference
+        name:
+          type: string
+          description: Name of the related entity.
+        version:
+          type: string
+          description: Service specification version
+        '@baseType':
+          example: ResourceSpecification
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          example: https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          example: LogicalResourceSpecification
+          type: string
+          description: When sub-classing, this defines the sub-class Extensible name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    MonitorAttributeValueChangeEvent:
+      type: object
+      description: The notification data structure
+      properties:
+        eventId:
+          type: string
+          description: The identifier of the notification.
+        eventTime:
+          type: string
+          format: date-time
+          description: Time of the event occurrence.
+        eventType:
+          type: string
+          description: The type of the notification.
+        correlationId:
+          type: string
+          description: The correlation id for this event.
+        domain:
+          type: string
+          description: The domain of the event.
+        title:
+          type: string
+          description: The title of the event.
+        description:
+          type: string
+          description: An explnatory of the event.
+        priority:
+          type: string
+          description: A priority.
+        timeOcurred:
+          type: string
+          format: date-time
+          description: The time the event occured.
+        fieldPath:
+          type: string
+          description: The path identifying the object field concerned by this notification.
+        event:
+          description: The event payload linked to the involved resource object
+          $ref: '#/components/schemas/MonitorAttributeValueChangeEventPayload'
+    RelatedServiceOrderItem:
+      type: object
+      description: RelatedServiceOrderItem (a ServiceOrder item) .The service order item which triggered service creation/change/termination.
+      required:
+      - itemId
+      - serviceOrderId
+      properties:
+        itemId:
+          type: string
+          description: Identifier of the order item where the service was managed
+        role:
+          type: string
+          description: role of the service order item for this service
+        serviceOrderHref:
+          type: string
+          description: Reference of the related entity.
+        serviceOrderId:
+          type: string
+          description: Unique identifier of a related entity.
+        itemAction:
+          $ref: '#/components/schemas/OrderItemActionType'
+          description: Action of the order item for this service
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    ServiceStateChangeEvent:
+      type: object
+      description: The notification data structure
+      properties:
+        event:
+          description: The event payload linked to the involved resource object
+          $ref: '#/components/schemas/ServiceStateChangeEventPayload'
+        eventId:
+          type: string
+          description: The identifier of the notification.
+        eventTime:
+          type: string
+          format: date-time
+          description: Time of the event occurrence.
+        eventType:
+          type: string
+          description: The type of the notification.
+        correlationId:
+          type: string
+          description: The correlation id for this event.
+        domain:
+          type: string
+          description: The domain of the event.
+        title:
+          type: string
+          description: The title of the event.
+        description:
+          type: string
+          description: An explnatory of the event.
+        priority:
+          type: string
+          description: A priority.
+        timeOcurred:
+          type: string
+          format: date-time
+          description: The time the event occured.
+    ServiceDeleteEvent:
+      type: object
+      description: The notification data structure
+      properties:
+        event:
+          description: The event payload linked to the involved resource object
+          $ref: '#/components/schemas/ServiceDeleteEventPayload'
+        eventId:
+          type: string
+          description: The identifier of the notification.
+        eventTime:
+          type: string
+          format: date-time
+          description: Time of the event occurrence.
+        eventType:
+          type: string
+          description: The type of the notification.
+        correlationId:
+          type: string
+          description: The correlation id for this event.
+        domain:
+          type: string
+          description: The domain of the event.
+        title:
+          type: string
+          description: The title of the event.
+        description:
+          type: string
+          description: An explnatory of the event.
+        priority:
+          type: string
+          description: A priority.
+        timeOcurred:
+          type: string
+          format: date-time
+          description: The time the event occured.
+    Characteristic:
+      type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
       properties:
         id:
           type: string
           description: Unique identifier of the characteristic
-        relationshipType:
+        name:
           type: string
-          description: The type of relationship
+          description: Name of the characteristic
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+        characteristicRelationship:
+          type: array
+          items:
+            $ref: '#/components/schemas/CharacteristicRelationship'
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
+        '@baseType':
+          example: ResourceSpecification
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          example: https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          example: LogicalResourceSpecification
+          type: string
+          description: When sub-classing, this defines the sub-class Extensible name
+    Monitor:
+      type: object
+      description: Monitoring of resources
+      properties:
+        id:
+          type: string
+          description: Identifier of an instance of the monitor. Required to be unique within the resource type.  Used in URIs as the identifier for specific instances of a type
+        href:
+          type: string
+          description: reference to this monitor
+        sourceHref:
+          type: string
+          description: The monitored resource href
+        state:
+          type: string
+          description: The Monitor state of the resource.  InProgress, InError, Completed
+        request:
+          $ref: '#/components/schemas/Request'
+          description: Represents the request
+        response:
+          $ref: '#/components/schemas/Response'
+          description: Represents the response
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -2023,13 +2141,20 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
-    ServiceStateChangeEvent:
+    MonitorCreateEventPayload:
+      type: object
+      description: The event data structure
+      properties:
+        monitor:
+          description: The involved resource data for the event
+          $ref: '#/components/schemas/Monitor'
+    MonitorDeleteEvent:
       type: object
       description: The notification data structure
       properties:
         event:
           description: The event payload linked to the involved resource object
-          $ref: '#/components/schemas/ServiceStateChangeEventPayload'
+          $ref: '#/components/schemas/MonitorDeleteEventPayload'
         eventId:
           type: string
           description: The identifier of the notification.
@@ -2059,94 +2184,20 @@ components:
           type: string
           format: date-time
           description: The time the event occured.
-    Response:
+    TimePeriod:
       type: object
-      description: A response to a request
-      required:
-      - body
-      - header
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
       properties:
-        body:
-          type: string
-          description: The body of the response. For example for an HTTP response might contain HTML for rendering.
-        statusCode:
-          type: string
-          description: The status of the response. For example for an HTTP response would be codes such as 200, 400, etc.
-        header:
-          type: array
-          items:
-            $ref: '#/components/schemas/HeaderItem'
-          minItems: 1
-          description: Items included in the header of the response. For example for an HTTP response might contain negotiated locale.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    MonitorAttributeValueChangeEventPayload:
-      type: object
-      description: The event data structure
-      properties:
-        monitor:
-          description: The involved resource data for the event
-          $ref: '#/components/schemas/Monitor'
-    RelatedServiceOrderItem:
-      type: object
-      description: RelatedServiceOrderItem (a ServiceOrder item) .The service order item which triggered service creation/change/termination.
-      required:
-      - itemId
-      - serviceOrderId
-      properties:
-        itemId:
-          type: string
-          description: Identifier of the order item where the service was managed
-        role:
-          type: string
-          description: role of the service order item for this service
-        serviceOrderHref:
-          type: string
-          description: Reference of the related entity.
-        serviceOrderId:
-          type: string
-          description: Unique identifier of a related entity.
-        itemAction:
-          $ref: '#/components/schemas/OrderItemActionType'
-          description: Action of the order item for this service
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-    Note:
-      type: object
-      description: Extra information about a given entity
-      properties:
-        id:
-          type: string
-          description: Identifier of the note within its containing entity (may or may not be globally unique, depending on provider implementation)
-        author:
-          type: string
-          description: Author of the note
-        date:
+        endDateTime:
+          example: '1985-04-12T23:20:50.52Z'
           type: string
           format: date-time
-          description: Date of the note
-        text:
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          example: '1985-04-12T23:20:50.52Z'
           type: string
-          description: Text of the note
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -2157,64 +2208,42 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    ServiceAttributeValueChangeEventPayload:
+    ResourceCreateEvent:
       type: object
-      description: The event data structure
+      description: The notification data structure
       properties:
-        service:
-          description: The involved resource data for the event
-          $ref: '#/components/schemas/Service'
-    Feature:
-      type: object
-      description: Configuration feature.
-      required:
-      - featureCharacteristic
-      - name
-      properties:
-        id:
+        event:
+          description: The event payload linked to the involved resource object
+          $ref: '#/components/schemas/ResourceCreateEventPayload'
+        eventId:
           type: string
-          description: Unique identifier of the feature.
-        isBundle:
-          type: boolean
-          description: True if this is a feature group. Default is false.
-        isEnabled:
-          type: boolean
-          description: True if this feature is enabled. Default is true.
-        name:
+          description: The identifier of the notification.
+        eventTime:
           type: string
-          description: This is the name for the feature.
-        constraint:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConstraintRef'
-          description: This is a list of feature constraints.
-        featureCharacteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/Characteristic'
-          minItems: 1
-          description: This is a list of Characteristics for a particular feature.
-        featureRelationship:
-          type: array
-          items:
-            $ref: '#/components/schemas/FeatureRelationship'
-        '@baseType':
+          format: date-time
+          description: Time of the event occurrence.
+        eventType:
           type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
+          description: The type of the notification.
+        correlationId:
           type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
+          description: The correlation id for this event.
+        domain:
           type: string
-          description: When sub-classing, this defines the sub-class entity name
-    ResourceUsageStateType:
-      type: string
-      description: ResourceUsageStateType enumerations
-      enum:
-      - idle
-      - active
-      - busy
+          description: The domain of the event.
+        title:
+          type: string
+          description: The title of the event.
+        description:
+          type: string
+          description: An explnatory of the event.
+        priority:
+          type: string
+          description: A priority.
+        timeOcurred:
+          type: string
+          format: date-time
+          description: The time the event occured.
     ResourceRefOrValue:
       type: object
       description: Resource is an abstract entity that describes the common set of attributes shared by all concrete resources. The polymorphic attributes @type, @schemaLocation & @referredType are related to the Resource entity and not the related ResourceRefOrValue class itself
@@ -2302,12 +2331,62 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
-    RelatedParty_2:
+    ResourceStatusType:
+      type: string
+      description: ResourceStatusType enumerations
+      enum:
+      - standby
+      - alarm
+      - available
+      - reserved
+      - unknown
+      - suspended
+    ResourceAdministrativeStateType:
+      type: string
+      description: ResourceAdministrativeStateType enumerations
+      enum:
+      - locked
+      - unlocked
+      - shutdown
+    ResourceDeleteEvent:
       type: object
-      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
-      required:
-      - '@referredType'
-      - id
+      description: The notification data structure
+      properties:
+        event:
+          description: The event payload linked to the involved resource object
+          $ref: '#/components/schemas/ResourceDeleteEventPayload'
+        eventId:
+          type: string
+          description: The identifier of the notification.
+        eventTime:
+          type: string
+          format: date-time
+          description: Time of the event occurrence.
+        eventType:
+          type: string
+          description: The type of the notification.
+        correlationId:
+          type: string
+          description: The correlation id for this event.
+        domain:
+          type: string
+          description: The domain of the event.
+        title:
+          type: string
+          description: The title of the event.
+        description:
+          type: string
+          description: An explnatory of the event.
+        priority:
+          type: string
+          description: A priority.
+        timeOcurred:
+          type: string
+          format: date-time
+          description: The time the event occured.
+    ConstraintRef_2:
+      type: object
+      description: Constraint reference. The Constraint resource represents a policy/rule applied to an entity or entity spec.
       properties:
         id:
           type: string
@@ -2319,9 +2398,9 @@ components:
         name:
           type: string
           description: Name of the related entity.
-        role:
+        version:
           type: string
-          description: Role played by the related party
+          description: constraint version
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -2335,6 +2414,85 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    Note_2:
+      type: object
+      description: Extra information about a given entity
+      properties:
+        id:
+          type: string
+          description: Identifier of the note within its containing entity (may or may not be globally unique, depending on provider implementation)
+        href:
+          type: string
+          format: uri
+          description: Hyperlink reference
+        author:
+          type: string
+          description: Author of the note
+        date:
+          type: string
+          format: date-time
+          description: Date of the note
+        text:
+          type: string
+          description: Text of the note
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class Extensible name
+    Quantity:
+      type: object
+      description: An amount in a given unit
+      properties:
+        amount:
+          default: 1
+          type: number
+          format: float
+          description: Numeric value in a given unit
+        units:
+          type: string
+          description: Unit
+    Feature_2:
+      type: object
+      description: Configuration feature.
+      required:
+      - featureCharacteristic
+      - name
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the feature.
+        isBundle:
+          type: boolean
+          description: True if this is a feature group. Default is false.
+        isEnabled:
+          type: boolean
+          description: True if this feature is enabled. Default is true.
+        name:
+          type: string
+          description: This is the name for the feature.
+        constraint:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConstraintRef_2'
+          description: This is a list of feature constraints.
+        featureCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic_2'
+          minItems: 1
+          description: This is a list of Characteristics for a particular feature.
+        featureRelationship:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeatureRelationship_2'
     ResourceAttributeValueChangeEvent:
       type: object
       description: The notification data structure
@@ -2374,16 +2532,48 @@ components:
         event:
           description: The event payload linked to the involved resource object
           $ref: '#/components/schemas/ResourceAttributeValueChangeEventPayload'
-    ResourceDeleteEventPayload:
+    ResourceOperationalStateType:
+      type: string
+      description: ResourceOperationalStateType enumerations
+      enum:
+      - enable
+      - disable
+    CharacteristicRelationship_2:
+      type: object
+      description: Another Characteristic that is related to the current Characteristic;
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the characteristic
+        href:
+          type: string
+          format: uri
+          description: Hyperlink reference
+        relationshipType:
+          type: string
+          description: The type of relationship
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class Extensible name
+    ResourceStateChangeEventPayload:
       type: object
       description: The event data structure
       properties:
         resource:
           description: The involved resource data for the event
           $ref: '#/components/schemas/Resource'
-    ConstraintRef_2:
+    ResourceSpecificationRef:
       type: object
-      description: Constraint reference. The Constraint resource represents a policy/rule applied to an entity or entity spec.
+      description: 'Resources are physical or non-physical components (or some combination of these) within an enterprise''s infrastructure or inventory. They are typically consumed or used by services (for example a physical port assigned to a service) or contribute to the realization of a Product (for example, a SIM card). They can be drawn from the Application, Computing and Network domains, and include, for example, Network Elements, software, IT systems, content and information, and technology components.
+
+        A ResourceSpecification is an abstract base class for representing a generic means for implementing a particular type of Resource. In essence, a ResourceSpecification defines the common attributes and relationships of a set of related Resources, while Resource defines a specific instance that is based on a particular ResourceSpecification.'
       properties:
         id:
           type: string
@@ -2397,7 +2587,7 @@ components:
           description: Name of the related entity.
         version:
           type: string
-          description: constraint version
+          description: Resource Specification version
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -2413,6 +2603,132 @@ components:
           description: The actual type of the target instance when needed for disambiguation.
       required:
       - id
+    RelatedParty_2:
+      type: object
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      required:
+      - '@referredType'
+      - id
+      properties:
+        id:
+          type: string
+          description: unique identifier
+        href:
+          type: string
+          format: uri
+          description: Hyperlink reference
+        name:
+          type: string
+          description: Name of the related entity.
+        role:
+          type: string
+          description: Role played by the related party
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class Extensible name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    ResourceRelationship:
+      type: object
+      description: Linked resources to the one instantiate, such as [bundled] if the resource is a bundle and you want to describe the bundled resources inside this bundle; [reliesOn] if the resource needs another already owned resource to rely on (e.g. an option on an already owned mobile access resource) [targets] or [isTargeted] (depending on the way of expressing the link) for any other kind of links that may be useful
+      required:
+      - relationshipType
+      - resource
+      properties:
+        id:
+          type: string
+          description: unique identifier
+        href:
+          type: string
+          format: uri
+          description: Hyperlink reference
+        relationshipType:
+          example: bundled
+          type: string
+          description: 'Type of the resource relationship, such as [bundled] if the resource is a bundle and you want to describe the bundled resources inside this bundle; [reliesOn] if the resource needs another already owned resource to rely on (eg: an option on an already owned mobile access resource) [targets] or [isTargeted] (depending on the way of expressing the link) for any other kind of links that may be useful'
+        resource:
+          $ref: '#/components/schemas/ResourceRefOrValue'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class Extensible name
+    FeatureRelationship_2:
+      type: object
+      description: Configuration feature
+      required:
+      - name
+      - relationshipType
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the target feature.
+        name:
+          type: string
+          description: This is the name of the target feature.
+        relationshipType:
+          type: string
+          description: This is the type of the feature relationship.
+        validFor:
+          $ref: '#/components/schemas/TimePeriod_2'
+          description: The period for which this feature relationship is valid.
+    ResourceCreateEventPayload:
+      type: object
+      description: The event data structure
+      properties:
+        resource:
+          description: The involved resource data for the event
+          $ref: '#/components/schemas/Resource'
+    ResourceUsageStateType:
+      type: string
+      description: ResourceUsageStateType enumerations
+      enum:
+      - idle
+      - active
+      - busy
+    RelatedPlaceRefOrValue_2:
+      type: object
+      description: Related Entity reference. A related place defines a place described by reference or by value linked to a specific entity. The polymorphic attributes @type, @schemaLocation & @referredType are related to the place entity and not the RelatedPlaceRefOrValue class itself
+      required:
+      - role
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the place
+        href:
+          type: string
+          description: Unique reference of the place
+        name:
+          type: string
+          description: A user-friendly name for the place, such as [Paris Store], [London Store], [Main Home]
+        role:
+          type: string
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class Extensible name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
     ResourceStateChangeEvent:
       type: object
       description: The notification data structure
@@ -2449,13 +2765,6 @@ components:
           type: string
           format: date-time
           description: The time the event occured.
-    ResourceCreateEventPayload:
-      type: object
-      description: The event data structure
-      properties:
-        resource:
-          description: The involved resource data for the event
-          $ref: '#/components/schemas/Resource'
     AttachmentRefOrValue:
       type: object
       description: An attachment by value or by reference. An attachment complements the description of an element, for example through a document, a video, a picture.
@@ -2511,62 +2820,36 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
-    ResourceStatusType:
-      type: string
-      description: ResourceStatusType enumerations
-      enum:
-      - standby
-      - alarm
-      - available
-      - reserved
-      - unknown
-      - suspended
-    FeatureRelationship_2:
-      type: object
-      description: Configuration feature
-      required:
-      - name
-      - relationshipType
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the target feature.
-        name:
-          type: string
-          description: This is the name of the target feature.
-        relationshipType:
-          type: string
-          description: This is the type of the feature relationship.
-        validFor:
-          $ref: '#/components/schemas/TimePeriod_2'
-          description: The period for which this feature relationship is valid.
-    ResourceStateChangeEventPayload:
+    ResourceDeleteEventPayload:
       type: object
       description: The event data structure
       properties:
         resource:
           description: The involved resource data for the event
           $ref: '#/components/schemas/Resource'
-    ResourceRelationship:
+    Characteristic_2:
       type: object
-      description: Linked resources to the one instantiate, such as [bundled] if the resource is a bundle and you want to describe the bundled resources inside this bundle; [reliesOn] if the resource needs another already owned resource to rely on (e.g. an option on an already owned mobile access resource) [targets] or [isTargeted] (depending on the way of expressing the link) for any other kind of links that may be useful
+      description: Describes a given characteristic of an object or entity through a name/value pair.
       required:
-      - relationshipType
-      - resource
+      - name
+      - value
       properties:
         id:
           type: string
-          description: unique identifier
-        href:
+          description: Unique identifier of the characteristic
+        name:
           type: string
-          format: uri
-          description: Hyperlink reference
-        relationshipType:
-          example: bundled
+          description: Name of the characteristic
+        valueType:
           type: string
-          description: 'Type of the resource relationship, such as [bundled] if the resource is a bundle and you want to describe the bundled resources inside this bundle; [reliesOn] if the resource needs another already owned resource to rely on (eg: an option on an already owned mobile access resource) [targets] or [isTargeted] (depending on the way of expressing the link) for any other kind of links that may be useful'
-        resource:
-          $ref: '#/components/schemas/ResourceRefOrValue'
+          description: Data type of the value of the characteristic
+        characteristicRelationship:
+          type: array
+          items:
+            $ref: '#/components/schemas/CharacteristicRelationship_2'
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -2577,13 +2860,6 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class Extensible name
-    ResourceAdministrativeStateType:
-      type: string
-      description: ResourceAdministrativeStateType enumerations
-      enum:
-      - locked
-      - unlocked
-      - shutdown
     Resource:
       type: object
       description: Resource is an abstract entity that describes the common set of attributes shared by all concrete resources (e.g. TPE, EQUIPMENT) in the inventory.
@@ -2668,84 +2944,13 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class Extensible name
-    ResourceDeleteEvent:
+    ResourceAttributeValueChangeEventPayload:
       type: object
-      description: The notification data structure
+      description: The event data structure
       properties:
-        event:
-          description: The event payload linked to the involved resource object
-          $ref: '#/components/schemas/ResourceDeleteEventPayload'
-        eventId:
-          type: string
-          description: The identifier of the notification.
-        eventTime:
-          type: string
-          format: date-time
-          description: Time of the event occurrence.
-        eventType:
-          type: string
-          description: The type of the notification.
-        correlationId:
-          type: string
-          description: The correlation id for this event.
-        domain:
-          type: string
-          description: The domain of the event.
-        title:
-          type: string
-          description: The title of the event.
-        description:
-          type: string
-          description: An explnatory of the event.
-        priority:
-          type: string
-          description: A priority.
-        timeOcurred:
-          type: string
-          format: date-time
-          description: The time the event occured.
-    ResourceOperationalStateType:
-      type: string
-      description: ResourceOperationalStateType enumerations
-      enum:
-      - enable
-      - disable
-    ResourceCreateEvent:
-      type: object
-      description: The notification data structure
-      properties:
-        event:
-          description: The event payload linked to the involved resource object
-          $ref: '#/components/schemas/ResourceCreateEventPayload'
-        eventId:
-          type: string
-          description: The identifier of the notification.
-        eventTime:
-          type: string
-          format: date-time
-          description: Time of the event occurrence.
-        eventType:
-          type: string
-          description: The type of the notification.
-        correlationId:
-          type: string
-          description: The correlation id for this event.
-        domain:
-          type: string
-          description: The domain of the event.
-        title:
-          type: string
-          description: The title of the event.
-        description:
-          type: string
-          description: An explnatory of the event.
-        priority:
-          type: string
-          description: A priority.
-        timeOcurred:
-          type: string
-          format: date-time
-          description: The time the event occured.
+        resource:
+          description: The involved resource data for the event
+          $ref: '#/components/schemas/Resource'
     TimePeriod_2:
       type: object
       description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
@@ -2760,236 +2965,77 @@ components:
           type: string
           format: date-time
           description: Start of the time period, using IETC-RFC-3339 format
-    RelatedPlaceRefOrValue_2:
+    MediumCharacteristic:
       type: object
-      description: Related Entity reference. A related place defines a place described by reference or by value linked to a specific entity. The polymorphic attributes @type, @schemaLocation & @referredType are related to the place entity and not the RelatedPlaceRefOrValue class itself
-      required:
-      - role
+      description: Describes the contact medium characteristics that could be used to contact a party
       properties:
-        id:
+        street1:
           type: string
-          description: Unique identifier of the place
-        href:
+          description: 'Line 1, SV_MAPPING: Cust_Acct.PostalLine1_X | Cust_Acct.SiteLine1_X'
+        street2:
           type: string
-          description: Unique reference of the place
-        name:
+          description: 'Line 2, SV_MAPPING: Cust_Acct.PostalLine2_X | Cust_Acct.SiteLine2_X'
+        suburb:
           type: string
-          description: A user-friendly name for the place, such as [Paris Store], [London Store], [Main Home]
-        role:
+          description: 'Suburban, SV_MAPPING: Cust_Acct.PostalSubDistrict_R | Cust_Acct.SiteSubDistrict_R'
+        city:
           type: string
-        '@baseType':
+          description: 'City, SV_MAPPING: Cust_Acct.PostalCity_R | Cust_Acct.SiteCity_R'
+        postCode:
           type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
+          description: 'Post Code, SV_MAPPING: Cust_Acct.PostalPostCode_X | Cust_Acct.SitePostCode_X'
+        stateOrProvince:
           type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
+          description: 'State, SV_MAPPING: Cust_Acct.PostalDistrict_R | Cust_Acct.SiteDistrict_R'
+        country:
           type: string
-          description: When sub-classing, this defines the sub-class Extensible name
-        '@referredType':
+          description: 'Country, SV_MAPPING: Cust_Acct.PostalCountry_R | Cust_Acct.SiteCountry_R'
+        addressLine1:
           type: string
-          description: The actual type of the target instance when needed for disambiguation.
-    ResourceAttributeValueChangeEventPayload:
-      type: object
-      description: The event data structure
-      properties:
-        resource:
-          description: The involved resource data for the event
-          $ref: '#/components/schemas/Resource'
-    Characteristic_2:
-      type: object
-      description: Describes a given characteristic of an object or entity through a name/value pair.
-      required:
-      - name
-      - value
-      properties:
-        id:
+          description: 'Address line 1, SV_MAPPING: Cust_Acct.PostalLine7_X | Cust_Acct.SiteLine7_X'
+        geocode:
           type: string
-          description: Unique identifier of the characteristic
-        name:
+          description: 'What3words, SV_MAPPING: Cust_Acct.PostalGeocode_X | Cust_Acct.SiteGeocode_X'
+        subDoorNumber:
           type: string
-          description: Name of the characteristic
-        valueType:
+          description: 'Sub Door number, SV_MAPPING: Cust_Acct.PostalSubDoorNumber_X | Cust_Acct.SiteSubDoorNumber_X'
+        genericAddress:
           type: string
-          description: Data type of the value of the characteristic
-        characteristicRelationship:
-          type: array
-          items:
-            $ref: '#/components/schemas/CharacteristicRelationship_2'
-        value:
-          $ref: '#/components/schemas/Any'
-          description: The value of the characteristic
-        '@baseType':
+          description: 'Generic Address when the actual address is not known, SV_MAPPING: Cust_Acct.PostalGenericAddress_X | Cust_Acct.SiteGenericAddress_X'
+        phoneNumber:
           type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class Extensible name
-    ResourceSpecificationRef:
-      type: object
-      description: 'Resources are physical or non-physical components (or some combination of these) within an enterprise''s infrastructure or inventory. They are typically consumed or used by services (for example a physical port assigned to a service) or contribute to the realization of a Product (for example, a SIM card). They can be drawn from the Application, Computing and Network domains, and include, for example, Network Elements, software, IT systems, content and information, and technology components.
-
-        A ResourceSpecification is an abstract base class for representing a generic means for implementing a particular type of Resource. In essence, a ResourceSpecification defines the common attributes and relationships of a set of related Resources, while Resource defines a specific instance that is based on a particular ResourceSpecification.'
-      properties:
-        id:
-          type: string
-          description: unique identifier
-        href:
-          type: string
-          format: uri
-          description: Hyperlink reference
-        name:
-          type: string
-          description: Name of the related entity.
-        version:
-          type: string
-          description: Resource Specification version
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class Extensible name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id
-    CharacteristicRelationship_2:
-      type: object
-      description: Another Characteristic that is related to the current Characteristic;
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the characteristic
-        href:
-          type: string
-          format: uri
-          description: Hyperlink reference
-        relationshipType:
-          type: string
-          description: The type of relationship
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class Extensible name
-    Quantity:
-      type: object
-      description: An amount in a given unit
-      properties:
-        amount:
-          default: 1
-          type: number
-          format: float
-          description: Numeric value in a given unit
-        units:
-          type: string
-          description: Unit
-    Note_2:
-      type: object
-      description: Extra information about a given entity
-      properties:
-        id:
-          type: string
-          description: Identifier of the note within its containing entity (may or may not be globally unique, depending on provider implementation)
-        href:
-          type: string
-          format: uri
-          description: Hyperlink reference
-        author:
-          type: string
-          description: Author of the note
-        date:
-          type: string
-          format: date-time
-          description: Date of the note
-        text:
-          type: string
-          description: Text of the note
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class Extensible name
-    Feature_2:
-      type: object
-      description: Configuration feature.
-      required:
-      - featureCharacteristic
-      - name
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the feature.
-        isBundle:
-          type: boolean
-          description: True if this is a feature group. Default is false.
-        isEnabled:
-          type: boolean
-          description: True if this feature is enabled. Default is true.
-        name:
-          type: string
-          description: This is the name for the feature.
-        constraint:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConstraintRef_2'
-          description: This is a list of feature constraints.
-        featureCharacteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/Characteristic_2'
-          minItems: 1
-          description: This is a list of Characteristics for a particular feature.
-        featureRelationship:
-          type: array
-          items:
-            $ref: '#/components/schemas/FeatureRelationship_2'
-    TopicChangeEventPayload:
+          description: These are the phone numbers of the primary contact of customer. HomeNumber->SV_MAPPING:Contact.HomePhone_X,WorkNumber->SV_MAPPING:Contact.WorkPhone_X, MobileNumber->SV_MAPPING:Contact.MobilePhone_X
+    TopicCreateEventPayload:
       type: object
       description: The event data structure
       properties:
-        customer:
-          description: The involved customer order change details
-          $ref: '#/components/schemas/CustomerOrder'
-        productOrder:
-          description: The involved product order change details
-          $ref: '#/components/schemas/ProductOrder'
         topic:
           description: The involved resource data for the event
           $ref: '#/components/schemas/Topic'
-    BillStructure:
+    EventSubscription_2:
       type: object
-      description: The bill structure that associated to the customer.
+      description: Sets the communication endpoint address the service instance must use to deliver notification information
+      required:
+      - id
+      - callback
       properties:
-        cycleSpecification:
-          description: The bill cycle that associated to the customer.
-          $ref: '#/components/schemas/CycleSpecification'
-        format:
-          type: array
-          description: The bill invoice format.
-          items:
-            $ref: '#/components/schemas/Format'
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Success
+        id:
+          type: string
+          description: Id of the listener
+        callback:
+          type: string
+          description: The callback being registered.
+        query:
+          type: string
+          description: additional data to be passed
     IndividualIdentification:
       type: object
       description: Represents our registration of information used as proof of identity by an individual (national identity card)
@@ -3000,53 +3046,96 @@ components:
         identificationType:
           type: string
           description: 'NationalId '
-    PartyRef:
+    CycleSpecification:
+      type: object
+      description: The customer bill cycle.
+      properties:
+        name:
+          type: string
+          description: Schedule Name, SV_MAPPING:Cust_Acct.InvoiceCycle_R
+        preferredCurrency:
+          type: string
+          description: Preferred Currency, SV_MAPPING:Cust_Acct.Currency_R
+          x-refdata-source: CM-Currency
+        reportLevel:
+          type: string
+          description: Report Level, SV_MAPPING:Cust_Acct.ReportLevel_R
+          x-refdata-source: RT-REPORT_LEVEL
+        suppressBilling:
+          type: string
+          description: Suppress Billing Flag, SV_MAPPING:Cust_Acct.SuppressBilling_B, Possible value 1 and 0
+        suppressCycles:
+          type: string
+          description: Suppress for number of Cycles, SV_MAPPING:Cust_Acct.SuppressCycles_I
+        suppressUntilDate:
+          type: string
+          description: Bill suppress date, SV_MAPPING:Cust_Acct.SuppressDate_T
+        transferredAccountNumber:
+          type: string
+          description: Transferred account number. SV_MAPPING:Cust_Acct.TransferAccountNumber_X
+        billEndDate:
+          type: string
+          description: Bill End Date. Describes the Bill cycle end date
+    ContactMedium:
       type: array
-      description: Party reference. A party represents an organization or an individual.
+      description: Indicates the contact medium that could be used to contact the party.
       items:
         properties:
-          '@referredType':
+          mediumType:
             type: string
-            description: 'This is type of related party which it reffers, possible values individual, organization, customer. SV_MAPPING: perestapi.REFERRED_TYPE'
-            x-refdata-source: RT-perestapi.REFERRED_TYPE
-          id:
-            type: string
-            description: Contact Id, SV_MAPPING:contact.ObjectKey (Primary) or SV_MAPPING:contact.ObjectKey (Secondary) or Customer id, SV_MAPPING:Cust_Acct.ObjectKey
-          href:
-            type: string
-            description: Reference of the party - <http://<TREREST_HOSTNAME>:<TREREST_PORT>/<Party TreREST URL>/<contact.ObjectKey>customer - <http://<TREREST_HOSTNAME>:<TREREST_PORT>/<customer TreREST URL>/<SV_MAPPING:Cust_Acct.ObjectKey>
-          name:
-            type: string
-            description: Contact display name, SV_MAPPING:contact.Display_Name, customer display name SV_MAPPING:Cust_Acct.CustAcctName_X or parent customer display name SV_MAPPING:Cust_Acct.ParentCustAcct_R@
-          role:
-            type: string
-            description: 'Primary | Secondary | Parent | Child. SV_MAPPING: perestapi.RELATED_PARTY_ROLE'
-            x-refdata-source: RT-perestapi.RELATED_PARTY_ROLE
-          individualIdentification:
-            type: array
-            items:
-              $ref: '#/components/schemas/IndividualIdentification'
-          partyCharacteristic:
-            type: array
-            description: 'Characteristic name supported: PersonalVatNumber | CorporateVatNumber | ContactRole. Characteristic value supported: PersonalVatNumber -> SV_MAPPING:Contact.General10_X | CorporateVatNumber -> SV_MAPPING:Contact.General10_X | ContactRole -> SV_MAPPING:perestapi.imp.CONTACT_ROLE. Characteristic value type supported: string'
-            items:
-              $ref: '#/components/schemas/Characteristic_3'
-            x-refdata-source: '||RT-perestapi.imp.CONTACT_ROLE'
-          contactMedium:
-            type: array
-            items:
-              $ref: '#/components/schemas/ContactMedium'
-          op:
-            type: string
-            description: 'add | replace | remove. SV_MAPPING: perestapi.OPERATION'
-            x-refdata-source: RT-perestapi.OPERATION
-    TopicDeleteEventPayload:
+            description: 'Type of the contact medium i.e.: PostalAddress | SiteAddress |HomeNumber | WorkNumber | MobileNumber. SV_MAPPING: perestapi.MEDIUM_TYPE RT'
+          characteristic:
+            $ref: '#/components/schemas/MediumCharacteristic'
+    CreditProfile:
       type: object
-      description: The event data structure
+      description: Credit profile for the party.
+      required:
+      - creditProfileDate
+      - validFor
       properties:
-        topic:
-          description: The involved resource data for the event
-          $ref: '#/components/schemas/Topic'
+        creditProfileDate:
+          type: string
+          format: date-time
+          description: The date the profile was established
+        creditRiskRating:
+          type: string
+          description: Credit rating, SV_MAPPING:Cust_Acct.CreditRating_R
+          x-refdata-source: RT-TREATMENT_CREDIT_CLASS
+        creditLimit:
+          type: string
+          description: CREDIT_LIMIT, SV_MAPPING:Cust_Acct.CreditLimit_C
+        creditLimitCurrency:
+          type: string
+          description: Credit limit Currency, SV_MAPPING:Cust_Acct.CreditLimitCurrency_R
+          x-refdata-source: CM-Currency
+        expectedRevenue:
+          type: string
+          description: Expected revenue, SV_MAPPING:Cust_Acct.ExptRevAmt_C
+        expRevCurrency:
+          type: string
+          description: Expected revenue currency, SV_MAPPING:Cust_Acct.ExptRevCurrency_R
+          x-refdata-source: CM-Currency
+        creditComments:
+          type: string
+          description: Credit comments, SV_MAPPING:Cust_Acct.CreditComments_X
+        taxClass:
+          type: string
+          description: Tax class, SV_MAPPING:Cust_Acct.TaxClass_R
+          x-refdata-source: RT-TAX_CLASS
+        creditScore:
+          type: string
+          description: Credit score, SV_MAPPING:Cust_Acct.CreditScore_X
+        validFor:
+          $ref: '#/components/schemas/TimePeriod_3'
+          description: The period for which the profile is valid
+    PresentationMedia:
+      type: object
+      description: The bill invoice presentation media.
+      properties:
+        name:
+          type: string
+          description: Invoice Delivery, SV_MAPPING:CustAcctInvoiceFormat.InvoiceDelivery_R
+          x-refdata-source: AT-invxml.InvoiceDelivery
     CustomerOrder:
       type: object
       description: details of product order
@@ -3162,105 +3251,95 @@ components:
               type: string
               format: date-time
               description: 'The effective end date Format: yyyy-mm-ddThh:nn:ss, SV_MAPPING:Cust_Acct.EffectiveEndDate_T'
-    CreditProfile:
+    TopicDeleteEvent:
       type: object
-      description: Credit profile for the party.
-      required:
-      - creditProfileDate
-      - validFor
+      description: The notification data structure
       properties:
-        creditProfileDate:
+        id:
+          type: string
+          description: Identifier of the Process flow
+        href:
+          type: string
+          description: Reference of the ProcessFlow
+        eventId:
+          type: string
+          description: The identifier of the notification.
+        eventTime:
           type: string
           format: date-time
-          description: The date the profile was established
-        creditRiskRating:
+          description: Time of the event occurrence.
+        eventType:
           type: string
-          description: Credit rating, SV_MAPPING:Cust_Acct.CreditRating_R
-          x-refdata-source: RT-TREATMENT_CREDIT_CLASS
-        creditLimit:
+          description: The type of the notification.
+        correlationId:
           type: string
-          description: CREDIT_LIMIT, SV_MAPPING:Cust_Acct.CreditLimit_C
-        creditLimitCurrency:
+          description: The correlation id for this event.
+        domain:
           type: string
-          description: Credit limit Currency, SV_MAPPING:Cust_Acct.CreditLimitCurrency_R
-          x-refdata-source: CM-Currency
-        expectedRevenue:
+          description: The domain of the event.
+        title:
           type: string
-          description: Expected revenue, SV_MAPPING:Cust_Acct.ExptRevAmt_C
-        expRevCurrency:
+          description: The title of the event.
+        description:
           type: string
-          description: Expected revenue currency, SV_MAPPING:Cust_Acct.ExptRevCurrency_R
-          x-refdata-source: CM-Currency
-        creditComments:
+          description: An explnatory of the event.
+        priority:
           type: string
-          description: Credit comments, SV_MAPPING:Cust_Acct.CreditComments_X
-        taxClass:
+          description: A priority.
+        timeOcurred:
           type: string
-          description: Tax class, SV_MAPPING:Cust_Acct.TaxClass_R
-          x-refdata-source: RT-TAX_CLASS
-        creditScore:
-          type: string
-          description: Credit score, SV_MAPPING:Cust_Acct.CreditScore_X
-        validFor:
-          $ref: '#/components/schemas/TimePeriod_3'
-          description: The period for which the profile is valid
-    MediumCharacteristic:
+          format: date-time
+          description: The time the event occured.
+        event:
+          description: The event payload linked to the involved resource object
+          $ref: '#/components/schemas/TopicDeleteEventPayload'
+    PartyRef:
+      type: array
+      description: Party reference. A party represents an organization or an individual.
+      items:
+        properties:
+          '@referredType':
+            type: string
+            description: 'This is type of related party which it reffers, possible values individual, organization, customer. SV_MAPPING: perestapi.REFERRED_TYPE'
+            x-refdata-source: RT-perestapi.REFERRED_TYPE
+          id:
+            type: string
+            description: Contact Id, SV_MAPPING:contact.ObjectKey (Primary) or SV_MAPPING:contact.ObjectKey (Secondary) or Customer id, SV_MAPPING:Cust_Acct.ObjectKey
+          href:
+            type: string
+            description: Reference of the party - <http://<TREREST_HOSTNAME>:<TREREST_PORT>/<Party TreREST URL>/<contact.ObjectKey>customer - <http://<TREREST_HOSTNAME>:<TREREST_PORT>/<customer TreREST URL>/<SV_MAPPING:Cust_Acct.ObjectKey>
+          name:
+            type: string
+            description: Contact display name, SV_MAPPING:contact.Display_Name, customer display name SV_MAPPING:Cust_Acct.CustAcctName_X or parent customer display name SV_MAPPING:Cust_Acct.ParentCustAcct_R@
+          role:
+            type: string
+            description: 'Primary | Secondary | Parent | Child. SV_MAPPING: perestapi.RELATED_PARTY_ROLE'
+            x-refdata-source: RT-perestapi.RELATED_PARTY_ROLE
+          individualIdentification:
+            type: array
+            items:
+              $ref: '#/components/schemas/IndividualIdentification'
+          partyCharacteristic:
+            type: array
+            description: 'Characteristic name supported: PersonalVatNumber | CorporateVatNumber | ContactRole. Characteristic value supported: PersonalVatNumber -> SV_MAPPING:Contact.General10_X | CorporateVatNumber -> SV_MAPPING:Contact.General10_X | ContactRole -> SV_MAPPING:perestapi.imp.CONTACT_ROLE. Characteristic value type supported: string'
+            items:
+              $ref: '#/components/schemas/Characteristic_3'
+            x-refdata-source: '||RT-perestapi.imp.CONTACT_ROLE'
+          contactMedium:
+            type: array
+            items:
+              $ref: '#/components/schemas/ContactMedium'
+          op:
+            type: string
+            description: 'add | replace | remove. SV_MAPPING: perestapi.OPERATION'
+            x-refdata-source: RT-perestapi.OPERATION
+    TopicDeleteEventPayload:
       type: object
-      description: Describes the contact medium characteristics that could be used to contact a party
+      description: The event data structure
       properties:
-        street1:
-          type: string
-          description: 'Line 1, SV_MAPPING: Cust_Acct.PostalLine1_X | Cust_Acct.SiteLine1_X'
-        street2:
-          type: string
-          description: 'Line 2, SV_MAPPING: Cust_Acct.PostalLine2_X | Cust_Acct.SiteLine2_X'
-        suburb:
-          type: string
-          description: 'Suburban, SV_MAPPING: Cust_Acct.PostalSubDistrict_R | Cust_Acct.SiteSubDistrict_R'
-        city:
-          type: string
-          description: 'City, SV_MAPPING: Cust_Acct.PostalCity_R | Cust_Acct.SiteCity_R'
-        postCode:
-          type: string
-          description: 'Post Code, SV_MAPPING: Cust_Acct.PostalPostCode_X | Cust_Acct.SitePostCode_X'
-        stateOrProvince:
-          type: string
-          description: 'State, SV_MAPPING: Cust_Acct.PostalDistrict_R | Cust_Acct.SiteDistrict_R'
-        country:
-          type: string
-          description: 'Country, SV_MAPPING: Cust_Acct.PostalCountry_R | Cust_Acct.SiteCountry_R'
-        addressLine1:
-          type: string
-          description: 'Address line 1, SV_MAPPING: Cust_Acct.PostalLine7_X | Cust_Acct.SiteLine7_X'
-        geocode:
-          type: string
-          description: 'What3words, SV_MAPPING: Cust_Acct.PostalGeocode_X | Cust_Acct.SiteGeocode_X'
-        subDoorNumber:
-          type: string
-          description: 'Sub Door number, SV_MAPPING: Cust_Acct.PostalSubDoorNumber_X | Cust_Acct.SiteSubDoorNumber_X'
-        genericAddress:
-          type: string
-          description: 'Generic Address when the actual address is not known, SV_MAPPING: Cust_Acct.PostalGenericAddress_X | Cust_Acct.SiteGenericAddress_X'
-        phoneNumber:
-          type: string
-          description: These are the phone numbers of the primary contact of customer. HomeNumber->SV_MAPPING:Contact.HomePhone_X,WorkNumber->SV_MAPPING:Contact.WorkPhone_X, MobileNumber->SV_MAPPING:Contact.MobilePhone_X
-    Format:
-      type: object
-      description: The bill invoice format.
-      properties:
-        name:
-          type: string
-          description: Invoice formate name, SV_MAPPING:CustAcctInvoiceFormat.InvoiceFormat_R
-          x-refdata-source: CM-InvoiceFormat
-        presentationMedia:
-          description: The bill invoice presentation media.
-          $ref: '#/components/schemas/PresentationMedia'
-        characteristic:
-          type: array
-          description: 'Characteristic name supported: sendInvoiceTo | contactId | itemized | addressChoice | invoiceLanguage | op | seqnr.Characteristic value supported: CustAcctInvoiceFormat.Contact_R, CustAcctInvoiceFormat.InvoiceItemised_R, CustAcctInvoiceFormat.AddressChoice_R, CustAcctInvoiceFormat.InvoiceLanguage_R, perestapi.OPERATION (op) and CustAcctInvoiceFormat.SequenceNum_I.Characteristic value type supported: string. For PATCH request, the combination of op and seqnr characteristics are mandatory values.They indicate the type of action (add/replace/remove) to perform on an identified invoice format entity, as well as all other attribute values under the format attribute object e.g.: name, presentationMedia and the list of other characteristic values.For GET request, the op characteristic will not be returned.For POST request, the op and seqnr characteristics will not be used.'
-          items:
-            $ref: '#/components/schemas/Characteristic_3'
-          x-refdata-source: '||RT-INVXML.INVOICE_ITEMISED|RT-ADDRESS_CHOICE,RT-INVXML.EMAIL_ADDRESS_CHOICE|RT-INVXML.INVOICE_LANGUAGE|RT-perestapi.OPERATION|'
+        topic:
+          description: The involved resource data for the event
+          $ref: '#/components/schemas/Topic'
     ProductOrder:
       type: object
       description: details of product order
@@ -3496,217 +3575,6 @@ components:
           type: string
           description: validation state
           example: Validated
-    TimePeriod_3:
-      type: object
-      description: A base / value business entity used to represent a period of time between two timepoints.
-      properties:
-        startDateTime:
-          type: string
-          format: date-time
-          description: 'Start Date format: yyyy-mm-ddThh:nn:ss, SV_MAPPING:Cust_Acct.EffectiveStartDate_T'
-        endDateTime:
-          type: string
-          format: date-time
-          description: 'The effective end date Format: yyyy-mm-ddThh:nn:ss, SV_MAPPING:Cust_Acct.EffectiveEndDate_T'
-    TopicCreateEvent:
-      type: object
-      description: The notification data structure
-      properties:
-        id:
-          type: string
-          description: Identifier of the Process flow
-        href:
-          type: string
-          description: Reference of the ProcessFlow
-        eventId:
-          type: string
-          description: The identifier of the notification.
-        eventTime:
-          type: string
-          format: date-time
-          description: Time of the event occurrence.
-        eventType:
-          type: string
-          description: The type of the notification.
-        correlationId:
-          type: string
-          description: The correlation id for this event.
-        domain:
-          type: string
-          description: The domain of the event.
-        title:
-          type: string
-          description: The title of the event.
-        description:
-          type: string
-          description: An explnatory of the event.
-        priority:
-          type: string
-          description: A priority.
-        timeOcurred:
-          type: string
-          format: date-time
-          description: The time the event occured.
-        event:
-          description: The event payload linked to the involved resource object
-          $ref: '#/components/schemas/TopicCreateEventPayload'
-    EventSubscription_2:
-      type: object
-      description: Sets the communication endpoint address the service instance must use to deliver notification information
-      required:
-      - id
-      - callback
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: Success
-        id:
-          type: string
-          description: Id of the listener
-        callback:
-          type: string
-          description: The callback being registered.
-        query:
-          type: string
-          description: additional data to be passed
-    TopicCreateEventPayload:
-      type: object
-      description: The event data structure
-      properties:
-        topic:
-          description: The involved resource data for the event
-          $ref: '#/components/schemas/Topic'
-    Characteristic_3:
-      type: array
-      description: Describes a given characteristic of an object or entity through a name/value pair.
-      items:
-        properties:
-          id:
-            type: string
-            description: Unique identifier of the characteristic
-          name:
-            type: string
-            description: Name of the characteristic
-          value:
-            type: string
-            description: Value of the characteristic
-          valueType:
-            type: string
-            description: Data type of the value of the characteristic
-    TopicDeleteEvent:
-      type: object
-      description: The notification data structure
-      properties:
-        id:
-          type: string
-          description: Identifier of the Process flow
-        href:
-          type: string
-          description: Reference of the ProcessFlow
-        eventId:
-          type: string
-          description: The identifier of the notification.
-        eventTime:
-          type: string
-          format: date-time
-          description: Time of the event occurrence.
-        eventType:
-          type: string
-          description: The type of the notification.
-        correlationId:
-          type: string
-          description: The correlation id for this event.
-        domain:
-          type: string
-          description: The domain of the event.
-        title:
-          type: string
-          description: The title of the event.
-        description:
-          type: string
-          description: An explnatory of the event.
-        priority:
-          type: string
-          description: A priority.
-        timeOcurred:
-          type: string
-          format: date-time
-          description: The time the event occured.
-        event:
-          description: The event payload linked to the involved resource object
-          $ref: '#/components/schemas/TopicDeleteEventPayload'
-    CycleSpecification:
-      type: object
-      description: The customer bill cycle.
-      properties:
-        name:
-          type: string
-          description: Schedule Name, SV_MAPPING:Cust_Acct.InvoiceCycle_R
-        preferredCurrency:
-          type: string
-          description: Preferred Currency, SV_MAPPING:Cust_Acct.Currency_R
-          x-refdata-source: CM-Currency
-        reportLevel:
-          type: string
-          description: Report Level, SV_MAPPING:Cust_Acct.ReportLevel_R
-          x-refdata-source: RT-REPORT_LEVEL
-        suppressBilling:
-          type: string
-          description: Suppress Billing Flag, SV_MAPPING:Cust_Acct.SuppressBilling_B, Possible value 1 and 0
-        suppressCycles:
-          type: string
-          description: Suppress for number of Cycles, SV_MAPPING:Cust_Acct.SuppressCycles_I
-        suppressUntilDate:
-          type: string
-          description: Bill suppress date, SV_MAPPING:Cust_Acct.SuppressDate_T
-        transferredAccountNumber:
-          type: string
-          description: Transferred account number. SV_MAPPING:Cust_Acct.TransferAccountNumber_X
-        billEndDate:
-          type: string
-          description: Bill End Date. Describes the Bill cycle end date
-    PresentationMedia:
-      type: object
-      description: The bill invoice presentation media.
-      properties:
-        name:
-          type: string
-          description: Invoice Delivery, SV_MAPPING:CustAcctInvoiceFormat.InvoiceDelivery_R
-          x-refdata-source: AT-invxml.InvoiceDelivery
-    Topic:
-      type: object
-      description: Is a event channel provided by the Event Streaming API
-      properties:
-        id:
-          type: string
-          description: The identifier of the notification.
-        href:
-          type: string
-          description: Reference of the related entity.
-        contentQuery:
-          type: string
-          description: is the filter that will be applied on the content of the Event.
-        headerQuery:
-          type: string
-          description: is the filter that will be applied on the Event header properties.
-        name:
-          type: string
-          description: use to identify grouping of events, per domain, per event types, per access control-right and so on.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
     TopicChangeEvent:
       type: object
       description: The notification data structure
@@ -3769,16 +3637,148 @@ components:
               name:
                 type: string
                 description: name of the source system
-    ContactMedium:
+    BillStructure:
+      type: object
+      description: The bill structure that associated to the customer.
+      properties:
+        cycleSpecification:
+          description: The bill cycle that associated to the customer.
+          $ref: '#/components/schemas/CycleSpecification'
+        format:
+          type: array
+          description: The bill invoice format.
+          items:
+            $ref: '#/components/schemas/Format'
+    TopicCreateEvent:
+      type: object
+      description: The notification data structure
+      properties:
+        id:
+          type: string
+          description: Identifier of the Process flow
+        href:
+          type: string
+          description: Reference of the ProcessFlow
+        eventId:
+          type: string
+          description: The identifier of the notification.
+        eventTime:
+          type: string
+          format: date-time
+          description: Time of the event occurrence.
+        eventType:
+          type: string
+          description: The type of the notification.
+        correlationId:
+          type: string
+          description: The correlation id for this event.
+        domain:
+          type: string
+          description: The domain of the event.
+        title:
+          type: string
+          description: The title of the event.
+        description:
+          type: string
+          description: An explnatory of the event.
+        priority:
+          type: string
+          description: A priority.
+        timeOcurred:
+          type: string
+          format: date-time
+          description: The time the event occured.
+        event:
+          description: The event payload linked to the involved resource object
+          $ref: '#/components/schemas/TopicCreateEventPayload'
+    Characteristic_3:
       type: array
-      description: Indicates the contact medium that could be used to contact the party.
+      description: Describes a given characteristic of an object or entity through a name/value pair.
       items:
         properties:
-          mediumType:
+          id:
             type: string
-            description: 'Type of the contact medium i.e.: PostalAddress | SiteAddress |HomeNumber | WorkNumber | MobileNumber. SV_MAPPING: perestapi.MEDIUM_TYPE RT'
-          characteristic:
-            $ref: '#/components/schemas/MediumCharacteristic'
+            description: Unique identifier of the characteristic
+          name:
+            type: string
+            description: Name of the characteristic
+          value:
+            type: string
+            description: Value of the characteristic
+          valueType:
+            type: string
+            description: Data type of the value of the characteristic
+    Topic:
+      type: object
+      description: Is a event channel provided by the Event Streaming API
+      properties:
+        id:
+          type: string
+          description: The identifier of the notification.
+        href:
+          type: string
+          description: Reference of the related entity.
+        contentQuery:
+          type: string
+          description: is the filter that will be applied on the content of the Event.
+        headerQuery:
+          type: string
+          description: is the filter that will be applied on the Event header properties.
+        name:
+          type: string
+          description: use to identify grouping of events, per domain, per event types, per access control-right and so on.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Format:
+      type: object
+      description: The bill invoice format.
+      properties:
+        name:
+          type: string
+          description: Invoice formate name, SV_MAPPING:CustAcctInvoiceFormat.InvoiceFormat_R
+          x-refdata-source: CM-InvoiceFormat
+        presentationMedia:
+          description: The bill invoice presentation media.
+          $ref: '#/components/schemas/PresentationMedia'
+        characteristic:
+          type: array
+          description: 'Characteristic name supported: sendInvoiceTo | contactId | itemized | addressChoice | invoiceLanguage | op | seqnr.Characteristic value supported: CustAcctInvoiceFormat.Contact_R, CustAcctInvoiceFormat.InvoiceItemised_R, CustAcctInvoiceFormat.AddressChoice_R, CustAcctInvoiceFormat.InvoiceLanguage_R, perestapi.OPERATION (op) and CustAcctInvoiceFormat.SequenceNum_I.Characteristic value type supported: string. For PATCH request, the combination of op and seqnr characteristics are mandatory values.They indicate the type of action (add/replace/remove) to perform on an identified invoice format entity, as well as all other attribute values under the format attribute object e.g.: name, presentationMedia and the list of other characteristic values.For GET request, the op characteristic will not be returned.For POST request, the op and seqnr characteristics will not be used.'
+          items:
+            $ref: '#/components/schemas/Characteristic_3'
+          x-refdata-source: '||RT-INVXML.INVOICE_ITEMISED|RT-ADDRESS_CHOICE,RT-INVXML.EMAIL_ADDRESS_CHOICE|RT-INVXML.INVOICE_LANGUAGE|RT-perestapi.OPERATION|'
+    TopicChangeEventPayload:
+      type: object
+      description: The event data structure
+      properties:
+        customer:
+          description: The involved customer order change details
+          $ref: '#/components/schemas/CustomerOrder'
+        productOrder:
+          description: The involved product order change details
+          $ref: '#/components/schemas/ProductOrder'
+        topic:
+          description: The involved resource data for the event
+          $ref: '#/components/schemas/Topic'
+    TimePeriod_3:
+      type: object
+      description: A base / value business entity used to represent a period of time between two timepoints.
+      properties:
+        startDateTime:
+          type: string
+          format: date-time
+          description: 'Start Date format: yyyy-mm-ddThh:nn:ss, SV_MAPPING:Cust_Acct.EffectiveStartDate_T'
+        endDateTime:
+          type: string
+          format: date-time
+          description: 'The effective end date Format: yyyy-mm-ddThh:nn:ss, SV_MAPPING:Cust_Acct.EffectiveEndDate_T'
   securitySchemes:
     basicAuth:
       type: http

@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
   version: v1.0
-  title: ServiceNow - Remedy Incident synchronisation Track ticket API
+  title: ServiceNow - Remedy Incident synchronisation Track ticket…
   description: An API to share an incident tickets between Remedy and ServiceNow
 servers:
 - url: https://api.mtn.com/
@@ -63,6 +63,8 @@ paths:
           description: Proxy system not authenticated
         500:
           description: Internal Server Error
+      operationId: getIncident
+      x-operation-id-source: derived
   /incident/{ticketId}:
     get:
       tags:
@@ -115,12 +117,28 @@ paths:
           description: Proxy system not authenticated
         500:
           description: Internal Server Error
+      operationId: getIncidentByTicketId
+      x-operation-id-source: derived
 components:
   schemas:
     TicketTrackRecordList:
       type: array
       items:
         $ref: '#/components/schemas/TicketTrackRecords'
+    TicketTrackResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Successful Request
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        data:
+          $ref: '#/components/schemas/TicketTrackRecordList'
     TicketTrackRecords:
       type: object
       properties:
@@ -192,20 +210,6 @@ components:
         statusFrn:
           type: string
           description: status in French
-    TicketTrackResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Successful Request
-        transactionId:
-          type: string
-          description: Client or API generated Id to include for tracing requests
-        data:
-          $ref: '#/components/schemas/TicketTrackRecordList'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

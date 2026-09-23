@@ -86,8 +86,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getAnalyticsRptByIdProductivity
+      x-operation-id-source: derived
 components:
   schemas:
+    metric:
+      type: object
+      properties:
+        metric:
+          type: string
+          description: The name of the report metric
+          example: total4GMigration
+        metricValue:
+          type: object
+          description: Report metric values
+          example: 5
+          $ref: '#/components/schemas/metricValue'
+    hateoasLinks:
+      type: object
+      required:
+      - self
+      properties:
+        self:
+          type: object
+          required:
+          - href
+          description: ''
+          properties:
+            href:
+              type: string
+              description: The HAETOS link referring to this object
+              example: https://api.mtn.com/v1/analytics/sra_mohabd/productivity
     reportWrapper:
       type: object
       required:
@@ -122,33 +151,6 @@ components:
           type: number
           description: The metric value could be double or integer
           example: 4
-    metric:
-      type: object
-      properties:
-        metric:
-          type: string
-          description: The name of the report metric
-          example: total4GMigration
-        metricValue:
-          type: object
-          description: Report metric values
-          example: 5
-          $ref: '#/components/schemas/metricValue'
-    hateoasLinks:
-      type: object
-      required:
-      - self
-      properties:
-        self:
-          type: object
-          required:
-          - href
-          description: ''
-          properties:
-            href:
-              type: string
-              description: The HAETOS link referring to this object
-              example: https://api.mtn.com/v1/analytics/sra_mohabd/productivity
     Error:
       properties:
         timestamp:

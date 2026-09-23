@@ -2,7 +2,11 @@ openapi: 3.2.0
 info:
   title: SIM Swap Verification SIM Swap API
   version: '0.1'
-  description: "The SIM Swap Verification API provides information about an MSISDN's sim-swap details.  \n## Supported Operations \n1. Get last SIM Swap date of a phone Number."
+  description: 'The SIM Swap Verification API provides information about an MSISDN''s sim-swap details.
+
+    ## Supported Operations
+
+    1. Get last SIM Swap date of a phone Number.'
 servers:
 - url: https://api.mtn.com/v1/mobile/phoneNumbers
 security:
@@ -14,7 +18,7 @@ paths:
     get:
       tags:
       - SIM Swap API
-      summary: Retrieve sim-swap date.
+      summary: Retrieve sim-swap date
       description: Retrieve last sim-swap date from network operator of phoneNumber as identified by customerId (customer's MSISDN).
       parameters:
       - name: phoneNumber
@@ -110,49 +114,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
+      operationId: getByPhoneNumberSimswapDate
+      x-operation-id-source: derived
 components:
   schemas:
-    Error400:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '5000'
-        statusMessage:
-          type: string
-          description: Invalid Parameters
-          example: The input parameters provided are invalid
-        SupportMessage:
-          type: string
-          description: Detailed error Message
-          example: Unsupported input, please enter a valid 'msisdn' value
-          enum:
-          - Unsupported input, please enter a valid 'msisdn' value.
-          - Invalid country code
-        transactionId:
-          type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
-    Error408:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '3003'
-        statusMessage:
-          type: string
-          description: The request timed out.
-          example: Timeout
-        supportMessage:
-          type: string
-          description: The server took too long to respond.
-          example: Request timed out
-        transactionId:
-          type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
     simswapResponse:
       required:
       - customerId
@@ -182,24 +147,6 @@ components:
           example: 232TXYZ-212
         data:
           $ref: '#/components/schemas/simswapData'
-    Error405:
-      type: object
-      description: Method not Allowed
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '4001'
-        statusMessage:
-          type: string
-          example: Not Allowed
-        supportMessage:
-          type: string
-          example: Method Not Allowed
-        transactionId:
-          type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
     Error401:
       type: object
       properties:
@@ -219,7 +166,26 @@ components:
           type: string
           description: Id for tracing.
           example: fg545f-cf4gg4fd55-fdg85hg6
-    Error415:
+    Error408:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '3003'
+        statusMessage:
+          type: string
+          description: The request timed out.
+          example: Timeout
+        supportMessage:
+          type: string
+          description: The server took too long to respond.
+          example: Request timed out
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+    Error400:
       type: object
       properties:
         statusCode:
@@ -228,38 +194,15 @@ components:
           example: '5000'
         statusMessage:
           type: string
-          description: Short description of the error
-          example: Unsupported Media Type
-        supportMessage:
+          description: Invalid Parameters
+          example: The input parameters provided are invalid
+        SupportMessage:
           type: string
-          description: Longer description of the error
-          example: Unsupported Media Type. It should be application/json
-        transactionId:
-          type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
-    simswapData:
-      type: object
-      properties:
-        lastSimSwapDate:
-          type: string
-          description: The date and time when the last sim swap performed on the SIM of the customerId provided represented as an ISO 8601:2004 [ISO8601 2004] YYYY-MM-DDTHH:MM:SSZ format. If the date cannot be determined, the value will be an empty string
-          example: '2020-04-20T15:22:11+03:00'
-    Error403:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '6000'
-        statusMessage:
-          type: string
-          description: Short description of the error
-          example: Forbidden
-        supportMessage:
-          type: string
-          description: Longer description of the error
-          example: Please verify token environment or access token or API key
+          description: Detailed error Message
+          example: Unsupported input, please enter a valid 'msisdn' value
+          enum:
+          - Unsupported input, please enter a valid 'msisdn' value.
+          - Invalid country code
         transactionId:
           type: string
           description: Id for tracing.
@@ -279,6 +222,69 @@ components:
           type: string
           description: Error
           example: Internal Server Error
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+    Error405:
+      type: object
+      description: Method not Allowed
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '4001'
+        statusMessage:
+          type: string
+          example: Not Allowed
+        supportMessage:
+          type: string
+          example: Method Not Allowed
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+    simswapData:
+      type: object
+      properties:
+        lastSimSwapDate:
+          type: string
+          description: The date and time when the last sim swap performed on the SIM of the customerId provided represented as an ISO 8601:2004 [ISO8601 2004] YYYY-MM-DDTHH:MM:SSZ format. If the date cannot be determined, the value will be an empty string
+          example: '2020-04-20T15:22:11+03:00'
+    Error415:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '5000'
+        statusMessage:
+          type: string
+          description: Short description of the error
+          example: Unsupported Media Type
+        supportMessage:
+          type: string
+          description: Longer description of the error
+          example: Unsupported Media Type. It should be application/json
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+    Error403:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '6000'
+        statusMessage:
+          type: string
+          description: Short description of the error
+          example: Forbidden
+        supportMessage:
+          type: string
+          description: Longer description of the error
+          example: Please verify token environment or access token or API key
         transactionId:
           type: string
           description: Id for tracing.

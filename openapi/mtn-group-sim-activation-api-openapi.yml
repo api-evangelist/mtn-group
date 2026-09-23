@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  description: "This API is used to verify/validate SIM Swap status, SIM Activation status and SIM Recycle status of a customer's msisdn.\n\n  - **'/simSwap/verifyStatus'** capability is used to verify sim swap status as true or false.\n  - **'/simActivation/verifyStatus'** capability is used to verify sim activation status as true or false.\n  - **'/simRecycle/verifyStatus'** capability is used to verify sim recycle status as true or false.\n  - **'/simSwap/validateStatus'** capability is used to validate sim swap status as true or false.\n  - **'/simActivation/validateStatus'** capability is used to validate sim activation status as true or false.\n  - **'/simRecycle/validateStatus'** capability is used to validate sim recycle status as true or false."
+  description: This API is used to verify/validate SIM Swap status, SIM Activation status and SIM Recycle status of a customer's msisdn.
   version: '1.0'
   title: MTN Customer SIM Verification Sim Activation API
 servers:
@@ -15,8 +15,8 @@ paths:
     get:
       tags:
       - Sim Activation
-      summary: Verify sim activation status as true or false.
-      description: Retrieve  sim-swap status indicateing whether a sim swap was performed on a particular msisdn .
+      summary: Verify sim activation status as true or false
+      description: Retrieve sim-swap status indicateing whether a sim swap was performed on a particular msisdn .
       parameters:
       - name: customerId
         in: path
@@ -91,12 +91,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getCustomersByCustomerIdSimActivationVerifyStatus
+      x-operation-id-source: derived
   /customers/{customerId}/simActivation/validateStatus:
     get:
       tags:
       - Sim Activation
-      summary: Validate sim activation status as true or false.
-      description: Validate  sim activation status against the activation  date supplied by the partner  .
+      summary: Validate sim activation status as true or false
+      description: Validate sim activation status against the activation date supplied by the partner .
       parameters:
       - name: customerId
         in: path
@@ -183,22 +185,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getCustomersByCustomerIdSimActivationValidateStatus
+      x-operation-id-source: derived
 components:
   schemas:
-    SIMActivationStatus:
-      $ref: '#/components/schemas/Status'
-      properties:
-        data:
-          $ref: '#/components/schemas/SimActivationStatusData'
-    SimActivationStatusData:
-      type: object
-      required:
-      - simActivationSatus
-      properties:
-        simActivationSatus:
-          type: string
-          description: Stutus of the swim activation - whether sim activation performed (True or False)
-          example: 'True'
     Status:
       required:
       - customerId
@@ -227,6 +217,20 @@ components:
           type: string
           description: MSISDN of the customer provided in the input as customerId
           example: '256789999781'
+    SimActivationStatusData:
+      type: object
+      required:
+      - simActivationSatus
+      properties:
+        simActivationSatus:
+          type: string
+          description: Stutus of the swim activation - whether sim activation performed (True or False)
+          example: 'True'
+    SIMActivationStatus:
+      $ref: '#/components/schemas/Status'
+      properties:
+        data:
+          $ref: '#/components/schemas/SimActivationStatusData'
     Error:
       type: object
       required:

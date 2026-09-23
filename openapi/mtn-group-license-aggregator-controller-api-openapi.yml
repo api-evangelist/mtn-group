@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  title: service-activation-aggregator License Aggregator Controller API
+  title: service-activation-aggregator License Aggregator Controller…
   description: Service Activation and Configuration API goal is to provide the ability to activate and configure Service. This API features Monitor pattern allowing to manage service configuration/activation asynchronous request (server side will provide monitor as POST/PATCH response).
   license:
     name: MADAPI
@@ -16,7 +16,7 @@ paths:
     post:
       tags:
       - license-aggregator-controller
-      summary: Create a new license for a specified target system.
+      summary: Create a new license for a specified target system
       description: Validates the license request, sets its type, and delegates creation to the service layer with structured response.
       operationId: createLicense
       parameters:
@@ -184,64 +184,6 @@ paths:
                 $ref: '#/components/schemas/ServerErrorResponse'
 components:
   schemas:
-    Link:
-      type: object
-      properties:
-        href:
-          type: string
-        hreflang:
-          type: string
-        title:
-          type: string
-        type:
-          type: string
-        deprecation:
-          type: string
-        profile:
-          type: string
-        name:
-          type: string
-        templated:
-          type: boolean
-    RelatedParty:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        role:
-          type: string
-        phoneNumber:
-          type: string
-        email:
-          type: string
-        '@referredType':
-          type: string
-    Validity:
-      type: object
-      properties:
-        validityType:
-          type: integer
-          format: int32
-        expirationDate:
-          type: string
-    Links:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/Link'
-    Payment:
-      type: object
-      properties:
-        paymentType:
-          type: string
-        billingInterval:
-          type: string
-        invoicingInterval:
-          type: integer
-          format: int32
-        invoicingType:
-          type: string
     ServerErrorResponse:
       type: object
       properties:
@@ -263,39 +205,17 @@ components:
         timestamp:
           type: string
           example: 2025-08-05 20:57:21+00:00
-    RelatedEntity:
+    Payment:
       type: object
       properties:
-        id:
+        paymentType:
           type: string
-        name:
+        billingInterval:
           type: string
-        role:
-          type: string
-        '@referredType':
-          type: string
-    APIResponse:
-      type: object
-      properties:
-        _links:
-          $ref: '#/components/schemas/Links'
-    ServiceOrderItem:
-      type: object
-      properties:
-        itemId:
-          type: string
-        serviceOrderId:
-          type: string
-        itemAction:
-          type: string
-        payment:
-          $ref: '#/components/schemas/Payment'
-    Note:
-      type: object
-      properties:
-        id:
-          type: string
-        text:
+        invoicingInterval:
+          type: integer
+          format: int32
+        invoicingType:
           type: string
     LicenseRequest:
       type: object
@@ -341,27 +261,10 @@ components:
           type: string
         name:
           type: string
-    UnauthorizedErrorResponse:
+    Links:
       type: object
-      properties:
-        statusCode:
-          type: string
-          example: '4000'
-        statusMessage:
-          type: string
-          example: Unauthorized
-        supportMessage:
-          type: string
-          example: The supplied authentication is invalid.
-        httpStatus;:
-          type: object
-          example:
-            code: 401
-            series: CLIENT_ERROR
-            reason: Unauthorized
-        timestamp:
-          type: string
-          example: 2025-08-05 20:57:21+00:00
+      additionalProperties:
+        $ref: '#/components/schemas/Link'
     BadRequestErrorResponse:
       type: object
       properties:
@@ -383,3 +286,100 @@ components:
         timestamp:
           type: string
           example: 2025-08-05 20:57:21+00:00
+    Validity:
+      type: object
+      properties:
+        validityType:
+          type: integer
+          format: int32
+        expirationDate:
+          type: string
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+    RelatedEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        '@referredType':
+          type: string
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+        hreflang:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        deprecation:
+          type: string
+        profile:
+          type: string
+        name:
+          type: string
+        templated:
+          type: boolean
+    UnauthorizedErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '4000'
+        statusMessage:
+          type: string
+          example: Unauthorized
+        supportMessage:
+          type: string
+          example: The supplied authentication is invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 401
+            series: CLIENT_ERROR
+            reason: Unauthorized
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    ServiceOrderItem:
+      type: object
+      properties:
+        itemId:
+          type: string
+        serviceOrderId:
+          type: string
+        itemAction:
+          type: string
+        payment:
+          $ref: '#/components/schemas/Payment'
+    RelatedParty:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        phoneNumber:
+          type: string
+        email:
+          type: string
+        '@referredType':
+          type: string
+    APIResponse:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/Links'

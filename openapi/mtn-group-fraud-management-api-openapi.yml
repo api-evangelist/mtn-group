@@ -14,14 +14,14 @@ security:
 - ApiKeyAuth: []
 - OAuth2: []
 tags:
-- name: fraudManagement
+- name: Fraud Management
 paths:
   /rts/order/returnToSender:
     post:
       summary: Creates a RTS request
       description: This operation creates a RTS request entity for fraud management.
       tags:
-      - fraudManagement
+      - Fraud Management
       parameters:
       - name: transactionId
         description: transactionId
@@ -77,12 +77,14 @@ paths:
             schema:
               $ref: '#/components/schemas/returnToSender_Request'
         required: true
+      operationId: postRtsOrderReturnToSender
+      x-operation-id-source: derived
   /order/returnToSender/dsv:
     post:
       summary: Creates a RTS request
       description: This operation creates a RTS request entity for fraud management.
       tags:
-      - fraudManagement
+      - Fraud Management
       parameters:
       - name: transactionId
         description: transactionId
@@ -132,8 +134,60 @@ paths:
             schema:
               $ref: '#/components/schemas/returnToSender_Request_dsv'
         required: true
+      operationId: postOrderReturnToSenderDsv
+      x-operation-id-source: derived
 components:
   schemas:
+    Error400dsv:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 5000
+        statusMessage:
+          type: string
+          description: Text explaining the reason for the error
+          example: Transaction Failed
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: '[ST05] StopOrder already exists for this item. Created on 11/1/2023 11:47:05 AM'
+        transactionId:
+          type: string
+          description: transaction Id from target system to indicate transaction status.
+          example: '42150905'
+        data:
+          type: object
+          properties:
+            orderNumber:
+              type: string
+              description: Order number
+              example: '3221111'
+            success:
+              type: string
+              description: success message represented as true or false.
+              example: 'false'
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+          example: oauth.v2.InvalidApiKey
     Error400:
       properties:
         statusCode:
@@ -180,35 +234,48 @@ components:
           type: string
           description: http response
           example: OK
-    Error400dsv:
+    Error405:
       properties:
-        statusCode:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
           type: integer
           description: Status code from target system to indicate transaction status
-          example: 5000
-        statusMessage:
+          example: 405
+        error:
           type: string
-          description: Text explaining the reason for the error
-          example: Transaction Failed
-        supportMessage:
+          description: error message
+          example: Method Not Allowed
+        message:
           type: string
-          description: More error details and corrective measures
-          example: '[ST05] StopOrder already exists for this item. Created on 11/1/2023 11:47:05 AM'
-        transactionId:
+          description: details
+        path:
           type: string
-          description: transaction Id from target system to indicate transaction status.
-          example: '42150905'
-        data:
-          type: object
-          properties:
-            orderNumber:
-              type: string
-              description: Order number
-              example: '3221111'
-            success:
-              type: string
-              description: success message represented as true or false.
-              example: 'false'
+          description: The path that caused the error
+    Error415:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 415
+        error:
+          type: string
+          description: error message
+          example: Unsupported Media Type
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
     returnToSender_Response_dsv:
       type: object
       properties:
@@ -241,69 +308,6 @@ components:
               type: string
               description: True or false status of the request
               example: 'true'
-    Error405:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 405
-        error:
-          type: string
-          description: error message
-          example: Method Not Allowed
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
-    Error401:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 4000
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-          example: Unauthorised
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-          example: Please verify token environment and key
-        faultMessage1:
-          type: string
-          description: ''
-        faultMessage2:
-          type: string
-          description: fault message
-          example: oauth.v2.InvalidApiKey
-    Error415:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 415
-        error:
-          type: string
-          description: error message
-          example: Unsupported Media Type
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
     returnToSender_Request:
       type: object
       required:
@@ -328,6 +332,20 @@ components:
           type: string
           description: IOMS order ID.
           example: '5473212'
+    Error404:
+      properties:
+        fault:
+          properties:
+            faultstring:
+              type: string
+              description: ''
+              example: 'Unable to identify proxy for host: southafrica and url: /v9/products/productOffering/roaming'
+            detail:
+              properties:
+                errorcode:
+                  type: string
+                  description: ''
+                  example: messaging.adaptors.http.flow.ApplicationNotFound
     returnToSender_Request_dsv:
       type: object
       required:
@@ -350,20 +368,6 @@ components:
           type: string
           description: F is Fraud as the type of stop to be put onto the item
           example: F
-    Error404:
-      properties:
-        fault:
-          properties:
-            faultstring:
-              type: string
-              description: ''
-              example: 'Unable to identify proxy for host: southafrica and url: /v9/products/productOffering/roaming'
-            detail:
-              properties:
-                errorcode:
-                  type: string
-                  description: ''
-                  example: messaging.adaptors.http.flow.ApplicationNotFound
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

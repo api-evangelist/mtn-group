@@ -82,6 +82,8 @@ paths:
             schema:
               $ref: '#/components/schemas/InvitationReqObject'
         required: true
+      operationId: postOrganizationsByIdInvitations
+      x-operation-id-source: derived
     get:
       tags:
       - Organizations
@@ -179,12 +181,13 @@ paths:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/Error500'
+      operationId: getOrganizationsByIdInvitations
+      x-operation-id-source: derived
   /organizations/{id}/invitations/{invitationId}:
     delete:
       tags:
       - Organizations
       summary: Delete invitations by Invitation ID
-      description: Delete invitations by Invitation ID
       parameters:
       - name: transactionId
         in: header
@@ -247,6 +250,8 @@ paths:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/Error500'
+      operationId: deleteOrganizationsByIdInvitationsByInvitationId
+      x-operation-id-source: derived
   /organizations/{id}/members/roles/{userId}:
     post:
       summary: Assign one or more roles to a member of an organization
@@ -309,8 +314,10 @@ paths:
             schema:
               $ref: '#/components/schemas/RoleRequest'
         required: true
+      operationId: postOrganizationsByIdMembersRolesByUserId
+      x-operation-id-source: derived
     delete:
-      summary: Remove one or more roles from a given user in the context of the provided organization
+      summary: Remove one or more roles from a given user in the context of the provided…
       tags:
       - Organizations
       description: This endpoint deletes one or more roles of a member in an organization.
@@ -370,50 +377,20 @@ paths:
             schema:
               $ref: '#/components/schemas/RoleRequest'
         required: true
+      operationId: deleteOrganizationsByIdMembersRolesByUserId
+      x-operation-id-source: derived
 components:
   schemas:
-    MTNIDOrgAppMetadataObject:
-      type: object
-      additionalProperties: false
+    Error401:
       properties:
-        orgInvite:
-          type: object
-          properties:
-            accountAlreadyExists:
-              type: boolean
-              description: true if "Search Users by Email" API returned a user and false if it did not
-            profileUpdateRequired:
-              type: boolean
-              example: true
-            profileUpdated:
-              type: boolean
-              example: false
-            profile:
-              type: object
-              properties:
-                givenName:
-                  type: string
-                  example: given_name
-                familyName:
-                  type: string
-                  example: family_name
-                name:
-                  type: string
-                  example: name
-        dpoMetadata:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/DPOMetadataObject'
-    Error404:
-      properties:
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 404
-        message:
+        error:
           type: string
-          description: details
-          example: no match found
+          description: error message from target system to indicate transaction status.
+          example: missing_authorization
+        error_description:
+          type: string
+          description: detailed error message from target system to indicate transaction status.
+          example: Missing Authorization header
     RoleRequest:
       properties:
         roles:
@@ -424,6 +401,178 @@ components:
             - rol_123
             - rol_456
     Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+    InvitationObject:
+      type: object
+      properties:
+        invitee:
+          type: object
+          description: The user being invited.
+          properties:
+            email:
+              type: string
+              format: email
+              description: The email address of the user being invited.
+        inviter:
+          type: object
+          description: The user sending the invitation.
+          properties:
+            name:
+              type: string
+              minLength: 1
+              maxLength: 300
+              description: The name of the user sending the invitation.
+        clientId:
+          type: string
+          description: The ID of the client (application) for which the invitation is being sent.
+        connectionId:
+          type: string
+          description: The ID of the connection to use for the invitation.
+        appMetadata:
+          type: object
+          description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
+          allOf:
+          - $ref: '#/components/schemas/InvitationReqAppMetadataObject'
+        userMetadata:
+          type: object
+          description: Metadata related to the user.
+        ttlSec:
+          type: integer
+          description: 'Number of seconds for which the invitation is valid before expiration. If unspecified or set to 0, this value defaults to 604800 seconds (7 days). Max value: 2592000 seconds (30 days).
+
+            '
+          example: 86400
+        roles:
+          type: array
+          description: List of roles IDs to associated with the user.
+          items:
+            type: string
+          example:
+          - rol_123
+        sendInvitationEmail:
+          type: boolean
+          description: Whether the user will receive an invitation email (true) or no email (false), true by default
+          example: true
+      required:
+      - invitee
+      - inviter
+      - clientId
+    DPOMetadataObject:
+      type: object
+      additionalProperties: false
+      properties:
+        services:
+          type: array
+          items:
+            type: object
+            properties:
+              asset:
+                type: string
+                example: partner
+              assetId:
+                type: string
+                description: Permanent or temporary Partner ID
+                example: '23456'
+              roles:
+                type: array
+                items:
+                  type: string
+                  example: Admin
+              metadata:
+                type: object
+                properties:
+                  tempId:
+                    type: string
+                    description: Temporary Partner ID
+                    example: '56353'
+                  status:
+                    type: string
+                    example: Enabled
+                  termsAccepted:
+                    type: boolean
+                    description: Whether the terms have been accepted
+                    example: false
+    Error500:
+      properties:
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3001'
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    InvitationReqObject:
+      additionalProperties: false
+      allOf:
+      - $ref: '#/components/schemas/InvitationObject'
+      - type: object
+        properties:
+          sendInvitationEmail:
+            type: boolean
+            description: Whether the user will receive an invitation email (true) or no email (false), true by default
+            example: true
+          ttlSec:
+            type: integer
+            description: 'Number of seconds for which the invitation is valid before expiration. If unspecified or set to 0, this value defaults to 604800 seconds (7 days). Max value: 2592000 seconds (30 days).
+
+              '
+            example: 86400
+          roles:
+            type: array
+            description: List of roles IDs to associated with the user.
+            items:
+              type: string
+            example:
+            - rol_123
+    Error404:
+      properties:
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        message:
+          type: string
+          description: details
+          example: no match found
+    InvitationReqAppMetadataObject:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/MTNIDOrgAppMetadataObject'
+    SendInvitaionResponse:
       properties:
         statusCode:
           type: integer
@@ -488,178 +637,38 @@ components:
                 type: object
                 allOf:
                 - $ref: '#/components/schemas/InvitationObject'
-    InvitationReqObject:
-      additionalProperties: false
-      allOf:
-      - $ref: '#/components/schemas/InvitationObject'
-      - type: object
-        properties:
-          sendInvitationEmail:
-            type: boolean
-            description: Whether the user will receive an invitation email (true) or no email (false), true by default
-            example: true
-          ttlSec:
-            type: integer
-            description: 'Number of seconds for which the invitation is valid before expiration. If unspecified or set to 0, this value defaults to 604800 seconds (7 days). Max value: 2592000 seconds (30 days).
-
-              '
-            example: 86400
-          roles:
-            type: array
-            description: List of roles IDs to associated with the user.
-            items:
-              type: string
-            example:
-            - rol_123
-    Error401:
-      properties:
-        error:
-          type: string
-          description: error message from target system to indicate transaction status.
-          example: missing_authorization
-        error_description:
-          type: string
-          description: detailed error message from target system to indicate transaction status.
-          example: Missing Authorization header
-    Error405:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 405
-        error:
-          type: string
-          description: error message
-          example: Method Not Allowed
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
-    InvitationObject:
-      type: object
-      properties:
-        invitee:
-          type: object
-          description: The user being invited.
-          properties:
-            email:
-              type: string
-              format: email
-              description: The email address of the user being invited.
-        inviter:
-          type: object
-          description: The user sending the invitation.
-          properties:
-            name:
-              type: string
-              minLength: 1
-              maxLength: 300
-              description: The name of the user sending the invitation.
-        clientId:
-          type: string
-          description: The ID of the client (application) for which the invitation is being sent.
-        connectionId:
-          type: string
-          description: The ID of the connection to use for the invitation.
-        appMetadata:
-          type: object
-          description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
-          allOf:
-          - $ref: '#/components/schemas/InvitationReqAppMetadataObject'
-        userMetadata:
-          type: object
-          description: Metadata related to the user.
-        ttlSec:
-          type: integer
-          description: 'Number of seconds for which the invitation is valid before expiration. If unspecified or set to 0, this value defaults to 604800 seconds (7 days). Max value: 2592000 seconds (30 days).
-
-            '
-          example: 86400
-        roles:
-          type: array
-          description: List of roles IDs to associated with the user.
-          items:
-            type: string
-          example:
-          - rol_123
-        sendInvitationEmail:
-          type: boolean
-          description: Whether the user will receive an invitation email (true) or no email (false), true by default
-          example: true
-      required:
-      - invitee
-      - inviter
-      - clientId
-    Error500:
-      properties:
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: Internal Server Error
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '3001'
-    InvitationReqAppMetadataObject:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/MTNIDOrgAppMetadataObject'
-    DPOMetadataObject:
+    MTNIDOrgAppMetadataObject:
       type: object
       additionalProperties: false
       properties:
-        services:
-          type: array
-          items:
-            type: object
-            properties:
-              asset:
-                type: string
-                example: partner
-              assetId:
-                type: string
-                description: Permanent or temporary Partner ID
-                example: '23456'
-              roles:
-                type: array
-                items:
+        orgInvite:
+          type: object
+          properties:
+            accountAlreadyExists:
+              type: boolean
+              description: true if "Search Users by Email" API returned a user and false if it did not
+            profileUpdateRequired:
+              type: boolean
+              example: true
+            profileUpdated:
+              type: boolean
+              example: false
+            profile:
+              type: object
+              properties:
+                givenName:
                   type: string
-                  example: Admin
-              metadata:
-                type: object
-                properties:
-                  tempId:
-                    type: string
-                    description: Temporary Partner ID
-                    example: '56353'
-                  status:
-                    type: string
-                    example: Enabled
-                  termsAccepted:
-                    type: boolean
-                    description: Whether the terms have been accepted
-                    example: false
-    SendInvitaionResponse:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
+                  example: given_name
+                familyName:
+                  type: string
+                  example: family_name
+                name:
+                  type: string
+                  example: name
+        dpoMetadata:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/DPOMetadataObject'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

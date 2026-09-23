@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  description: "The Data Share API facilitates data share between Data Share Agent(Data Sender) and Customer(Data Receiver) also provides a data analytics.\nIt also provides functionality to manage provider and consumer msisdns that are linked as part of the Internet Share Bundles Product\n\n**26-August-21: ChangeID: 0000000327**\n  - Added a new GET endpoint /customers/{customerId}/summary\n**20-Sept-21: ChangeID: 0000000000**\n  - Added a new GET endpoint /providers/{providerMsisdn}/eligibility\n**04-Oct-21: ChangeID: 0000000000**\n  - Modified the POST endpoint to support Addition of a Consumer to a Family Pack Shared Account\n**18-Oct-21: ChangeID: 0000000000**\n  - Modified the DELETE endpoint to support delete of all connsumers, delete a specific consumer from a shared family pack\n**20-Nov-21: ChangeID: 0000000000**\n  - Added a new PATCH endpoint to enable setting of consumer data limits on a shared data package"
+  description: The Data Share API facilitates data share between Data Share Agent(Data Sender) and Customer(Data Receiver) also provides a data analytics.
   version: 1.7.1
   title: Customer Data Share Provider API
 servers:
@@ -90,10 +90,12 @@ paths:
               $ref: '#/components/schemas/ConsumerInformation'
         description: Request body
         required: true
+      operationId: postProvidersByProviderMsisdn
+      x-operation-id-source: derived
     delete:
       tags:
       - Provider
-      summary: Deactivates Internet sharing for a provider/consumer msisdn or removes consumer msisdns from the provider msisdn
+      summary: Deactivates Internet sharing for a provider/consumer msisdn or removes consumer…
       description: Allows a provider to leave data sharing or to remove a customer and hence stop them from using their internet share bundle
       parameters:
       - name: providerMsisdn
@@ -192,6 +194,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: deleteProvidersByProviderMsisdn
+      x-operation-id-source: derived
     patch:
       tags:
       - Provider
@@ -271,6 +275,8 @@ paths:
               $ref: '#/components/schemas/ConsumerInformation'
         description: Request body
         required: true
+      operationId: patchProvidersByProviderMsisdn
+      x-operation-id-source: derived
   /providers/{providerMsisdn}/activate:
     post:
       tags:
@@ -351,6 +357,8 @@ paths:
               $ref: '#/components/schemas/ConsumerInformation'
         description: Request body
         required: true
+      operationId: postProvidersByProviderMsisdnActivate
+      x-operation-id-source: derived
     get:
       tags:
       - Provider
@@ -447,6 +455,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getProvidersByProviderMsisdnActivate
+      x-operation-id-source: derived
   /providers/{providerMsisdn}/eligibility:
     get:
       tags:
@@ -535,25 +545,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getProvidersByProviderMsisdnEligibility
+      x-operation-id-source: derived
 components:
   schemas:
-    ProviderPostResponseData:
-      type: object
-      properties:
-        notification:
-          type: string
-        amount:
-          type: number
-        requestId:
-          type: string
-        responseType:
-          type: string
-        action:
-          type: string
-        countryCode:
-          type: string
-        product:
-          $ref: '#/components/schemas/ProductDetails'
     ConsumerInformation:
       type: object
       required:
@@ -591,52 +586,6 @@ components:
           - ACTIVATE_DATA_PLAN
           - SUSPEND_NUMBER
           - UNSUSPEND_NUMBER
-    ProviderEligibilityResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP status codes
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Success
-        transactionId:
-          type: string
-          description: Client generated Id to include for tracing requests.
-          example: '12376892'
-        data:
-          type: object
-          properties:
-            eligibilityStatus:
-              type: boolean
-              description: This will be true if the provided number is a provider and will be false if its not a provider
-            countryCode:
-              type: string
-              description: This is the mobile number for the mobile number
-            requestId:
-              type: string
-              description: Request Id from the back end system
-    ProviderShareResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP status codes
-          example: '0000'
-        errorCode:
-          type: string
-          description: HTTP error codes
-          example: S1001
-        statusMessage:
-          type: string
-          example: Success
-        transactionId:
-          type: string
-          description: Client generated Id to include for tracing requests.
-          example: '12376892'
-        data:
-          $ref: '#/components/schemas/ProviderPostResponseData'
     ConsumersListResponse:
       type: object
       properties:
@@ -666,6 +615,81 @@ components:
                 href:
                   type: string
                   example: https://api.mtn.com/v1/customers/256789999781/dataShare
+    ProductDetails:
+      type: object
+      properties:
+        productId:
+          type: string
+          description: Product Id
+        productName:
+          type: string
+          description: Name of the product
+        productType:
+          type: string
+          description: Type of the product
+    ProviderPostResponseData:
+      type: object
+      properties:
+        notification:
+          type: string
+        amount:
+          type: number
+        requestId:
+          type: string
+        responseType:
+          type: string
+        action:
+          type: string
+        countryCode:
+          type: string
+        product:
+          $ref: '#/components/schemas/ProductDetails'
+    ProviderShareResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP status codes
+          example: '0000'
+        errorCode:
+          type: string
+          description: HTTP error codes
+          example: S1001
+        statusMessage:
+          type: string
+          example: Success
+        transactionId:
+          type: string
+          description: Client generated Id to include for tracing requests.
+          example: '12376892'
+        data:
+          $ref: '#/components/schemas/ProviderPostResponseData'
+    ProviderEligibilityResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP status codes
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Success
+        transactionId:
+          type: string
+          description: Client generated Id to include for tracing requests.
+          example: '12376892'
+        data:
+          type: object
+          properties:
+            eligibilityStatus:
+              type: boolean
+              description: This will be true if the provided number is a provider and will be false if its not a provider
+            countryCode:
+              type: string
+              description: This is the mobile number for the mobile number
+            requestId:
+              type: string
+              description: Request Id from the back end system
     SuccessResponse:
       type: object
       properties:
@@ -749,18 +773,6 @@ components:
           type: string
           description: The path to the request
           example: https://api.mtn.com/v1/
-    ProductDetails:
-      type: object
-      properties:
-        productId:
-          type: string
-          description: Product Id
-        productName:
-          type: string
-          description: Name of the product
-        productType:
-          type: string
-          description: Type of the product
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

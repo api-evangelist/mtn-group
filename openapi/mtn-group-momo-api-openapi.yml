@@ -56,90 +56,10 @@ paths:
               $ref: '#/components/schemas/RegistrationRequestBody'
         description: Registration Request to be initiated on GSM Account
         required: true
+      operationId: postMomoTier0Registration
+      x-operation-id-source: derived
 components:
   schemas:
-    ContactMediumCharacteristic:
-      type: object
-      properties:
-        city:
-          type: string
-          description: City
-        stateOrProvince:
-          type: string
-          description: State or province
-        country:
-          type: string
-          description: Contact country
-          example: GH
-        contactType:
-          type: string
-          description: Type of address
-          enum:
-          - HOME
-          - BIZZ
-        name:
-          type: string
-          description: Address Name
-        town:
-          type: string
-          description: Town Name
-        street:
-          type: string
-          description: Street Name
-        postalCode:
-          type: string
-          description: Zip Code
-          example: 155
-        addressLines:
-          type: array
-          description: First Address Line
-          items:
-            type: string
-      description: Indicates the contact medium that could be used to contact the party.
-    RelatedParty:
-      required:
-      - customerMsisdn
-      type: object
-      properties:
-        customerMsisdn:
-          type: string
-          description: Unique msisdn to be registered for the customer.
-          example: 233559999781
-        msisdnVerificationCode:
-          type: string
-          maxLength: 64
-          description: An optional msisdn verification code for validating the account holder's msisdn
-      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
-    IndividualIdentification:
-      type: object
-      properties:
-        individualId:
-          type: string
-          description: Unique alphanumeric string for the document used to identify the individual
-          example: G7888777
-        indentificationType:
-          type: string
-          enum:
-          - PASS
-          - CPFA
-          - SRSA
-          - NRIN
-          - OTHR
-          - DRLC
-          - SOCS
-          - AREG
-          - IDCD
-          description: Identification type (passport, national identity card, drivers license, social security number, birth certificate)
-        issuingAuthority:
-          type: string
-        issuingDate:
-          type: string
-          description: Date of the format yyyy-MM-dd
-          example: '2019-05-15'
-        expiryDate:
-          type: string
-          description: Date of the format yyyy-MM-dd
-          example: '2019-05-15'
     RegistrationRequestBody:
       type: object
       required:
@@ -156,40 +76,6 @@ components:
           $ref: '#/components/schemas/ContactMedium'
         partyCharacteristic:
           $ref: '#/components/schemas/Characteristic'
-    ContactMedium:
-      type: object
-      properties:
-        mediumType:
-          type: string
-          description: Contact Medium Type
-          example: Postal
-        characteristic:
-          $ref: '#/components/schemas/ContactMediumCharacteristic'
-      description: Indicates the contact medium that could be used to contact the party.
-    MomoRegistrationResponse:
-      type: object
-      required:
-      - accountHolderIdentity
-      - accountHolderIdentityType
-      - statusCode
-      - transactionId
-      properties:
-        accountHolderIdentity:
-          type: string
-          description: The ID of resource created
-          example: '9230088'
-        accountHolderIdentityType:
-          type: string
-          description: The type of ID for the resource created
-          example: ID
-        statusCode:
-          type: string
-          description: The status code for operation
-          example: '0000'
-        transactionId:
-          type: string
-          description: The transaction Id created for the request
-          example: A3344098765456
     Characteristic:
       required:
       - name
@@ -302,6 +188,108 @@ components:
           type: string
           example: '30'
       description: Describes a given characteristic of an object xor entity through a name/value pair.
+    MomoRegistrationResponse:
+      type: object
+      required:
+      - accountHolderIdentity
+      - accountHolderIdentityType
+      - statusCode
+      - transactionId
+      properties:
+        accountHolderIdentity:
+          type: string
+          description: The ID of resource created
+          example: '9230088'
+        accountHolderIdentityType:
+          type: string
+          description: The type of ID for the resource created
+          example: ID
+        statusCode:
+          type: string
+          description: The status code for operation
+          example: '0000'
+        transactionId:
+          type: string
+          description: The transaction Id created for the request
+          example: A3344098765456
+    IndividualIdentification:
+      type: object
+      properties:
+        individualId:
+          type: string
+          description: Unique alphanumeric string for the document used to identify the individual
+          example: G7888777
+        indentificationType:
+          type: string
+          enum:
+          - PASS
+          - CPFA
+          - SRSA
+          - NRIN
+          - OTHR
+          - DRLC
+          - SOCS
+          - AREG
+          - IDCD
+          description: Identification type (passport, national identity card, drivers license, social security number, birth certificate)
+        issuingAuthority:
+          type: string
+        issuingDate:
+          type: string
+          description: Date of the format yyyy-MM-dd
+          example: '2019-05-15'
+        expiryDate:
+          type: string
+          description: Date of the format yyyy-MM-dd
+          example: '2019-05-15'
+    ContactMedium:
+      type: object
+      properties:
+        mediumType:
+          type: string
+          description: Contact Medium Type
+          example: Postal
+        characteristic:
+          $ref: '#/components/schemas/ContactMediumCharacteristic'
+      description: Indicates the contact medium that could be used to contact the party.
+    ContactMediumCharacteristic:
+      type: object
+      properties:
+        city:
+          type: string
+          description: City
+        stateOrProvince:
+          type: string
+          description: State or province
+        country:
+          type: string
+          description: Contact country
+          example: GH
+        contactType:
+          type: string
+          description: Type of address
+          enum:
+          - HOME
+          - BIZZ
+        name:
+          type: string
+          description: Address Name
+        town:
+          type: string
+          description: Town Name
+        street:
+          type: string
+          description: Street Name
+        postalCode:
+          type: string
+          description: Zip Code
+          example: 155
+        addressLines:
+          type: array
+          description: First Address Line
+          items:
+            type: string
+      description: Indicates the contact medium that could be used to contact the party.
     APIError:
       type: object
       required:
@@ -328,6 +316,20 @@ components:
           type: string
           description: HTTP Method used to make request
           example: GET
+    RelatedParty:
+      required:
+      - customerMsisdn
+      type: object
+      properties:
+        customerMsisdn:
+          type: string
+          description: Unique msisdn to be registered for the customer.
+          example: 233559999781
+        msisdnVerificationCode:
+          type: string
+          maxLength: 64
+          description: An optional msisdn verification code for validating the account holder's msisdn
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

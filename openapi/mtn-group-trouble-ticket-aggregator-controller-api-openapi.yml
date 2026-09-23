@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
-  title: TMF621 Trouble Ticket Management Aggregator Trouble Ticket Aggregator Controller API
-  description: TMF621 Trouble Ticket Management  Aggregator This service provides endpoint to fetch the ticket details with ticket id, create ticket, fetch list of tickets by customer id and update the existing tickets
+  title: TMF621 Trouble Ticket Management Aggregator Trouble Ticket…
+  description: TMF621 Trouble Ticket Management Aggregator This service provides endpoint to fetch the ticket details with ticket id, create ticket, fetch list of tickets by customer id and update the existing tickets
   license:
     name: MADAPI
     url: https://developers.mtn.com/
@@ -17,7 +17,7 @@ paths:
       tags:
       - trouble-ticket-aggregator-controller
       summary: This operation retrieves trouble ticket
-      description: Retrieve list of trouble ticket. It return a  list that has the data filtered by provided parameters. It provide the pagination's as well to retrieve the data in pages with required sizes.
+      description: Retrieve list of trouble ticket. It return a list that has the data filtered by provided parameters. It provide the pagination's as well to retrieve the data in pages with required sizes.
       operationId: listTickets
       parameters:
       - name: transactionId
@@ -347,7 +347,7 @@ paths:
       tags:
       - trouble-ticket-aggregator-controller
       summary: This operation retrieves a trouble ticket category and sub category
-      description: This operation retrieves the category  of a trouble ticket. Through this operation, a ticket category and sub-category can be retrieved.
+      description: This operation retrieves the category of a trouble ticket. Through this operation, a ticket category and sub-category can be retrieved.
       operationId: getTroubleTicketCategory
       parameters:
       - name: categoryType
@@ -449,7 +449,7 @@ paths:
       tags:
       - trouble-ticket-aggregator-controller
       summary: This operation retrieves a trouble ticket category and sub category
-      description: This operation retrieves the category  of a trouble ticket. Through this operation, a ticket category and sub-category can be retrieved.
+      description: This operation retrieves the category of a trouble ticket. Through this operation, a ticket category and sub-category can be retrieved.
       operationId: getIncidentCategory
       parameters:
       - name: categoryType
@@ -548,6 +548,153 @@ paths:
                 $ref: '#/components/schemas/ServerErrorResponse'
 components:
   schemas:
+    CustomFields:
+      type: object
+      properties:
+        country:
+          type: string
+        province:
+          type: string
+        city:
+          type: string
+        name:
+          type: string
+    Medium:
+      type: object
+      properties:
+        type:
+          type: string
+        emailAddress:
+          type: string
+        verified:
+          type: boolean
+        number:
+          type: string
+    UnauthorizedErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '4000'
+        statusMessage:
+          type: string
+          example: Unauthorized
+        supportMessage:
+          type: string
+          example: The supplied authentication is invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 401
+            series: CLIENT_ERROR
+            reason: Unauthorized
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    ContactMedium:
+      type: object
+      properties:
+        medium:
+          $ref: '#/components/schemas/Medium'
+        type:
+          type: string
+        role:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        preferred:
+          type: boolean
+    Assignees:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        '@schemaLocation':
+          type: string
+    Groups:
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+        href:
+          type: string
+        '@schemaLocation':
+          type: string
+    EngagedParty:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        '@referredType':
+          type: string
+        '@schemaLocation':
+          type: string
+    TicketActivity:
+      type: object
+      properties:
+        author:
+          type: string
+        date:
+          type: string
+        text:
+          type: string
+        action:
+          type: string
+        note:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        assignedUser:
+          type: string
+        status:
+          type: string
+        previousComment:
+          type: string
+        '@type':
+          type: string
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+        author:
+          type: string
+        date:
+          type: string
+        '@type':
+          type: string
+    ValidFor:
+      type: object
+      properties:
+        endDateTime:
+          type: string
+        startDateTime:
+          type: string
+    Attachments:
+      type: object
+      properties:
+        id:
+          type: string
+        validFor:
+          $ref: '#/components/schemas/ValidFor'
+        attachmentType:
+          type: string
+        content:
+          type: string
+        name:
+          type: string
     RelatedParty:
       type: object
       properties:
@@ -573,123 +720,14 @@ components:
           type: string
         '@schemaLocation':
           type: string
-    UpdateIncidentRequest:
+    CountryInformation:
       type: object
       properties:
-        statusChangeReason:
+        country:
           type: string
-        field:
+        province:
           type: string
-        categoryType:
-          type: string
-        description:
-          type: string
-        assignedTo:
-          type: string
-        requestedFor:
-          type: string
-    ServerErrorResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '3001'
-        statusMessage:
-          type: string
-          example: INTERNAL_SERVER_ERROR
-        supportMessage:
-          type: string
-          example: An internal server error occurred and processing could not be completed.
-        httpStatus;:
-          type: object
-          example:
-            code: 500
-            series: SERVER_ERROR
-            reason: Internal Server Error
-        timestamp:
-          type: string
-          example: 2025-08-05 20:57:21+00:00
-    ExternalSystem:
-      type: object
-      properties:
-        id:
-          type: string
-    UnauthorizedErrorResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '4000'
-        statusMessage:
-          type: string
-          example: Unauthorized
-        supportMessage:
-          type: string
-          example: The supplied authentication is invalid.
-        httpStatus;:
-          type: object
-          example:
-            code: 401
-            series: CLIENT_ERROR
-            reason: Unauthorized
-        timestamp:
-          type: string
-          example: 2025-08-05 20:57:21+00:00
-    ValidFor:
-      type: object
-      properties:
-        endDateTime:
-          type: string
-        startDateTime:
-          type: string
-    Groups:
-      type: object
-      properties:
-        id:
-          type: string
-        date:
-          type: string
-        href:
-          type: string
-        '@schemaLocation':
-          type: string
-    BadRequestErrorResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '5000'
-        statusMessage:
-          type: string
-          example: INVALID_INPUT_PARAMETERS
-        supportMessage:
-          type: string
-          example: The input parameters provided are invalid.
-        httpStatus;:
-          type: object
-          example:
-            code: 400
-            series: CLIENT_ERROR
-            reason: Bad Request
-        timestamp:
-          type: string
-          example: 2025-08-05 20:57:21+00:00
-    TicketRelationship:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-        name:
-          type: string
-        relationshipType:
-          type: string
-        '@baseType':
-          type: string
-        '@schemaLocation':
-          type: string
-        '@type':
+        city:
           type: string
     DCLMTroubleTicketAPIResponse:
       type: object
@@ -812,6 +850,42 @@ components:
           type: string
         '@schemaLocation':
           type: string
+    UpdateIncidentRequest:
+      type: object
+      properties:
+        statusChangeReason:
+          type: string
+        field:
+          type: string
+        categoryType:
+          type: string
+        description:
+          type: string
+        assignedTo:
+          type: string
+        requestedFor:
+          type: string
+    BadRequestErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '5000'
+        statusMessage:
+          type: string
+          example: INVALID_INPUT_PARAMETERS
+        supportMessage:
+          type: string
+          example: The input parameters provided are invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 400
+            series: CLIENT_ERROR
+            reason: Bad Request
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
     CreateRequest:
       type: object
       properties:
@@ -845,14 +919,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RelatedEntity'
-    Assignees:
+    TroubleTicketRelationship:
       type: object
       properties:
-        id:
+        name:
           type: string
-        href:
+    WorkFlowRef:
+      type: object
+      properties:
+        formId:
           type: string
-        '@schemaLocation':
+        processId:
+          type: string
+        groupId:
+          type: string
+        taskInfoId:
+          type: string
+        formIdentity:
+          type: string
+        balkanGraphId:
+          type: string
+        workflowId:
           type: string
     RelatedEntity:
       type: object
@@ -866,6 +953,84 @@ components:
         '@schemaLocation':
           type: string
         '@referredType':
+          type: string
+    TicketRelationship:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        name:
+          type: string
+        relationshipType:
+          type: string
+        '@baseType':
+          type: string
+        '@schemaLocation':
+          type: string
+        '@type':
+          type: string
+    Channel:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        role:
+          type: string
+        href:
+          type: string
+        '@schemaLocation':
+          type: string
+        '@referredType':
+          type: string
+        '@type':
+          type: string
+    StatusChange:
+      type: object
+      properties:
+        status:
+          type: string
+        changeDate:
+          type: string
+        changeReason:
+          type: string
+        '@type':
+          type: string
+    ServerErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '3001'
+        statusMessage:
+          type: string
+          example: INTERNAL_SERVER_ERROR
+        supportMessage:
+          type: string
+          example: An internal server error occurred and processing could not be completed.
+        httpStatus;:
+          type: object
+          example:
+            code: 500
+            series: SERVER_ERROR
+            reason: Internal Server Error
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    Assignee:
+      type: object
+      properties:
+        id:
+          type: string
+        assigned:
+          type: boolean
+    ExternalSystem:
+      type: object
+      properties:
+        id:
           type: string
     UpdateTicketRequest:
       type: object
@@ -889,69 +1054,6 @@ components:
         relatedParty:
           $ref: '#/components/schemas/RelatedParty'
         statusChangeReason:
-          type: string
-    Attachments:
-      type: object
-      properties:
-        id:
-          type: string
-        validFor:
-          $ref: '#/components/schemas/ValidFor'
-        attachmentType:
-          type: string
-        content:
-          type: string
-        name:
-          type: string
-    Channel:
-      type: object
-      properties:
-        name:
-          type: string
-        id:
-          type: string
-        role:
-          type: string
-        href:
-          type: string
-        '@schemaLocation':
-          type: string
-        '@referredType':
-          type: string
-        '@type':
-          type: string
-    Note:
-      type: object
-      properties:
-        id:
-          type: string
-        text:
-          type: string
-        author:
-          type: string
-        date:
-          type: string
-        '@type':
-          type: string
-    CountryInformation:
-      type: object
-      properties:
-        country:
-          type: string
-        province:
-          type: string
-        city:
-          type: string
-    StatusChange:
-      type: object
-      properties:
-        status:
-          type: string
-        changeDate:
-          type: string
-        changeReason:
-          type: string
-        '@type':
           type: string
     TroubleTicketResponse:
       type: object
@@ -1160,105 +1262,3 @@ components:
           type: string
         '@schemaLocation':
           type: string
-    CustomFields:
-      type: object
-      properties:
-        country:
-          type: string
-        province:
-          type: string
-        city:
-          type: string
-        name:
-          type: string
-    TicketActivity:
-      type: object
-      properties:
-        author:
-          type: string
-        date:
-          type: string
-        text:
-          type: string
-        action:
-          type: string
-        note:
-          type: string
-        from:
-          type: string
-        to:
-          type: string
-        assignedUser:
-          type: string
-        status:
-          type: string
-        previousComment:
-          type: string
-        '@type':
-          type: string
-    Medium:
-      type: object
-      properties:
-        type:
-          type: string
-        emailAddress:
-          type: string
-        verified:
-          type: boolean
-        number:
-          type: string
-    TroubleTicketRelationship:
-      type: object
-      properties:
-        name:
-          type: string
-    ContactMedium:
-      type: object
-      properties:
-        medium:
-          $ref: '#/components/schemas/Medium'
-        type:
-          type: string
-        role:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-        preferred:
-          type: boolean
-    WorkFlowRef:
-      type: object
-      properties:
-        formId:
-          type: string
-        processId:
-          type: string
-        groupId:
-          type: string
-        taskInfoId:
-          type: string
-        formIdentity:
-          type: string
-        balkanGraphId:
-          type: string
-        workflowId:
-          type: string
-    EngagedParty:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-        '@referredType':
-          type: string
-        '@schemaLocation':
-          type: string
-    Assignee:
-      type: object
-      properties:
-        id:
-          type: string
-        assigned:
-          type: boolean

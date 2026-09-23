@@ -92,6 +92,8 @@ paths:
               $ref: '#/components/schemas/cancelPreapprovalRequest'
         description: Request body
         required: true
+      operationId: postConsentCancelPreapproval
+      x-operation-id-source: derived
 components:
   schemas:
     preapprovalError:
@@ -127,14 +129,13 @@ components:
           type: string
           description: The HTTP method type that was used
           example: GET
-    cancelPreapprovalResponse:
+    cancelPreapprovalResponse__links_self:
       type: object
       properties:
-        statusCode:
+        href:
           type: string
-          description: HTTP error code extension
-        _links:
-          $ref: '#/components/schemas/cancelPreapprovalResponse__links'
+          example: https://host:port/consent/v1/preapproval
+          description: Hyperlink to access the problem.
     cancelPreapprovalRequest:
       type: object
       required:
@@ -152,19 +153,20 @@ components:
           type: string
           example: ID:1234567/ID
           description: The internal ID of the accountHolder - If provided than will delete ALL preapprovals for this user
-    cancelPreapprovalResponse__links_self:
-      type: object
-      properties:
-        href:
-          type: string
-          example: https://host:port/consent/v1/preapproval
-          description: Hyperlink to access the problem.
     cancelPreapprovalResponse__links:
       type: object
       properties:
         self:
           $ref: '#/components/schemas/cancelPreapprovalResponse__links_self'
       description: Relevant links to the problem.
+    cancelPreapprovalResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+        _links:
+          $ref: '#/components/schemas/cancelPreapprovalResponse__links'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

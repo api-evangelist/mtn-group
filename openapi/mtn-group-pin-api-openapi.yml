@@ -15,8 +15,8 @@ paths:
     post:
       tags:
       - PIN
-      summary: To create Pin customer will provide mandatory(customerId, secret, alternateNumber, securityQuestion, tncDetails,channel,transId) attributes. Also will provide emailID as optional input
-      description: create Pin Details, user must enter the MSISDN/Service Number of Customer, the PIN number, alternate mobile Number , Answer for the Security Question and valid channel id. Finally the user will enter the Unique Trans ID as per below format yyyymmddhhmmss<UniqueSequenceNumber> i.e 20200711123459103
+      summary: To create Pin customer will provide mandatory(customerId, secret…
+      description: create Pin Details, user must enter the MSISDN/Service Number of Customer, the PIN number, alternate mobile Number , Answer for the Security Question and valid channel id. Finally the user will enter the Unique Trans ID as per below format yyyymmddhhmmss i.e 20200711123459103
       operationId: createCutomerPin
       parameters:
       - name: transactionId
@@ -183,8 +183,8 @@ paths:
     get:
       tags:
       - PIN
-      summary: To validate Pin  Details  user will enter (customerId, secret, channel, transId) Attributes
-      description: To validate Pin Details, user must enter the MSISDN/Service Number of Customer, the PIN number, channel id. Finally the user will enter the Unique Trans ID as per below format yyyymmddhhmmss<UniqueSequenceNumber> i.e 20200711123459104
+      summary: To validate Pin Details user will enter (customerId, secret, channel, transId)…
+      description: To validate Pin Details, user must enter the MSISDN/Service Number of Customer, the PIN number, channel id. Finally the user will enter the Unique Trans ID as per below format yyyymmddhhmmss i.e 20200711123459104
       operationId: validateCutomerPin
       parameters:
       - name: transactionId
@@ -272,8 +272,8 @@ paths:
     put:
       tags:
       - PIN
-      summary: To change Pin  Details user will enter (customerId, operationType, currentSecret, newSecret,channel,transId) Attributes
-      description: To change Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User has to enter the 'current Secret/PIN' and 'New Secret/PIN'. User will enter Security Answer selected during first time Secret/PIN Creation. Finally the user will enter the 'channel id' & 'Unique Trans ID as per below format yyyymmddhhmmss<UniqueSequenceNumber> i.e 20200711123459105
+      summary: To change Pin Details user will enter (customerId, operationType…
+      description: To change Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User has to enter the 'current Secret/PIN' and 'New Secret/PIN'. User will enter Security Answer selected during first time Secret/PIN Creation. Finally the user will enter the 'channel id' & 'Unique Trans ID as per below format yyyymmddhhmmss i.e 20200711123459105
       operationId: changeCutomerPin
       parameters:
       - name: transactionId
@@ -420,8 +420,8 @@ paths:
     patch:
       tags:
       - PIN
-      summary: To reset Pin  Details user will enter (customerId, operationType, validateAnswers, motherName,dateOfBirth,stateOfOrigin,channel,transId) Attributes
-      description: To reset Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User has to enter the Y-indicates validate security answer, N-indicates no validation for Validate Answers'. User will enter Mothers maiden name also will enter the Date of Birth in format YYYY-MM-DD and State of Origin code. Finally the user will enter the 'channel id' & 'Unique Trans ID as per below format yyyymmddhhmmss<UniqueSequenceNumber> i.e 20200711123459105
+      summary: To reset Pin Details user will enter (customerId, operationType…
+      description: To reset Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User has to enter the Y-indicates validate security answer, N-indicates no validation for Validate Answers'. User will enter Mothers maiden name also will enter the Date of Birth in format YYYY-MM-DD and State of Origin code. Finally the user will enter the 'channel id' & 'Unique Trans ID as per below format yyyymmddhhmmss i.e 20200711123459105
       operationId: resetCutomerPin
       parameters:
       - name: transactionId
@@ -549,7 +549,7 @@ paths:
     put:
       tags:
       - PIN
-      summary: To change Pin  Details user will enter (customerId, operationType,securityQuestion,securityAnswer,channel,emailID,tncDetails) Attributes
+      summary: To change Pin Details user will enter (customerId…
       description: To change Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User will enter Security Answer to be updated. Finally the user will enter the 'channel id'
       operationId: chanageSecurityQnACutomerPin
       parameters:
@@ -659,7 +659,7 @@ paths:
     get:
       tags:
       - PIN
-      summary: To get Pin profile Details user will enter (customerId, operationType,securityQuestion,securityAnswer,channel) Attributes
+      summary: To get Pin profile Details user will enter (customerId…
       description: To get Pin Details, user must enter the 'MSISDN/Service Number of Customer'. User will enter Security Answer to be updated. Finally the user will enter the 'channel id'
       operationId: getProfileDetails
       parameters:
@@ -764,19 +764,83 @@ components:
               type: number
             unit:
               type: string
-    securityquestionAnswer:
+    CreatePinResponseData:
+      type: object
+      title: CreatePinResponseData
+      properties:
+        message:
+          type: string
+          example: Subscriber secret created successfully
+          description: API Success Message. i.e. Subscriber secret created successfully
+    resetPinResponse:
       type: object
       required:
       - name
       properties:
-        securityQuestion:
+        statusCode:
           type: string
-          example: string
-          description: user will enter security question
-        securityAnswer:
+          example: '0000'
+          description: Success API code. '0000' in case of success
+        statusMessage:
           type: string
-          example: string
-          description: user will enter answer for security question
+          example: String
+        transactionId:
+          type: string
+          example: String
+        data:
+          type: object
+          $ref: '#/components/schemas/ResetPinResponseData'
+    ValidatePinResponse:
+      type: object
+      required:
+      - name
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: Success API code. '0000' in case of success
+        statusMessage:
+          type: string
+          example: String
+        transactionId:
+          type: string
+          example: String
+        data:
+          type: object
+          $ref: '#/components/schemas/ValidatePinResponseData'
+    SecurityQuestionAnswers:
+      type: array
+      items:
+        type: object
+        properties:
+          SecurityQuestionAnswer:
+            $ref: '#/components/schemas/securityquestionAnswer'
+    GetProfileDetailsResponse:
+      type: object
+      required:
+      - name
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: Success API code. '0000' in case of success
+        statusMessage:
+          type: string
+          example: String
+        transactionId:
+          type: string
+          example: String
+        data:
+          type: object
+          $ref: '#/components/schemas/GetProfileDetailsResponseData'
+    GetProfileDetailsResponseData:
+      type: object
+      title: GetProfileDetailsResponseData
+      properties:
+        message:
+          type: string
+          example: Terms & Conditions retreived Successfully
+          description: API Success Message. i.e. This is Smartapp Terms & Conditions
     ValidateSecurityAnswerResponse:
       type: object
       required:
@@ -795,7 +859,7 @@ components:
         data:
           type: object
           $ref: '#/components/schemas/ValidateSecurityAnswerResponseData'
-    ChangePinResponse:
+    CreatePinResponse:
       type: object
       required:
       - name
@@ -810,12 +874,9 @@ components:
         transactionId:
           type: string
           example: String
-        customerId:
-          type: string
-          example: String
         data:
           type: object
-          $ref: '#/components/schemas/ChangePinResponseData'
+          $ref: '#/components/schemas/CreatePinResponseData'
     ValidatePinResponseData:
       type: object
       title: ValidatePinResponseData
@@ -847,14 +908,20 @@ components:
         tncLastUpdtversion:
           type: string
           example: '2.0'
-    SecurityQuestionAnswers:
-      type: array
-      items:
-        type: object
-        properties:
-          SecurityQuestionAnswer:
-            $ref: '#/components/schemas/securityquestionAnswer'
-    ValidatePinResponse:
+    securityquestionAnswer:
+      type: object
+      required:
+      - name
+      properties:
+        securityQuestion:
+          type: string
+          example: string
+          description: user will enter security question
+        securityAnswer:
+          type: string
+          example: string
+          description: user will enter answer for security question
+    ChangePinResponse:
       type: object
       required:
       - name
@@ -869,51 +936,12 @@ components:
         transactionId:
           type: string
           example: String
-        data:
-          type: object
-          $ref: '#/components/schemas/ValidatePinResponseData'
-    GetProfileDetailsResponseData:
-      type: object
-      title: GetProfileDetailsResponseData
-      properties:
-        message:
-          type: string
-          example: Terms & Conditions retreived Successfully
-          description: API Success Message. i.e. This is Smartapp Terms & Conditions
-    CreatePinResponse:
-      type: object
-      required:
-      - name
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-          description: Success API code. '0000' in case of success
-        statusMessage:
-          type: string
-          example: String
-        transactionId:
+        customerId:
           type: string
           example: String
         data:
           type: object
-          $ref: '#/components/schemas/CreatePinResponseData'
-    CreatePinResponseData:
-      type: object
-      title: CreatePinResponseData
-      properties:
-        message:
-          type: string
-          example: Subscriber secret created successfully
-          description: API Success Message. i.e. Subscriber secret created successfully
-    ValidateSecurityAnswerResponseData:
-      type: object
-      title: ValidateSecurityAnswerResponseData
-      properties:
-        message:
-          type: string
-          example: Subscriber answer validated successfully
-          description: API Success Message.i.e. Subscriber answer validated successfully
+          $ref: '#/components/schemas/ChangePinResponseData'
     ChangePinResponseData:
       type: object
       title: ChangePinResponseData
@@ -929,42 +957,14 @@ components:
               type: number
             unit:
               type: string
-    resetPinResponse:
+    ValidateSecurityAnswerResponseData:
       type: object
-      required:
-      - name
+      title: ValidateSecurityAnswerResponseData
       properties:
-        statusCode:
+        message:
           type: string
-          example: '0000'
-          description: Success API code. '0000' in case of success
-        statusMessage:
-          type: string
-          example: String
-        transactionId:
-          type: string
-          example: String
-        data:
-          type: object
-          $ref: '#/components/schemas/ResetPinResponseData'
-    GetProfileDetailsResponse:
-      type: object
-      required:
-      - name
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-          description: Success API code. '0000' in case of success
-        statusMessage:
-          type: string
-          example: String
-        transactionId:
-          type: string
-          example: String
-        data:
-          type: object
-          $ref: '#/components/schemas/GetProfileDetailsResponseData'
+          example: Subscriber answer validated successfully
+          description: API Success Message.i.e. Subscriber answer validated successfully
     Error:
       type: object
       required:

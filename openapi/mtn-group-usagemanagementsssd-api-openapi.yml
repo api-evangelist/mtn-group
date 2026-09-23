@@ -1,11 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Mtn Group Usage Managements S Sd API
-  version: 3.0.0 - Last updated date:2026-06-26 09:07:34
+  title: MTN Usage Management Usage Managements S Sd API
+  description: This service provides comprehensive usage management capabilities for MTN operations including data usage tracking, subscription management, balance inquiries, and usage analytics. The service integrates with various billing and usage systems to provide real-time usage information across the MTN ecosystem.
   license:
     name: MADAPI
     url: https://developers.mtn.com/
-  description: 'Operations tagged UsageManagementsSSd across 2 of this provider''s published API definitions: mtn-group-tmf-usage-management-tmf635.yml, mtn-group-usage-management.yml. Each path carries the servers of the definition it was published in.'
+  version: 3.0.0 - Last updated date:2026-06-26 09:07:34
 servers:
 - url: https://api.mtn.com/v1
   description: Production Server
@@ -18,7 +18,7 @@ paths:
     get:
       tags:
       - UsageManagementsSSd
-      summary: Retrieves recharge history and top-up transactions for a subscriber MSISDN via GET /recharge/{id} on the SSD deployment profile, including financial trace fields and paging metadata resolved through the same streamlined routing model used for other SSD usage endpoints.
+      summary: Retrieves recharge history and top-up transactions for a subscriber MSISDN via…
       description: This operation retrieves comprehensive recharge history details for a subscriber, supporting financial tracking, transaction analysis, and customer service with complete recharge transaction records.
       operationId: UsageManagementsSSd_get_getRechargeHistory_rechargeid
       parameters:
@@ -147,14 +147,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIError'
       deprecated: false
-    servers:
-    - url: https://api.mtn.com/v1
-      description: Production Server
   /usage/{id}:
     get:
       tags:
       - UsageManagementsSSd
-      summary: Retrieves consolidated usage history for a subscriber MSISDN via GET /usage/{id} on the SSD deployment profile, including SMS, voice, and data records with pagination and downstream routing to the configured single-system usage path for the requesting country.
+      summary: Retrieves consolidated usage history for a subscriber MSISDN via GET…
       description: This operation retrieves all the call details record for a subscriber like SMS, Voice and Data usage history with comprehensive transaction tracking and detailed usage analytics.
       operationId: UsageManagementsSSd_get_getUsageByID_usageid
       parameters:
@@ -294,14 +291,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIError'
       deprecated: false
-    servers:
-    - url: https://api.mtn.com/v1
-      description: Production Server
   /usageCharge/{id}:
     get:
       tags:
       - UsageManagementsSSd
-      summary: Retrieves out-of-bundle usage charge lines for a subscriber MSISDN via GET /usageCharge/{id} on the SSD deployment profile, returning rated beyond-bundle consumption with paging and downstream retrieval aligned to the simplified system selection rules for this stack.
+      summary: Retrieves out-of-bundle usage charge lines for a subscriber MSISDN via GET…
       description: This operation retrieves comprehensive out of bundle usage charges applied to a subscriber, supporting detailed billing analysis, cost tracking, and financial reporting with complete charge breakdown.
       operationId: UsageManagementsSSd_get_getUsageChargeByID_usageChargeid
       parameters:
@@ -425,11 +419,122 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIError'
       deprecated: false
-    servers:
-    - url: https://api.mtn.com/v1
-      description: Production Server
 components:
   schemas:
+    rw_co_mtn_usage_aggregator_model_data_RechargeHistory:
+      title: RechargeHistory
+      type: object
+      properties:
+        description:
+          type: string
+        payType:
+          type: string
+        rechargeAmount:
+          type: string
+        unit:
+          type: string
+        partnerCode:
+          type: string
+    rw_co_mtn_usage_aggregator_model_data_RechargeData:
+      title: RechargeData
+      type: object
+      properties:
+        subscriberId:
+          type: string
+        rechargeDate:
+          type: string
+        adjustmentType:
+          type: string
+        amountBefore:
+          type: string
+        amountAfter:
+          type: string
+        transaction:
+          type: string
+        rechargeDescription:
+          type: string
+        rechargeHistory:
+          type: array
+          items:
+            title: RechargeHistory
+            type: object
+            properties:
+              description:
+                type: string
+              payType:
+                type: string
+              rechargeAmount:
+                type: string
+              unit:
+                type: string
+              partnerCode:
+                type: string
+        recharge:
+          type: array
+          items:
+            $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_data_RechargeHistory'
+    rw_co_mtn_usage_aggregator_model_data_UsageChargeData:
+      title: UsageChargeData
+      type: object
+      properties:
+        usageDate:
+          type: string
+        voiceCharge:
+          $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_common_CommonUnit'
+        smsCharge:
+          $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_common_CommonUnit'
+        dataCharge:
+          $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_common_CommonUnit'
+    rw_co_mtn_usage_aggregator_model_res_UsageChargeResponse:
+      title: UsageChargeResponse
+      type: object
+      properties:
+        resultCode:
+          type: string
+        resultDescription:
+          type: string
+        transactionId:
+          type: string
+        sequenceNumber:
+          type: string
+        referenceId:
+          type: string
+        requestDate:
+          type: string
+        maxRecs:
+          type: string
+        numRecs:
+          type: string
+        pageNum:
+          type: string
+        data:
+          type: array
+          items:
+            title: UsageChargeData
+            type: object
+            properties:
+              usageDate:
+                type: string
+              voiceCharge:
+                $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_common_CommonUnit'
+              smsCharge:
+                $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_common_CommonUnit'
+              dataCharge:
+                $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_common_CommonUnit'
+        usageCharge:
+          type: array
+          items:
+            $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_data_UsageChargeData'
+    rw_co_mtn_usage_aggregator_model_common_CommonUnit:
+      title: CommonUnit
+      type: object
+      properties:
+        unit:
+          type: string
+        value:
+          type: string
+        amount:
+          type: string
     rw_co_mtn_usage_aggregator_model_data_UsageDataResponse:
       title: UsageDataResponse
       type: object
@@ -828,96 +933,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_data_RechargeData'
-    rw_co_mtn_usage_aggregator_model_data_UsageChargeData:
-      title: UsageChargeData
+    rw_co_mtn_usage_aggregator_model_res_UsageUnit:
+      title: UsageUnit
       type: object
       properties:
-        usageDate:
+        unit:
           type: string
-        voiceCharge:
-          $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_common_CommonUnit'
-        smsCharge:
-          $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_common_CommonUnit'
-        dataCharge:
-          $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_common_CommonUnit'
-    rw_co_mtn_usage_aggregator_model_data_RechargeData:
-      title: RechargeData
-      type: object
-      properties:
-        subscriberId:
+        amount:
           type: string
-        rechargeDate:
-          type: string
-        adjustmentType:
-          type: string
-        amountBefore:
-          type: string
-        amountAfter:
-          type: string
-        transaction:
-          type: string
-        rechargeDescription:
-          type: string
-        rechargeHistory:
-          type: array
-          items:
-            title: RechargeHistory
-            type: object
-            properties:
-              description:
-                type: string
-              payType:
-                type: string
-              rechargeAmount:
-                type: string
-              unit:
-                type: string
-              partnerCode:
-                type: string
-        recharge:
-          type: array
-          items:
-            $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_data_RechargeHistory'
-    rw_co_mtn_usage_aggregator_model_res_UsageChargeResponse:
-      title: UsageChargeResponse
-      type: object
-      properties:
-        resultCode:
-          type: string
-        resultDescription:
-          type: string
-        transactionId:
-          type: string
-        sequenceNumber:
-          type: string
-        referenceId:
-          type: string
-        requestDate:
-          type: string
-        maxRecs:
-          type: string
-        numRecs:
-          type: string
-        pageNum:
-          type: string
-        data:
-          type: array
-          items:
-            title: UsageChargeData
-            type: object
-            properties:
-              usageDate:
-                type: string
-              voiceCharge:
-                $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_common_CommonUnit'
-              smsCharge:
-                $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_common_CommonUnit'
-              dataCharge:
-                $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_common_CommonUnit'
-        usageCharge:
-          type: array
-          items:
-            $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_data_UsageChargeData'
     APIError:
       title: APIError
       required:
@@ -969,24 +992,6 @@ components:
         transactionId: '1234567890'
         sequenceNo: '20250115120000001'
         timestamp: 2025-01-15 12:00:00+00:00
-    rw_co_mtn_usage_aggregator_model_res_UsageUnit:
-      title: UsageUnit
-      type: object
-      properties:
-        unit:
-          type: string
-        amount:
-          type: string
-    rw_co_mtn_usage_aggregator_model_common_CommonUnit:
-      title: CommonUnit
-      type: object
-      properties:
-        unit:
-          type: string
-        value:
-          type: string
-        amount:
-          type: string
     rw_co_mtn_usage_aggregator_model_res_UsageResponse:
       title: UsageResponse
       type: object
@@ -1370,20 +1375,6 @@ components:
             $ref: '#/components/schemas/rw_co_mtn_usage_aggregator_model_data_UsageDataResponse'
         usageDate:
           type: string
-    rw_co_mtn_usage_aggregator_model_data_RechargeHistory:
-      title: RechargeHistory
-      type: object
-      properties:
-        description:
-          type: string
-        payType:
-          type: string
-        rechargeAmount:
-          type: string
-        unit:
-          type: string
-        partnerCode:
-          type: string
   securitySchemes:
     OAuth2:
       type: oauth2
@@ -1396,6 +1387,3 @@ components:
       description: Bearer token received from OAuth2.0 authentication with the MADAPI
       scheme: bearer
       bearerFormat: JWT
-x-refined-from:
-- mtn-group-tmf-usage-management-tmf635.yml
-- mtn-group-usage-management.yml

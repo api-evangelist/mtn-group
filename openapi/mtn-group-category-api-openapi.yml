@@ -1,16 +1,15 @@
 openapi: 3.2.0
 info:
-  title: Mtn Group Category API
+  title: Product Catalog Management Category API
+  description: API to provide capability to manage catalog, category, Offerings, Offering price and specification of products.
   version: 1.0.0
-  description: 'Operations tagged category across 4 of this provider''s published API definitions: mtn-group-product-catalog-coe.yml, mtn-group-product-catalog-management-v1.yml, mtn-group-product-catalogue-management.yml, mtn-group-tmf-product-catalog-tmf620.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.mtn.com/tmf-api/productcatalog/v1
-- url: https://api.mtn.com/productCatalogManagement/v1/
 security:
 - ApiKeyAuth: []
 - OAuth2: []
 tags:
-- name: category
+- name: Category
 paths:
   /category/{id}:
     get:
@@ -18,7 +17,7 @@ paths:
       summary: Retrieves a Category by ID
       description: This operation retrieves a Category entity. Attribute selection is enabled for all first level attributes.
       tags:
-      - category
+      - Category
       parameters:
       - name: id
         description: Identifier of the Category
@@ -108,67 +107,8 @@ paths:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/Error'
-    servers:
-    - url: https://api.mtn.com/tmf-api/productcatalog/v1
 components:
   schemas:
-    SubCategoryRef:
-      type: object
-      description: The category for grouping recommendations
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity
-        href:
-          type: string
-          description: Holds URI.
-        name:
-          type: string
-          description: Name of the related entity.
-        description:
-          type: string
-          description: Description of the related entity.
-        lifecycleStatus:
-          type: string
-          description: Used to indicate the current lifecycle status
-        version:
-          type: string
-          description: Category version
-        baseType:
-          type: string
-          description: When sub-classing, this defines the super-class
-        type:
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        referredType:
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id
-    TimePeriod:
-      type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
-      properties:
-        endDateTime:
-          type: string
-          format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
-          type: string
-          format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
-    Quantity:
-      type: object
-      description: An amount in a given unit
-      properties:
-        amount:
-          default: 1
-          type: number
-          format: float
-          description: Numeric value in a given unit
-        units:
-          type: string
-          description: Unit
     SubCategory:
       type: object
       description: The category resource is used to group product offerings, service and resource candidates in logical containers. Categories can contain other categories and/or product offerings, resource or service candidates.
@@ -220,24 +160,46 @@ components:
         validFor:
           $ref: '#/components/schemas/TimePeriod'
           description: The period for which the category is valid
-    Response_Category_ID:
+    Quantity:
       type: object
-      required:
-      - resultCode
-      - resultDescription
-      - data
+      description: An amount in a given unit
       properties:
-        resultCode:
+        amount:
+          default: 1
+          type: number
+          format: float
+          description: Numeric value in a given unit
+        units:
           type: string
-          description: Result code. Example- '0000'
-        resultDescription:
+          description: Unit
+    Money:
+      type: object
+      description: A base / value business entity used to represent money
+      properties:
+        unit:
           type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
+          description: Currency (ISO4217 norm uses 3 letters to define the currency)
+        value:
+          type: number
+          format: float
+          description: A positive floating point number
+    ProductSpecificationRef:
+      type: object
+      properties:
+        id:
           type: string
-          description: Transaction id returned by the provider system.
-        data:
-          $ref: '#/components/schemas/SubCategory'
+          description: Unique identifier of a related entity. This can be product id or offer id etc.
+        name:
+          type: string
+          description: Name of the related entity. This can be product name or offer name etc.
+        type:
+          type: string
+          description: Type of a product or offer,e.g., Data, SMS, Voice etc.
+        validity:
+          type: string
+          description: Validity of a product or offer.
+        quantity:
+          $ref: '#/components/schemas/Quantity'
     ProductOfferingRef:
       type: object
       required:
@@ -271,34 +233,39 @@ components:
         baseType:
           type: string
           description: When sub-classing, this defines the super-class
-    Money:
+    SubCategoryRef:
       type: object
-      description: A base / value business entity used to represent money
-      properties:
-        unit:
-          type: string
-          description: Currency (ISO4217 norm uses 3 letters to define the currency)
-        value:
-          type: number
-          format: float
-          description: A positive floating point number
-    ProductSpecificationRef:
-      type: object
+      description: The category for grouping recommendations
       properties:
         id:
           type: string
-          description: Unique identifier of a related entity. This can be product id or offer id etc.
+          description: Unique identifier of a related entity
+        href:
+          type: string
+          description: Holds URI.
         name:
           type: string
-          description: Name of the related entity. This can be product name or offer name etc.
+          description: Name of the related entity.
+        description:
+          type: string
+          description: Description of the related entity.
+        lifecycleStatus:
+          type: string
+          description: Used to indicate the current lifecycle status
+        version:
+          type: string
+          description: Category version
+        baseType:
+          type: string
+          description: When sub-classing, this defines the super-class
         type:
           type: string
-          description: Type of a product or offer,e.g., Data, SMS, Voice etc.
-        validity:
+          description: When sub-classing, this defines the sub-class entity name
+        referredType:
           type: string
-          description: Validity of a product or offer.
-        quantity:
-          $ref: '#/components/schemas/Quantity'
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
     Error:
       type: object
       title: Error
@@ -332,30 +299,7 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    Error_2:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        status:
-          type: string
-          description: Status/Error code returned from the provider system
-        error:
-          type: string
-          description: Status/Error description
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: the path that caused the error
-    Response_Category_ID_2:
+    Response_Category_ID:
       type: object
       required:
       - resultCode
@@ -372,114 +316,19 @@ components:
           type: string
           description: Transaction id returned by the provider system.
         data:
-          $ref: '#/components/schemas/Category'
-    Category:
+          $ref: '#/components/schemas/SubCategory'
+    TimePeriod:
       type: object
-      description: The category resource is used to group product offerings, service and resource candidates in logical containers. Categories can contain other categories and/or product offerings, resource or service candidates.
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
       properties:
-        id:
-          type: string
-          description: Unique identifier of the category
-        href:
-          type: string
-          description: Holds URI
-        description:
-          type: string
-          description: Description of the category
-        isRoot:
-          type: boolean
-          description: If true, this Boolean indicates that the category is a root of categories
-        lastUpdate:
+        endDateTime:
           type: string
           format: date-time
-          description: Date and time of the last update
-        lifecycleStatus:
-          type: string
-          description: Used to indicate the current lifecycle status
-        name:
-          type: string
-          description: Name of the category
-        parentId:
-          type: string
-          description: Unique identifier of the parent category
-        version:
-          type: string
-          description: Category version
-        type:
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        baseType:
-          type: string
-          description: When sub-classing, this defines the super-class
-        productOffering:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductOfferingRef'
-          description: A product offering represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
-        subCategory:
-          type: array
-          items:
-            $ref: '#/components/schemas/CategoryRef'
-          description: The category resource is used to group product offerings, service and resource candidates in logical containers. Categories can contain other (sub-)categories and/or product offerings.
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the category is valid
-    CategoryRef:
-      type: object
-      description: The category for grouping recommendations
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity
-        href:
-          type: string
-          description: Holds URI.
-        name:
-          type: string
-          description: Name of the related entity.
-        description:
-          type: string
-          description: Description of the related entity.
-        lifecycleStatus:
-          type: string
-          description: Used to indicate the current lifecycle status
-        version:
-          type: string
-          description: Category version
-        baseType:
-          type: string
-          description: When sub-classing, this defines the super-class
-        type:
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        referredType:
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id
-    Error_3:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        timestamp:
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
           type: string
           format: date-time
-          description: Time stamp of the error
-        status:
-          type: string
-          description: Status/Error code returned from the provider system
-        error:
-          type: string
-          description: Status/Error description
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: the path that caused the error
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
@@ -491,8 +340,3 @@ components:
         clientCredentials:
           scopes: {}
           tokenUrl: https://api.mtn.com/v1/oauth/access_token
-x-refined-from:
-- mtn-group-product-catalog-coe.yml
-- mtn-group-product-catalog-management-v1.yml
-- mtn-group-product-catalogue-management.yml
-- mtn-group-tmf-product-catalog-tmf620.yml

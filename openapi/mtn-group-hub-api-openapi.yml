@@ -9,7 +9,7 @@ security:
 - ApiKeyAuth: []
 - basicAuth: []
 tags:
-- name: hub
+- name: Hub
 paths:
   /topic/{topicId}/hub:
     get:
@@ -17,7 +17,7 @@ paths:
       summary: List or find Hub objects
       description: This operation list or find Hub entities
       tags:
-      - hub
+      - Hub
       parameters:
       - name: topicId
         description: Identifier of the parent Topic entity
@@ -108,7 +108,7 @@ paths:
       summary: Creates a Hub
       description: This operation creates a Hub entity.
       tags:
-      - hub
+      - Hub
       parameters:
       - name: topicId
         description: Identifier of the parent Topic entity
@@ -172,7 +172,7 @@ paths:
       summary: Retrieves a Hub by ID
       description: This operation retrieves a Hub entity. Attribute selection is enabled for all first level attributes.
       tags:
-      - hub
+      - Hub
       parameters:
       - name: topicId
         description: Identifier of the parent Topic entity
@@ -246,7 +246,7 @@ paths:
       summary: Deletes a Hub
       description: This operation deletes a Hub entity.
       tags:
-      - hub
+      - Hub
       parameters:
       - name: topicId
         description: Identifier of the parent Topic entity
@@ -307,16 +307,14 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Hub:
+    Hub_Create:
       type: object
-      description: A Hub is used to subscribe to an event notification
+      description: 'A Hub is used to subscribe to an event notification
+
+        Skipped properties: id,href'
       required:
       - callback
-      - id
       properties:
-        id:
-          type: string
-          description: The unique-id for your subscription - referenced when updating or deleting a subscription
         callback:
           type: string
           description: The URI that will be POSTed to when a notification is triggered
@@ -333,14 +331,16 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    Hub_Create:
+    Hub:
       type: object
-      description: 'A Hub is used to subscribe to an event notification
-
-        Skipped properties: id,href'
+      description: A Hub is used to subscribe to an event notification
       required:
       - callback
+      - id
       properties:
+        id:
+          type: string
+          description: The unique-id for your subscription - referenced when updating or deleting a subscription
         callback:
           type: string
           description: The URI that will be POSTed to when a notification is triggered

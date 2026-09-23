@@ -15,7 +15,7 @@ paths:
     post:
       tags:
       - Usage Limit Adjust
-      summary: Used to Reserve, Commit or Abort merchant limit.
+      summary: Used to Reserve, Commit or Abort merchant limit
       description: This implementation has been done for the auto top up service where a Merchant's Limit can be reserved (Holds the Limit), Committed (Committed as Success) and Aborted (Limit Rolled Back). If we don't receive a commit or abort within a transaction keep alive period, the request will be aborted which will result in the external party needing to repeat the reserve.
       operationId: usageLimitAdjust
       parameters:
@@ -83,6 +83,39 @@ paths:
         required: true
 components:
   schemas:
+    usageLimitRequest:
+      type: object
+      properties:
+        transactionId:
+          maxLength: 50
+          type: string
+          description: RSN is a unique request sequence number that can be used to tie up the request and response.
+          example: '4837617387438085'
+        timestamp:
+          description: The field denotes the date at which the request is done.
+          type: string
+          example: '20101126023515'
+        customerId:
+          type: string
+          description: Customer Identifier eg. MSISDN
+        amount:
+          description: 'This field denotes the amount that should be credited to the subscribers MSISDN. Note: The amount specified must be in cents.'
+          type: integer
+        bundleID:
+          description: Identifier for the bundle.
+          type: string
+          example: DATA1G
+        usageAdjust:
+          description: mode of adjustment
+          type: string
+          enum:
+          - Reserve
+          - Commit
+          - Abort
+        paymentId:
+          description: Mandatory when Auto Top up is true. The portal (online recharges) generates the product payment ID (PPID), which will be shared via SOA to SAAE to IBF.
+          type: string
+          example: 5454DERFD
     usageLimitResponse:
       type: object
       properties:
@@ -127,39 +160,6 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
-    usageLimitRequest:
-      type: object
-      properties:
-        transactionId:
-          maxLength: 50
-          type: string
-          description: RSN is a unique request sequence number that can be used to tie up the request and response.
-          example: '4837617387438085'
-        timestamp:
-          description: The field denotes the date at which the request is done.
-          type: string
-          example: '20101126023515'
-        customerId:
-          type: string
-          description: Customer Identifier eg. MSISDN
-        amount:
-          description: 'This field denotes the amount that should be credited to the subscribers MSISDN. Note: The amount specified must be in cents.'
-          type: integer
-        bundleID:
-          description: Identifier for the bundle.
-          type: string
-          example: DATA1G
-        usageAdjust:
-          description: mode of adjustment
-          type: string
-          enum:
-          - Reserve
-          - Commit
-          - Abort
-        paymentId:
-          description: Mandatory when Auto Top up is true. The portal (online recharges) generates the product payment ID (PPID), which will be shared via SOA to SAAE to IBF.
-          type: string
-          example: 5454DERFD
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -18,7 +18,7 @@ paths:
     get:
       tags:
       - subscriber-attributes-controller
-      summary: Retrieves Subscriber Attributes V2 Details.
+      summary: Retrieves Subscriber Attributes V2 Details
       description: Retrieves the v2/subscriber-attributes of a MTN customer.
       operationId: getSubscriberAttributeV2UsingGET
       parameters:
@@ -70,7 +70,7 @@ paths:
     get:
       tags:
       - subscriber-attributes-controller
-      summary: Retrieves Subscriber Attributes V3 Details.
+      summary: Retrieves Subscriber Attributes V3 Details
       description: Retrieves the v3/subscriber-attributes of a MTN customer.
       operationId: getSubscriberAttributeV3UsingGET
       parameters:
@@ -132,6 +132,47 @@ paths:
       deprecated: false
 components:
   schemas:
+    Error401:
+      properties:
+        error:
+          type: string
+          description: error message from target system to indicate transaction status.
+          example: missing_authorization
+        error_description:
+          type: string
+          description: detailed error message from target system to indicate transaction status.
+          example: Missing Authorization header
+    SubscriberAttributeV3Response:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Status code from IBF
+          example: '200'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: success
+        supportMessage:
+          type: string
+          description: detailed message
+          example: Transaction passed successfully
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        wowBonusFlag:
+          type: string
+          description: Inficates the Bonus flag with True or False
+        sharpSharpFlag:
+          type: string
+          description: Inficates the Sharp Sharp flag with True or False
+        links:
+          type: array
+          description: extra details
+          items:
+            type: string
+      title: SubscriberAttributeV3Response
     Error400:
       type: object
       properties:
@@ -152,6 +193,27 @@ components:
           items:
             type: string
             description: details of error
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
     SubscriberAttributeV2error:
       type: object
       required:
@@ -182,47 +244,6 @@ components:
           type: string
           description: The HTTP method type that was used
           example: PATCH
-    Error405:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 405
-        error:
-          type: string
-          description: error message
-          example: Method Not Allowed
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
-    Error401:
-      properties:
-        error:
-          type: string
-          description: error message from target system to indicate transaction status.
-          example: missing_authorization
-        error_description:
-          type: string
-          description: detailed error message from target system to indicate transaction status.
-          example: Missing Authorization header
-    Error403:
-      properties:
-        error:
-          type: string
-          description: error message from target system to indicate transaction status.
-          example: access_denied
-        error_description:
-          type: string
-          description: detailed error message from target system to indicate transaction status.
-          example: Unauthorized
     SubscriberAttributeV2Response:
       type: object
       properties:
@@ -311,37 +332,16 @@ components:
         voicoobbarCorporateLiable:
           type: string
       title: SubscriberAttributeV2Response
-    SubscriberAttributeV3Response:
-      type: object
+    Error403:
       properties:
-        statusCode:
+        error:
           type: string
-          description: Status code from IBF
-          example: '200'
-        statusMessage:
+          description: error message from target system to indicate transaction status.
+          example: access_denied
+        error_description:
           type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: success
-        supportMessage:
-          type: string
-          description: detailed message
-          example: Transaction passed successfully
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
-        wowBonusFlag:
-          type: string
-          description: Inficates the Bonus flag with True or False
-        sharpSharpFlag:
-          type: string
-          description: Inficates the Sharp Sharp flag with True or False
-        links:
-          type: array
-          description: extra details
-          items:
-            type: string
-      title: SubscriberAttributeV3Response
+          description: detailed error message from target system to indicate transaction status.
+          example: Unauthorized
     Error404:
       properties:
         timestamp:

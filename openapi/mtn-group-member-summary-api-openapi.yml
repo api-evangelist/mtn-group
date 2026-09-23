@@ -86,8 +86,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ayoSummaryError'
+      operationId: getCustomersByCustomerIdSummary
+      x-operation-id-source: derived
 components:
   schemas:
+    ayoAmount:
+      type: object
+      properties:
+        amount:
+          type: integer
+          example: 3000
+          description: amount is numerical value  defined in different features like premium and cover
+        currencyCode:
+          type: string
+          example: ZAR
+          description: Currecy code is currency in which amount is defined, for southAfrica it is ZAR
     ayocoverDetails:
       type: object
       properties:
@@ -119,46 +132,6 @@ components:
           $ref: '#/components/schemas/ayoAmount'
         totalPremium:
           $ref: '#/components/schemas/ayoAmount'
-    ayoAmount:
-      type: object
-      properties:
-        amount:
-          type: integer
-          example: 3000
-          description: amount is numerical value  defined in different features like premium and cover
-        currencyCode:
-          type: string
-          example: ZAR
-          description: Currecy code is currency in which amount is defined, for southAfrica it is ZAR
-    ayoSummaryResponse:
-      type: object
-      required:
-      - memberAggrementNumber
-      - coverDetails
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned.
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: success
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful), mapped to description from the response of AYO
-          example: Success
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
-        memberAggrementNumber:
-          type: string
-          example: 2120000059490612
-          description: Personal ID Number which is the unique value provided by ayo for every customer
-        coverDetails:
-          description: Cover details consist of all the information related to policy associated with the customer
-          $ref: '#/components/schemas/ayocoverDetails'
     ayoSummaryError:
       type: object
       required:
@@ -195,6 +168,35 @@ components:
           type: string
           example: business error
           description: type of error is shown for non 200 response and mapped from AYO response
+    ayoSummaryResponse:
+      type: object
+      required:
+      - memberAggrementNumber
+      - coverDetails
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned.
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: success
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful), mapped to description from the response of AYO
+          example: Success
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        memberAggrementNumber:
+          type: string
+          example: 2120000059490612
+          description: Personal ID Number which is the unique value provided by ayo for every customer
+        coverDetails:
+          description: Cover details consist of all the information related to policy associated with the customer
+          $ref: '#/components/schemas/ayocoverDetails'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

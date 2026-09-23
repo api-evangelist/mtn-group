@@ -82,6 +82,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getSiebelByIdOpenOrders
+      x-operation-id-source: derived
   /siebel/{id}/assetDetails:
     get:
       summary: Asset Details
@@ -148,6 +150,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getSiebelByIdAssetDetails
+      x-operation-id-source: derived
   /siebel/{id}/createCase:
     post:
       summary: Create Case
@@ -216,35 +220,10 @@ paths:
             schema:
               $ref: '#/components/schemas/createCaseRequest'
         required: true
+      operationId: postSiebelByIdCreateCase
+      x-operation-id-source: derived
 components:
   schemas:
-    createCaseResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        data:
-          type: object
-          properties:
-            caseNumber:
-              type: string
-    createCaseRequest:
-      type: object
-      properties:
-        applicationId:
-          type: string
-        customerType:
-          type: string
-        applicationType:
-          type: string
-        flag:
-          type: string
-          example: Y
     assetDetailsInsurance:
       type: object
       properties:
@@ -260,7 +239,7 @@ components:
         premiumType:
           type: string
           example: All Risk
-    openOrdersResponse:
+    createCaseResponse:
       type: object
       properties:
         statusCode:
@@ -270,59 +249,11 @@ components:
         statusMessage:
           type: string
           description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
         data:
           type: object
           properties:
-            openOrders:
-              type: object
-              properties:
-                openOrders-1:
-                  type: object
-                  properties:
-                    orderNumber:
-                      type: string
-                    costCenter:
-                      type: string
-                    billingSubType:
-                      type: string
-                    paymentMethod:
-                      type: string
-                    billingType:
-                      type: string
-                    insuranceDetails:
-                      type: object
-                      properties:
-                        insurance:
-                          type: array
-                          items:
-                            $ref: '#/components/schemas/openOrderInsuranceArray'
-                openOrders-2:
-                  type: object
-                  properties:
-                    orderNumber:
-                      type: string
-                    costCenter:
-                      type: string
-                    billingSubType:
-                      type: string
-                    paymentMethod:
-                      type: string
-                    billingType:
-                      type: string
-                    serviceClass:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/serviceClassArray'
-                    insuranceDetails:
-                      type: object
-                      properties:
-                        insurance:
-                          type: array
-                          items:
-                            $ref: '#/components/schemas/openOrderInsuranceArray'
+            caseNumber:
+              type: string
     serviceClassArray:
       type: object
       properties:
@@ -357,6 +288,23 @@ components:
               type: string
             prodPromInstanceId:
               type: string
+    openOrderInsuranceArray:
+      type: object
+      properties:
+        spulValue:
+          type: string
+        dealName:
+          type: string
+        serviceMRC:
+          type: string
+        serviceNumber:
+          type: string
+        productType:
+          type: string
+        pricePlan:
+          type: string
+        offsetMRC:
+          type: string
     assetDetailsResponse:
       type: object
       properties:
@@ -447,23 +395,81 @@ components:
                           example: 654342613870009
                     insurance:
                       $ref: '#/components/schemas/assetDetailsInsurance'
-    openOrderInsuranceArray:
+    createCaseRequest:
       type: object
       properties:
-        spulValue:
+        applicationId:
           type: string
-        dealName:
+        customerType:
           type: string
-        serviceMRC:
+        applicationType:
           type: string
-        serviceNumber:
+        flag:
           type: string
-        productType:
+          example: Y
+    openOrdersResponse:
+      type: object
+      properties:
+        statusCode:
           type: string
-        pricePlan:
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
           type: string
-        offsetMRC:
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
           type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        data:
+          type: object
+          properties:
+            openOrders:
+              type: object
+              properties:
+                openOrders-1:
+                  type: object
+                  properties:
+                    orderNumber:
+                      type: string
+                    costCenter:
+                      type: string
+                    billingSubType:
+                      type: string
+                    paymentMethod:
+                      type: string
+                    billingType:
+                      type: string
+                    insuranceDetails:
+                      type: object
+                      properties:
+                        insurance:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/openOrderInsuranceArray'
+                openOrders-2:
+                  type: object
+                  properties:
+                    orderNumber:
+                      type: string
+                    costCenter:
+                      type: string
+                    billingSubType:
+                      type: string
+                    paymentMethod:
+                      type: string
+                    billingType:
+                      type: string
+                    serviceClass:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/serviceClassArray'
+                    insuranceDetails:
+                      type: object
+                      properties:
+                        insurance:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/openOrderInsuranceArray'
     Error:
       type: object
       required:
