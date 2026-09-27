@@ -10,7 +10,7 @@ tags:
 paths:
   /sim/admin/suspend/{iccid}:
     patch:
-      operationId: to disable a sim
+      operationId: toDisableASim
       summary: To disable a sim
       description: This operation disable a sim.
       tags:
@@ -36,8 +36,34 @@ paths:
               $ref: '#/components/schemas/Admin_Suspend'
         description: Fraud Suspension
         required: true
+      x-operation-id-source: normalized
+      x-operation-id-original: to disable a sim
 components:
   schemas:
+    Admin_Suspend_Response:
+      type: object
+      description: 'Skipped properties: id,href'
+      required:
+      - engagedParty
+      - name
+      properties:
+        serviceCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceCharacteristic'
+          description: Describes the characteristic of a customer.
+    Admin_Suspend:
+      type: object
+      description: 'Skipped properties: id,href'
+      required:
+      - engagedParty
+      - name
+      properties:
+        serviceCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceCharacteristic'
+          description: Describes the characteristic of a customer.
     Any: {}
     ServiceCharacteristic:
       required:
@@ -52,30 +78,6 @@ components:
           $ref: '#/components/schemas/Any'
           description: The value of the characteristic
       description: Describes a given characteristic of an object or entity through a name/value pair.
-    Admin_Suspend:
-      type: object
-      description: 'Skipped properties: id,href'
-      required:
-      - engagedParty
-      - name
-      properties:
-        serviceCharacteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/ServiceCharacteristic'
-          description: Describes the characteristic of a customer.
-    Admin_Suspend_Response:
-      type: object
-      description: 'Skipped properties: id,href'
-      required:
-      - engagedParty
-      - name
-      properties:
-        serviceCharacteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/ServiceCharacteristic'
-          description: Describes the characteristic of a customer.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

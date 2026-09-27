@@ -13,7 +13,7 @@ tags:
 paths:
   /callmeback/{id}:
     get:
-      operationId: getGeographicLocation and postCallMeBack
+      operationId: getGeographicLocationAndPostCallMeBack
       summary: GET GeographicLocation based on id and POST a callback request to Digi Call
       description: This operation finds GeographicLocation based on ID of the user and POST a callback request to Digi Call for the user.
       tags:
@@ -55,8 +55,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+      x-operation-id-source: normalized
+      x-operation-id-original: getGeographicLocation and postCallMeBack
 components:
   schemas:
+    Error404:
+      properties:
+        fault:
+          properties:
+            faultstring:
+              type: string
+              description: ''
+              example: 'Unable to identify proxy for host: southafrica and url: /v9/products/productOffering/roaming'
+        detail:
+          properties:
+            errorcode:
+              type: string
+              description: ''
+              example: messaging.adaptors.http.flow.ApplicationNotFound
     Error400:
       properties:
         statusCode:
@@ -73,41 +89,6 @@ components:
         supportMessage:
           type: string
           description: More error details and corrective measures
-    Error401:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status.
-          example: 4000
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-          example: Unauthorised
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-          example: Please verify token environment and key
-        faultMessage1:
-          type: string
-          description: ''
-        faultMessage2:
-          type: string
-          description: fault message
-          example: oauth.v2.InvalidApiKey
-    Error404:
-      properties:
-        fault:
-          properties:
-            faultstring:
-              type: string
-              description: ''
-              example: 'Unable to identify proxy for host: southafrica and url: /v9/products/productOffering/roaming'
-        detail:
-          properties:
-            errorcode:
-              type: string
-              description: ''
-              example: messaging.adaptors.http.flow.ApplicationNotFound
     callmeback_response:
       type: object
       required:
@@ -130,6 +111,27 @@ components:
           type: string
           description: This is the same transactionId that is sent in the request
           example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status.
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+          example: oauth.v2.InvalidApiKey
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

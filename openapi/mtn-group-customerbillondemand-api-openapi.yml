@@ -227,6 +227,39 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    Error:
+      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+      type: object
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name.
     CustomerBillOnDemand:
       type: object
       description: This resource is used to manage the creation request of a customer bill in real-time (on demand).
@@ -272,39 +305,31 @@ components:
       - rejected
       - done
       - terminatedWithError
-    Error:
-      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+    BillRef:
       type: object
-      required:
-      - code
-      - reason
+      description: Bill reference.
       properties:
-        code:
+        id:
           type: string
-          description: Application relevant detail, defined in the API or a common list.
-        reason:
+          description: Unique-Identifier for this <123>
+        href:
           type: string
-          description: Explanation of the reason for the error which can be shown to a client user.
-        message:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client user.
-        status:
-          type: string
-          description: HTTP Error code extension
-        referenceError:
-          type: string
-          format: uri
-          description: URI of documentation describing the error.
+          description: URL serving as reference for the <xyz> resource
         '@baseType':
           type: string
-          description: When sub-classing, this defines the super-class.
+          description: When sub-classing, this defines the super-class
         '@schemaLocation':
           type: string
           format: uri
           description: A URI to a JSON-Schema file that defines additional attributes and relationships
         '@type':
           type: string
-          description: When sub-classing, this defines the sub-class entity name.
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
     RelatedPartyRef:
       type: object
       description: RelatedParty reference. A related party defines party or party role linked to a specific entity.
@@ -336,9 +361,9 @@ components:
           description: The actual type of the target instance when needed for disambiguation.
       required:
       - id
-    BillRef:
+    BillingAccountRef:
       type: object
-      description: Bill reference.
+      description: Reference to the billing account in case of not billed item.
       properties:
         id:
           type: string
@@ -346,6 +371,9 @@ components:
         href:
           type: string
           description: URL serving as reference for the <xyz> resource
+        name:
+          type: string
+          description: Name of the Billingaccount
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -394,31 +422,3 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    BillingAccountRef:
-      type: object
-      description: Reference to the billing account in case of not billed item.
-      properties:
-        id:
-          type: string
-          description: Unique-Identifier for this <123>
-        href:
-          type: string
-          description: URL serving as reference for the <xyz> resource
-        name:
-          type: string
-          description: Name of the Billingaccount
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id

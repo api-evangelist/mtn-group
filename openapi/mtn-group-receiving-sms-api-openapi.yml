@@ -65,49 +65,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    inboundSMSMessage:
-      type: object
-      required:
-      - registrationId
-      - senderAddress
-      - message
-      properties:
-        dateTime:
-          type: string
-          description: The time when the message is received.
-          example: 2012-08-01T09:25:55.815+0000
-        registrationId:
-          type: string
-          description: The number associated with service (for example, an agreed short code)
-          example: '10111'
-        message:
-          type: string
-          description: The SMS message itself
-          example: Hello MADAPI SMS receiver!!!
-        senderAddress:
-          type: string
-          description: The MSISDN or Anonymous Customer Reference of the sender
-          example: '27830000001'
-        messageID:
-          type: string
-          description: Server-generated message identifier
-          example: 4444aaz-ddsds-45
-          format: URL
-    inboundSMSMessageList:
-      type: object
-      properties:
-        numberOfMessagesInThisBatch:
-          type: string
-          description: The number of messages in the batch.
-          example: '10'
-        totalNumberOfPendingMessages:
-          type: string
-          description: Total number of messages in the gateway storage waiting for retrieval at the time of the request
-          example: '10'
-        inboundSMSMessage:
-          type: array
-          items:
-            $ref: '#/components/schemas/inboundSMSMessage'
     inboundSMSMessageResponse:
       type: object
       required:
@@ -146,6 +103,21 @@ components:
                   type: string
                   description: ''
                   example: https://api.mtn.com/v1/messages/sms/inbound/registrations/10111/messages
+    inboundSMSMessageList:
+      type: object
+      properties:
+        numberOfMessagesInThisBatch:
+          type: string
+          description: The number of messages in the batch.
+          example: '10'
+        totalNumberOfPendingMessages:
+          type: string
+          description: Total number of messages in the gateway storage waiting for retrieval at the time of the request
+          example: '10'
+        inboundSMSMessage:
+          type: array
+          items:
+            $ref: '#/components/schemas/inboundSMSMessage'
     Error:
       type: object
       required:
@@ -179,6 +151,34 @@ components:
           type: string
           description: The HTTP method type that was used
           example: POST
+    inboundSMSMessage:
+      type: object
+      required:
+      - registrationId
+      - senderAddress
+      - message
+      properties:
+        dateTime:
+          type: string
+          description: The time when the message is received.
+          example: 2012-08-01T09:25:55.815+0000
+        registrationId:
+          type: string
+          description: The number associated with service (for example, an agreed short code)
+          example: '10111'
+        message:
+          type: string
+          description: The SMS message itself
+          example: Hello MADAPI SMS receiver!!!
+        senderAddress:
+          type: string
+          description: The MSISDN or Anonymous Customer Reference of the sender
+          example: '27830000001'
+        messageID:
+          type: string
+          description: Server-generated message identifier
+          example: 4444aaz-ddsds-45
+          format: URL
   securitySchemes:
     OAuth2:
       type: oauth2

@@ -17,7 +17,7 @@ paths:
       - Process Operations
       summary: To retrieve the booking availability
       description: Booking availability retrieval
-      operationId: Booking Availability
+      operationId: BookingAvailability
       parameters:
       - name: targetSystem
         in: header
@@ -131,13 +131,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      x-operation-id-source: normalized
+      x-operation-id-original: Booking Availability
   /booking/externalBooking:
     post:
       tags:
       - Process Operations
       summary: To validate the booking
       description: External booking validation
-      operationId: External Booking
+      operationId: ExternalBooking
       parameters:
       - name: targetSystem
         in: header
@@ -195,13 +197,15 @@ paths:
             schema:
               $ref: '#/components/schemas/externalBookingRequest'
         required: true
+      x-operation-id-source: normalized
+      x-operation-id-original: External Booking
   /booking/getBooking:
     get:
       tags:
       - Process Operations
       summary: To update or cancel a booking
       description: To view a booking
-      operationId: Booking update
+      operationId: BookingUpdate
       parameters:
       - name: targetSystem
         in: header
@@ -288,13 +292,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      x-operation-id-source: normalized
+      x-operation-id-original: Booking update
   /booking/cancelBooking:
     post:
       tags:
       - Process Operations
       summary: To cancel a booking request
       description: Booking Request cancellation
-      operationId: Cancel Booking
+      operationId: CancelBooking
       parameters:
       - name: targetSystem
         in: header
@@ -352,13 +358,15 @@ paths:
             schema:
               $ref: '#/components/schemas/cancelBookingRequest'
         required: true
+      x-operation-id-source: normalized
+      x-operation-id-original: Cancel Booking
   /booking/findBooking:
     get:
       tags:
       - Process Operations
       summary: To track a booking
       description: To know the current state of a booking
-      operationId: Track Booking
+      operationId: TrackBooking
       parameters:
       - name: targetSystem
         in: header
@@ -445,13 +453,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      x-operation-id-source: normalized
+      x-operation-id-original: Track Booking
   /booking/updateBooking:
     post:
       tags:
       - Process Operations
       summary: To validate booking by Administrator
       description: Booking validation by Administrator
-      operationId: Update Booking
+      operationId: UpdateBooking
       parameters:
       - name: targetSystem
         in: header
@@ -509,260 +519,10 @@ paths:
             schema:
               $ref: '#/components/schemas/updateBookingRequest'
         required: true
+      x-operation-id-source: normalized
+      x-operation-id-original: Update Booking
 components:
   schemas:
-    cancelBookingRequest:
-      type: object
-      properties:
-        referenceNo:
-          type: string
-          maxLength: 20
-          description: DX171130_425
-        divisionCode:
-          type: string
-          maxLength: 6
-          description: Division Code = MSD
-        customerGroupCode:
-          type: string
-          maxLength: 10
-          description: Customer Group Code
-        clientIDPassport:
-          type: string
-          maxLength: 20
-          description: '7012125181080'
-        cancellationReason:
-          type: string
-          maxLength: 100
-          description: Card no longer required
-    bookingRequests:
-      type: object
-      properties:
-        referenceNo:
-          type: string
-          description: DX171204_425
-          maxLength: 20
-        divisionCode:
-          type: string
-          description: Division Code for the Customers client
-          maxLength: 6
-        customerGroupCode:
-          type: string
-          description: Customer Group Code
-          maxLength: 10
-        deliveryType:
-          type: integer
-          description: Delivery Type 1=F2F, 2=KND, 3=Uplift(Branch), 4 = Locker
-        referenceType:
-          type: integer
-          description: Search Identifier Type 1 = UniqueRef :2 = MountiesRef M;
-        referenceValue:
-          type: integer
-          description: Unique Reference provided by Customers, or MountiesReference provided by DSV
-          maxLength: 50
-        productCode:
-          type: string
-          description: Product Code provided by Customers
-          maxLength: 6
-        deliveryProvinceCode:
-          type: string
-          description: Province Code selected by Customer
-        deliveryTownCode:
-          type: string
-          description: Town Code
-          maxLength: 5
-        deliverySuburb:
-          type: string
-          description: Suburb Name to search by
-          maxLength: 40
-        deliveryPostalCode:
-          type: string
-          description: Product Type Code to be delivered
-          maxLength: 6
-        deliveryCountryCode:
-          type: string
-          description: Country Code for the delivery
-          maxLength: 4
-        deliveryDateTime:
-          type: string
-          format: date-time
-          description: Requested Delivery Date from
-        controllingLocation:
-          type: string
-          maxLength: 6
-          description: Controlling Location for the delivery
-        tripSheetID:
-          type: string
-          maxLength: 30
-          description: Unique identifier of the Tripsheet available for delivery
-        tripServiceTime:
-          type: string
-          maxLength: 20
-          description: Times the Suburb is visited for deliveries
-        clientName:
-          type: string
-          maxLength: 50
-          description: Full name of the client/card holder
-        clientIDPassport:
-          type: string
-          maxLength: 30
-          description: ID or Passport number of the client/cardholder
-        clientContactTel:
-          type: string
-          maxLength: 20
-          description: Contact number of the client/cardholder
-        clientDeliveryAddress1:
-          type: string
-          maxLength: 30
-          description: Client/Cardholder delivery address line 1
-        clientDeliveryAddress2:
-          type: string
-          maxLength: 30
-          description: Client/Cardholder delivery address line 2
-        clientDeliveryAddress3:
-          type: string
-          maxLength: 30
-          description: Client/Cardholder delivery address line 3
-        notificationSMS:
-          type: boolean
-          description: Client/Cardholder SMS notification indicator
-        notificationEmail:
-          type: boolean
-          description: Client/Cardholder Email notification indicator
-        notificationCalendar:
-          type: boolean
-          description: Client/Cardholder Calendar notification indicator
-        notificationCellNo:
-          type: string
-          maxLength: 12
-          description: Client/Cardholder SMS notification cell number
-        notificationEmailAddress:
-          type: string
-          maxLength: 50
-          description: Client/Cardholder Email notification address
-        notificationEmailCalendar:
-          type: string
-          maxLength: 50
-          description: Client/Cardholder Calendar appointment email address
-        clientSpecialInstructions:
-          type: string
-          maxLength: 250
-          description: Client/Cardholder special instructions for delivery
-        failCount:
-          type: integer
-          description: Number of times the Booking failed to slot onto Tripsheet
-        createdDate:
-          type: string
-          description: Date Booking was created
-        updatedDate:
-          type: string
-          description: Date Booking was updated
-        failedDate:
-          type: string
-          description: Date Booking last failed
-        bookedDate:
-          type: string
-          description: Date Booking was slotted onto Tripsheet successfully
-        cancelledDate:
-          type: string
-          description: Date Booking was cancelled by the user
-        deadlineDate:
-          type: string
-          description: Date the Data and Item must be received by
-        adminComments:
-          type: string
-          maxLength: 250
-          description: Comments entered by administrator users
-        messages:
-          type: string
-          maxLength: 250
-          description: List of messages generated during processing
-        statusDescription:
-          type: string
-          maxLength: 25
-          description: Status of the Booking Request
-        bookedBy:
-          type: string
-          maxLength: 30
-          description: User who submitted the Booking Request
-        thirdPartyDelivery:
-          type: boolean
-          description: Third Party Delivery Indicator
-        thirdPartyName:
-          type: string
-          maxLength: 50
-          description: John Smith
-        thirdPartyIDNumber:
-          type: string
-          maxLength: 20
-        thirdPartyContactNumber:
-          type: string
-          maxLength: 20
-        thirdPartyEmailAddress:
-          type: string
-          maxLength: 60
-        GPSX:
-          type: string
-          maxLength: 20
-          description: Latitude
-        GPSY:
-          type: string
-          maxLength: 20
-          description: Longitude
-    updateBookingResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-    findBookingResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-        data:
-          type: object
-          properties:
-            bookingRequest:
-              type: array
-              items:
-                $ref: '#/components/schemas/bookingRequests'
-            messages:
-              type: array
-              items:
-                $ref: '#/components/schemas/messages'
-    getBookingResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-        data:
-          type: object
-          properties:
-            bookingRequest:
-              type: array
-              items:
-                $ref: '#/components/schemas/bookingRequest'
-            messages:
-              type: array
-              items:
-                $ref: '#/components/schemas/messages'
     bookingRequest:
       type: object
       properties:
@@ -937,6 +697,215 @@ components:
           type: string
           maxLength: 20
           description: Longitude
+    findBookingResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            bookingRequest:
+              type: array
+              items:
+                $ref: '#/components/schemas/bookingRequests'
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/messages'
+    messages:
+      type: object
+      properties:
+        oneBookingRequestFound:
+          type: string
+          maxLength: 10
+    serviceDays:
+      type: object
+      properties:
+        version:
+          type: string
+          maxLength: 10
+        mon:
+          type: string
+          maxLength: 1
+          example: Y
+        tue:
+          type: string
+          maxLength: 1
+          example: Y
+        wed:
+          type: string
+          maxLength: 1
+          example: Y
+        thu:
+          type: string
+          maxLength: 1
+          example: Y
+        fri:
+          type: string
+          maxLength: 1
+          example: Y
+        sat:
+          type: string
+          maxLength: 1
+          example: Y
+        sun:
+          type: string
+          maxLength: 1
+          example: Y
+        pubHol:
+          type: string
+          maxLength: 1
+          example: Y
+        monServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        tueServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        wedServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        thuServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        friServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        satServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        sunServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        pHServiceTimes:
+          type: object
+          properties:
+            timeSlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/timeSlots'
+        createdDate:
+          type: string
+          format: date-time
+    bookingAvailabilityResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            bookingAvailabilitySlots:
+              type: array
+              items:
+                $ref: '#/components/schemas/bookingAvailabilitySlots'
+            serviceDays:
+              type: array
+              items:
+                $ref: '#/components/schemas/serviceDays'
+    cancelBookingRequest:
+      type: object
+      properties:
+        referenceNo:
+          type: string
+          maxLength: 20
+          description: DX171130_425
+        divisionCode:
+          type: string
+          maxLength: 6
+          description: Division Code = MSD
+        customerGroupCode:
+          type: string
+          maxLength: 10
+          description: Customer Group Code
+        clientIDPassport:
+          type: string
+          maxLength: 20
+          description: '7012125181080'
+        cancellationReason:
+          type: string
+          maxLength: 100
+          description: Card no longer required
+    getBookingResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            bookingRequest:
+              type: array
+              items:
+                $ref: '#/components/schemas/bookingRequest'
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/messages'
+    externalBookingResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            referenceNo:
+              type: string
+              description: Booking Reference No generated
     updateBookingRequest:
       type: object
       properties:
@@ -1074,153 +1043,6 @@ components:
         GPSY:
           type: string
           description: Longitude
-    bookingAvailabilityResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-        data:
-          type: object
-          properties:
-            bookingAvailabilitySlots:
-              type: array
-              items:
-                $ref: '#/components/schemas/bookingAvailabilitySlots'
-            serviceDays:
-              type: array
-              items:
-                $ref: '#/components/schemas/serviceDays'
-    serviceDays:
-      type: object
-      properties:
-        version:
-          type: string
-          maxLength: 10
-        mon:
-          type: string
-          maxLength: 1
-          example: Y
-        tue:
-          type: string
-          maxLength: 1
-          example: Y
-        wed:
-          type: string
-          maxLength: 1
-          example: Y
-        thu:
-          type: string
-          maxLength: 1
-          example: Y
-        fri:
-          type: string
-          maxLength: 1
-          example: Y
-        sat:
-          type: string
-          maxLength: 1
-          example: Y
-        sun:
-          type: string
-          maxLength: 1
-          example: Y
-        pubHol:
-          type: string
-          maxLength: 1
-          example: Y
-        monServiceTimes:
-          type: object
-          properties:
-            timeSlots:
-              type: array
-              items:
-                $ref: '#/components/schemas/timeSlots'
-        tueServiceTimes:
-          type: object
-          properties:
-            timeSlots:
-              type: array
-              items:
-                $ref: '#/components/schemas/timeSlots'
-        wedServiceTimes:
-          type: object
-          properties:
-            timeSlots:
-              type: array
-              items:
-                $ref: '#/components/schemas/timeSlots'
-        thuServiceTimes:
-          type: object
-          properties:
-            timeSlots:
-              type: array
-              items:
-                $ref: '#/components/schemas/timeSlots'
-        friServiceTimes:
-          type: object
-          properties:
-            timeSlots:
-              type: array
-              items:
-                $ref: '#/components/schemas/timeSlots'
-        satServiceTimes:
-          type: object
-          properties:
-            timeSlots:
-              type: array
-              items:
-                $ref: '#/components/schemas/timeSlots'
-        sunServiceTimes:
-          type: object
-          properties:
-            timeSlots:
-              type: array
-              items:
-                $ref: '#/components/schemas/timeSlots'
-        pHServiceTimes:
-          type: object
-          properties:
-            timeSlots:
-              type: array
-              items:
-                $ref: '#/components/schemas/timeSlots'
-        createdDate:
-          type: string
-          format: date-time
-    externalBookingResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-        data:
-          type: object
-          properties:
-            referenceNo:
-              type: string
-              description: Booking Reference No generated
-    cancelBookingResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
     externalBookingRequest:
       type: object
       properties:
@@ -1339,40 +1161,6 @@ components:
         gpsY:
           type: string
           description: Longitude
-    bookingAvailabilitySlots:
-      type: object
-      properties:
-        dailyTripId:
-          type: string
-          description: Unique daily trip GUID tripsheet identifier
-          maxLength: 68
-        townCode:
-          type: string
-          maxLength: 3
-        suburbName:
-          type: string
-          maxLength: 30
-        serviceDate:
-          type: string
-          format: date-time
-        serviceTime:
-          type: string
-          description: This is the service start time and end time
-          maxLength: 20
-          example: 9:00AM - 5:00PM
-        availableSlots:
-          type: integer
-          description: Number of available slots of Daily Trip Sheet
-        additionalSuburbNotes:
-          type: string
-          description: Additional suburb notes that are captured when setting up the delivery suburbs.
-          maxLength: 258
-    messages:
-      type: object
-      properties:
-        oneBookingRequestFound:
-          type: string
-          maxLength: 10
     timeSlots:
       type: string
       example: 5:00AM - 5:00PM, 9:00AM - 5:00PM, 11:25AM - 8:00PM
@@ -1402,6 +1190,230 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
+    bookingRequests:
+      type: object
+      properties:
+        referenceNo:
+          type: string
+          description: DX171204_425
+          maxLength: 20
+        divisionCode:
+          type: string
+          description: Division Code for the Customers client
+          maxLength: 6
+        customerGroupCode:
+          type: string
+          description: Customer Group Code
+          maxLength: 10
+        deliveryType:
+          type: integer
+          description: Delivery Type 1=F2F, 2=KND, 3=Uplift(Branch), 4 = Locker
+        referenceType:
+          type: integer
+          description: Search Identifier Type 1 = UniqueRef :2 = MountiesRef M;
+        referenceValue:
+          type: integer
+          description: Unique Reference provided by Customers, or MountiesReference provided by DSV
+          maxLength: 50
+        productCode:
+          type: string
+          description: Product Code provided by Customers
+          maxLength: 6
+        deliveryProvinceCode:
+          type: string
+          description: Province Code selected by Customer
+        deliveryTownCode:
+          type: string
+          description: Town Code
+          maxLength: 5
+        deliverySuburb:
+          type: string
+          description: Suburb Name to search by
+          maxLength: 40
+        deliveryPostalCode:
+          type: string
+          description: Product Type Code to be delivered
+          maxLength: 6
+        deliveryCountryCode:
+          type: string
+          description: Country Code for the delivery
+          maxLength: 4
+        deliveryDateTime:
+          type: string
+          format: date-time
+          description: Requested Delivery Date from
+        controllingLocation:
+          type: string
+          maxLength: 6
+          description: Controlling Location for the delivery
+        tripSheetID:
+          type: string
+          maxLength: 30
+          description: Unique identifier of the Tripsheet available for delivery
+        tripServiceTime:
+          type: string
+          maxLength: 20
+          description: Times the Suburb is visited for deliveries
+        clientName:
+          type: string
+          maxLength: 50
+          description: Full name of the client/card holder
+        clientIDPassport:
+          type: string
+          maxLength: 30
+          description: ID or Passport number of the client/cardholder
+        clientContactTel:
+          type: string
+          maxLength: 20
+          description: Contact number of the client/cardholder
+        clientDeliveryAddress1:
+          type: string
+          maxLength: 30
+          description: Client/Cardholder delivery address line 1
+        clientDeliveryAddress2:
+          type: string
+          maxLength: 30
+          description: Client/Cardholder delivery address line 2
+        clientDeliveryAddress3:
+          type: string
+          maxLength: 30
+          description: Client/Cardholder delivery address line 3
+        notificationSMS:
+          type: boolean
+          description: Client/Cardholder SMS notification indicator
+        notificationEmail:
+          type: boolean
+          description: Client/Cardholder Email notification indicator
+        notificationCalendar:
+          type: boolean
+          description: Client/Cardholder Calendar notification indicator
+        notificationCellNo:
+          type: string
+          maxLength: 12
+          description: Client/Cardholder SMS notification cell number
+        notificationEmailAddress:
+          type: string
+          maxLength: 50
+          description: Client/Cardholder Email notification address
+        notificationEmailCalendar:
+          type: string
+          maxLength: 50
+          description: Client/Cardholder Calendar appointment email address
+        clientSpecialInstructions:
+          type: string
+          maxLength: 250
+          description: Client/Cardholder special instructions for delivery
+        failCount:
+          type: integer
+          description: Number of times the Booking failed to slot onto Tripsheet
+        createdDate:
+          type: string
+          description: Date Booking was created
+        updatedDate:
+          type: string
+          description: Date Booking was updated
+        failedDate:
+          type: string
+          description: Date Booking last failed
+        bookedDate:
+          type: string
+          description: Date Booking was slotted onto Tripsheet successfully
+        cancelledDate:
+          type: string
+          description: Date Booking was cancelled by the user
+        deadlineDate:
+          type: string
+          description: Date the Data and Item must be received by
+        adminComments:
+          type: string
+          maxLength: 250
+          description: Comments entered by administrator users
+        messages:
+          type: string
+          maxLength: 250
+          description: List of messages generated during processing
+        statusDescription:
+          type: string
+          maxLength: 25
+          description: Status of the Booking Request
+        bookedBy:
+          type: string
+          maxLength: 30
+          description: User who submitted the Booking Request
+        thirdPartyDelivery:
+          type: boolean
+          description: Third Party Delivery Indicator
+        thirdPartyName:
+          type: string
+          maxLength: 50
+          description: John Smith
+        thirdPartyIDNumber:
+          type: string
+          maxLength: 20
+        thirdPartyContactNumber:
+          type: string
+          maxLength: 20
+        thirdPartyEmailAddress:
+          type: string
+          maxLength: 60
+        GPSX:
+          type: string
+          maxLength: 20
+          description: Latitude
+        GPSY:
+          type: string
+          maxLength: 20
+          description: Longitude
+    bookingAvailabilitySlots:
+      type: object
+      properties:
+        dailyTripId:
+          type: string
+          description: Unique daily trip GUID tripsheet identifier
+          maxLength: 68
+        townCode:
+          type: string
+          maxLength: 3
+        suburbName:
+          type: string
+          maxLength: 30
+        serviceDate:
+          type: string
+          format: date-time
+        serviceTime:
+          type: string
+          description: This is the service start time and end time
+          maxLength: 20
+          example: 9:00AM - 5:00PM
+        availableSlots:
+          type: integer
+          description: Number of available slots of Daily Trip Sheet
+        additionalSuburbNotes:
+          type: string
+          description: Additional suburb notes that are captured when setting up the delivery suburbs.
+          maxLength: 258
+    updateBookingResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+    cancelBookingResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -101,29 +101,40 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Deals:
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        status:
+          type: string
+          description: Status/Error code returned from the provider system
+        error:
+          type: string
+          description: Status/Error description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
+    Products:
       type: object
       properties:
-        dealId:
+        productid:
           type: string
-        dealType:
+        productName:
           type: string
-        dealName:
+        serviceMRC:
           type: string
-        contractTerm:
+        productType:
           type: string
-        dealPriceWithVAT:
-          type: string
-        dealPriceWithoutVAT:
-          type: string
-        devices:
-          type: array
-          items:
-            $ref: '#/components/schemas/DealDevices'
-        pricePlan:
-          type: array
-          items:
-            $ref: '#/components/schemas/PricePlan'
     PricePlan:
       type: object
       properties:
@@ -136,28 +147,6 @@ components:
         serviceMRCWithoutVAT:
           type: string
         serviceType:
-          type: string
-    DealDevices:
-      type: object
-      properties:
-        subDealId:
-          type: string
-        deviceName:
-          type: string
-        deviceMRCWithVAT:
-          type: string
-        deviceMRCWithoutVAT:
-          type: string
-    Products:
-      type: object
-      properties:
-        productid:
-          type: string
-        productName:
-          type: string
-        serviceMRC:
-          type: string
-        productType:
           type: string
     GetDealsResponse:
       type: object
@@ -195,29 +184,40 @@ components:
                 $ref: '#/components/schemas/Products'
             sourceApplicationID:
               type: string
-    Error:
+    DealDevices:
       type: object
-      title: Error
-      required:
-      - status
-      - message
       properties:
-        timestamp:
+        subDealId:
           type: string
-          format: date-time
-          description: Time stamp of the error
-        status:
+        deviceName:
           type: string
-          description: Status/Error code returned from the provider system
-        error:
+        deviceMRCWithVAT:
           type: string
-          description: Status/Error description
-        message:
+        deviceMRCWithoutVAT:
           type: string
-          description: More error details and corrective measures
-        path:
+    Deals:
+      type: object
+      properties:
+        dealId:
           type: string
-          description: the path that caused the error
+        dealType:
+          type: string
+        dealName:
+          type: string
+        contractTerm:
+          type: string
+        dealPriceWithVAT:
+          type: string
+        dealPriceWithoutVAT:
+          type: string
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/DealDevices'
+        pricePlan:
+          type: array
+          items:
+            $ref: '#/components/schemas/PricePlan'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

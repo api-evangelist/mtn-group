@@ -65,21 +65,28 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    AdditionalInformationListData:
+    AccountHolderRegistrationData:
       type: object
-      description: Any other information of the account holder
+      required:
+      - msisdn
+      - username
+      - email
       properties:
-        firstName:
+        accountHolderId:
           type: string
-        lastName:
+          description: A uniquie identifier or an account number of the accounts to be linked
+          example: 0100002009300
+        profileName:
           type: string
-        contactNumber:
+          description: A description of the account to be registered and linked, profile details
+        timeout:
+          type: number
+          description: A timeout in seconds
+          default: 30
+        bankDomainName:
           type: string
-        otherName:
-          type: string
-          description: Other name of the account holder
-        residentialAddress:
-          type: string
+          description: Name of the bank eg. EcoBank
+          example: EcoBank, AccessBank
     LinkAccountData:
       type: object
       required:
@@ -128,34 +135,27 @@ components:
           type: string
           description: The transaction Id created for the request
           example: A3344098765456
-    AccountHolderRegistrationData:
-      type: object
-      required:
-      - msisdn
-      - username
-      - email
-      properties:
-        accountHolderId:
-          type: string
-          description: A uniquie identifier or an account number of the accounts to be linked
-          example: 0100002009300
-        profileName:
-          type: string
-          description: A description of the account to be registered and linked, profile details
-        timeout:
-          type: number
-          description: A timeout in seconds
-          default: 30
-        bankDomainName:
-          type: string
-          description: Name of the bank eg. EcoBank
-          example: EcoBank, AccessBank
     DocumentReferenceInformationListData:
       type: object
       properties:
         documentReferenceNumber:
           type: string
         documentName:
+          type: string
+    AdditionalInformationListData:
+      type: object
+      description: Any other information of the account holder
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        contactNumber:
+          type: string
+        otherName:
+          type: string
+          description: Other name of the account holder
+        residentialAddress:
           type: string
     APIError:
       type: object

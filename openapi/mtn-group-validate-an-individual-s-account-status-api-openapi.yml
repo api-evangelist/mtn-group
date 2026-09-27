@@ -121,6 +121,38 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the error occured.
+          example: 2018-05-01T00:00
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+        supportMessage:
+          type: string
+          description: Support Message
+        customerId:
+          type: string
+          description: Customer ID or msisdn
+        sequenceNo:
+          type: string
+          description: A unique id for tracing all requests
+          example: 12345
+        transactionId:
+          type: string
+          description: Message ID
+        _links:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links'
     AccountholderStatusResponse__links_self:
       type: object
       properties:
@@ -128,41 +160,6 @@ components:
           type: string
           example: https://host:port/v1/accountholderstatus/12345
           description: Hyperlink to access the Accountholder's Status.
-    validationData:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: First Name of the customer
-          example: John
-        lastName:
-          type: string
-          description: Last Name of the customer
-          example: Doe
-        gender:
-          type: string
-          description: Gender of the customer
-          example: FEMALE
-        dateOfBirth:
-          type: string
-          description: Date of birth of the customer
-          example: '1992-12-17'
-        isValid:
-          type: boolean
-          description: Indicates whether the accountholder is validated. True = yes.
-          example: false
-        extension:
-          type: array
-          description: List of additional values returned from the provider system
-          items:
-            type: string
-    AccountholderProfileResponse__links_self:
-      type: object
-      properties:
-        href:
-          type: string
-          example: https://host:port/v1/accountholders/12345
-          description: Hyperlink to access the Accountholder's Profile.
     AccountholderStatusResponse__links:
       type: object
       properties:
@@ -196,38 +193,41 @@ components:
         self:
           $ref: '#/components/schemas/AccountholderProfileResponse__links_self'
       description: Relevant links to the Accoutholder Profile.
-    Error:
+    AccountholderProfileResponse__links_self:
       type: object
-      required:
-      - statusCode
-      - statusMessage
       properties:
-        timestamp:
+        href:
           type: string
-          format: date-time
-          description: Timestamp when the error occured.
-          example: 2018-05-01T00:00
-        statusCode:
+          example: https://host:port/v1/accountholders/12345
+          description: Hyperlink to access the Accountholder's Profile.
+    validationData:
+      type: object
+      properties:
+        firstName:
           type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-        statusMessage:
+          description: First Name of the customer
+          example: John
+        lastName:
           type: string
-          description: More details and corrective actions related to the error which can be shown to a client.
-        supportMessage:
+          description: Last Name of the customer
+          example: Doe
+        gender:
           type: string
-          description: Support Message
-        customerId:
+          description: Gender of the customer
+          example: FEMALE
+        dateOfBirth:
           type: string
-          description: Customer ID or msisdn
-        sequenceNo:
-          type: string
-          description: A unique id for tracing all requests
-          example: 12345
-        transactionId:
-          type: string
-          description: Message ID
-        _links:
-          $ref: '#/components/schemas/AccountholderProfileResponse__links'
+          description: Date of birth of the customer
+          example: '1992-12-17'
+        isValid:
+          type: boolean
+          description: Indicates whether the accountholder is validated. True = yes.
+          example: false
+        extension:
+          type: array
+          description: List of additional values returned from the provider system
+          items:
+            type: string
   securitySchemes:
     OAuth2:
       type: oauth2

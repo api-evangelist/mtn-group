@@ -50,6 +50,80 @@ paths:
       - Balance Buckets Methods
 components:
   schemas:
+    RealizingResourceRefType:
+      description: Information about a resource that holds realizes the product that is linked to the bucket balance
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the related party
+        href:
+          type: string
+          description: Reference to the party
+        name:
+          type: string
+          description: Name of the resource
+        '@Type':
+          type: string
+          description: Indicates the type of resource
+        value:
+          type: string
+          description: 'The resource value that can be used to identify a resource with a public key (e.g.: a tel nr, an msisdn)'
+    TimePeriodType:
+      description: Representation of a time period
+      properties:
+        startDateTime:
+          format: date-time
+          type: string
+          description: Start date of the period
+        endDateTime:
+          format: date-time
+          type: string
+          description: End date of the period
+      required:
+      - startDateTime
+    PartyAccountRefType:
+      description: Information about a resource that holds information about the account that owns the bucket
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the account entity
+        href:
+          type: string
+          description: A resource URI pointing to the resource in the OB that stores the account information
+        name:
+          type: string
+          description: Name of the account
+      required:
+      - id
+      - href
+    ProductRefType:
+      description: Representation of a resource that holds information about the product that is linked to the bucket balance.
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the product entity
+        href:
+          type: string
+          description: A resource URI pointing to the resource in the OB that stores the product information
+        name:
+          type: string
+          description: Name of the product
+      required:
+      - id
+      - href
+    QuantityType:
+      description: Representation of a quantity of something. I can also be used to represent a quantity range
+      properties:
+        amount:
+          format: decimal
+          type: number
+          description: Measured amount
+        units:
+          type: string
+          description: Units the quantity is measured in
+      required:
+      - units
+      - amount
     BucketBalance:
       description: Represents and tracks the amount remained or owed for a certain type of service by certain customer
       properties:
@@ -105,65 +179,6 @@ components:
       - validFor
       - status
       - product
-    RealizingResourceRefType:
-      description: Information about a resource that holds realizes the product that is linked to the bucket balance
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the related party
-        href:
-          type: string
-          description: Reference to the party
-        name:
-          type: string
-          description: Name of the resource
-        '@Type':
-          type: string
-          description: Indicates the type of resource
-        value:
-          type: string
-          description: 'The resource value that can be used to identify a resource with a public key (e.g.: a tel nr, an msisdn)'
-    ProductRefType:
-      description: Representation of a resource that holds information about the product that is linked to the bucket balance.
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the product entity
-        href:
-          type: string
-          description: A resource URI pointing to the resource in the OB that stores the product information
-        name:
-          type: string
-          description: Name of the product
-      required:
-      - id
-      - href
-    QuantityType:
-      description: Representation of a quantity of something. I can also be used to represent a quantity range
-      properties:
-        amount:
-          format: decimal
-          type: number
-          description: Measured amount
-        units:
-          type: string
-          description: Units the quantity is measured in
-      required:
-      - units
-      - amount
-    TimePeriodType:
-      description: Representation of a time period
-      properties:
-        startDateTime:
-          format: date-time
-          type: string
-          description: Start date of the period
-        endDateTime:
-          format: date-time
-          type: string
-          description: End date of the period
-      required:
-      - startDateTime
     RelatedPartyRefType:
       description: Information about an associated entity and its role
       properties:
@@ -182,21 +197,6 @@ components:
       required:
       - role
       - name
-    PartyAccountRefType:
-      description: Information about a resource that holds information about the account that owns the bucket
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the account entity
-        href:
-          type: string
-          description: A resource URI pointing to the resource in the OB that stores the account information
-        name:
-          type: string
-          description: Name of the account
-      required:
-      - id
-      - href
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

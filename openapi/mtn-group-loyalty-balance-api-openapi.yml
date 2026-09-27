@@ -13,7 +13,7 @@ paths:
       description: This operation retrieves loyalty program member accounts balance.
       tags:
       - Loyalty Balance
-      operationId: List Member Balances
+      operationId: ListMemberBalances
       parameters:
       - name: memberId
         in: path
@@ -29,11 +29,13 @@ paths:
                 $ref: '#/components/schemas/GetLoyaltyBalance'
       summary: List member balances
       x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: List Member Balances
     patch:
       description: This operation updates the attributes of a loyalty program member loyalty balance present in the request body and update another members/ point transfer loyalty balance.
       tags:
       - Loyalty Balance
-      operationId: Update Member Balance
+      operationId: UpdateMemberBalance
       parameters:
       - name: memberId
         in: path
@@ -67,6 +69,8 @@ paths:
         required: true
       summary: Update member balance
       x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: Update Member Balance
 components:
   schemas:
     LoyaltyProgramProductSpecification:
@@ -77,85 +81,6 @@ components:
           type: string
       required:
       - id
-    LoyaltySuccessResponse:
-      title: LoyaltyBalanceTransferResponse
-      required:
-      - code
-      - message
-      properties:
-        code:
-          description: An integer coding the error type. This is given to caller so he can translate them if required.
-          type: integer
-        message:
-          description: A short localized string that describes the error.
-          type: string
-        description:
-          description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
-          type: string
-    ValidFor:
-      title: ValidFor
-      type: object
-      properties:
-        startDateTime:
-          type: string
-        endDateTime:
-          type: string
-      required:
-      - startDateTime
-    LoyaltyBalance:
-      title: LoyaltyBalance
-      type: object
-      properties:
-        id:
-          type: string
-        quantity:
-          $ref: '#/components/schemas/Quantity'
-        redeemQuantity:
-          $ref: '#/components/schemas/RedeemQuantity'
-        validFor:
-          $ref: '#/components/schemas/ValidFor'
-        loyaltyProgramMember:
-          $ref: '#/components/schemas/LoyaltyMemberLinkRef'
-        productSpecification:
-          $ref: '#/components/schemas/LoyaltyProgramProductSpecification'
-    Quantity:
-      title: Quantity
-      type: object
-      properties:
-        unit:
-          type: string
-        balance:
-          type: number
-          format: double
-      required:
-      - balance
-    ErrorDetail:
-      required:
-      - code
-      - message
-      properties:
-        code:
-          description: An integer coding the error type. This is given to caller so he can translate them if required.
-          type: integer
-        message:
-          description: A short localized string that describes the error.
-          type: string
-        description:
-          description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
-          type: string
-        infoURL:
-          description: (optional) A URL to online documentation that provides more information about the error.
-          type: string
-    GetLoyaltyBalance:
-      title: GetLoyaltyBalance
-      type: object
-      properties:
-        availablePoints:
-          type: string
-        listResponse:
-          type: array
-          items:
-            $ref: '#/components/schemas/LoyaltyBalance'
     Error:
       required:
       - code
@@ -177,6 +102,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorDetail'
+    LoyaltyBalance:
+      title: LoyaltyBalance
+      type: object
+      properties:
+        id:
+          type: string
+        quantity:
+          $ref: '#/components/schemas/Quantity'
+        redeemQuantity:
+          $ref: '#/components/schemas/RedeemQuantity'
+        validFor:
+          $ref: '#/components/schemas/ValidFor'
+        loyaltyProgramMember:
+          $ref: '#/components/schemas/LoyaltyMemberLinkRef'
+        productSpecification:
+          $ref: '#/components/schemas/LoyaltyProgramProductSpecification'
+    LoyaltyBalanceTransfer:
+      title: LoyaltyBalanceTransfer
+      type: object
+      properties:
+        toLoyaltyProgrammeMember:
+          type: string
+        pointsToBeTransferred:
+          type: number
     RedeemQuantity:
       title: Quantity
       type: object
@@ -188,14 +137,16 @@ components:
           format: double
       required:
       - balance
-    LoyaltyBalanceTransfer:
-      title: LoyaltyBalanceTransfer
+    ValidFor:
+      title: ValidFor
       type: object
       properties:
-        toLoyaltyProgrammeMember:
+        startDateTime:
           type: string
-        pointsToBeTransferred:
-          type: number
+        endDateTime:
+          type: string
+      required:
+      - startDateTime
     LoyaltyMemberLinkRef:
       title: LoyaltyMemberLinkRef
       type: object
@@ -205,4 +156,57 @@ components:
         publicIdentifier:
           type: string
         href:
+          type: string
+    ErrorDetail:
+      required:
+      - code
+      - message
+      properties:
+        code:
+          description: An integer coding the error type. This is given to caller so he can translate them if required.
+          type: integer
+        message:
+          description: A short localized string that describes the error.
+          type: string
+        description:
+          description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
+          type: string
+        infoURL:
+          description: (optional) A URL to online documentation that provides more information about the error.
+          type: string
+    Quantity:
+      title: Quantity
+      type: object
+      properties:
+        unit:
+          type: string
+        balance:
+          type: number
+          format: double
+      required:
+      - balance
+    GetLoyaltyBalance:
+      title: GetLoyaltyBalance
+      type: object
+      properties:
+        availablePoints:
+          type: string
+        listResponse:
+          type: array
+          items:
+            $ref: '#/components/schemas/LoyaltyBalance'
+    LoyaltySuccessResponse:
+      title: LoyaltyBalanceTransferResponse
+      required:
+      - code
+      - message
+      properties:
+        code:
+          description: An integer coding the error type. This is given to caller so he can translate them if required.
+          type: integer
+        message:
+          description: A short localized string that describes the error.
+          type: string
+        description:
+          description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
           type: string

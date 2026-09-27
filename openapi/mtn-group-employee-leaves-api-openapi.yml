@@ -17,7 +17,7 @@ paths:
       - Employee Leaves
       summary: Returns leave balance of the employee
       description: Returns leave balance of the employee with Employee Id.
-      operationId: getLeave Balance
+      operationId: getLeaveBalance
       parameters:
       - name: transactionId
         in: query
@@ -74,28 +74,10 @@ paths:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/Error500'
+      x-operation-id-source: normalized
+      x-operation-id-original: getLeave Balance
 components:
   schemas:
-    Error401:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 4000
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-          example: Unauthorised
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-          example: Please verify token environment and key
-        faultMessage1:
-          type: string
-          description: ''
-        faultMessage2:
-          type: string
-          description: fault message
     Error400:
       properties:
         statusCode:
@@ -131,27 +113,6 @@ components:
           type: string
           description: More details and corrective actions related to the error which can be shown to a client
           example: Internal Server Error
-        path:
-          type: string
-          description: The path that caused the error
-    Error415:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 415
-        error:
-          type: string
-          description: error message
-          example: Unsupported Media Type
-        message:
-          type: string
-          description: details
         path:
           type: string
           description: The path that caused the error
@@ -214,6 +175,47 @@ components:
                 type: string
                 description: This is the actual leave balance formatted
                 example: 31 Days
+    Error415:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 415
+        error:
+          type: string
+          description: error message
+          example: Unsupported Media Type
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
     Error404:
       properties:
         timestamp:

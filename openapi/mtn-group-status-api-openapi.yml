@@ -330,6 +330,38 @@ paths:
     - url: https://api.mtn.com/v1/customer
 components:
   schemas:
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the error occured.
+          example: 2018-05-01T00:00
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+        supportMessage:
+          type: string
+          description: Support Message
+        customerId:
+          type: string
+          description: Customer ID or msisdn
+        sequenceNo:
+          type: string
+          description: A unique id for tracing all requests
+          example: 12345
+        transactionId:
+          type: string
+          description: Message ID
+        _links:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links'
     data:
       type: object
       properties:
@@ -448,7 +480,22 @@ components:
           properties:
             code:
               type: string
-    Any: {}
+    ParentAttributes:
+      type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          description: Name of the characteristic
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
     AccountholderProfile:
       type: object
       properties:
@@ -474,22 +521,13 @@ components:
           $ref: '#/components/schemas/data'
         _links:
           $ref: '#/components/schemas/AccountholderProfileResponse__links'
-    ParentAttributes:
+    Any: {}
+    AccountholderProfileResponse__links:
       type: object
-      description: Describes a given characteristic of an object or entity through a name/value pair.
-      required:
-      - name
-      - value
       properties:
-        name:
-          type: string
-          description: Name of the characteristic
-        valueType:
-          type: string
-          description: Data type of the value of the characteristic
-        value:
-          $ref: '#/components/schemas/Any'
-          description: The value of the characteristic
+        self:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links_self'
+      description: Relevant links to the Accoutholder Profile.
     AccountholderProfileResponse__links_self:
       type: object
       properties:
@@ -497,86 +535,6 @@ components:
           type: string
           example: https://host:port/v1/accountholders/12345
           description: Hyperlink to access the Accountholder's Profile.
-    AccountholderProfileResponse__links:
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/AccountholderProfileResponse__links_self'
-      description: Relevant links to the Accoutholder Profile.
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp when the error occured.
-          example: 2018-05-01T00:00
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client.
-        supportMessage:
-          type: string
-          description: Support Message
-        customerId:
-          type: string
-          description: Customer ID or msisdn
-        sequenceNo:
-          type: string
-          description: A unique id for tracing all requests
-          example: 12345
-        transactionId:
-          type: string
-          description: Message ID
-        _links:
-          $ref: '#/components/schemas/AccountholderProfileResponse__links'
-    transStatResponse:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      - supportMessage
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-        data:
-          type: object
-          properties:
-            type:
-              description: The transaction query type.
-              minLength: 2
-              maxLength: 30
-              type: string
-              enum:
-              - debit
-              - order
-              - refund
-            msn:
-              type: string
-              minLength: 16
-              maxLength: 64
-              description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
-              example: '5115314911298406'
-            orderRef:
-              type: string
-              minLength: 1
-              description: This field is the payment reference of the transaction being queried.
-              example: '1236457'
-            timestamp:
-              type: string
-              format: date-time
-              description: Time stamp of the error
     tokenStatResponse:
       type: object
       properties:
@@ -635,6 +593,48 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
+    transStatResponse:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            type:
+              description: The transaction query type.
+              minLength: 2
+              maxLength: 30
+              type: string
+              enum:
+              - debit
+              - order
+              - refund
+            msn:
+              type: string
+              minLength: 16
+              maxLength: 64
+              description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+              example: '5115314911298406'
+            orderRef:
+              type: string
+              minLength: 1
+              description: This field is the payment reference of the transaction being queried.
+              example: '1236457'
+            timestamp:
+              type: string
+              format: date-time
+              description: Time stamp of the error
   securitySchemes:
     OAuth2:
       type: oauth2

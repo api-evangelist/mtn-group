@@ -105,6 +105,182 @@ paths:
         required: true
 components:
   schemas:
+    RelatedParty:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        role:
+          type: string
+      required:
+      - href
+      - role
+      example:
+        id: '1234'
+        href: http://serverlocation:port/partyManagement/partyRole/1234
+        role: Admin
+    FeatureGroup:
+      type: object
+      properties:
+        name:
+          type: string
+          description: ' This is the name for the feature group'
+        listOfCharacteristics:
+          type: array
+          description: ' This is a list of  Resource Characteristics for a particular feature '
+          items:
+            $ref: '#/components/schemas/Characteristic'
+        listOfFeatures:
+          type: array
+          description: ' This is a list of  features for a particular feature group '
+          items:
+            $ref: '#/components/schemas/Feature'
+      required:
+      - name
+      - listOfCharacteristics
+      - listOfFeatures
+      example:
+        name: Filtering
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        status:
+          type: string
+          description: Status code
+        error:
+          type: string
+          description: Status description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
+    ScheduleRef:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        ResourceFunctionConfig:
+          $ref: '#/components/schemas/ResourceFunction'
+      required:
+      - href
+      - ResourceFunctionConfig
+      example:
+        id: SCH-78906
+        href: http://serverlocation:port/resourceSpecification/SCH-78906
+    Characteristic:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+      - name
+      - value
+      example:
+        name: bandwidth
+        value: 100MB
+    ResourceFunctionRef:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+      required:
+      - href
+      example:
+        id: RF-6789
+        href: http://serverlocation:port/resourceSpecification/RF-6789
+    Feature:
+      type: object
+      properties:
+        name:
+          type: string
+          description: ' This is the name for the feature'
+        listOfCharacteristics:
+          type: array
+          description: ' This is a list of  Resource Characteristics for a particular feature '
+          items:
+            $ref: '#/components/schemas/Characteristic'
+      required:
+      - name
+      - listOfCharacteristics
+      example:
+        name: Tarpit
+    Result:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      - data
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          $ref: '#/components/schemas/ResourceFunction'
+    ResourceFunctionSpecification:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+      required:
+      - id
+      example:
+        id: RS-6789
+        href: http://serverlocation:port/resourceSpecification/RS-6789
+    Connectivity:
+      type: object
+      properties:
+        source:
+          $ref: '#/components/schemas/ResourceFunctionRef'
+        target:
+          $ref: '#/components/schemas/ResourceFunctionRef'
+        relationship:
+          type: string
+      required:
+      - source
+      - target
+      - relationship
+      example:
+        source: http://serverlocation:port/resourceFunction/6789
+        target: http://serverlocation:port/resourceFunction/1234
+        relationship: ConnectsTo
+    SAPRef:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+      required:
+      - href
+      example:
+        id: SAP-49876
+        href: http://serverlocation:port/resourceFunction/SAP-49876
     ResourceFunction:
       type: object
       properties:
@@ -220,182 +396,6 @@ components:
             $ref: '#/components/schemas/RelatedParty'
       required:
       - resourceFunctionSpecification
-    ScheduleRef:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-        ResourceFunctionConfig:
-          $ref: '#/components/schemas/ResourceFunction'
-      required:
-      - href
-      - ResourceFunctionConfig
-      example:
-        id: SCH-78906
-        href: http://serverlocation:port/resourceSpecification/SCH-78906
-    Characteristic:
-      type: object
-      properties:
-        name:
-          type: string
-        value:
-          type: string
-      required:
-      - name
-      - value
-      example:
-        name: bandwidth
-        value: 100MB
-    ResourceFunctionRef:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-      required:
-      - href
-      example:
-        id: RF-6789
-        href: http://serverlocation:port/resourceSpecification/RF-6789
-    ResourceFunctionSpecification:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-      required:
-      - id
-      example:
-        id: RS-6789
-        href: http://serverlocation:port/resourceSpecification/RS-6789
-    FeatureGroup:
-      type: object
-      properties:
-        name:
-          type: string
-          description: ' This is the name for the feature group'
-        listOfCharacteristics:
-          type: array
-          description: ' This is a list of  Resource Characteristics for a particular feature '
-          items:
-            $ref: '#/components/schemas/Characteristic'
-        listOfFeatures:
-          type: array
-          description: ' This is a list of  features for a particular feature group '
-          items:
-            $ref: '#/components/schemas/Feature'
-      required:
-      - name
-      - listOfCharacteristics
-      - listOfFeatures
-      example:
-        name: Filtering
-    SAPRef:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-      required:
-      - href
-      example:
-        id: SAP-49876
-        href: http://serverlocation:port/resourceFunction/SAP-49876
-    Connectivity:
-      type: object
-      properties:
-        source:
-          $ref: '#/components/schemas/ResourceFunctionRef'
-        target:
-          $ref: '#/components/schemas/ResourceFunctionRef'
-        relationship:
-          type: string
-      required:
-      - source
-      - target
-      - relationship
-      example:
-        source: http://serverlocation:port/resourceFunction/6789
-        target: http://serverlocation:port/resourceFunction/1234
-        relationship: ConnectsTo
-    Feature:
-      type: object
-      properties:
-        name:
-          type: string
-          description: ' This is the name for the feature'
-        listOfCharacteristics:
-          type: array
-          description: ' This is a list of  Resource Characteristics for a particular feature '
-          items:
-            $ref: '#/components/schemas/Characteristic'
-      required:
-      - name
-      - listOfCharacteristics
-      example:
-        name: Tarpit
-    Result:
-      type: object
-      required:
-      - resultCode
-      - resultDescription
-      - data
-      properties:
-        resultCode:
-          type: string
-          description: Result code. Example- '0000'
-        resultDescription:
-          type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-        data:
-          $ref: '#/components/schemas/ResourceFunction'
-    RelatedParty:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-        role:
-          type: string
-      required:
-      - href
-      - role
-      example:
-        id: '1234'
-        href: http://serverlocation:port/partyManagement/partyRole/1234
-        role: Admin
-    Error:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        status:
-          type: string
-          description: Status code
-        error:
-          type: string
-          description: Status description
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: the path that caused the error
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

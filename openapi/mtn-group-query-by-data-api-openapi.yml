@@ -12,7 +12,7 @@ tags:
 paths:
   /logback:
     post:
-      operationId: Query logback failure
+      operationId: QueryLogbackFailure
       tags:
       - Query By Data
       summary: Query logback failure
@@ -42,8 +42,19 @@ paths:
               $ref: '#/components/schemas/queryData'
         description: Query Data
         required: true
+      x-operation-id-source: normalized
+      x-operation-id-original: Query logback failure
 components:
   schemas:
+    serverErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        data:
+          type: string
     responseData:
       type: object
       properties:
@@ -68,29 +79,6 @@ components:
           type: string
         countryCode:
           type: string
-    serverErrorResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        data:
-          type: string
-    clientErrorResponse:
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date
-        status:
-          type: string
-        error:
-          type: string
-        message:
-          type: string
-        path:
-          type: string
     response:
       type: object
       properties:
@@ -114,6 +102,20 @@ components:
         requestType:
           type: string
         countryCode:
+          type: string
+    clientErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date
+        status:
+          type: string
+        error:
+          type: string
+        message:
+          type: string
+        path:
           type: string
   securitySchemes:
     ApiKeyAuth:

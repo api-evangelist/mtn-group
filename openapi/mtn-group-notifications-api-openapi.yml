@@ -148,6 +148,39 @@ paths:
     - url: https://api.mtn.com/v1
 components:
   schemas:
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        path:
+          type: string
+          description: The path that caused the error
+          example: /subscribers/27831234567
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
     Success:
       type: object
       required:
@@ -212,72 +245,6 @@ components:
           type: string
           description: Status of the registration
           example: Deleted
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        path:
-          type: string
-          description: The path that caused the error
-          example: /subscribers/27831234567
-        method:
-          type: string
-          description: The HTTP method type that was used
-          example: GET
-    SendNotificationResponse:
-      type: object
-      description: The response expected after triggering a notification
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
-        sequenceNo:
-          type: string
-          description: This is a unique transaction Identifier returned to the client
-          example: '12345'
-    NotificationData:
-      description: The model expected to trigger a notification
-      type: object
-      properties:
-        data:
-          description: The data to be send as the notification. This must be a valid JSON request
-          type: object
-        deliveryReportUrl:
-          description: The delivery report url. The status/report of the notification delivery is send to this url. It expects an object of the type definitions/DeliveryReportRequest. Ex. ```{"statusCode":"","statusMessage":"","transationId":"","sequenceNo":""}```. The response is of type definitions/DeliveryReportResponse. Ex. ```{"statusCode":"","statusMessage":""}```
-          type: string
-          example: http://deliveryreporturl.com.ng
     Error_2:
       type: object
       description: Generic MADAPI error response
@@ -316,6 +283,39 @@ components:
           type: string
           description: The HTTP method type that was used
           example: GET
+    NotificationData:
+      description: The model expected to trigger a notification
+      type: object
+      properties:
+        data:
+          description: The data to be send as the notification. This must be a valid JSON request
+          type: object
+        deliveryReportUrl:
+          description: The delivery report url. The status/report of the notification delivery is send to this url. It expects an object of the type definitions/DeliveryReportRequest. Ex. ```{"statusCode":"","statusMessage":"","transationId":"","sequenceNo":""}```. The response is of type definitions/DeliveryReportResponse. Ex. ```{"statusCode":"","statusMessage":""}```
+          type: string
+          example: http://deliveryreporturl.com.ng
+    SendNotificationResponse:
+      type: object
+      description: The response expected after triggering a notification
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        sequenceNo:
+          type: string
+          description: This is a unique transaction Identifier returned to the client
+          example: '12345'
   securitySchemes:
     OAuth2:
       type: oauth2

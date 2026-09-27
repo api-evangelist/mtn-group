@@ -329,6 +329,186 @@ paths:
         required: true
 components:
   schemas:
+    DocumentSpecification2:
+      type: object
+      description: A document specification reference
+      properties:
+        id:
+          type: string
+          description: Indentifier of the DocumentSpecification
+        href:
+          type: string
+          description: The URI for the object itself.
+        URL:
+          type: string
+          description: URL of the Document Specification
+        name:
+          type: string
+          description: a String. Name of the DocumentSpecification
+        version:
+          type: string
+          description: A string, a version of the DocumentSpecification.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    RelatedEntity2:
+      type: object
+      description: A reference to an entity, where the type of the entity is not known in advance.
+      required:
+      - '@referredType'
+      - id
+      - role
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: Name of the related entity.
+        role:
+          type: string
+          description: The role of an entity.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    Any: {}
+    ApiResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        transactionId:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        data:
+          $ref: '#/components/schemas/Document2'
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+    CharacteristicSpecificationRelationship:
+      type: object
+      description: An aggregation, migration, substitution, dependency or exclusivity relationship between/among Characteristic specifications. The specification characteristic is embedded within the specification whose ID and href are in this entity, and identified by its ID.
+      properties:
+        characteristicSpecificationId:
+          type: string
+          description: Unique identifier of the characteristic within the specification
+        name:
+          type: string
+          description: Name of the target characteristic within the specification
+        parentSpecificationHref:
+          type: string
+          format: uri
+          description: Hyperlink reference to the parent specification containing the target characteristic
+        parentSpecificationId:
+          type: string
+          description: Unique identifier of the parent specification containing the target characteristic
+        relationshipType:
+          type: string
+          description: Type of relationship such as aggregation, migration, substitution, dependency, exclusivity
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the object is valid
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class Extensible name
+    Document2:
+      type: object
+      description: Document is a tangible output from an activity
+      properties:
+        id:
+          type: string
+          description: Identifier of an instance of the document. Required to be unique within the document type.  Used in URIs as the identifier for specific instances of a type.
+        href:
+          type: string
+          description: The URI for the object itself.
+        creationDate:
+          type: string
+          format: date-time
+          description: The date and time the document was created. A date and time formatted in compliance with the ISO8601 standard must be used.
+        description:
+          type: string
+          description: free-text description of the document
+        documentType:
+          type: string
+          description: Name of the document type
+        lastUpdate:
+          type: string
+          format: date-time
+          description: The date and time the document was last modified. A date and time formatted in compliance with the ISO8601 standard must be used.
+        lifecycleState:
+          type: string
+          description: The life cycle state of the document.
+        name:
+          type: string
+          description: A string used to give a name to the document
+        version:
+          type: string
+          description: A particular form or variety of an artefact that is different from others or from the original. The form represents differences in properties that characterize an artefact, that are not enough to warrant creating a new artefact
+        binaryAttachment:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachmentRefOrValue'
+        characteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic2'
+        documentRelationship:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentRef2'
+        documentSpecification:
+          $ref: '#/components/schemas/DocumentSpecification2'
+        relatedEntity:
+          $ref: '#/components/schemas/RelatedEntity2'
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty2'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
     CharacteristicSpecification:
       type: object
       description: This class defines a characteristic specification.
@@ -389,9 +569,9 @@ components:
         '@valueSchemaLocation':
           type: string
           description: This (optional) field provides a link to the schema describing the value type.
-    DocumentStatusType:
+    DocumentSpecificationStatusType:
       type: string
-      description: Possible values for the status of a Document
+      description: Possible values for the status of a DocumentSpecification
       enum:
       - created
       - reviewed
@@ -399,6 +579,10 @@ components:
       - published
       - archived
       - deleted
+      - received
+      - verified
+      - rejected
+      - unindexed
     Document_Update:
       type: object
       description: 'A Document describes the meta-data of a Document - such as the name, creationDate and lifecycle status.
@@ -434,21 +618,89 @@ components:
             $ref: '#/components/schemas/DocumentRef'
         documentSpecification:
           $ref: '#/components/schemas/DocumentSpecification'
-    TimePeriod2:
+    Error:
+      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
       type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      required:
+      - code
+      - reason
       properties:
-        endDateTime:
+        code:
           type: string
-          format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
           type: string
-          format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
-    DocumentSpecificationRefOrValue:
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name.
+    TargetEntitySchema:
       type: object
-      description: A DocumentSpecificationRefOrValue where you can select between a DocumentSpecification (by Value) or a DocumentSpecificationRef (by Reference)
+      description: The reference object to the schema and type of target entity which is described by a specification
+      required:
+      - '@schemaLocation'
+      - '@type'
+      properties:
+        '@schemaLocation':
+          type: string
+          description: This field provides a link to the schema describing the target entity
+        '@type':
+          type: string
+          description: Class type of the target entity
+    Characteristic:
+      type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the characteristic
+        name:
+          type: string
+          description: Name of the characteristic
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+        characteristicRelationship:
+          type: array
+          items:
+            $ref: '#/components/schemas/CharacteristicRelationship'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class Extensible name
+    RelatedEntity:
+      type: object
+      description: A reference to an entity, where the type of the entity is not known in advance.
+      required:
+      - '@referredType'
+      - id
+      - role
       properties:
         id:
           type: string
@@ -457,47 +709,12 @@ components:
           type: string
           format: uri
           description: Hyperlink reference
-        description:
-          type: string
-          description: Description of the specification
-        isBundle:
-          type: boolean
-          description: isBundle determines whether specification represents a single specification (false), or a bundle of specifications (true).
-        lastUpdate:
-          type: string
-          format: date-time
-          description: Date and time of the last update of the specification
         name:
           type: string
-          description: Name given to the specification
-        version:
+          description: Name of the related entity.
+        role:
           type: string
-          description: specification version
-        constraint:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConstraintRef'
-          description: This is a list of constraint references applied to this specification
-        lifecycleStatus:
-          example: approved
-          $ref: '#/components/schemas/DocumentSpecificationStatusType'
-          description: The current lifecycle status of this DocumentSpecification
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedParty'
-          description: Parties who manage or otherwise have an interest in this specification
-        specCharacteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/CharacteristicSpecification'
-          description: List of characteristics that the entity can take
-        targetEntitySchema:
-          $ref: '#/components/schemas/TargetEntitySchema'
-          description: Pointer to a schema that defines the target entity
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which this REST resource is valid
+          description: The role of an entity.
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -511,6 +728,67 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
+    TimePeriod:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDateTime:
+          example: '1985-04-12T23:20:50.52Z'
+          type: string
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          example: '1985-04-12T23:20:50.52Z'
+          type: string
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format
+    DocumentRef2:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifier of the document
+        href:
+          type: string
+          description: The URI for the object itself.
+        name:
+          type: string
+          description: Name of the related entity.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    CharacteristicRelationship2:
+      type: object
+      description: Another Characteristic that is related to the current Characteristic;
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the characteristic
+        relationshipType:
+          type: string
+          description: The type of relationship
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
     Document:
       type: object
       description: 'A Document describes the meta-data of a Document - such as the name, creationDate and lifecycle status.
@@ -588,30 +866,12 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class Extensible name
-    ApiResponse:
+    RelatedParty:
       type: object
-      properties:
-        statusCode:
-          type: string
-        transactionId:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        data:
-          $ref: '#/components/schemas/Document2'
-        _links:
-          type: object
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
-    CategoryRef:
-      type: object
-      description: The category for grouping recommendations
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      required:
+      - '@referredType'
+      - id
       properties:
         id:
           type: string
@@ -623,9 +883,9 @@ components:
         name:
           type: string
           description: Name of the related entity.
-        version:
+        role:
           type: string
-          description: Category version
+          description: Role played by the related party
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -639,41 +899,6 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id
-    Error:
-      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
-      type: object
-      required:
-      - code
-      - reason
-      properties:
-        code:
-          type: string
-          description: Application relevant detail, defined in the API or a common list.
-        reason:
-          type: string
-          description: Explanation of the reason for the error which can be shown to a client user.
-        message:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client user.
-        status:
-          type: string
-          description: HTTP Error code extension
-        referenceError:
-          type: string
-          format: uri
-          description: URI of documentation describing the error.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class.
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name.
     Document_Create:
       type: object
       description: 'Document is a tangible output from an activity
@@ -733,6 +958,39 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
+    Characteristic2:
+      type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the characteristic
+        name:
+          type: string
+          description: Name of the characteristic
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+        characteristicRelationship:
+          type: array
+          items:
+            $ref: '#/components/schemas/CharacteristicRelationship2'
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
     Error2:
       description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
       type: object
@@ -759,24 +1017,67 @@ components:
           type: string
           format: uri
           description: 'Indicates the url of the request sent. '
-    Any: {}
-    ConstraintRef:
+    AttachmentRefOrValue:
       type: object
-      description: Constraint reference. The Constraint resource represents a policy/rule applied to an entity or entity spec.
+      description: An attachment by value or by reference. For AttachmentRefOrValue, the attribute type,schemaLocation and referredType are related to the contained entity and not to AttchmentRefOrValue itself
       properties:
         id:
           type: string
-          description: unique identifier
+          description: Unique identifier for this particular attachment
+        href:
+          type: string
+          description: URI for this Attachment
+        attachmentType:
+          type: string
+          description: Attachment type such as video, picture
+        description:
+          type: string
+          description: A narrative text describing the content of the attachment. This parameter holds the shared location of the file in case uploadType is not UPLOAD_BASE64
+        mimeType:
+          type: string
+          description: Attachment mime type such as extension file for video, picture and document
+        content:
+          type: string
+          description: The content of the document in base64 format. Required if uploadType is UPLOAD_BASE64
+        name:
+          type: string
+          description: The name of the attachment
+        url:
+          type: string
+          description: Uniform Resource Locator, is a web page address (a subset of URI)
+        size:
+          $ref: '#/components/schemas/Quantity2'
+          description: The size of the attachment.
+        validFor:
+          $ref: '#/components/schemas/TimePeriod2'
+          description: The period of time for which the attachment is valid
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    CharacteristicRelationship:
+      type: object
+      description: Another Characteristic that is related to the current Characteristic;
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the characteristic
         href:
           type: string
           format: uri
           description: Hyperlink reference
-        name:
+        relationshipType:
           type: string
-          description: Name of the related entity.
-        version:
-          type: string
-          description: constraint version
+          description: The type of relationship
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -787,11 +1088,6 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class Extensible name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id
     RelatedParty2:
       type: object
       description: Related Entity reference. A related party defines party or party role linked to a specific entity.
@@ -821,6 +1117,71 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    DocumentSpecificationRefOrValue:
+      type: object
+      description: A DocumentSpecificationRefOrValue where you can select between a DocumentSpecification (by Value) or a DocumentSpecificationRef (by Reference)
+      properties:
+        id:
+          type: string
+          description: unique identifier
+        href:
+          type: string
+          format: uri
+          description: Hyperlink reference
+        description:
+          type: string
+          description: Description of the specification
+        isBundle:
+          type: boolean
+          description: isBundle determines whether specification represents a single specification (false), or a bundle of specifications (true).
+        lastUpdate:
+          type: string
+          format: date-time
+          description: Date and time of the last update of the specification
+        name:
+          type: string
+          description: Name given to the specification
+        version:
+          type: string
+          description: specification version
+        constraint:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConstraintRef'
+          description: This is a list of constraint references applied to this specification
+        lifecycleStatus:
+          example: approved
+          $ref: '#/components/schemas/DocumentSpecificationStatusType'
+          description: The current lifecycle status of this DocumentSpecification
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+          description: Parties who manage or otherwise have an interest in this specification
+        specCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/CharacteristicSpecification'
+          description: List of characteristics that the entity can take
+        targetEntitySchema:
+          $ref: '#/components/schemas/TargetEntitySchema'
+          description: Pointer to a schema that defines the target entity
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which this REST resource is valid
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class Extensible name
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
@@ -888,158 +1249,9 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class Extensible name
-    CharacteristicSpecificationRelationship:
+    CategoryRef:
       type: object
-      description: An aggregation, migration, substitution, dependency or exclusivity relationship between/among Characteristic specifications. The specification characteristic is embedded within the specification whose ID and href are in this entity, and identified by its ID.
-      properties:
-        characteristicSpecificationId:
-          type: string
-          description: Unique identifier of the characteristic within the specification
-        name:
-          type: string
-          description: Name of the target characteristic within the specification
-        parentSpecificationHref:
-          type: string
-          format: uri
-          description: Hyperlink reference to the parent specification containing the target characteristic
-        parentSpecificationId:
-          type: string
-          description: Unique identifier of the parent specification containing the target characteristic
-        relationshipType:
-          type: string
-          description: Type of relationship such as aggregation, migration, substitution, dependency, exclusivity
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the object is valid
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class Extensible name
-    Characteristic2:
-      type: object
-      description: Describes a given characteristic of an object or entity through a name/value pair.
-      required:
-      - name
-      - value
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the characteristic
-        name:
-          type: string
-          description: Name of the characteristic
-        valueType:
-          type: string
-          description: Data type of the value of the characteristic
-        characteristicRelationship:
-          type: array
-          items:
-            $ref: '#/components/schemas/CharacteristicRelationship2'
-        value:
-          $ref: '#/components/schemas/Any'
-          description: The value of the characteristic
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    DocumentSpecification2:
-      type: object
-      description: A document specification reference
-      properties:
-        id:
-          type: string
-          description: Indentifier of the DocumentSpecification
-        href:
-          type: string
-          description: The URI for the object itself.
-        URL:
-          type: string
-          description: URL of the Document Specification
-        name:
-          type: string
-          description: a String. Name of the DocumentSpecification
-        version:
-          type: string
-          description: A string, a version of the DocumentSpecification.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    CharacteristicRelationship:
-      type: object
-      description: Another Characteristic that is related to the current Characteristic;
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the characteristic
-        href:
-          type: string
-          format: uri
-          description: Hyperlink reference
-        relationshipType:
-          type: string
-          description: The type of relationship
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class Extensible name
-    DocumentRef2:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Identifier of the document
-        href:
-          type: string
-          description: The URI for the object itself.
-        name:
-          type: string
-          description: Name of the related entity.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id
-    RelatedParty:
-      type: object
-      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
-      required:
-      - '@referredType'
-      - id
+      description: The category for grouping recommendations
       properties:
         id:
           type: string
@@ -1051,9 +1263,9 @@ components:
         name:
           type: string
           description: Name of the related entity.
-        role:
+        version:
           type: string
-          description: Role played by the related party
+          description: Category version
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -1067,6 +1279,8 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
     ExternalIdentifier:
       type: object
       description: An identification of an entity that is owned by or originates in a software system different from the current system, for example a ProductOrder handed off from a commerce platform into an order handling system. The structure identifies the system itself, the nature of the entity within the system (e.g. class name) and the unique ID of the entity within the system. It is anticipated that multiple external IDs can be held for a single entity, e.g. if the entity passed through multiple systems on the way to the current system. In this case the consumer is expected to sequence the IDs in the array in reverse order of provenance, i.e. most recent system first in the list.
@@ -1099,19 +1313,30 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class Extensible name
-    TargetEntitySchema:
+    Quantity2:
       type: object
-      description: The reference object to the schema and type of target entity which is described by a specification
-      required:
-      - '@schemaLocation'
-      - '@type'
+      description: An amount in a given unit
       properties:
-        '@schemaLocation':
+        amount:
+          default: 1
+          type: number
+          format: float
+          description: Numeric value in a given unit
+        units:
           type: string
-          description: This field provides a link to the schema describing the target entity
-        '@type':
+          description: Unit
+    TimePeriod2:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDateTime:
           type: string
-          description: Class type of the target entity
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          type: string
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
     DocumentRef:
       type: object
       properties:
@@ -1139,33 +1364,9 @@ components:
           description: The actual type of the target instance when needed for disambiguation.
       required:
       - refId
-    CharacteristicRelationship2:
+    ConstraintRef:
       type: object
-      description: Another Characteristic that is related to the current Characteristic;
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the characteristic
-        relationshipType:
-          type: string
-          description: The type of relationship
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    RelatedEntity:
-      type: object
-      description: A reference to an entity, where the type of the entity is not known in advance.
-      required:
-      - '@referredType'
-      - id
-      - role
+      description: Constraint reference. The Constraint resource represents a policy/rule applied to an entity or entity spec.
       properties:
         id:
           type: string
@@ -1177,9 +1378,9 @@ components:
         name:
           type: string
           description: Name of the related entity.
-        role:
+        version:
           type: string
-          description: The role of an entity.
+          description: constraint version
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -1193,9 +1394,11 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
-    DocumentSpecificationStatusType:
+      required:
+      - id
+    DocumentStatusType:
       type: string
-      description: Possible values for the status of a DocumentSpecification
+      description: Possible values for the status of a Document
       enum:
       - created
       - reviewed
@@ -1203,162 +1406,6 @@ components:
       - published
       - archived
       - deleted
-      - received
-      - verified
-      - rejected
-      - unindexed
-    Quantity2:
-      type: object
-      description: An amount in a given unit
-      properties:
-        amount:
-          default: 1
-          type: number
-          format: float
-          description: Numeric value in a given unit
-        units:
-          type: string
-          description: Unit
-    AttachmentRefOrValue:
-      type: object
-      description: An attachment by value or by reference. For AttachmentRefOrValue, the attribute type,schemaLocation and referredType are related to the contained entity and not to AttchmentRefOrValue itself
-      properties:
-        id:
-          type: string
-          description: Unique identifier for this particular attachment
-        href:
-          type: string
-          description: URI for this Attachment
-        attachmentType:
-          type: string
-          description: Attachment type such as video, picture
-        description:
-          type: string
-          description: A narrative text describing the content of the attachment. This parameter holds the shared location of the file in case uploadType is not UPLOAD_BASE64
-        mimeType:
-          type: string
-          description: Attachment mime type such as extension file for video, picture and document
-        content:
-          type: string
-          description: The content of the document in base64 format. Required if uploadType is UPLOAD_BASE64
-        name:
-          type: string
-          description: The name of the attachment
-        url:
-          type: string
-          description: Uniform Resource Locator, is a web page address (a subset of URI)
-        size:
-          $ref: '#/components/schemas/Quantity2'
-          description: The size of the attachment.
-        validFor:
-          $ref: '#/components/schemas/TimePeriod2'
-          description: The period of time for which the attachment is valid
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-    Document2:
-      type: object
-      description: Document is a tangible output from an activity
-      properties:
-        id:
-          type: string
-          description: Identifier of an instance of the document. Required to be unique within the document type.  Used in URIs as the identifier for specific instances of a type.
-        href:
-          type: string
-          description: The URI for the object itself.
-        creationDate:
-          type: string
-          format: date-time
-          description: The date and time the document was created. A date and time formatted in compliance with the ISO8601 standard must be used.
-        description:
-          type: string
-          description: free-text description of the document
-        documentType:
-          type: string
-          description: Name of the document type
-        lastUpdate:
-          type: string
-          format: date-time
-          description: The date and time the document was last modified. A date and time formatted in compliance with the ISO8601 standard must be used.
-        lifecycleState:
-          type: string
-          description: The life cycle state of the document.
-        name:
-          type: string
-          description: A string used to give a name to the document
-        version:
-          type: string
-          description: A particular form or variety of an artefact that is different from others or from the original. The form represents differences in properties that characterize an artefact, that are not enough to warrant creating a new artefact
-        binaryAttachment:
-          type: array
-          items:
-            $ref: '#/components/schemas/AttachmentRefOrValue'
-        characteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/Characteristic2'
-        documentRelationship:
-          type: array
-          items:
-            $ref: '#/components/schemas/DocumentRef2'
-        documentSpecification:
-          $ref: '#/components/schemas/DocumentSpecification2'
-        relatedEntity:
-          $ref: '#/components/schemas/RelatedEntity2'
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedParty2'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    Characteristic:
-      type: object
-      description: Describes a given characteristic of an object or entity through a name/value pair.
-      required:
-      - name
-      - value
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the characteristic
-        name:
-          type: string
-          description: Name of the characteristic
-        valueType:
-          type: string
-          description: Data type of the value of the characteristic
-        characteristicRelationship:
-          type: array
-          items:
-            $ref: '#/components/schemas/CharacteristicRelationship'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class Extensible name
     CharacteristicValueSpecification:
       type: object
       description: specification of a value (number or text or an object) that can be assigned to a Characteristic.
@@ -1397,50 +1444,3 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class Extensible name
-    RelatedEntity2:
-      type: object
-      description: A reference to an entity, where the type of the entity is not known in advance.
-      required:
-      - '@referredType'
-      - id
-      - role
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity.
-        href:
-          type: string
-          description: Reference of the related entity.
-        name:
-          type: string
-          description: Name of the related entity.
-        role:
-          type: string
-          description: The role of an entity.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-    TimePeriod:
-      type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
-      properties:
-        endDateTime:
-          example: '1985-04-12T23:20:50.52Z'
-          type: string
-          format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
-          example: '1985-04-12T23:20:50.52Z'
-          type: string
-          format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format

@@ -179,7 +179,29 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ForbiddenResponse:
+    ShortCodeSubscription:
+      type: object
+      required:
+      - callbackUrl
+      - targetSystem
+      - serviceCode
+      properties:
+        callbackUrl:
+          type: string
+          description: This is the callback URL that will be invoked when a Mobile originating or Delivery Receipt message is sent by a Subscriber to the configured short code .
+          example: https://example.com/12acb41
+        targetSystem:
+          type: string
+          description: Target system indicates the name of the system that this Mobile originating request will be sent to.
+          example: Golden-Bank
+        deliveryReportUrl:
+          type: string
+          description: This is the URL where the delivery receipts for messages sent with the /messages/sms/outbound endpoint will be sent. The messages will be sent to the deliveryReportUrl if requestDeliveryReceipt is set to true , by default it is false when sending an outbound message.
+          example: https://example.com/delivery-report
+        serviceCode:
+          type: string
+          description: This is the service code that is being registered for Mobile originating and delivery receipt calls
+    Error:
       type: object
       required:
       - statusCode
@@ -189,15 +211,13 @@ components:
         statusCode:
           type: string
           description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '4004'
+          example: '1000'
         statusMessage:
           type: string
           description: More details and corrective actions related to the error which can be shown to a client
-          example: Service code has already been registered .
         supportMessage:
           type: string
           description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-          example: Service code 711 has been used by WEB-ONLINE !.
         transactionId:
           type: string
           description: MADAPI generated Id to include for tracing requests
@@ -240,7 +260,7 @@ components:
             subscriptionId:
               type: string
               example: 63284250bde7cd4938630ada
-    Error:
+    ForbiddenResponse:
       type: object
       required:
       - statusCode
@@ -250,13 +270,15 @@ components:
         statusCode:
           type: string
           description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
+          example: '4004'
         statusMessage:
           type: string
           description: More details and corrective actions related to the error which can be shown to a client
+          example: Service code has already been registered .
         supportMessage:
           type: string
           description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+          example: Service code 711 has been used by WEB-ONLINE !.
         transactionId:
           type: string
           description: MADAPI generated Id to include for tracing requests
@@ -273,28 +295,6 @@ components:
           type: string
           description: The HTTP method type that was used
           example: POST
-    ShortCodeSubscription:
-      type: object
-      required:
-      - callbackUrl
-      - targetSystem
-      - serviceCode
-      properties:
-        callbackUrl:
-          type: string
-          description: This is the callback URL that will be invoked when a Mobile originating or Delivery Receipt message is sent by a Subscriber to the configured short code .
-          example: https://example.com/12acb41
-        targetSystem:
-          type: string
-          description: Target system indicates the name of the system that this Mobile originating request will be sent to.
-          example: Golden-Bank
-        deliveryReportUrl:
-          type: string
-          description: This is the URL where the delivery receipts for messages sent with the /messages/sms/outbound endpoint will be sent. The messages will be sent to the deliveryReportUrl if requestDeliveryReceipt is set to true , by default it is false when sending an outbound message.
-          example: https://example.com/delivery-report
-        serviceCode:
-          type: string
-          description: This is the service code that is being registered for Mobile originating and delivery receipt calls
     UpdateSubscriptionRequest:
       type: object
       properties:

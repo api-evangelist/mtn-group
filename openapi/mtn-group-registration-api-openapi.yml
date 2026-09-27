@@ -549,7 +549,7 @@ paths:
       - Registration
       summary: Register/Update 3PP for notification
       description: Register/Update 3PP for notification.
-      operationId: register3PPNotificationDetailsUsingPOST
+      operationId: postNotificationRegister3PP
       parameters:
       - in: header
         name: transactionId
@@ -603,6 +603,8 @@ paths:
         required: true
       security:
       - OAuth2: []
+      x-operation-id-source: normalized
+      x-operation-id-original: register3PPNotificationDetailsUsingPOST
     servers:
     - url: https://api.mtn.com/v2
   /notification/register/3PP/{id}:
@@ -611,7 +613,7 @@ paths:
       - Registration
       summary: Get 3PP notification details by id
       description: Get 3PP notification details by id.
-      operationId: get3PPNotificationDetailsByIdUsingGET
+      operationId: getNotificationRegister3PPById
       parameters:
       - in: header
         name: transactionId
@@ -664,6 +666,8 @@ paths:
       deprecated: false
       security:
       - OAuth2: []
+      x-operation-id-source: normalized
+      x-operation-id-original: get3PPNotificationDetailsByIdUsingGET
     delete:
       tags:
       - Registration
@@ -736,7 +740,7 @@ paths:
       - Registration
       summary: Get 3PP Notification details by target system, code and notification type
       description: Get 3PP Notification details by name, code and notification type.
-      operationId: get3PPNotificationDetailsByNameAndCodeAndNotificationTypeUsingGET
+      operationId: getNotificationRegister3PPByTargetSystemByCodeByNotificationType
       parameters:
       - name: notificationType
         in: path
@@ -807,12 +811,14 @@ paths:
       deprecated: false
       security:
       - OAuth2: []
+      x-operation-id-source: normalized
+      x-operation-id-original: get3PPNotificationDetailsByNameAndCodeAndNotificationTypeUsingGET
     delete:
       tags:
       - Registration
       summary: Delete 3PP Notification registration by target system, code and notification…
       description: Delete 3PP notification registration by name, code and notification type.
-      operationId: delete3PPNotificationDetailsByNameAndCodeAndNotificationTypeUsingDELETE
+      operationId: deleteNotificationRegister3PPByTargetSystemByCodeByNotificationType
       parameters:
       - name: notificationType
         in: path
@@ -888,6 +894,8 @@ paths:
       deprecated: false
       security:
       - OAuth2: []
+      x-operation-id-source: normalized
+      x-operation-id-original: delete3PPNotificationDetailsByNameAndCodeAndNotificationTypeUsingDELETE
     servers:
     - url: https://api.mtn.com/v2
 components:
@@ -907,238 +915,6 @@ components:
           type: string
           description: Status description
           example: 'DEP ::: Service Not Found'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-    ErrorSvcIdSvcRefNotFound:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 3004
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Service ID or Service Ref Not Found'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-    ProductTerm:
-      type: object
-      description: Description of a productTerm linked to this product. This represent a commitment with a duration
-      properties:
-        description:
-          type: string
-          description: Description of the productTerm
-        name:
-          type: string
-          description: Name of the productTerm
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    ProductOfferingRef:
-      type: object
-      description: ProductOffering reference. A product offering represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity.
-        name:
-          type: string
-          description: Name of unique identifier of related entity
-    Error:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-        statusMessage:
-          type: string
-          description: Status description
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-    ProductOrderItem:
-      type: object
-      description: An identified part of the order. A product order is decomposed into one or more order items.
-      properties:
-        product:
-          $ref: '#/components/schemas/ProductRefOrValue'
-        itemTotalPrice:
-          $ref: '#/components/schemas/OrderPrice'
-    CreateOrderResponse:
-      required:
-      - statusCode
-      - statusMessage
-      - data
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: Result code. Example- '0000'
-        statusMessage:
-          type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-        data:
-          type: object
-          properties:
-            billingToken:
-              type: object
-              properties:
-                msn:
-                  type: string
-                  minLength: 16
-                  maxLength: 64
-                  description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
-                  example: '5115314911298406'
-                contentToken:
-                  type: string
-                  minLength: 16
-                  maxLength: 96
-                  description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
-                  example: 81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058
-                allowToActivate:
-                  type: boolean
-                  description: Information inidicating if activation of token will be allowed.
-                  example: true
-                proposalIndicator:
-                  type: integer
-                  description: This indicates what is proposed, 0 - Nothing, 1 - Spend Limit only, 2 - Digital Limit only, 3 - Both Digital and Spend Limit, 4 - Nothing with SUL equals to SPUL and Digital Limit equal to New Monthly Committed Value
-                  enum:
-                  - 0
-                  - 1
-                  - 2
-                  - 3
-                  - 4
-                proposedDigitalLimit:
-                  type: integer
-                  minimum: 1
-                  maximum: 999999
-                  description: This the proposed digital limit in Rxx whole rands only.
-                  example: 25000
-                proposedSpendLimit:
-                  type: integer
-                  minimum: 1
-                  maximum: 999999
-                  description: This the proposed digital limit in Rxx whole rands only.
-                  example: 25000
-                proratedBill:
-                  type: integer
-                  minimum: 0
-                  maximum: 999999
-                  description: The prorated amount in cents. Note, this field won't be returned if the token is not a monthly token, which is specified via selectedDebitOrderDate
-                  example: 90
-                proratedBillDate:
-                  type: string
-                  minLength: 10
-                  maxLength: 10
-                  description: The date upon which the prorated billing will be performed, in the format 'yyyy-mm-dd'. Note, this field won't be returned if the token is not a monthly token, which is specified via selectedDebitOrderDate
-                  example: '2023-02-22'
-            subscription:
-              $ref: '#/components/schemas/ProductOrder2'
-    RelatedChannel:
-      type: object
-      description: Related channel to another entity. May be online web, mobile app, social ,etc.
-      required:
-      - id
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity.
-        role:
-          type: string
-          description: Role of channel
-        href:
-          type: string
-          description: Reference of the related entity.
-    ErrorBadReq:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 5000
-        statusMessage:
-          type: string
-          description: Status description
-          example: Bad Request
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-    ErrorActSubsEx:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 1002
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Active Subscription Exists'
         supportMessage:
           type: string
           description: More error details and corrective measures
@@ -1182,6 +958,193 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
+    ErrorInvAPIVersion:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 3001
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Invalid API Version'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ErrorSubNotFound:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1000
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Subscription Not Found'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ErrorSubChanNotFound:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1007
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Subscription Channel Not Found'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    Money:
+      type: object
+      description: A base / value business entity used to represent money
+      properties:
+        unit:
+          type: string
+          description: Currency (ISO4217 norm uses 3 letters to define the currency)
+        value:
+          type: number
+          format: float
+          description: A positive floating point number
+    ErrorActSubsEx:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1002
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Active Subscription Exists'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ProductStatusType:
+      type: string
+      description: Possible values for the status of the product
+      enum:
+      - created
+      - pendingActive
+      - cancelled
+      - active
+      - pendingTerminate
+      - terminated
+      - suspended
+      - 'aborted '
+    OrderPrice:
+      type: object
+      description: An amount, usually of money, that represents the actual price paid by the Customer for this item or this order
+      properties:
+        priceType:
+          type: string
+          description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth
+        recurringChargePeriod:
+          type: string
+          description: Could be month, week...
+        price:
+          $ref: '#/components/schemas/Price'
+          description: a structure used to define price amount
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+        statusMessage:
+          type: string
+          description: Status description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    AgreementRef:
+      type: object
+      description: Agreement reference. An agreement represents a contract or arrangement, either written or verbal and sometimes enforceable by law, such as a service level agreement or a customer price agreement. An agreement involves a number of other business entities, such as products, services, and resources and/or their specifications.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
     ErrorInvBillRate:
       type: object
       title: Error
@@ -1211,6 +1174,111 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
+    ErrorSubNotActive:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1003
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Subscription Not Active'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ProductTerm:
+      type: object
+      description: Description of a productTerm linked to this product. This represent a commitment with a duration
+      properties:
+        description:
+          type: string
+          description: Description of the productTerm
+        name:
+          type: string
+          description: Name of the productTerm
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    ErrorSvcNotLinked:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 5001
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Service Not Linked To Billing Channel'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    ProductOrder2:
+      type: object
+      description: A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
+      required:
+      - productOrderItem
+      properties:
+        id:
+          type: string
+          description: ID created on repository side (OM system)
+        description:
+          type: string
+          description: Description of the product order
+        externalId:
+          type: string
+          description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
+        orderDate:
+          type: string
+          format: date-time
+          description: Date when the order was created
+        agreement:
+          $ref: '#/components/schemas/AgreementRef'
+        channel:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedChannel'
+        productOrderItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOrderItem'
+          minItems: 1
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
     RelatedParty:
       type: object
       description: Related Entity reference. A related party defines party or party role linked to a specific entity.
@@ -1229,18 +1297,85 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
-    ProductStatusType:
-      type: string
-      description: Possible values for the status of the product
-      enum:
-      - created
-      - pendingActive
-      - cancelled
-      - active
-      - pendingTerminate
-      - terminated
-      - suspended
-      - 'aborted '
+    Price:
+      type: object
+      description: Provides all amounts (tax included, duty free, tax rate), used currency and percentage to apply for Price Alteration.
+      properties:
+        taxIncludedAmount:
+          $ref: '#/components/schemas/Money'
+          description: All taxes included amount (expressed in the given currency)
+    productCharacteristic:
+      type: object
+      properties:
+        name:
+          type: string
+          example: hulaya data
+        value:
+          type: number
+          example: 6
+    ProductRefOrValue:
+      type: object
+      description: A product to be created defined by value or existing defined by reference. The polymorphic attributes @type, @schemaLocation & @referredType are related to the product entity and not the RelatedProductRefOrValue class itself
+      properties:
+        agreement:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgreementItemRef2'
+        characteristic:
+          type: array
+          description: product characteristics such as amount, type, etc
+          items:
+            $ref: '#/components/schemas/productCharacteristic'
+        productOffering:
+          $ref: '#/components/schemas/ProductOfferingRef'
+        productTerm:
+          type: array
+          description: Description of a productTerm linked to this product. This represent a commitment with a duration
+          items:
+            $ref: '#/components/schemas/ProductTerm'
+        status:
+          type: array
+          description: status of product
+          items:
+            $ref: '#/components/schemas/ProductStatusType'
+        orderDate:
+          type: string
+          description: Date when the order was created.
+        startDate:
+          type: string
+          description: Is the date from which the product starts
+        terminationDate:
+          type: string
+          description: Is the date when the product was terminated.
+    ErrorPendingSubEx:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 1005
+        statusMessage:
+          type: string
+          description: Status description
+          example: 'DEP ::: Pending Subscription Exists'
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
     RegisterTokenRequest:
       type: object
       properties:
@@ -1492,205 +1627,21 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/RelatedParty'
-    Price:
+    RelatedChannel:
       type: object
-      description: Provides all amounts (tax included, duty free, tax rate), used currency and percentage to apply for Price Alteration.
-      properties:
-        taxIncludedAmount:
-          $ref: '#/components/schemas/Money'
-          description: All taxes included amount (expressed in the given currency)
-    ErrorSubNotActive:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 1003
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Subscription Not Active'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-    AgreementRef:
-      type: object
-      description: Agreement reference. An agreement represents a contract or arrangement, either written or verbal and sometimes enforceable by law, such as a service level agreement or a customer price agreement. An agreement involves a number of other business entities, such as products, services, and resources and/or their specifications.
+      description: Related channel to another entity. May be online web, mobile app, social ,etc.
       required:
       - id
       properties:
         id:
           type: string
           description: Unique identifier of a related entity.
-    ProductOrder2:
-      type: object
-      description: A Product Order is a type of order which  can  be used to place an order between a customer and a service provider or between a service provider and a partner and vice versa,
-      required:
-      - productOrderItem
-      properties:
-        id:
+        role:
           type: string
-          description: ID created on repository side (OM system)
-        description:
+          description: Role of channel
+        href:
           type: string
-          description: Description of the product order
-        externalId:
-          type: string
-          description: ID given by the consumer and only understandable by him (to facilitate his searches afterwards)
-        orderDate:
-          type: string
-          format: date-time
-          description: Date when the order was created
-        agreement:
-          $ref: '#/components/schemas/AgreementRef'
-        channel:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedChannel'
-        productOrderItem:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductOrderItem'
-          minItems: 1
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedParty'
-    ErrorSvcNotLinked:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 5001
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Service Not Linked To Billing Channel'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-    Money:
-      type: object
-      description: A base / value business entity used to represent money
-      properties:
-        unit:
-          type: string
-          description: Currency (ISO4217 norm uses 3 letters to define the currency)
-        value:
-          type: number
-          format: float
-          description: A positive floating point number
-    productCharacteristic:
-      type: object
-      properties:
-        name:
-          type: string
-          example: hulaya data
-        value:
-          type: number
-          example: 6
-    ErrorInvAPIVersion:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 3001
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Invalid API Version'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-    ErrorPendingSubEx:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-          example: 1005
-        statusMessage:
-          type: string
-          description: Status description
-          example: 'DEP ::: Pending Subscription Exists'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-    OrderPrice:
-      type: object
-      description: An amount, usually of money, that represents the actual price paid by the Customer for this item or this order
-      properties:
-        priceType:
-          type: string
-          description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth
-        recurringChargePeriod:
-          type: string
-          description: Could be month, week...
-        price:
-          $ref: '#/components/schemas/Price'
-          description: a structure used to define price amount
+          description: Reference of the related entity.
     ErrorMsisdnNotProvided:
       type: object
       title: Error
@@ -1720,70 +1671,98 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
-    ErrorSubNotFound:
+    ProductOrderItem:
       type: object
-      title: Error
+      description: An identified part of the order. A product order is decomposed into one or more order items.
+      properties:
+        product:
+          $ref: '#/components/schemas/ProductRefOrValue'
+        itemTotalPrice:
+          $ref: '#/components/schemas/OrderPrice'
+    CreateOrderResponse:
       required:
-      - status
-      - message
+      - statusCode
+      - statusMessage
+      - data
+      type: object
       properties:
         statusCode:
           type: string
-          description: Status code returned by provider system
-          example: 1000
+          description: Result code. Example- '0000'
         statusMessage:
           type: string
-          description: Status description
-          example: 'DEP ::: Subscription Not Found'
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Backend specific response
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
+          description: Result message. Example- 'Successfully processed'
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
-    ProductRefOrValue:
+        data:
+          type: object
+          properties:
+            billingToken:
+              type: object
+              properties:
+                msn:
+                  type: string
+                  minLength: 16
+                  maxLength: 64
+                  description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+                  example: '5115314911298406'
+                contentToken:
+                  type: string
+                  minLength: 16
+                  maxLength: 96
+                  description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+                  example: 81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058
+                allowToActivate:
+                  type: boolean
+                  description: Information inidicating if activation of token will be allowed.
+                  example: true
+                proposalIndicator:
+                  type: integer
+                  description: This indicates what is proposed, 0 - Nothing, 1 - Spend Limit only, 2 - Digital Limit only, 3 - Both Digital and Spend Limit, 4 - Nothing with SUL equals to SPUL and Digital Limit equal to New Monthly Committed Value
+                  enum:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                proposedDigitalLimit:
+                  type: integer
+                  minimum: 1
+                  maximum: 999999
+                  description: This the proposed digital limit in Rxx whole rands only.
+                  example: 25000
+                proposedSpendLimit:
+                  type: integer
+                  minimum: 1
+                  maximum: 999999
+                  description: This the proposed digital limit in Rxx whole rands only.
+                  example: 25000
+                proratedBill:
+                  type: integer
+                  minimum: 0
+                  maximum: 999999
+                  description: The prorated amount in cents. Note, this field won't be returned if the token is not a monthly token, which is specified via selectedDebitOrderDate
+                  example: 90
+                proratedBillDate:
+                  type: string
+                  minLength: 10
+                  maxLength: 10
+                  description: The date upon which the prorated billing will be performed, in the format 'yyyy-mm-dd'. Note, this field won't be returned if the token is not a monthly token, which is specified via selectedDebitOrderDate
+                  example: '2023-02-22'
+            subscription:
+              $ref: '#/components/schemas/ProductOrder2'
+    ProductOfferingRef:
       type: object
-      description: A product to be created defined by value or existing defined by reference. The polymorphic attributes @type, @schemaLocation & @referredType are related to the product entity and not the RelatedProductRefOrValue class itself
+      description: ProductOffering reference. A product offering represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
       properties:
-        agreement:
-          type: array
-          items:
-            $ref: '#/components/schemas/AgreementItemRef2'
-        characteristic:
-          type: array
-          description: product characteristics such as amount, type, etc
-          items:
-            $ref: '#/components/schemas/productCharacteristic'
-        productOffering:
-          $ref: '#/components/schemas/ProductOfferingRef'
-        productTerm:
-          type: array
-          description: Description of a productTerm linked to this product. This represent a commitment with a duration
-          items:
-            $ref: '#/components/schemas/ProductTerm'
-        status:
-          type: array
-          description: status of product
-          items:
-            $ref: '#/components/schemas/ProductStatusType'
-        orderDate:
+        id:
           type: string
-          description: Date when the order was created.
-        startDate:
+          description: Unique identifier of a related entity.
+        name:
           type: string
-          description: Is the date from which the product starts
-        terminationDate:
-          type: string
-          description: Is the date when the product was terminated.
-    ErrorSubChanNotFound:
+          description: Name of unique identifier of related entity
+    ErrorSvcIdSvcRefNotFound:
       type: object
       title: Error
       required:
@@ -1793,11 +1772,11 @@ components:
         statusCode:
           type: string
           description: Status code returned by provider system
-          example: 1007
+          example: 3004
         statusMessage:
           type: string
           description: Status description
-          example: 'DEP ::: Subscription Channel Not Found'
+          example: 'DEP ::: Service ID or Service Ref Not Found'
         supportMessage:
           type: string
           description: More error details and corrective measures
@@ -1819,7 +1798,36 @@ components:
         id:
           type: string
           description: Unique identifier of a related entity.
-    RegisterNotificationResponse:
+    ErrorBadReq:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+          example: 5000
+        statusMessage:
+          type: string
+          description: Status description
+          example: Bad Request
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Backend specific response
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+    Error_2:
       type: object
       required:
       - statusCode
@@ -1832,41 +1840,9 @@ components:
         statusMessage:
           type: string
           description: More details and corrective actions related to the error which can be shown to a client
-        transactionId:
+        supportMessage:
           type: string
-          description: This is the same transactionId that is sent in the request
-          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
-        id:
-          type: string
-          description: The id generated upon registration for notifications and to be used upon processing actual notifications
-          example: c5f80cb8-dc8b-11ea-87d0-0242ac130003
-        links:
-          $ref: '#/components/schemas/RegisterNotificationResponse__links_self'
-    ThirdParty:
-      type: object
-      properties:
-        notificationType:
-          type: string
-        notificationUrl:
-          type: string
-        targetSystem:
-          type: string
-        code:
-          type: string
-      title: ThirdParty
-    Success:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
         transactionId:
           type: string
           description: This is the same transactionId that is sent in the request
@@ -1876,8 +1852,21 @@ components:
           format: date-time
           description: Timestamp that the error occurred
           example: '2021-07-21T17:32:28Z'
-        AdditionalData:
-          $ref: '#/components/schemas/Data'
+        path:
+          type: string
+          description: The path that caused the error
+          example: /subscribers/27831234567
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+    RegisterNotificationResponse__links_self:
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://host:port/v1/
+          description: Hyperlink to access the Notification  created.
     Data:
       type: object
       properties:
@@ -1918,14 +1907,43 @@ components:
           type: string
           description: Status of the registration
           example: Deleted
-    RegisterNotificationResponse__links_self:
+    ThirdParty:
       type: object
       properties:
-        href:
+        notificationType:
           type: string
-          example: https://host:port/v1/
-          description: Hyperlink to access the Notification  created.
-    Error_2:
+        notificationUrl:
+          type: string
+        targetSystem:
+          type: string
+        code:
+          type: string
+      title: ThirdParty
+    Success:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        AdditionalData:
+          $ref: '#/components/schemas/Data'
+    RegisterNotificationResponse:
       type: object
       required:
       - statusCode
@@ -1938,38 +1956,16 @@ components:
         statusMessage:
           type: string
           description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
         transactionId:
           type: string
           description: This is the same transactionId that is sent in the request
           example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
-        timestamp:
+        id:
           type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        path:
-          type: string
-          description: The path that caused the error
-          example: /subscribers/27831234567
-        method:
-          type: string
-          description: The HTTP method type that was used
-          example: GET
-    RegisterNotificationRequest:
-      description: This is the model expected for notification registration request.
-      type: object
-      properties:
-        notificationType:
-          type: string
-        notificationUrl:
-          type: string
-        targetSystem:
-          type: string
-        code:
-          type: string
+          description: The id generated upon registration for notifications and to be used upon processing actual notifications
+          example: c5f80cb8-dc8b-11ea-87d0-0242ac130003
+        links:
+          $ref: '#/components/schemas/RegisterNotificationResponse__links_self'
     DeleteNotificationSubscriptionResponse:
       type: object
       description: The response for deleting a notification subscription
@@ -2037,39 +2033,18 @@ components:
               type: string
               description: Status of the registration
               example: Deleted
-    RegisterNotificationResponse_2:
+    RegisterNotificationRequest:
+      description: This is the model expected for notification registration request.
       type: object
-      description: This is the response expected for a notification registration request.
-      required:
-      - statusCode
-      - statusMessage
       properties:
-        statusCode:
+        notificationType:
           type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
-        statusMessage:
+        notificationUrl:
           type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        transactionId:
+        targetSystem:
           type: string
-          description: This is the same transactionId that is sent in the request
-          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
-        sequenceNo:
+        code:
           type: string
-          description: This is a unique transaction Identifier returned to the client
-          example: '12345'
-        id:
-          type: string
-          description: The id generated upon registration for notifications and to be used upon processing actual notifications
-          example: c5f80cb8-dc8b-11ea-87d0-0242ac130003
-        links:
-          type: object
-          properties:
-            href:
-              type: string
-              example: https://host:port/v1/
-              description: Hyperlink to access the Notification  created.
     Error_3:
       type: object
       description: Generic MADAPI error response
@@ -2108,6 +2083,39 @@ components:
           type: string
           description: The HTTP method type that was used
           example: GET
+    RegisterNotificationResponse_2:
+      type: object
+      description: This is the response expected for a notification registration request.
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        sequenceNo:
+          type: string
+          description: This is a unique transaction Identifier returned to the client
+          example: '12345'
+        id:
+          type: string
+          description: The id generated upon registration for notifications and to be used upon processing actual notifications
+          example: c5f80cb8-dc8b-11ea-87d0-0242ac130003
+        links:
+          type: object
+          properties:
+            href:
+              type: string
+              example: https://host:port/v1/
+              description: Hyperlink to access the Notification  created.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

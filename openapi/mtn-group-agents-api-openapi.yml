@@ -316,6 +316,98 @@ paths:
         required: true
 components:
   schemas:
+    BalanceDetail:
+      type: object
+      required:
+      - type
+      - activeValue
+      - activeUnit
+      description: The details for a balance type.
+      properties:
+        type:
+          type: string
+          description: This is the type of the value.
+          enum:
+          - CURRENCY
+          - DATA
+          - MINUTES
+          - SMS
+        activeValue:
+          type: string
+          description: This is the aggregated formatted active value of a balance type.
+          example: '136271'
+        activeUnit:
+          type: string
+          description: This is the unit of the aggregated active value.
+          enum:
+          - UGX
+          - ZAR
+          - NGN
+          - GB
+          - MB
+          - MINUTES
+          - SMS
+    Error:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+        status:
+          type: string
+          description: Text explaining the reason for the error
+        error:
+          type: string
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: ''
+    geoTagging:
+      type: object
+      properties:
+        regLocationLat:
+          type: number
+          format: double
+          description: Latitude value of the place where the agent KYC capture has taken place
+          example: 3.225225225225225
+        regLocationLong:
+          type: number
+          format: double
+          description: Longitude value of the place where the agent KYC capture has taken place
+          example: 30.913829549623536
+        cellGlobalId:
+          type: string
+          pattern: ^\d{3}-\d{2}-\d-\w$
+          description: Full Cell Global Identity in the format MCC-MNC-LAC-CellId
+          example: 641-10-2321-6b1c
+        kycCaptureDateTime:
+          type: string
+          format: date-time
+          description: datetime when the agent KYC capture/update happened, using IETC-RFC-3339 format
+    installationConfirmationDetailsRequest:
+      type: object
+      required:
+      - appCode
+      - installerCode
+      - msisdn
+      - imei
+      properties:
+        appCode:
+          type: string
+        msisdn:
+          type: string
+        imei:
+          type: string
+        phoneOSVersion:
+          type: string
+        imsi:
+          type: string
+        sourceChannel:
+          type: string
+        deviceLocation:
+          type: string
     Devices:
       type: object
       properties:
@@ -339,19 +431,6 @@ components:
                       endDateTime:
                         type: string
                         format: date-time
-    Wallet:
-      type: object
-      required:
-      - name
-      - amount
-      description: Contributing wallets to the aggregated balance
-      properties:
-        name:
-          type: string
-          description: The name of a wallet account. E.g. registrationCommission, simswapCommission
-          example: registrationCommission
-        amount:
-          $ref: '#/components/schemas/Amount'
     AgentLinks:
       type: object
       required:
@@ -367,6 +446,42 @@ components:
               type: string
               description: ''
               example: https://api.mtn.com/v1/agents/256779999781
+    ACTIVITYREPORT:
+      type: object
+      properties:
+        firstCallActivationCount:
+          type: integer
+          description: Number of new customers registered by the agent that have done their first voice call
+          example: 110
+        firstRechargeActivationCount:
+          type: integer
+          description: Number of new customers registered by the agent that have done their first airtime recharge
+          example: 90
+    Agent:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Canonical response code. '0000' for success response
+          example: '0000'
+        agentId:
+          type: string
+          example: '2568810000034'
+        agentKyc:
+          type: array
+          items:
+            $ref: '#/components/schemas/AGENTKYC'
+        agentPlans:
+          type: object
+          $ref: '#/components/schemas/AGENTPLANS'
+        activityReport:
+          type: object
+          $ref: '#/components/schemas/ACTIVITYREPORT'
+        _link:
+          type: object
+          allOf:
+          - description: The link to retrieve the Agent KYC details.
+          - $ref: '#/components/schemas/AgentLinks'
     AGENTPLANS:
       type: object
       properties:
@@ -393,66 +508,19 @@ components:
                     description: The different wallets used to compute the active and unused values of this balance.
                     items:
                       $ref: '#/components/schemas/Wallet'
-    installationConfirmationDetailsRequest:
+    Wallet:
       type: object
       required:
-      - appCode
-      - installerCode
-      - msisdn
-      - imei
+      - name
+      - amount
+      description: Contributing wallets to the aggregated balance
       properties:
-        appCode:
+        name:
           type: string
-        msisdn:
-          type: string
-        imei:
-          type: string
-        phoneOSVersion:
-          type: string
-        imsi:
-          type: string
-        sourceChannel:
-          type: string
-        deviceLocation:
-          type: string
-    installationConfirmationDetailsResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-          description: Error response code
-    agentFLAG:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        message:
-          type: string
-          description: Response description from the backend system
-          example: Yello, Requestor should be an agent.
-        transactionId:
-          type: string
-          description: Response Id from the backend
-        agentId:
-          type: string
-          description: ID of the agent. It could be MSISDN, email address, or any other agent identifier. if id is msisdn, format must be E.123
-          example: '256789999781'
-        data:
-          type: object
-          properties:
-            isAgent:
-              type: boolean
-              example: false
-        _links:
-          allOf:
-          - description: Links used to access the agent information
-          - $ref: '#/components/schemas/AgentLinks'
+          description: The name of a wallet account. E.g. registrationCommission, simswapCommission
+          example: registrationCommission
+        amount:
+          $ref: '#/components/schemas/Amount'
     Amount:
       type: object
       required:
@@ -485,30 +553,38 @@ components:
           - MINUTES
           - SMS
           - FCFA
-    Agent:
+    ErrorDefault:
+      properties:
+        error:
+          type: string
+        error_description:
+          type: string
+    agentFLAG:
       type: object
       properties:
         statusCode:
           type: string
-          description: Canonical response code. '0000' for success response
           example: '0000'
+        message:
+          type: string
+          description: Response description from the backend system
+          example: Yello, Requestor should be an agent.
+        transactionId:
+          type: string
+          description: Response Id from the backend
         agentId:
           type: string
-          example: '2568810000034'
-        agentKyc:
-          type: array
-          items:
-            $ref: '#/components/schemas/AGENTKYC'
-        agentPlans:
+          description: ID of the agent. It could be MSISDN, email address, or any other agent identifier. if id is msisdn, format must be E.123
+          example: '256789999781'
+        data:
           type: object
-          $ref: '#/components/schemas/AGENTPLANS'
-        activityReport:
-          type: object
-          $ref: '#/components/schemas/ACTIVITYREPORT'
-        _link:
-          type: object
+          properties:
+            isAgent:
+              type: boolean
+              example: false
+        _links:
           allOf:
-          - description: The link to retrieve the Agent KYC details.
+          - description: Links used to access the agent information
           - $ref: '#/components/schemas/AgentLinks'
     AGENTKYC:
       type: object
@@ -552,93 +628,17 @@ components:
               type: string
             lastName:
               type: string
-    ACTIVITYREPORT:
+    installationConfirmationDetailsResponse:
       type: object
       properties:
-        firstCallActivationCount:
-          type: integer
-          description: Number of new customers registered by the agent that have done their first voice call
-          example: 110
-        firstRechargeActivationCount:
-          type: integer
-          description: Number of new customers registered by the agent that have done their first airtime recharge
-          example: 90
-    geoTagging:
-      type: object
-      properties:
-        regLocationLat:
-          type: number
-          format: double
-          description: Latitude value of the place where the agent KYC capture has taken place
-          example: 3.225225225225225
-        regLocationLong:
-          type: number
-          format: double
-          description: Longitude value of the place where the agent KYC capture has taken place
-          example: 30.913829549623536
-        cellGlobalId:
+        statusCode:
           type: string
-          pattern: ^\d{3}-\d{2}-\d-\w$
-          description: Full Cell Global Identity in the format MCC-MNC-LAC-CellId
-          example: 641-10-2321-6b1c
-        kycCaptureDateTime:
+        statusMessage:
           type: string
-          format: date-time
-          description: datetime when the agent KYC capture/update happened, using IETC-RFC-3339 format
-    BalanceDetail:
-      type: object
-      required:
-      - type
-      - activeValue
-      - activeUnit
-      description: The details for a balance type.
-      properties:
-        type:
-          type: string
-          description: This is the type of the value.
-          enum:
-          - CURRENCY
-          - DATA
-          - MINUTES
-          - SMS
-        activeValue:
-          type: string
-          description: This is the aggregated formatted active value of a balance type.
-          example: '136271'
-        activeUnit:
-          type: string
-          description: This is the unit of the aggregated active value.
-          enum:
-          - UGX
-          - ZAR
-          - NGN
-          - GB
-          - MB
-          - MINUTES
-          - SMS
-    ErrorDefault:
-      properties:
-        error:
-          type: string
-        error_description:
-          type: string
-    Error:
-      properties:
         timestamp:
           type: string
           format: date-time
           description: Error response code
-        status:
-          type: string
-          description: Text explaining the reason for the error
-        error:
-          type: string
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: ''
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

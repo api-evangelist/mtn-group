@@ -83,6 +83,39 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+        sequenceNo:
+          type: string
+          description: A unique identifier for tracking all requests
+          example: '12939993'
     PremiumError:
       type: object
       properties:
@@ -98,48 +131,19 @@ components:
         transactionId:
           type: string
           description: Message ID
-    PremiumData:
-      type: object
-      description: Contains response information pertaining to the premium request.
-      properties:
-        message:
-          type: string
-          description: A message send by the back end pertaining to the premium calculation request
-        premium:
-          $ref: '#/components/schemas/Amount'
-        loyaltyInformation:
-          $ref: '#/components/schemas/LoyaltyBalances'
-    Amount:
+    CustomerPremium:
       type: object
       required:
-      - value
-      - type
-      - unit
-      description: The amount details for a wallet.
+      - originReferenceId
       properties:
-        type:
+        originReferenceId:
           type: string
-          description: This is the type of the wallet value.
-          enum:
-          - CURRENCY
-          - DATA
-          - MINUTES
-          - SMS
-        value:
+          description: Origin Reference Id
+        statusCode:
           type: string
-          description: This is the value of a balance wallet.
-        unit:
-          type: string
-          description: This is the unit of the wallet value.
-          enum:
-          - ZAR
-          - NGN
-          - GB
-          - MB
-          - MINUTES
-          - SMS
-          - FCFA
-          example: NGN
+          description: This will have MADAPI response mapping, based on the value received from the downstream system
+        data:
+          $ref: '#/components/schemas/PremiumData'
     PremiumRequest:
       type: object
       required:
@@ -183,52 +187,48 @@ components:
           $ref: '#/components/schemas/Amount'
         newBalance:
           $ref: '#/components/schemas/Amount'
-    CustomerPremium:
+    PremiumData:
+      type: object
+      description: Contains response information pertaining to the premium request.
+      properties:
+        message:
+          type: string
+          description: A message send by the back end pertaining to the premium calculation request
+        premium:
+          $ref: '#/components/schemas/Amount'
+        loyaltyInformation:
+          $ref: '#/components/schemas/LoyaltyBalances'
+    Amount:
       type: object
       required:
-      - originReferenceId
+      - value
+      - type
+      - unit
+      description: The amount details for a wallet.
       properties:
-        originReferenceId:
+        type:
           type: string
-          description: Origin Reference Id
-        statusCode:
+          description: This is the type of the wallet value.
+          enum:
+          - CURRENCY
+          - DATA
+          - MINUTES
+          - SMS
+        value:
           type: string
-          description: This will have MADAPI response mapping, based on the value received from the downstream system
-        data:
-          $ref: '#/components/schemas/PremiumData'
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
+          description: This is the value of a balance wallet.
+        unit:
           type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-        path:
-          type: string
-          description: The path that caused the error
-        method:
-          type: string
-          description: The HTTP method type that was used
-          example: GET
-        sequenceNo:
-          type: string
-          description: A unique identifier for tracking all requests
-          example: '12939993'
+          description: This is the unit of the wallet value.
+          enum:
+          - ZAR
+          - NGN
+          - GB
+          - MB
+          - MINUTES
+          - SMS
+          - FCFA
+          example: NGN
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

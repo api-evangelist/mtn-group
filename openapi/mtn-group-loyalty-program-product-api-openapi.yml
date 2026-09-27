@@ -19,7 +19,7 @@ paths:
       description: This operation is used to retrieve the loyalty program member’s loyalty program products.
       tags:
       - Loyalty Program Product
-      operationId: List Products
+      operationId: ListProducts
       parameters:
       - name: memberId
         in: path
@@ -114,12 +114,14 @@ paths:
       security: []
       summary: List products
       x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: List Products
   /loyaltyProgramMember/{memberId}/loyaltyProgramProduct/{programProductId}:
     get:
       description: This operation is used to retrieve the loyalty member's merchants based on the categories the member is eligible for
       tags:
       - Loyalty Program Product
-      operationId: Get Product
+      operationId: GetProduct
       parameters:
       - name: memberId
         in: path
@@ -181,36 +183,10 @@ paths:
       security: []
       summary: Get product
       x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: Get Product
 components:
   schemas:
-    LoyaltyAccountCreate:
-      title: LoyaltyAccountCreate
-      type: object
-      properties:
-        id:
-          type: string
-        loyaltyBalance:
-          $ref: '#/components/schemas/CreateLoyaltyBalance'
-    Quantity:
-      title: Quantity
-      type: object
-      properties:
-        unit:
-          type: string
-        balance:
-          type: number
-          format: double
-      required:
-      - unit
-      - balance
-    ProductCharacteristics:
-      title: ProductLinkRef
-      type: object
-      properties:
-        name:
-          type: string
-        value:
-          type: string
     ProductProgramRef:
       title: ProductProgram
       type: object
@@ -240,30 +216,6 @@ components:
       required:
       - name
       - productSpecId
-    ProductProgramCategoriesResponseData:
-      title: ProductProgramUpdate
-      type: object
-      properties:
-        name:
-          type: string
-        id:
-          type: string
-        description:
-          type: string
-        productStatus:
-          type: string
-        characteristics:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductCharacteristics'
-    CreateLoyaltyBalance:
-      title: CreateLoyaltyBalance
-      type: object
-      properties:
-        quantity:
-          $ref: '#/components/schemas/Quantity'
-      required:
-      - quantity
     Error:
       type: object
       required:
@@ -288,6 +240,58 @@ components:
           format: date-time
           description: Timestamp of the error
           example: 2019-08-23T07:29:25.593+0000
+    CreateLoyaltyBalance:
+      title: CreateLoyaltyBalance
+      type: object
+      properties:
+        quantity:
+          $ref: '#/components/schemas/Quantity'
+      required:
+      - quantity
+    ProductProgramCategoriesResponseData:
+      title: ProductProgramUpdate
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        description:
+          type: string
+        productStatus:
+          type: string
+        characteristics:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductCharacteristics'
+    ProductCharacteristics:
+      title: ProductLinkRef
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    Quantity:
+      title: Quantity
+      type: object
+      properties:
+        unit:
+          type: string
+        balance:
+          type: number
+          format: double
+      required:
+      - unit
+      - balance
+    LoyaltyAccountCreate:
+      title: LoyaltyAccountCreate
+      type: object
+      properties:
+        id:
+          type: string
+        loyaltyBalance:
+          $ref: '#/components/schemas/CreateLoyaltyBalance'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

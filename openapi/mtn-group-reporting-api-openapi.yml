@@ -10,7 +10,7 @@ tags:
 paths:
   /customers/{customerId}/score/creditreport:
     get:
-      operationId: retrieve credit score report
+      operationId: retrieveCreditScoreReport
       summary: retrieve credit score report for an individual and coorporate entity
       description: This operation retrieves a credit score report for an individual and coorporate entity. This can be a nano, classic or a basic individual or cooporate report
       tags:
@@ -168,8 +168,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      x-operation-id-source: normalized
+      x-operation-id-original: retrieve credit score report
 components:
   schemas:
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        sequenceNo:
+          type: string
+          description: This is the MADAPI auto generated reference for tracing purposes
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/customers/2348024008124/score
+    Summary:
+      type: object
+      properties:
+        BUREAU_CURRENCY:
+          type: string
+          example: NGN
+        HEADINGTEXT:
+          type: string
+        NO_OF_OPENEDCREDITFACILITIES:
+          type: string
+        OWNERSHIP_TYPE:
+          type: string
+        SANCTIONED_AMOUNT:
+          type: string
+        NO_OF_OPENEDCREDITFACILITIESSpecified:
+          type: boolean
+        TOTAL_NO_OF_CREDITFACILITIES:
+          type: string
+        TOTAL_NO_OF_CREDITGRANTORS:
+          type: string
+        TOTAL_OUTSTANDING:
+          type: string
     SummaryOverdue:
       type: object
       properties:
@@ -190,6 +250,24 @@ components:
           type: string
         TOT_DUESpecified:
           type: boolean
+    ScoreReportResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        sequenceNo:
+          type: string
+          description: This is the MADAPI auto generated reference for tracing purposes
+        data:
+          $ref: '#/components/schemas/ReportData'
     ReportData:
       type: object
       properties:
@@ -985,82 +1063,6 @@ components:
                       type: object
         REQUESTID:
           type: string
-    ScoreReportResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        sequenceNo:
-          type: string
-          description: This is the MADAPI auto generated reference for tracing purposes
-        data:
-          $ref: '#/components/schemas/ReportData'
-    Summary:
-      type: object
-      properties:
-        BUREAU_CURRENCY:
-          type: string
-          example: NGN
-        HEADINGTEXT:
-          type: string
-        NO_OF_OPENEDCREDITFACILITIES:
-          type: string
-        OWNERSHIP_TYPE:
-          type: string
-        SANCTIONED_AMOUNT:
-          type: string
-        NO_OF_OPENEDCREDITFACILITIESSpecified:
-          type: boolean
-        TOTAL_NO_OF_CREDITFACILITIES:
-          type: string
-        TOTAL_NO_OF_CREDITGRANTORS:
-          type: string
-        TOTAL_OUTSTANDING:
-          type: string
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: 2020-08-01T12:34
-        sequenceNo:
-          type: string
-          description: This is the MADAPI auto generated reference for tracing purposes
-        _links:
-          type: object
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
-                  example: https://api.mtn.com/v1/customers/2348024008124/score
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

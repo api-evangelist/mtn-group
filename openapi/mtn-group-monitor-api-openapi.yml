@@ -171,35 +171,39 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Response:
+    Error:
+      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
       type: object
-      description: A response to a request
       required:
-      - body
-      - header
+      - code
+      - reason
       properties:
-        body:
+        code:
           type: string
-          description: The body of the response. For example for an HTTP response might contain HTML for rendering.
-        statusCode:
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
           type: string
-          description: The status of the response. For example for an HTTP response would be codes such as 200, 400, etc.
-        header:
-          type: array
-          items:
-            $ref: '#/components/schemas/HeaderItem'
-          minItems: 1
-          description: Items included in the header of the response. For example for an HTTP response might contain negotiated locale.
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
         '@baseType':
           type: string
-          description: When sub-classing, this defines the super-class
+          description: When sub-classing, this defines the super-class.
         '@schemaLocation':
           type: string
           format: uri
           description: A URI to a JSON-Schema file that defines additional attributes and relationships
         '@type':
           type: string
-          description: When sub-classing, this defines the sub-class entity name
+          description: When sub-classing, this defines the sub-class entity name.
     Monitor:
       type: object
       description: Monitoring of resources
@@ -255,6 +259,35 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
+    Response:
+      type: object
+      description: A response to a request
+      required:
+      - body
+      - header
+      properties:
+        body:
+          type: string
+          description: The body of the response. For example for an HTTP response might contain HTML for rendering.
+        statusCode:
+          type: string
+          description: The status of the response. For example for an HTTP response would be codes such as 200, 400, etc.
+        header:
+          type: array
+          items:
+            $ref: '#/components/schemas/HeaderItem'
+          minItems: 1
+          description: Items included in the header of the response. For example for an HTTP response might contain negotiated locale.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
     Request:
       type: object
       description: A response to a request
@@ -287,36 +320,3 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    Error:
-      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
-      type: object
-      required:
-      - code
-      - reason
-      properties:
-        code:
-          type: string
-          description: Application relevant detail, defined in the API or a common list.
-        reason:
-          type: string
-          description: Explanation of the reason for the error which can be shown to a client user.
-        message:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client user.
-        status:
-          type: string
-          description: HTTP Error code extension
-        referenceError:
-          type: string
-          format: uri
-          description: URI of documentation describing the error.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class.
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name.

@@ -13,7 +13,7 @@ paths:
       description: This operation retrieves a loyalty burn transactions of a spesific programme member.Redemtion history
       tags:
       - Loyalty Burn
-      operationId: List Burn Transactions
+      operationId: ListBurnTransactions
       parameters:
       - name: memberId
         in: path
@@ -31,11 +31,13 @@ paths:
                   $ref: '#/components/schemas/LoyaltyTransactionRef'
       summary: List burn transactions
       x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: List Burn Transactions
     post:
       description: This operation creates a new loyalty burn transaction, Loyaty redemtion.
       tags:
       - Loyalty Burn
-      operationId: Burn Loyalty Balance
+      operationId: BurnLoyaltyBalance
       parameters:
       - name: memberId
         in: path
@@ -69,8 +71,20 @@ paths:
         required: true
       summary: Burn loyalty balance
       x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: Burn Loyalty Balance
 components:
   schemas:
+    LoyaltyBalanceRef:
+      title: LoyaltyBalance
+      type: object
+      properties:
+        id:
+          type: string
+        quantity:
+          $ref: '#/components/schemas/Quantity'
+        redeemQuantity:
+          $ref: '#/components/schemas/RedeemQuantity'
     LoyaltyTransactionRef:
       title: LoyaltyTransaction
       type: object
@@ -125,26 +139,7 @@ components:
       - openingBalance
       - closingBalance
       - dateTime
-    CreateLoyaltyBurn:
-      title: CreateLoyaltyBurn
-      type: object
-      properties:
-        redeemAllPoints:
-          type: boolean
-        loyaltyCatalogueItem:
-          $ref: '#/components/schemas/LoyaltyCatalogueItemRef'
-    Quantity:
-      title: Quantity
-      type: object
-      properties:
-        unit:
-          type: string
-        balance:
-          type: number
-          format: double
-      required:
-      - balance
-    ErrorDetail:
+    Error:
       required:
       - code
       - message
@@ -161,6 +156,21 @@ components:
         infoURL:
           description: (optional) A URL to online documentation that provides more information about the error.
           type: string
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+    RedeemQuantity:
+      title: Quantity
+      type: object
+      properties:
+        unit:
+          type: string
+        balance:
+          type: number
+          format: double
+      required:
+      - balance
     LoyaltyCatalogueItemRef:
       title: LoyaltyCatalogueItem
       type: object
@@ -173,17 +183,7 @@ components:
           - sms
           - voice
           - data
-    LoyaltyBalanceRef:
-      title: LoyaltyBalance
-      type: object
-      properties:
-        id:
-          type: string
-        quantity:
-          $ref: '#/components/schemas/Quantity'
-        redeemQuantity:
-          $ref: '#/components/schemas/RedeemQuantity'
-    RedeemQuantity:
+    Quantity:
       title: Quantity
       type: object
       properties:
@@ -220,7 +220,7 @@ components:
         dateTime:
           type: string
           format: dateTime
-    Error:
+    ErrorDetail:
       required:
       - code
       - message
@@ -237,7 +237,11 @@ components:
         infoURL:
           description: (optional) A URL to online documentation that provides more information about the error.
           type: string
-        details:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorDetail'
+    CreateLoyaltyBurn:
+      title: CreateLoyaltyBurn
+      type: object
+      properties:
+        redeemAllPoints:
+          type: boolean
+        loyaltyCatalogueItem:
+          $ref: '#/components/schemas/LoyaltyCatalogueItemRef'
