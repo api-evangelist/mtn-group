@@ -88,6 +88,58 @@ paths:
         required: true
 components:
   schemas:
+    InboundRequest:
+      type: object
+      required:
+      - sessionId
+      - messageType
+      - msisdn
+      - serviceCode
+      - ussdString
+      properties:
+        sessionId:
+          type: string
+          description: Unique identifier of the session.
+          example: '01235'
+        messageType:
+          type: string
+          description: Message type. 0-Begin|1-Continue|2-End|3-Notification|4-Cancel|5-Timeout.
+          example: '0'
+        msisdn:
+          type: string
+          description: Mobile number of the message recipient.
+          example: '2252312345'
+        serviceCode:
+          type: string
+          example: '321123'
+        ussdString:
+          type: string
+          description: USSD message content. If messageType is of type 4-Abort, this attribute will contain the abort reason or message.
+          example: Please vote for xxx.
+        cellId:
+          type: string
+          description: Cell Id of the subscriber. A GSM Cell ID (CID) is a unique number used to identify each base transceiver station (BTS) or sector of a BTS within a location area code (LAC) if not within a GSM network.
+        language:
+          type: string
+          description: Language of preference of the subscriber
+        imsi:
+          type: string
+          description: IMSI of the subscriber. An international mobile subscriber identity (IMSI) is a unique number, usually fifteen digits, associated with Global System for Mobile Communications (GSM) and Universal Mobile Telecommunications System (UMTS) network mobile phone users. The IMSI is a unique number identifying a GSM subscriber.
+    Links:
+      type: object
+      required:
+      - self
+      properties:
+        self:
+          type: object
+          required:
+          - href
+          description: ''
+          properties:
+            href:
+              type: string
+              description: ''
+              example: https://api.mtn.com/v1/messages/ussd/send
     InboundResponse:
       type: object
       required:
@@ -168,58 +220,6 @@ components:
           type: string
           description: The HTTP method type that was used
           example: POST
-    Links:
-      type: object
-      required:
-      - self
-      properties:
-        self:
-          type: object
-          required:
-          - href
-          description: ''
-          properties:
-            href:
-              type: string
-              description: ''
-              example: https://api.mtn.com/v1/messages/ussd/send
-    InboundRequest:
-      type: object
-      required:
-      - sessionId
-      - messageType
-      - msisdn
-      - serviceCode
-      - ussdString
-      properties:
-        sessionId:
-          type: string
-          description: Unique identifier of the session.
-          example: '01235'
-        messageType:
-          type: string
-          description: Message type. 0-Begin|1-Continue|2-End|3-Notification|4-Cancel|5-Timeout.
-          example: '0'
-        msisdn:
-          type: string
-          description: Mobile number of the message recipient.
-          example: '2252312345'
-        serviceCode:
-          type: string
-          example: '321123'
-        ussdString:
-          type: string
-          description: USSD message content. If messageType is of type 4-Abort, this attribute will contain the abort reason or message.
-          example: Please vote for xxx.
-        cellId:
-          type: string
-          description: Cell Id of the subscriber. A GSM Cell ID (CID) is a unique number used to identify each base transceiver station (BTS) or sector of a BTS within a location area code (LAC) if not within a GSM network.
-        language:
-          type: string
-          description: Language of preference of the subscriber
-        imsi:
-          type: string
-          description: IMSI of the subscriber. An international mobile subscriber identity (IMSI) is a unique number, usually fifteen digits, associated with Global System for Mobile Communications (GSM) and Universal Mobile Telecommunications System (UMTS) network mobile phone users. The IMSI is a unique number identifying a GSM subscriber.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

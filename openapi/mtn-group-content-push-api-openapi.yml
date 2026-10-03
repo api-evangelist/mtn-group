@@ -180,131 +180,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Error400:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Error response code
-          example: '2023-10-25T09:52:55.166+00:00'
-        status:
-          type: string
-          description: Text explaining the reason for the error
-          example: '400'
-        error:
-          type: string
-          example: Bad Request
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: ''
-          example: /customers/1234567890321/identityStatus
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). More information on these mappings can be found at https://developers.mtn.com/getting-started/response-and-error-codes
-          example: '3001'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: 2020-08-01T12:34
-        path:
-          type: string
-          description: The path that caused the error
-          example: /subscriber/256789999781/simswap-date
-        method:
-          type: string
-          description: The HTTP method type that was used
-          example: POST
-    Error500:
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '3010'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: Internal Server Error
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        path:
-          type: string
-          description: The path that caused the error
-        method:
-          type: string
-          description: method used by MADAPI to get the response
-    wigPushRequest:
-      type: object
-      required:
-      - msisdn
-      properties:
-        msisdn:
-          type: string
-          description: Mobile number of the customer.
-          example: '9614454422'
-        command:
-          type: string
-          description: Invigo command for WIG Push
-          example: SIM_ADV
-        wml:
-          type: string
-          description: This is for the source system that wants to use the push feature with wml data
-        params:
-          type: array
-          items:
-            type: object
-            properties:
-              advid:
-                example: '3'
-                type: string
-                description: unique id
-    Error405:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 405
-        error:
-          type: string
-          description: error message
-          example: Method Not Allowed
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
     wigPushResponse:
       type: object
       properties:
@@ -350,26 +225,31 @@ components:
           type: string
           description: Id for tracing.
           example: fg545f-cf4gg4fd55-fdg85hg6
-    sendSmsResponse:
-      required:
-      - data
-      - statusCode
-      - statusMessage
-      - transactionId
-      type: object
+    Error500:
       properties:
         statusCode:
           type: string
-          description: HTTP error code extension
-          example: '0000'
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3010'
         statusMessage:
           type: string
-          description: Message.
-          example: Send Sms is in progress
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
         transactionId:
           type: string
-          description: MSISDN of the customer provided in the input as customerId
-          example: 0987777896789999781
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: method used by MADAPI to get the response
     Error401:
       properties:
         statusCode:
@@ -391,20 +271,31 @@ components:
           type: string
           description: fault message
           example: oauth.v2.InvalidApiKey
-    Error404:
+    wigPushRequest:
+      type: object
+      required:
+      - msisdn
       properties:
-        fault:
-          properties:
-            faultstring:
-              type: string
-              description: ''
-              example: 'Unable to identify proxy for host: southafrica and url: /v1o/kycVerification/customers/1234567890123333/identityStatus'
-            detail:
-              properties:
-                errorcode:
-                  type: string
-                  description: ''
-                  example: messaging.adaptors.http.flow.ApplicationNotFound
+        msisdn:
+          type: string
+          description: Mobile number of the customer.
+          example: '9614454422'
+        command:
+          type: string
+          description: Invigo command for WIG Push
+          example: SIM_ADV
+        wml:
+          type: string
+          description: This is for the source system that wants to use the push feature with wml data
+        params:
+          type: array
+          items:
+            type: object
+            properties:
+              advid:
+                example: '3'
+                type: string
+                description: unique id
     sendSmsRequest:
       required:
       - customerId
@@ -434,6 +325,115 @@ components:
         linkId:
           type: string
           description: Link ID
+    Error400:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+          example: '2023-10-25T09:52:55.166+00:00'
+        status:
+          type: string
+          description: Text explaining the reason for the error
+          example: '400'
+        error:
+          type: string
+          example: Bad Request
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: ''
+          example: /customers/1234567890321/identityStatus
+    sendSmsResponse:
+      required:
+      - data
+      - statusCode
+      - statusMessage
+      - transactionId
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '0000'
+        statusMessage:
+          type: string
+          description: Message.
+          example: Send Sms is in progress
+        transactionId:
+          type: string
+          description: MSISDN of the customer provided in the input as customerId
+          example: 0987777896789999781
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). More information on these mappings can be found at https://developers.mtn.com/getting-started/response-and-error-codes
+          example: '3001'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /subscriber/256789999781/simswap-date
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: POST
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error404:
+      properties:
+        fault:
+          properties:
+            faultstring:
+              type: string
+              description: ''
+              example: 'Unable to identify proxy for host: southafrica and url: /v1o/kycVerification/customers/1234567890123333/identityStatus'
+            detail:
+              properties:
+                errorcode:
+                  type: string
+                  description: ''
+                  example: messaging.adaptors.http.flow.ApplicationNotFound
   securitySchemes:
     apiKey:
       type: apiKey

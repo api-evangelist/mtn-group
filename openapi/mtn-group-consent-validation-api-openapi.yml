@@ -88,6 +88,12 @@ paths:
         required: true
 components:
   schemas:
+    SuccessConsentResponseLink:
+      type: object
+      properties:
+        self:
+          type: string
+          example: https://api.mtn.com/v1/consent
     consentError:
       type: object
       properties:
@@ -103,6 +109,27 @@ components:
         transactionId:
           type: string
           description: Message ID
+    SuccessConsentResponse:
+      type: object
+      required:
+      - statusCode
+      - data
+      - _links
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        customerId:
+          type: string
+          example: '234806589013'
+        data:
+          type: object
+          properties:
+            sent:
+              type: boolean
+              example: true
+        _links:
+          $ref: '#/components/schemas/SuccessConsentResponseLink'
     ConsentRequest:
       type: object
       required:
@@ -132,33 +159,6 @@ components:
           - custom data 1
           - custom data 2
           description: This is a custom list of strings that you want to be sent back to you when the user's consent is posted back in ConsentNotificationResponse object.
-    SuccessConsentResponse:
-      type: object
-      required:
-      - statusCode
-      - data
-      - _links
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        customerId:
-          type: string
-          example: '234806589013'
-        data:
-          type: object
-          properties:
-            sent:
-              type: boolean
-              example: true
-        _links:
-          $ref: '#/components/schemas/SuccessConsentResponseLink'
-    SuccessConsentResponseLink:
-      type: object
-      properties:
-        self:
-          type: string
-          example: https://api.mtn.com/v1/consent
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

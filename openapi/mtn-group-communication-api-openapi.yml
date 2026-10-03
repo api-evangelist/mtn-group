@@ -271,70 +271,17 @@ paths:
       x-operation-id-original: deregister Callback
 components:
   schemas:
-    SendSMS:
-      title: SendSMS
+    MessageSentResponseSMS:
+      title: MessageSentResponse
       type: object
-      required:
-      - to
-      - body
       properties:
-        to:
-          description: Mobile number to send SMS to
+        messages:
+          description: An array of messages.
           type: array
           items:
-            type: string
-          example:
-          - '+27832008963'
-          - '+27832008981'
-          - '+27832090015'
-        body:
-          description: text body of the SMS message
-          type: string
-          example: Welcome to the Bozza network
-        from:
-          description: Sender identity/address/code
-          type: string
-          example: '34001'
-        notificationURL:
-          description: callback URL to send status of the SMS send request
-          type: string
-          example: http://domian.co.za/callbackurl
-        clientId:
-          description: client app name
-          type: string
-          example: My_SMS_APP
-    Error:
+            $ref: '#/components/schemas/Message'
       required:
-      - code
-      - reason
-      properties:
-        code:
-          type: integer
-          description: Application related code.
-        reason:
-          type: integer
-          description: Text that explains the reason for error.
-        message:
-          type: string
-          description: (optional) Text that provide more details and corrective actions related to the error.
-    CallbackResponse:
-      required:
-      - accessCode
-      - callbackUrl
-      properties:
-        accessCode:
-          type: string
-          description: Id of the registered callback
-        callbackUrl:
-          type: string
-          description: The callback being registered.
-        status:
-          type: string
-          enum:
-          - successful
-          - unsuccessful
-        message:
-          type: string
+      - messages
     Message:
       title: Message
       type: object
@@ -368,19 +315,46 @@ components:
       - deliveryStatus
       - messageId
       - smsStatusUrl
-    CallbackInfo:
+    CallbackResponse:
       required:
-      - callbackURL
+      - accessCode
+      - callbackUrl
       properties:
-        callbackURL:
-          type: string
-          description: The callback being registered.
         accessCode:
           type: string
-          description: Developer assigned short code
-        clientId:
+          description: Id of the registered callback
+        callbackUrl:
           type: string
-          description: App ID
+          description: The callback being registered.
+        status:
+          type: string
+          enum:
+          - successful
+          - unsuccessful
+        message:
+          type: string
+    OutboundPollResponse:
+      title: OutboundPollResponse
+      type: object
+      properties:
+        to:
+          description: 'The phone number (recipient) the message was sent to (in E.164 format).
+
+            '
+          type: string
+          example: '+27832008963'
+        sentTimestamp:
+          description: The date and time when the message was sent.
+          type: string
+          format: date-time
+          example: {}
+        receivedTimestamp:
+          description: The date and time when the message was recieved by recipient.
+          type: string
+          format: date-time
+          example: {}
+        deliveryStatus:
+          $ref: '#/components/schemas/Status'
     Status:
       title: Status
       type: string
@@ -394,17 +368,65 @@ components:
       - REJECTED
       - READ
       example: DELIVERED
-    MessageSentResponseSMS:
-      title: MessageSentResponse
-      type: object
+    CallbackInfo:
+      required:
+      - callbackURL
       properties:
-        messages:
-          description: An array of messages.
+        callbackURL:
+          type: string
+          description: The callback being registered.
+        accessCode:
+          type: string
+          description: Developer assigned short code
+        clientId:
+          type: string
+          description: App ID
+    Error:
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: integer
+          description: Application related code.
+        reason:
+          type: integer
+          description: Text that explains the reason for error.
+        message:
+          type: string
+          description: (optional) Text that provide more details and corrective actions related to the error.
+    SendSMS:
+      title: SendSMS
+      type: object
+      required:
+      - to
+      - body
+      properties:
+        to:
+          description: Mobile number to send SMS to
           type: array
           items:
-            $ref: '#/components/schemas/Message'
-      required:
-      - messages
+            type: string
+          example:
+          - '+27832008963'
+          - '+27832008981'
+          - '+27832090015'
+        body:
+          description: text body of the SMS message
+          type: string
+          example: Welcome to the Bozza network
+        from:
+          description: Sender identity/address/code
+          type: string
+          example: '34001'
+        notificationURL:
+          description: callback URL to send status of the SMS send request
+          type: string
+          example: http://domian.co.za/callbackurl
+        clientId:
+          description: client app name
+          type: string
+          example: My_SMS_APP
     ReceivePollResponse:
       title: ReceivePollResponse
       description: 'Poll for incoming messages specifying the number of messages to receive
@@ -439,28 +461,6 @@ components:
               sentTimestamp:
                 description: The date and time when the message was sent by recipient.
                 type: string
-    OutboundPollResponse:
-      title: OutboundPollResponse
-      type: object
-      properties:
-        to:
-          description: 'The phone number (recipient) the message was sent to (in E.164 format).
-
-            '
-          type: string
-          example: '+27832008963'
-        sentTimestamp:
-          description: The date and time when the message was sent.
-          type: string
-          format: date-time
-          example: {}
-        receivedTimestamp:
-          description: The date and time when the message was recieved by recipient.
-          type: string
-          format: date-time
-          example: {}
-        deliveryStatus:
-          $ref: '#/components/schemas/Status'
   securitySchemes:
     OAuth2:
       type: oauth2

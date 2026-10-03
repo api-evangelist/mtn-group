@@ -330,6 +330,44 @@ paths:
     - url: https://api.mtn.com/v1/customer
 components:
   schemas:
+    AccountholderProfileResponse__links:
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links_self'
+      description: Relevant links to the Accoutholder Profile.
+    AccountholderProfile:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+        statusMessage:
+          type: string
+          description: Message of the transaction. Either Success or Failure.
+        transactionId:
+          type: string
+          description: Unique identifier for every request to the backend. Mapped from input request.
+          example: 5345345
+        customerId:
+          type: string
+          example: MTN123456
+          description: Id provided in the input, could be an MSISDN or an account id that was used in getting the info.
+        sequenceNo:
+          type: string
+          description: A unique id used in tracing all requests
+          example: 12345
+        data:
+          $ref: '#/components/schemas/data'
+        _links:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links'
+    AccountholderProfileResponse__links_self:
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://host:port/v1/accountholders/12345
+          description: Hyperlink to access the Accountholder's Profile.
     Error:
       type: object
       required:
@@ -496,45 +534,7 @@ components:
         value:
           $ref: '#/components/schemas/Any'
           description: The value of the characteristic
-    AccountholderProfile:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-        statusMessage:
-          type: string
-          description: Message of the transaction. Either Success or Failure.
-        transactionId:
-          type: string
-          description: Unique identifier for every request to the backend. Mapped from input request.
-          example: 5345345
-        customerId:
-          type: string
-          example: MTN123456
-          description: Id provided in the input, could be an MSISDN or an account id that was used in getting the info.
-        sequenceNo:
-          type: string
-          description: A unique id used in tracing all requests
-          example: 12345
-        data:
-          $ref: '#/components/schemas/data'
-        _links:
-          $ref: '#/components/schemas/AccountholderProfileResponse__links'
     Any: {}
-    AccountholderProfileResponse__links:
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/AccountholderProfileResponse__links_self'
-      description: Relevant links to the Accoutholder Profile.
-    AccountholderProfileResponse__links_self:
-      type: object
-      properties:
-        href:
-          type: string
-          example: https://host:port/v1/accountholders/12345
-          description: Hyperlink to access the Accountholder's Profile.
     tokenStatResponse:
       type: object
       properties:
@@ -567,32 +567,6 @@ components:
               maxLength: 64
               description: The status of the token.
               example: Pending
-    Error_2:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-        statusMessage:
-          type: string
-          description: Status description
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
     transStatResponse:
       type: object
       required:
@@ -635,6 +609,32 @@ components:
               type: string
               format: date-time
               description: Time stamp of the error
+    Error_2:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+        statusMessage:
+          type: string
+          description: Status description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
   securitySchemes:
     OAuth2:
       type: oauth2

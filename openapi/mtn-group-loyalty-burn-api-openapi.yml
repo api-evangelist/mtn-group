@@ -75,6 +75,112 @@ paths:
       x-operation-id-original: Burn Loyalty Balance
 components:
   schemas:
+    Quantity:
+      title: Quantity
+      type: object
+      properties:
+        unit:
+          type: string
+        balance:
+          type: number
+          format: double
+      required:
+      - balance
+    LoyaltyBurnCreateRef:
+      title: LoyaltyBurn
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        description:
+          type: string
+        loyaltyBurnId:
+          type: string
+        availableBalance:
+          type: string
+        redeemedQuantity:
+          type: integer
+          format: int32
+        openingBalance:
+          type: number
+          format: double
+        closingBalance:
+          type: number
+          format: double
+        dateTime:
+          type: string
+          format: dateTime
+    RedeemQuantity:
+      title: Quantity
+      type: object
+      properties:
+        unit:
+          type: string
+        balance:
+          type: number
+          format: double
+      required:
+      - balance
+    LoyaltyCatalogueItemRef:
+      title: LoyaltyCatalogueItem
+      type: object
+      properties:
+        id:
+          type: string
+        unit:
+          type: string
+          enum:
+          - sms
+          - voice
+          - data
+    CreateLoyaltyBurn:
+      title: CreateLoyaltyBurn
+      type: object
+      properties:
+        redeemAllPoints:
+          type: boolean
+        loyaltyCatalogueItem:
+          $ref: '#/components/schemas/LoyaltyCatalogueItemRef'
+    ErrorDetail:
+      required:
+      - code
+      - message
+      properties:
+        code:
+          description: An integer coding the error type. This is given to caller so he can translate them if required.
+          type: integer
+        message:
+          description: A short localized string that describes the error.
+          type: string
+        description:
+          description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
+          type: string
+        infoURL:
+          description: (optional) A URL to online documentation that provides more information about the error.
+          type: string
+    Error:
+      required:
+      - code
+      - message
+      properties:
+        code:
+          description: An integer coding the error type. This is given to caller so he can translate them if required.
+          type: integer
+        message:
+          description: A short localized string that describes the error.
+          type: string
+        description:
+          description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
+          type: string
+        infoURL:
+          description: (optional) A URL to online documentation that provides more information about the error.
+          type: string
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
     LoyaltyBalanceRef:
       title: LoyaltyBalance
       type: object
@@ -139,109 +245,3 @@ components:
       - openingBalance
       - closingBalance
       - dateTime
-    Error:
-      required:
-      - code
-      - message
-      properties:
-        code:
-          description: An integer coding the error type. This is given to caller so he can translate them if required.
-          type: integer
-        message:
-          description: A short localized string that describes the error.
-          type: string
-        description:
-          description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
-          type: string
-        infoURL:
-          description: (optional) A URL to online documentation that provides more information about the error.
-          type: string
-        details:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorDetail'
-    RedeemQuantity:
-      title: Quantity
-      type: object
-      properties:
-        unit:
-          type: string
-        balance:
-          type: number
-          format: double
-      required:
-      - balance
-    LoyaltyCatalogueItemRef:
-      title: LoyaltyCatalogueItem
-      type: object
-      properties:
-        id:
-          type: string
-        unit:
-          type: string
-          enum:
-          - sms
-          - voice
-          - data
-    Quantity:
-      title: Quantity
-      type: object
-      properties:
-        unit:
-          type: string
-        balance:
-          type: number
-          format: double
-      required:
-      - balance
-    LoyaltyBurnCreateRef:
-      title: LoyaltyBurn
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-        description:
-          type: string
-        loyaltyBurnId:
-          type: string
-        availableBalance:
-          type: string
-        redeemedQuantity:
-          type: integer
-          format: int32
-        openingBalance:
-          type: number
-          format: double
-        closingBalance:
-          type: number
-          format: double
-        dateTime:
-          type: string
-          format: dateTime
-    ErrorDetail:
-      required:
-      - code
-      - message
-      properties:
-        code:
-          description: An integer coding the error type. This is given to caller so he can translate them if required.
-          type: integer
-        message:
-          description: A short localized string that describes the error.
-          type: string
-        description:
-          description: (optional) A long localized error description if needed. It can contain precise information about which parameter is missing, or what are the identifier acceptable values.
-          type: string
-        infoURL:
-          description: (optional) A URL to online documentation that provides more information about the error.
-          type: string
-    CreateLoyaltyBurn:
-      title: CreateLoyaltyBurn
-      type: object
-      properties:
-        redeemAllPoints:
-          type: boolean
-        loyaltyCatalogueItem:
-          $ref: '#/components/schemas/LoyaltyCatalogueItemRef'

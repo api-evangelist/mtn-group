@@ -79,161 +79,6 @@ paths:
         required: true
 components:
   schemas:
-    QuotationRequest:
-      type: object
-      required:
-      - quoteType
-      properties:
-        customer:
-          type: object
-          required:
-          - type
-          properties:
-            type:
-              type: string
-              description: Type of customer
-              enum:
-              - cbu
-              - ebu
-              - sme
-            customerSubType:
-              type: string
-              enum:
-              - sme
-            title:
-              type: string
-              enum:
-              - mr
-              - mrs
-              - ms
-            initials:
-              type: string
-              description: Intials of the customer. Data encrypted by MADAPI before sending to backend system.
-              example: MJ
-              maxLength: 10
-            firstName:
-              type: string
-              description: First name of the customer. Data encrypted by MADAPI before sending to backend system.
-              example: Mary
-              minLength: 1
-              maxLength: 100
-            lastName:
-              type: string
-              description: Surname of the customer. Data encrypted by MADAPI before sending to backend system.
-              example: Joan
-              minLength: 2
-              maxLength: 100
-            companyName:
-              type: string
-              description: Company name of the customer. Data encrypted by MADAPI before sending to backend system.
-              minLength: 2
-              maxLength: 100
-              example: Missy Joans (Pty) Ltd
-            tradingName:
-              type: string
-              description: Trading name of the customer. Data encrypted by MADAPI before sending to backend system.
-              minLength: 2
-              maxLength: 100
-              example: Missy Joans & Co
-            companyRegistration:
-              type: string
-              description: Company name of the customer. Data encrypted by MADAPI before sending to backend system.
-              minLength: 15
-              maxLength: 100
-        quoteItem:
-          type: array
-          items:
-            required:
-            - productType
-            - quantity
-            properties:
-              productType:
-                type: string
-                description: Type of the insured product, like Device, Cyber Sim or Contract Protector or Router Insurance
-                enum:
-                - device
-                - cyberSim
-                - contractProtector
-                - routerInsurance
-              coverType:
-                type: string
-                description: Premium type filter (optional). Mandatory for Downgrade if product type is chosen as 'device'.
-                enum:
-                - allRisk
-                - repairOnly
-                - accident
-                - lossTheft
-              addOn:
-                type: array
-                items:
-                  type: string
-                  example: excessBuyDown
-                  description: List of addOn covers like excessBuyDown, cyberSim, contractProtector, routerInsurance
-              productIdType:
-                type: string
-                description: How the insured product is identified, such as using a Product Code, TAC or SKU. Mandatory if product type is chosen as 'device'.
-                enum:
-                - code
-                - tac
-                - sku
-                - marketingId
-              productId:
-                type: string
-                description: Actual identifier for the selected type such as a specific SKU. Mandatory if product type is chosen as 'device'.
-                minLength: 2
-                maxLength: 50
-                example: 7923642
-              quantity:
-                type: number
-                description: Total devices to be quoted on for insurance.
-                example: 5
-        quoteType:
-          type: string
-          description: Type of quotation requested.
-          enum:
-          - quotation
-          - downgrade
-          - finalisation
-    ErrorBadRequest:
-      type: object
-      title: ErrorBadRequest
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: MADAPI Canonical Error Code of 4 digit long
-          default: '5000'
-        statusMessage:
-          type: string
-          description: Error description
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp of the error
-        transactionId:
-          type: string
-          description: Unique identifier of this transaction
-    ErrorForbidden:
-      type: object
-      title: ErrorForbidden
-      required:
-      - error
-      - error_description
-      properties:
-        error:
-          type: string
-          description: Error description
-        error_description:
-          type: string
-          description: More error details and corrective measures
     QuotationResponse:
       type: object
       required:
@@ -438,6 +283,19 @@ components:
                         - simCards
                         - wearables
                         - other
+    ErrorForbidden:
+      type: object
+      title: ErrorForbidden
+      required:
+      - error
+      - error_description
+      properties:
+        error:
+          type: string
+          description: Error description
+        error_description:
+          type: string
+          description: More error details and corrective measures
     ErrorUnauthorized:
       type: object
       title: ErrorUnauthorized
@@ -449,6 +307,148 @@ components:
           type: string
           description: MADAPI Canonical Error Code of 4 digit long
           default: '4000'
+        statusMessage:
+          type: string
+          description: Error description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+        transactionId:
+          type: string
+          description: Unique identifier of this transaction
+    QuotationRequest:
+      type: object
+      required:
+      - quoteType
+      properties:
+        customer:
+          type: object
+          required:
+          - type
+          properties:
+            type:
+              type: string
+              description: Type of customer
+              enum:
+              - cbu
+              - ebu
+              - sme
+            customerSubType:
+              type: string
+              enum:
+              - sme
+            title:
+              type: string
+              enum:
+              - mr
+              - mrs
+              - ms
+            initials:
+              type: string
+              description: Intials of the customer. Data encrypted by MADAPI before sending to backend system.
+              example: MJ
+              maxLength: 10
+            firstName:
+              type: string
+              description: First name of the customer. Data encrypted by MADAPI before sending to backend system.
+              example: Mary
+              minLength: 1
+              maxLength: 100
+            lastName:
+              type: string
+              description: Surname of the customer. Data encrypted by MADAPI before sending to backend system.
+              example: Joan
+              minLength: 2
+              maxLength: 100
+            companyName:
+              type: string
+              description: Company name of the customer. Data encrypted by MADAPI before sending to backend system.
+              minLength: 2
+              maxLength: 100
+              example: Missy Joans (Pty) Ltd
+            tradingName:
+              type: string
+              description: Trading name of the customer. Data encrypted by MADAPI before sending to backend system.
+              minLength: 2
+              maxLength: 100
+              example: Missy Joans & Co
+            companyRegistration:
+              type: string
+              description: Company name of the customer. Data encrypted by MADAPI before sending to backend system.
+              minLength: 15
+              maxLength: 100
+        quoteItem:
+          type: array
+          items:
+            required:
+            - productType
+            - quantity
+            properties:
+              productType:
+                type: string
+                description: Type of the insured product, like Device, Cyber Sim or Contract Protector or Router Insurance
+                enum:
+                - device
+                - cyberSim
+                - contractProtector
+                - routerInsurance
+              coverType:
+                type: string
+                description: Premium type filter (optional). Mandatory for Downgrade if product type is chosen as 'device'.
+                enum:
+                - allRisk
+                - repairOnly
+                - accident
+                - lossTheft
+              addOn:
+                type: array
+                items:
+                  type: string
+                  example: excessBuyDown
+                  description: List of addOn covers like excessBuyDown, cyberSim, contractProtector, routerInsurance
+              productIdType:
+                type: string
+                description: How the insured product is identified, such as using a Product Code, TAC or SKU. Mandatory if product type is chosen as 'device'.
+                enum:
+                - code
+                - tac
+                - sku
+                - marketingId
+              productId:
+                type: string
+                description: Actual identifier for the selected type such as a specific SKU. Mandatory if product type is chosen as 'device'.
+                minLength: 2
+                maxLength: 50
+                example: 7923642
+              quantity:
+                type: number
+                description: Total devices to be quoted on for insurance.
+                example: 5
+        quoteType:
+          type: string
+          description: Type of quotation requested.
+          enum:
+          - quotation
+          - downgrade
+          - finalisation
+    ErrorBadRequest:
+      type: object
+      title: ErrorBadRequest
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: MADAPI Canonical Error Code of 4 digit long
+          default: '5000'
         statusMessage:
           type: string
           description: Error description

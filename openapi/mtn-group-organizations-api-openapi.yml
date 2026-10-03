@@ -381,20 +381,70 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Error400:
+    InvitationReqObject:
+      additionalProperties: false
+      allOf:
+      - $ref: '#/components/schemas/InvitationObject'
+      - type: object
+        properties:
+          sendInvitationEmail:
+            type: boolean
+            description: Whether the user will receive an invitation email (true) or no email (false), true by default
+            example: true
+          ttlSec:
+            type: integer
+            description: 'Number of seconds for which the invitation is valid before expiration. If unspecified or set to 0, this value defaults to 604800 seconds (7 days). Max value: 2592000 seconds (30 days).
+
+              '
+            example: 86400
+          roles:
+            type: array
+            description: List of roles IDs to associated with the user.
+            items:
+              type: string
+            example:
+            - rol_123
+    RoleRequest:
       properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
+        roles:
+          type: array
+          items:
+            type: string
+            example:
+            - rol_123
+            - rol_456
+    MTNIDOrgAppMetadataObject:
+      type: object
+      additionalProperties: false
+      properties:
+        orgInvite:
+          type: object
+          properties:
+            accountAlreadyExists:
+              type: boolean
+              description: true if "Search Users by Email" API returned a user and false if it did not
+            profileUpdateRequired:
+              type: boolean
+              example: true
+            profileUpdated:
+              type: boolean
+              example: false
+            profile:
+              type: object
+              properties:
+                givenName:
+                  type: string
+                  example: given_name
+                familyName:
+                  type: string
+                  example: family_name
+                name:
+                  type: string
+                  example: name
+        dpoMetadata:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/DPOMetadataObject'
     Error500:
       properties:
         statusMessage:
@@ -405,96 +455,16 @@ components:
           type: string
           description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
           example: '3001'
-    InvitationRespObject:
-      type: object
+    Error401:
       properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-        supportMessage:
-          type: string
-          description: Any additional message from backend
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        data:
-          type: array
-          items:
-            properties:
-              id:
-                type: string
-                description: The ID of the invitation.
-                example: uinv_Z6a66ldcD64NmjMu
-              organizationId:
-                type: string
-                description: The ID of the organization.
-              roles:
-                type: array
-                items:
-                  type: string
-              invitationUrl:
-                type: string
-                description: The invitation url to be send to the invitee.
-                format: strict-https-uri
-                example: https://app.mtn.com/login?invitation=XuVv8ywghwfX2hzl6cwLZncxI98lI2kV&organization={{AUTH0_ORG_ID}}&organization_name={{AUTH0_ORG_NAME}}
-              createdAt:
-                type: string
-                format: date-time
-                description: The ISO 8601 formatted timestamp representing the creation time of the invitation.
-              expiresAt:
-                type: string
-                format: date-time
-                description: The ISO 8601 formatted timestamp representing the expiration time of the invitation.
-              ticketId:
-                type: string
-                description: The id of the invitation ticket.
-                example: XuVv8ywghwfX2hzl6cwLZncxI98lI2kV
-              invitation:
-                type: object
-                allOf:
-                - $ref: '#/components/schemas/InvitationObject'
-    InvitationReqAppMetadataObject:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/MTNIDOrgAppMetadataObject'
-    SendInvitaionResponse:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-    Error405:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 405
         error:
           type: string
-          description: error message
-          example: Method Not Allowed
-        message:
+          description: error message from target system to indicate transaction status.
+          example: missing_authorization
+        error_description:
           type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
+          description: detailed error message from target system to indicate transaction status.
+          example: Missing Authorization header
     DPOMetadataObject:
       type: object
       additionalProperties: false
@@ -530,67 +500,20 @@ components:
                     type: boolean
                     description: Whether the terms have been accepted
                     example: false
-    RoleRequest:
+    Error400:
       properties:
-        roles:
-          type: array
-          items:
-            type: string
-            example:
-            - rol_123
-            - rol_456
-    Error401:
-      properties:
-        error:
-          type: string
-          description: error message from target system to indicate transaction status.
-          example: missing_authorization
-        error_description:
-          type: string
-          description: detailed error message from target system to indicate transaction status.
-          example: Missing Authorization header
-    Error404:
-      properties:
-        status:
+        statusCode:
           type: integer
           description: Status code from target system to indicate transaction status
-          example: 404
-        message:
+        statusMessage:
           type: string
-          description: details
-          example: no match found
-    MTNIDOrgAppMetadataObject:
-      type: object
-      additionalProperties: false
-      properties:
-        orgInvite:
-          type: object
-          properties:
-            accountAlreadyExists:
-              type: boolean
-              description: true if "Search Users by Email" API returned a user and false if it did not
-            profileUpdateRequired:
-              type: boolean
-              example: true
-            profileUpdated:
-              type: boolean
-              example: false
-            profile:
-              type: object
-              properties:
-                givenName:
-                  type: string
-                  example: given_name
-                familyName:
-                  type: string
-                  example: family_name
-                name:
-                  type: string
-                  example: name
-        dpoMetadata:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/DPOMetadataObject'
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
     InvitationObject:
       type: object
       properties:
@@ -646,29 +569,106 @@ components:
       - invitee
       - inviter
       - clientId
-    InvitationReqObject:
-      additionalProperties: false
+    InvitationReqAppMetadataObject:
+      type: object
       allOf:
-      - $ref: '#/components/schemas/InvitationObject'
-      - type: object
-        properties:
-          sendInvitationEmail:
-            type: boolean
-            description: Whether the user will receive an invitation email (true) or no email (false), true by default
-            example: true
-          ttlSec:
-            type: integer
-            description: 'Number of seconds for which the invitation is valid before expiration. If unspecified or set to 0, this value defaults to 604800 seconds (7 days). Max value: 2592000 seconds (30 days).
-
-              '
-            example: 86400
-          roles:
-            type: array
-            description: List of roles IDs to associated with the user.
-            items:
-              type: string
-            example:
-            - rol_123
+      - $ref: '#/components/schemas/MTNIDOrgAppMetadataObject'
+    InvitationRespObject:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: Any additional message from backend
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        data:
+          type: array
+          items:
+            properties:
+              id:
+                type: string
+                description: The ID of the invitation.
+                example: uinv_Z6a66ldcD64NmjMu
+              organizationId:
+                type: string
+                description: The ID of the organization.
+              roles:
+                type: array
+                items:
+                  type: string
+              invitationUrl:
+                type: string
+                description: The invitation url to be send to the invitee.
+                format: strict-https-uri
+                example: https://app.mtn.com/login?invitation=XuVv8ywghwfX2hzl6cwLZncxI98lI2kV&organization={{AUTH0_ORG_ID}}&organization_name={{AUTH0_ORG_NAME}}
+              createdAt:
+                type: string
+                format: date-time
+                description: The ISO 8601 formatted timestamp representing the creation time of the invitation.
+              expiresAt:
+                type: string
+                format: date-time
+                description: The ISO 8601 formatted timestamp representing the expiration time of the invitation.
+              ticketId:
+                type: string
+                description: The id of the invitation ticket.
+                example: XuVv8ywghwfX2hzl6cwLZncxI98lI2kV
+              invitation:
+                type: object
+                allOf:
+                - $ref: '#/components/schemas/InvitationObject'
+    SendInvitaionResponse:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error404:
+      properties:
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        message:
+          type: string
+          description: details
+          example: no match found
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

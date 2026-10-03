@@ -184,6 +184,113 @@ paths:
                 $ref: '#/components/schemas/ServerErrorResponse'
 components:
   schemas:
+    ServiceOrderItem:
+      type: object
+      properties:
+        itemId:
+          type: string
+        serviceOrderId:
+          type: string
+        itemAction:
+          type: string
+        payment:
+          $ref: '#/components/schemas/Payment'
+    Validity:
+      type: object
+      properties:
+        validityType:
+          type: integer
+          format: int32
+        expirationDate:
+          type: string
+    RelatedEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        '@referredType':
+          type: string
+    BadRequestErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '5000'
+        statusMessage:
+          type: string
+          example: INVALID_INPUT_PARAMETERS
+        supportMessage:
+          type: string
+          example: The input parameters provided are invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 400
+            series: CLIENT_ERROR
+            reason: Bad Request
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    UnauthorizedErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '4000'
+        statusMessage:
+          type: string
+          example: Unauthorized
+        supportMessage:
+          type: string
+          example: The supplied authentication is invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 401
+            series: CLIENT_ERROR
+            reason: Unauthorized
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    Payment:
+      type: object
+      properties:
+        paymentType:
+          type: string
+        billingInterval:
+          type: string
+        invoicingInterval:
+          type: integer
+          format: int32
+        invoicingType:
+          type: string
+    Links:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Link'
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+        hreflang:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        deprecation:
+          type: string
+        profile:
+          type: string
+        name:
+          type: string
+        templated:
+          type: boolean
     RelatedParty:
       type: object
       properties:
@@ -199,25 +306,6 @@ components:
           type: string
         '@referredType':
           type: string
-    Validity:
-      type: object
-      properties:
-        validityType:
-          type: integer
-          format: int32
-        expirationDate:
-          type: string
-    ServiceOrderItem:
-      type: object
-      properties:
-        itemId:
-          type: string
-        serviceOrderId:
-          type: string
-        itemAction:
-          type: string
-        payment:
-          $ref: '#/components/schemas/Payment'
     LicenseRequest:
       type: object
       properties:
@@ -262,75 +350,18 @@ components:
           type: string
         name:
           type: string
-    Payment:
-      type: object
-      properties:
-        paymentType:
-          type: string
-        billingInterval:
-          type: string
-        invoicingInterval:
-          type: integer
-          format: int32
-        invoicingType:
-          type: string
-    BadRequestErrorResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '5000'
-        statusMessage:
-          type: string
-          example: INVALID_INPUT_PARAMETERS
-        supportMessage:
-          type: string
-          example: The input parameters provided are invalid.
-        httpStatus;:
-          type: object
-          example:
-            code: 400
-            series: CLIENT_ERROR
-            reason: Bad Request
-        timestamp:
-          type: string
-          example: 2025-08-05 20:57:21+00:00
-    UnauthorizedErrorResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '4000'
-        statusMessage:
-          type: string
-          example: Unauthorized
-        supportMessage:
-          type: string
-          example: The supplied authentication is invalid.
-        httpStatus;:
-          type: object
-          example:
-            code: 401
-            series: CLIENT_ERROR
-            reason: Unauthorized
-        timestamp:
-          type: string
-          example: 2025-08-05 20:57:21+00:00
-    RelatedEntity:
+    Note:
       type: object
       properties:
         id:
           type: string
-        name:
+        text:
           type: string
-        role:
-          type: string
-        '@referredType':
-          type: string
-    Links:
+    APIResponse:
       type: object
-      additionalProperties:
-        $ref: '#/components/schemas/Link'
+      properties:
+        _links:
+          $ref: '#/components/schemas/Links'
     ServerErrorResponse:
       type: object
       properties:
@@ -352,34 +383,3 @@ components:
         timestamp:
           type: string
           example: 2025-08-05 20:57:21+00:00
-    Link:
-      type: object
-      properties:
-        href:
-          type: string
-        hreflang:
-          type: string
-        title:
-          type: string
-        type:
-          type: string
-        deprecation:
-          type: string
-        profile:
-          type: string
-        name:
-          type: string
-        templated:
-          type: boolean
-    APIResponse:
-      type: object
-      properties:
-        _links:
-          $ref: '#/components/schemas/Links'
-    Note:
-      type: object
-      properties:
-        id:
-          type: string
-        text:
-          type: string

@@ -79,6 +79,117 @@ paths:
         required: true
 components:
   schemas:
+    ErrorForbidden:
+      type: object
+      title: ErrorForbidden
+      required:
+      - error
+      - error_description
+      properties:
+        error:
+          type: string
+          description: Error description
+        error_description:
+          type: string
+          description: More error details and corrective measures
+    ErrorUnauthorized:
+      type: object
+      title: ErrorUnauthorized
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: MADAPI Canonical Error Code of 4 digit long
+          default: '4000'
+        statusMessage:
+          type: string
+          description: Error description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+        transactionId:
+          type: string
+          description: Unique identifier of this transaction
+    ApplicationResponse:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - transactionId
+      - data
+      properties:
+        statusCode:
+          type: string
+          description: Result code.
+          default: '0000'
+        statusMessage:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Unique id of this transaction.
+        data:
+          type: object
+          properties:
+            applicationRefNumbers:
+              type: array
+              items:
+                required:
+                - groupId
+                - subGroupId
+                - coverTypeCode
+                properties:
+                  groupId:
+                    minLength: 5
+                    maxLength: 50
+                    example: ATS-EBU-22333-MTNAR–12345
+                    description: 'Structure would include ATS-EBU-ClientIdentifier-CoverType–DeviceID.
+
+                      ClientIdentifier: Max 11 digits
+
+                      CoverTypes: MTNAR (All Risk), MTNLT (Loss & Theft), MTNAD (Liquid & Accident), MTNRO (Repair Only), MTNCS (Cyber Sim), MTNRI (Router Insurance), MTNCP (Contract Protector)
+
+                      DeviceID: System product code for the device'
+                  subGroupId:
+                    minLength: 5
+                    maxLength: 50
+                    example: ATS-EBU-22333-MTNAR–12345
+                    description: 'Structure would include ATS-EBU-ClientIdentifier-CoverType–DeviceID-QuoteID.
+
+                      ClientIdentifier: Max 11 digits
+
+                      CoverTypes: MTNAR (All Risk), MTNLT (Loss & Theft), MTNAD (Liquid & Accident), MTNRO (Repair Only), MTNCS (Cyber Sim), MTNRI (Router Insurance), MTNCP (Contract Protector)
+
+                      DeviceID: System product code for the device
+
+                      QuoteID: As per cover in application request'
+                  coverTypeCode:
+                    minLength: 2
+                    maxLength: 50
+                    example: allRisk
+                    enum:
+                    - allRisk
+                    - repairOnly
+                    - accident
+                    - lossTheft
+                    - excessBuyDown
+                    - cyberSim
+                    - contractProtector
+                    - routerInsurance
+                  deviceId:
+                    type: string
+                    minLength: 1
+                    maxLength: 50
+                    example: '12345'
     ApplicationRequest:
       type: object
       required:
@@ -571,117 +682,6 @@ components:
           type: string
           description: MADAPI Canonical Error Code of 4 digit long
           default: '5000'
-        statusMessage:
-          type: string
-          description: Error description
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp of the error
-        transactionId:
-          type: string
-          description: Unique identifier of this transaction
-    ApplicationResponse:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      - transactionId
-      - data
-      properties:
-        statusCode:
-          type: string
-          description: Result code.
-          default: '0000'
-        statusMessage:
-          type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
-          type: string
-          description: Unique id of this transaction.
-        data:
-          type: object
-          properties:
-            applicationRefNumbers:
-              type: array
-              items:
-                required:
-                - groupId
-                - subGroupId
-                - coverTypeCode
-                properties:
-                  groupId:
-                    minLength: 5
-                    maxLength: 50
-                    example: ATS-EBU-22333-MTNAR–12345
-                    description: 'Structure would include ATS-EBU-ClientIdentifier-CoverType–DeviceID.
-
-                      ClientIdentifier: Max 11 digits
-
-                      CoverTypes: MTNAR (All Risk), MTNLT (Loss & Theft), MTNAD (Liquid & Accident), MTNRO (Repair Only), MTNCS (Cyber Sim), MTNRI (Router Insurance), MTNCP (Contract Protector)
-
-                      DeviceID: System product code for the device'
-                  subGroupId:
-                    minLength: 5
-                    maxLength: 50
-                    example: ATS-EBU-22333-MTNAR–12345
-                    description: 'Structure would include ATS-EBU-ClientIdentifier-CoverType–DeviceID-QuoteID.
-
-                      ClientIdentifier: Max 11 digits
-
-                      CoverTypes: MTNAR (All Risk), MTNLT (Loss & Theft), MTNAD (Liquid & Accident), MTNRO (Repair Only), MTNCS (Cyber Sim), MTNRI (Router Insurance), MTNCP (Contract Protector)
-
-                      DeviceID: System product code for the device
-
-                      QuoteID: As per cover in application request'
-                  coverTypeCode:
-                    minLength: 2
-                    maxLength: 50
-                    example: allRisk
-                    enum:
-                    - allRisk
-                    - repairOnly
-                    - accident
-                    - lossTheft
-                    - excessBuyDown
-                    - cyberSim
-                    - contractProtector
-                    - routerInsurance
-                  deviceId:
-                    type: string
-                    minLength: 1
-                    maxLength: 50
-                    example: '12345'
-    ErrorForbidden:
-      type: object
-      title: ErrorForbidden
-      required:
-      - error
-      - error_description
-      properties:
-        error:
-          type: string
-          description: Error description
-        error_description:
-          type: string
-          description: More error details and corrective measures
-    ErrorUnauthorized:
-      type: object
-      title: ErrorUnauthorized
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: MADAPI Canonical Error Code of 4 digit long
-          default: '4000'
         statusMessage:
           type: string
           description: Error description

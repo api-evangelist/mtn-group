@@ -299,6 +299,46 @@ components:
           description: The actual type of the target instance when needed for disambiguation.
       required:
       - id
+    OtherNameOrganization:
+      type: object
+      description: Keeps track of other names, for example the old name of an organization.
+      properties:
+        name:
+          type: string
+          description: Organization name (department name for example)
+        nameType:
+          type: string
+          description: Co. , Inc. , Ltd. , Pty Ltd. , Plc; , Gmbh
+        tradingName:
+          type: string
+          description: The name that the organization trades under
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Result:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
     Organization:
       type: object
       description: Organization represents a group of people identified by shared interests or purpose. Examples include business, department and enterprise. Because of the complex nature of many businesses, both organizations and organization units are represented by the same data.
@@ -387,6 +427,204 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
+    TaxDefinition:
+      type: object
+      description: Reference of a tax definition. A tax is levied by an authorized tax jurisdiction. There are many different types of tax (Federal Tax levied by the US Government, State Tax levied by the State of California,…).
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the tax.
+        name:
+          type: string
+          description: Tax name.
+        taxType:
+          type: string
+          description: Type of  the tax.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    AttachmentRefOrValue:
+      type: object
+      description: An attachment by value or by reference. An attachment complements the description of an element, for example through a document, a video, a picture.
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this particular attachment
+        href:
+          type: string
+          description: URI for this Attachment
+        attachmentType:
+          type: string
+          description: Attachment type such as video, picture
+        content:
+          type: string
+          description: The actual contents of the attachment object, if embedded, encoded as base64
+        description:
+          type: string
+          description: A narrative text describing the content of the attachment
+        mimeType:
+          type: string
+          description: Attachment mime type such as extension file for video, picture and document
+        name:
+          type: string
+          description: The name of the attachment
+        url:
+          type: string
+          description: Uniform Resource Locator, is a web page address (a subset of URI)
+        size:
+          $ref: '#/components/schemas/Quantity'
+          description: The size of the attachment.
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period of time for which the attachment is valid
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    Quantity:
+      type: object
+      description: An amount in a given unit
+      properties:
+        amount:
+          default: 1
+          type: number
+          format: float
+          description: Numeric value in a given unit
+        units:
+          type: string
+          description: Unit
+    TimePeriod:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          type: string
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+    OrganizationIdentification:
+      type: object
+      description: Represents our registration of information used as proof of identity by an organization
+      properties:
+        identificationId:
+          type: string
+          description: Identifier
+        identificationType:
+          type: string
+          description: Type of identification information used to identify the company in a country or internationally
+        issuingAuthority:
+          type: string
+          description: Authority which has issued the identifier (chamber of commerce...)
+        issuingDate:
+          type: string
+          format: date-time
+          description: Date at which the identifier was issued
+        attachment:
+          $ref: '#/components/schemas/AttachmentRefOrValue'
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the identification information is valid.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    ContactMedium:
+      type: object
+      description: Indicates the contact medium that could be used to contact the party.
+      properties:
+        mediumType:
+          type: string
+          description: 'Type of the contact medium, such as: physicalAdress,postalAddress,contactPerson etc.'
+        preferred:
+          type: boolean
+          description: If true, indicates that is the preferred contact medium
+        characteristic:
+          $ref: '#/components/schemas/MediumCharacteristic'
+          description: Any additional characteristic(s) of this contact medium
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The time period that the contact medium is valid for
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+        status:
+          type: string
+          description: HTTP Status code
+        error:
+          type: string
+          description: Status description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
+    ExternalReference:
+      type: object
+      description: External reference of the individual or reference in other system
+      properties:
+        externalReferenceType:
+          type: string
+          description: Type of the external reference
+        name:
+          type: string
+          description: External reference name
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
     MediumCharacteristic:
       type: object
       description: Describes the contact medium characteristics that could be used to contact a party (an individual or an organization)
@@ -457,26 +695,19 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    OrganizationStateType:
-      type: string
-      description: Valid values for the lifecycle state of the organization
-      enum:
-      - initialized
-      - validated
-      - closed
-    OtherNameOrganization:
+    TaxExemptionCertificate:
       type: object
-      description: Keeps track of other names, for example the old name of an organization.
+      description: A tax exemption certificate represents a tax exemption granted to a party (individual or organization) by a tax jurisdiction which may be a city, state, country,... An exemption has a certificate identifier (received from the jurisdiction that levied the tax) and a validity period. An exemption is per tax types and determines for each type of tax what portion of the tax is exempted (partial by percentage or complete) via the tax definition.
       properties:
-        name:
+        id:
           type: string
-          description: Organization name (department name for example)
-        nameType:
-          type: string
-          description: Co. , Inc. , Ltd. , Pty Ltd. , Plc; , Gmbh
-        tradingName:
-          type: string
-          description: The name that the organization trades under
+          description: Unique identifier of the certificate of the tax exemption
+        attachment:
+          $ref: '#/components/schemas/AttachmentRefOrValue'
+        taxDefinition:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxDefinition'
         validFor:
           $ref: '#/components/schemas/TimePeriod'
         '@baseType':
@@ -489,45 +720,24 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    Error:
+    PartyCreditProfile:
       type: object
-      title: Error
-      required:
-      - status
-      - message
+      description: An individual might be evaluated for its worthiness and this evaluation might be based on a credit rating given by a credit agency.
       properties:
-        timestamp:
+        creditAgencyName:
           type: string
-          format: date-time
-          description: Error response code
-        status:
+          description: Name of the credit agency giving the score
+        creditAgencyType:
           type: string
-          description: HTTP Status code
-        error:
+          description: Type of the credit agency giving the score
+        ratingReference:
           type: string
-          description: Status description
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: the path that caused the error
-    ContactMedium:
-      type: object
-      description: Indicates the contact medium that could be used to contact the party.
-      properties:
-        mediumType:
-          type: string
-          description: 'Type of the contact medium, such as: physicalAdress,postalAddress,contactPerson etc.'
-        preferred:
-          type: boolean
-          description: If true, indicates that is the preferred contact medium
-        characteristic:
-          $ref: '#/components/schemas/MediumCharacteristic'
-          description: Any additional characteristic(s) of this contact medium
+          description: Reference corresponding to the credit rating
+        ratingScore:
+          type: integer
+          description: A measure of a party’s creditworthiness calculated on the basis of a combination of factors such as their income and credit history
         validFor:
           $ref: '#/components/schemas/TimePeriod'
-          description: The time period that the contact medium is valid for
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -564,21 +774,35 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    TimePeriod:
+    OrganizationStateType:
+      type: string
+      description: Valid values for the lifecycle state of the organization
+      enum:
+      - initialized
+      - validated
+      - closed
+    MemberList:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: ID used for unique identification
+          name:
+            type: string
+            description: Name of the member
+          serviceNumber:
+            type: string
+            description: Service number. In case of msisdn as service number, form will be 'countryCode+ msisdn'. example- 2507685432
+          serviceType:
+            type: string
+            description: type of service used by member. example - GSM,Fixed Line etc.
+          status:
+            type: string
+    OrganizationChildRelationship:
       type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
-      properties:
-        endDateTime:
-          type: string
-          format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
-          type: string
-          format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
-    OrganizationParentRelationship:
-      type: object
-      description: Parent references of an organization in a structure of organizations.
+      description: Child references of an organization in a structure of organizations.
       properties:
         relationshipType:
           type: string
@@ -595,42 +819,15 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    TaxDefinition:
+    OrganizationParentRelationship:
       type: object
-      description: Reference of a tax definition. A tax is levied by an authorized tax jurisdiction. There are many different types of tax (Federal Tax levied by the US Government, State Tax levied by the State of California,…).
+      description: Parent references of an organization in a structure of organizations.
       properties:
-        id:
+        relationshipType:
           type: string
-          description: Unique identifier of the tax.
-        name:
-          type: string
-          description: Tax name.
-        taxType:
-          type: string
-          description: Type of  the tax.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-    ExternalReference:
-      type: object
-      description: External reference of the individual or reference in other system
-      properties:
-        externalReferenceType:
-          type: string
-          description: Type of the external reference
-        name:
-          type: string
-          description: External reference name
+          description: Type of the relationship. Could be juridical, hierarchical, geographical, functional for example.
+        organization:
+          $ref: '#/components/schemas/OrganizationRef'
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -673,203 +870,6 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
-    TaxExemptionCertificate:
-      type: object
-      description: A tax exemption certificate represents a tax exemption granted to a party (individual or organization) by a tax jurisdiction which may be a city, state, country,... An exemption has a certificate identifier (received from the jurisdiction that levied the tax) and a validity period. An exemption is per tax types and determines for each type of tax what portion of the tax is exempted (partial by percentage or complete) via the tax definition.
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the certificate of the tax exemption
-        attachment:
-          $ref: '#/components/schemas/AttachmentRefOrValue'
-        taxDefinition:
-          type: array
-          items:
-            $ref: '#/components/schemas/TaxDefinition'
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    OrganizationIdentification:
-      type: object
-      description: Represents our registration of information used as proof of identity by an organization
-      properties:
-        identificationId:
-          type: string
-          description: Identifier
-        identificationType:
-          type: string
-          description: Type of identification information used to identify the company in a country or internationally
-        issuingAuthority:
-          type: string
-          description: Authority which has issued the identifier (chamber of commerce...)
-        issuingDate:
-          type: string
-          format: date-time
-          description: Date at which the identifier was issued
-        attachment:
-          $ref: '#/components/schemas/AttachmentRefOrValue'
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the identification information is valid.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    OrganizationChildRelationship:
-      type: object
-      description: Child references of an organization in a structure of organizations.
-      properties:
-        relationshipType:
-          type: string
-          description: Type of the relationship. Could be juridical, hierarchical, geographical, functional for example.
-        organization:
-          $ref: '#/components/schemas/OrganizationRef'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    AttachmentRefOrValue:
-      type: object
-      description: An attachment by value or by reference. An attachment complements the description of an element, for example through a document, a video, a picture.
-      properties:
-        id:
-          type: string
-          description: Unique identifier for this particular attachment
-        href:
-          type: string
-          description: URI for this Attachment
-        attachmentType:
-          type: string
-          description: Attachment type such as video, picture
-        content:
-          type: string
-          description: The actual contents of the attachment object, if embedded, encoded as base64
-        description:
-          type: string
-          description: A narrative text describing the content of the attachment
-        mimeType:
-          type: string
-          description: Attachment mime type such as extension file for video, picture and document
-        name:
-          type: string
-          description: The name of the attachment
-        url:
-          type: string
-          description: Uniform Resource Locator, is a web page address (a subset of URI)
-        size:
-          $ref: '#/components/schemas/Quantity'
-          description: The size of the attachment.
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period of time for which the attachment is valid
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-    MemberList:
-      type: array
-      items:
-        type: object
-        properties:
-          id:
-            type: string
-            description: ID used for unique identification
-          name:
-            type: string
-            description: Name of the member
-          serviceNumber:
-            type: string
-            description: Service number. In case of msisdn as service number, form will be 'countryCode+ msisdn'. example- 2507685432
-          serviceType:
-            type: string
-            description: type of service used by member. example - GSM,Fixed Line etc.
-          status:
-            type: string
-    PartyCreditProfile:
-      type: object
-      description: An individual might be evaluated for its worthiness and this evaluation might be based on a credit rating given by a credit agency.
-      properties:
-        creditAgencyName:
-          type: string
-          description: Name of the credit agency giving the score
-        creditAgencyType:
-          type: string
-          description: Type of the credit agency giving the score
-        ratingReference:
-          type: string
-          description: Reference corresponding to the credit rating
-        ratingScore:
-          type: integer
-          description: A measure of a party’s creditworthiness calculated on the basis of a combination of factors such as their income and credit history
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    Result:
-      type: object
-      required:
-      - resultCode
-      - resultDescription
-      properties:
-        resultCode:
-          type: string
-          description: Result code. Example- '0000'
-        resultDescription:
-          type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-    Quantity:
-      type: object
-      description: An amount in a given unit
-      properties:
-        amount:
-          default: 1
-          type: number
-          format: float
-          description: Numeric value in a given unit
-        units:
-          type: string
-          description: Unit
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

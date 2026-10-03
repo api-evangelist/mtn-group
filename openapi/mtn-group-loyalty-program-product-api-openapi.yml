@@ -187,6 +187,42 @@ paths:
       x-operation-id-original: Get Product
 components:
   schemas:
+    Quantity:
+      title: Quantity
+      type: object
+      properties:
+        unit:
+          type: string
+        balance:
+          type: number
+          format: double
+      required:
+      - unit
+      - balance
+    CreateLoyaltyBalance:
+      title: CreateLoyaltyBalance
+      type: object
+      properties:
+        quantity:
+          $ref: '#/components/schemas/Quantity'
+      required:
+      - quantity
+    ProductProgramCategoriesResponseData:
+      title: ProductProgramUpdate
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        description:
+          type: string
+        productStatus:
+          type: string
+        characteristics:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductCharacteristics'
     ProductProgramRef:
       title: ProductProgram
       type: object
@@ -216,6 +252,14 @@ components:
       required:
       - name
       - productSpecId
+    LoyaltyAccountCreate:
+      title: LoyaltyAccountCreate
+      type: object
+      properties:
+        id:
+          type: string
+        loyaltyBalance:
+          $ref: '#/components/schemas/CreateLoyaltyBalance'
     Error:
       type: object
       required:
@@ -240,30 +284,6 @@ components:
           format: date-time
           description: Timestamp of the error
           example: 2019-08-23T07:29:25.593+0000
-    CreateLoyaltyBalance:
-      title: CreateLoyaltyBalance
-      type: object
-      properties:
-        quantity:
-          $ref: '#/components/schemas/Quantity'
-      required:
-      - quantity
-    ProductProgramCategoriesResponseData:
-      title: ProductProgramUpdate
-      type: object
-      properties:
-        name:
-          type: string
-        id:
-          type: string
-        description:
-          type: string
-        productStatus:
-          type: string
-        characteristics:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductCharacteristics'
     ProductCharacteristics:
       title: ProductLinkRef
       type: object
@@ -272,26 +292,6 @@ components:
           type: string
         value:
           type: string
-    Quantity:
-      title: Quantity
-      type: object
-      properties:
-        unit:
-          type: string
-        balance:
-          type: number
-          format: double
-      required:
-      - unit
-      - balance
-    LoyaltyAccountCreate:
-      title: LoyaltyAccountCreate
-      type: object
-      properties:
-        id:
-          type: string
-        loyaltyBalance:
-          $ref: '#/components/schemas/CreateLoyaltyBalance'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -235,102 +235,6 @@ paths:
     - url: https://api.mtn.com/v2/
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      - transactionId
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: MADAPI generated Id to include for tracing requests
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: 2020-08-01T12:34
-        path:
-          type: string
-          description: The path that caused the error
-          example: https://api.mtn.com/v1/
-        method:
-          type: string
-          description: The HTTP method type that was used
-          example: POST
-    outboundSubscriptionDeleteResponse:
-      type: object
-      required:
-      - data
-      - statusCode
-      - statusMessage
-      - transactionId
-      - _link
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client.
-          example: Sucessful
-        transactionId:
-          type: string
-          description: MADAPI generated Id to include for tracing requests
-          example: 1365478abcz-fdhsdfh54351
-        data:
-          type: object
-        _link:
-          type: object
-          required:
-          - self
-          properties:
-            self:
-              type: object
-              required:
-              - href
-              description: ''
-              properties:
-                href:
-                  type: string
-                  description: ''
-                  example: https://api.mtn.com/v1/messages/sms/outbound/10111/subscription/10c0d78cd4bf77e
-    deliveryStatusResponse:
-      type: object
-      required:
-      - data
-      - statusCode
-      - statusMessage
-      - transactionId
-      - _link
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client.
-          example: Sucessful
-        transactionId:
-          type: string
-          description: MADAPI generated Id to include for tracing requests
-          example: 1365478abcz-fdhsdfh54351
-        data:
-          $ref: '#/components/schemas/deliveryInfo'
-        _link:
-          $ref: '#/components/schemas/Links'
     resourceReference:
       type: object
       required:
@@ -380,82 +284,14 @@ components:
                   type: string
                   description: ''
                   example: https://api.mtn.com/v1/messages/sms/outbound
-    outboundSMSMessageRequest:
-      type: object
-      required:
-      - message
-      - senderAddress
-      - receiverAddress
-      properties:
-        senderAddress:
-          type: string
-          description: It is the MSISDN or virtual MSIDN of the sender.
-          example: '278945464'
-        receiverAddress:
-          description: This an array of the subscriber MSISDN(s) that the SMS is being sent to. The value is represented as International  ITU-T E.164. If more than one address is used the values will be comma separated. Current supported length is one. This means a client may not send an SMS to more than one receiver at a time.
-          type: array
-          items:
-            type: string
-          example:
-          - '27123456789'
-        message:
-          type: string
-          description: The message being sent. The standard limit of the size of the message is 160 characters.
-          maxLength: 160
-        clientCorrelator:
-          type: string
-          description: It uniquely identifies the request.
-          maxLength: 36
-    Links:
-      type: object
-      required:
-      - self
-      properties:
-        self:
-          type: object
-          required:
-          - href
-          description: ''
-          properties:
-            href:
-              type: string
-              description: ''
-              example: https://api.mtn.com/v1/messages/sms/outbound/10111/10c0d78cd4bf77ee%40138a3d02644/deliveryStatus
-    deliveryInfo:
-      type: object
-      required:
-      - receiverAddress
-      - deliveryStatus
-      - requestId
-      properties:
-        requestId:
-          type: string
-          description: Identifier used to link the delivery notification to the message sent
-          example: req445454
-        clientCorrelator:
-          type: string
-          description: Identifier passed by client when sending the message
-        deliveryStatus:
-          type: array
-          items:
-            type: object
-            required:
-            - receiverAddress
-            - status
-            properties:
-              receiverAddress:
-                type: string
-                description: Subscriber MSISDN
-                example: '27568942200'
-              status:
-                $ref: '#/components/schemas/status'
-    resourceReferencev3:
+    outboundSubscriptionDeleteResponse:
       type: object
       required:
       - data
       - statusCode
       - statusMessage
       - transactionId
+      - _link
       properties:
         statusCode:
           type: string
@@ -467,51 +303,25 @@ components:
           example: Sucessful
         transactionId:
           type: string
-          description: This is the client generated clientCorrelator that is echoed back. Incase the clientCorrelator was not set, then the madapi generated ID will be returned
-          example: 1365478abcz
+          description: MADAPI generated Id to include for tracing requests
+          example: 1365478abcz-fdhsdfh54351
         data:
           type: object
+        _link:
+          type: object
+          required:
+          - self
           properties:
-            status:
-              type: string
-              description: Status of the submitted outbound message(s)
-              example: PENDING
-    status:
-      type: string
-      title: Delivery status
-      description: 'SMS delivery status.
-
-        Successful delivery to Terminal value is "DeliveredToTerminal"
-
-        Delivery status unknown: e.g. because it was handed off to another network value is "DeliveryUncertain"
-
-        Unsuccessful delivery; the message could not be delivered before it expired value is "DeliveryImpossible"
-
-        The message is still queued for delivery. This is a temporary state, pending transition to one of the preceding states value is "MessageWaiting"
-
-        Successful delivery to the network entity responsible for distributing the short message further in the network value is "DeliveredToNetwork"
-
-        Unable to provide delivery receipt notification. NotifyMessageDeliveryReceipt function will provide DeliveryNotificationNotSupported to indicate that delivery receipt for the specified address in a send message request is not supported value is "DeliveryNotificationNotSupported"'
-      example: DeliveredToTerminal
-      enum:
-      - DeliveredToTerminal
-      - DeliveryUncertain
-      - DeliveryImpossible
-      - MessageWaiting
-      - DeliveredToNetwork
-      - DeliveryNotificationNotSupported
-    deliveryReceiptSubscription:
-      type: object
-      required:
-      - notifyUrl
-      - targetSystem
-      properties:
-        notifyUrl:
-          type: string
-          example: https://example.com/12acb41
-        targetSystem:
-          type: string
-          example: MADAPI
+            self:
+              type: object
+              required:
+              - href
+              description: ''
+              properties:
+                href:
+                  type: string
+                  description: ''
+                  example: https://api.mtn.com/v1/messages/sms/outbound/10111/subscription/10c0d78cd4bf77e
     subscriptionResponse:
       type: object
       required:
@@ -555,6 +365,196 @@ components:
                   type: string
                   description: ''
                   example: https://api.mtn.com/v1/messages/sms/outbound/10111/subscription
+    status:
+      type: string
+      title: Delivery status
+      description: 'SMS delivery status.
+
+        Successful delivery to Terminal value is "DeliveredToTerminal"
+
+        Delivery status unknown: e.g. because it was handed off to another network value is "DeliveryUncertain"
+
+        Unsuccessful delivery; the message could not be delivered before it expired value is "DeliveryImpossible"
+
+        The message is still queued for delivery. This is a temporary state, pending transition to one of the preceding states value is "MessageWaiting"
+
+        Successful delivery to the network entity responsible for distributing the short message further in the network value is "DeliveredToNetwork"
+
+        Unable to provide delivery receipt notification. NotifyMessageDeliveryReceipt function will provide DeliveryNotificationNotSupported to indicate that delivery receipt for the specified address in a send message request is not supported value is "DeliveryNotificationNotSupported"'
+      example: DeliveredToTerminal
+      enum:
+      - DeliveredToTerminal
+      - DeliveryUncertain
+      - DeliveryImpossible
+      - MessageWaiting
+      - DeliveredToNetwork
+      - DeliveryNotificationNotSupported
+    resourceReferencev3:
+      type: object
+      required:
+      - data
+      - statusCode
+      - statusMessage
+      - transactionId
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+          example: Sucessful
+        transactionId:
+          type: string
+          description: This is the client generated clientCorrelator that is echoed back. Incase the clientCorrelator was not set, then the madapi generated ID will be returned
+          example: 1365478abcz
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              description: Status of the submitted outbound message(s)
+              example: PENDING
+    Links:
+      type: object
+      required:
+      - self
+      properties:
+        self:
+          type: object
+          required:
+          - href
+          description: ''
+          properties:
+            href:
+              type: string
+              description: ''
+              example: https://api.mtn.com/v1/messages/sms/outbound/10111/10c0d78cd4bf77ee%40138a3d02644/deliveryStatus
+    outboundSMSMessageRequest:
+      type: object
+      required:
+      - message
+      - senderAddress
+      - receiverAddress
+      properties:
+        senderAddress:
+          type: string
+          description: It is the MSISDN or virtual MSIDN of the sender.
+          example: '278945464'
+        receiverAddress:
+          description: This an array of the subscriber MSISDN(s) that the SMS is being sent to. The value is represented as International  ITU-T E.164. If more than one address is used the values will be comma separated. Current supported length is one. This means a client may not send an SMS to more than one receiver at a time.
+          type: array
+          items:
+            type: string
+          example:
+          - '27123456789'
+        message:
+          type: string
+          description: The message being sent. The standard limit of the size of the message is 160 characters.
+          maxLength: 160
+        clientCorrelator:
+          type: string
+          description: It uniquely identifies the request.
+          maxLength: 36
+    deliveryReceiptSubscription:
+      type: object
+      required:
+      - notifyUrl
+      - targetSystem
+      properties:
+        notifyUrl:
+          type: string
+          example: https://example.com/12acb41
+        targetSystem:
+          type: string
+          example: MADAPI
+    deliveryStatusResponse:
+      type: object
+      required:
+      - data
+      - statusCode
+      - statusMessage
+      - transactionId
+      - _link
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+          example: Sucessful
+        transactionId:
+          type: string
+          description: MADAPI generated Id to include for tracing requests
+          example: 1365478abcz-fdhsdfh54351
+        data:
+          $ref: '#/components/schemas/deliveryInfo'
+        _link:
+          $ref: '#/components/schemas/Links'
+    deliveryInfo:
+      type: object
+      required:
+      - receiverAddress
+      - deliveryStatus
+      - requestId
+      properties:
+        requestId:
+          type: string
+          description: Identifier used to link the delivery notification to the message sent
+          example: req445454
+        clientCorrelator:
+          type: string
+          description: Identifier passed by client when sending the message
+        deliveryStatus:
+          type: array
+          items:
+            type: object
+            required:
+            - receiverAddress
+            - status
+            properties:
+              receiverAddress:
+                type: string
+                description: Subscriber MSISDN
+                example: '27568942200'
+              status:
+                $ref: '#/components/schemas/status'
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - transactionId
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: MADAPI generated Id to include for tracing requests
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: https://api.mtn.com/v1/
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: POST
     resourceReference_2:
       type: object
       required:

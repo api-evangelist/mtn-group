@@ -148,6 +148,46 @@ paths:
     - url: https://api.mtn.com/v1
 components:
   schemas:
+    Data:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id that gets generated
+          example: Rec1
+        targetsystem:
+          type: string
+          description: The intended system that will receive the notification
+          example: AYO
+        code:
+          type: string
+          description: Code generated
+          example: FZ-32-SFSG-1
+        notificationURL:
+          type: string
+          description: The URL that will receive the notifications
+          example: https://ayowebapi-team2.mmiholdings.co.za/api/v1/madapi/rechargenotification
+        notificationType:
+          type: string
+          description: The method used
+          example: PUT
+        countryCode:
+          type: string
+          example: ZA
+        created At:
+          type: string
+          format: date-time
+          description: Date and time the request is created
+          example: '2021-07-21T17:32:28Z'
+        modified At:
+          type: string
+          format: date-time
+          description: Date and time the request was modified
+          example: '2021-07-21T17:32:28Z'
+        registration Status:
+          type: string
+          description: Status of the registration
+          example: Deleted
     Error:
       type: object
       required:
@@ -205,46 +245,17 @@ components:
           example: '2021-07-21T17:32:28Z'
         AdditionalData:
           $ref: '#/components/schemas/Data'
-    Data:
+    NotificationData:
+      description: The model expected to trigger a notification
       type: object
       properties:
-        id:
+        data:
+          description: The data to be send as the notification. This must be a valid JSON request
+          type: object
+        deliveryReportUrl:
+          description: The delivery report url. The status/report of the notification delivery is send to this url. It expects an object of the type definitions/DeliveryReportRequest. Ex. ```{"statusCode":"","statusMessage":"","transationId":"","sequenceNo":""}```. The response is of type definitions/DeliveryReportResponse. Ex. ```{"statusCode":"","statusMessage":""}```
           type: string
-          description: Id that gets generated
-          example: Rec1
-        targetsystem:
-          type: string
-          description: The intended system that will receive the notification
-          example: AYO
-        code:
-          type: string
-          description: Code generated
-          example: FZ-32-SFSG-1
-        notificationURL:
-          type: string
-          description: The URL that will receive the notifications
-          example: https://ayowebapi-team2.mmiholdings.co.za/api/v1/madapi/rechargenotification
-        notificationType:
-          type: string
-          description: The method used
-          example: PUT
-        countryCode:
-          type: string
-          example: ZA
-        created At:
-          type: string
-          format: date-time
-          description: Date and time the request is created
-          example: '2021-07-21T17:32:28Z'
-        modified At:
-          type: string
-          format: date-time
-          description: Date and time the request was modified
-          example: '2021-07-21T17:32:28Z'
-        registration Status:
-          type: string
-          description: Status of the registration
-          example: Deleted
+          example: http://deliveryreporturl.com.ng
     Error_2:
       type: object
       description: Generic MADAPI error response
@@ -283,17 +294,6 @@ components:
           type: string
           description: The HTTP method type that was used
           example: GET
-    NotificationData:
-      description: The model expected to trigger a notification
-      type: object
-      properties:
-        data:
-          description: The data to be send as the notification. This must be a valid JSON request
-          type: object
-        deliveryReportUrl:
-          description: The delivery report url. The status/report of the notification delivery is send to this url. It expects an object of the type definitions/DeliveryReportRequest. Ex. ```{"statusCode":"","statusMessage":"","transationId":"","sequenceNo":""}```. The response is of type definitions/DeliveryReportResponse. Ex. ```{"statusCode":"","statusMessage":""}```
-          type: string
-          example: http://deliveryreporturl.com.ng
     SendNotificationResponse:
       type: object
       description: The response expected after triggering a notification

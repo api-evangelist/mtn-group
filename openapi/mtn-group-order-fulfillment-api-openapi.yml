@@ -74,29 +74,28 @@ paths:
         required: true
 components:
   schemas:
-    Error:
-      required:
-      - statusCode
-      - statusMessage
+    customerRef:
       type: object
+      required:
+      - customerId
+      - customerName
       properties:
-        statusCode:
+        customerId:
           type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
-        statusMessage:
+          description: Customer who is purchasing
+          example: 2349062059569
+        beneficiaryId:
           type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
+          description: Id of beneficiary for whom Customer wants to purchase, if purchase is for self , this value need not be populated
+          example: 2349062059534
+        customerName:
           type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
+          description: Customer name who is purchasing
+          example: Jack
+        customerEmail:
           type: string
-          description: This is the same transactionId that is sent in the request
-        timestamp:
-          type: string
-          description: Timestamp of the error
-          format: date-time
+          description: Contact email id of Customer who is purchasing
+          example: jack@mtn.com
     productRef:
       type: object
       required:
@@ -129,55 +128,6 @@ components:
           type: number
           description: Price of Product
           example: 1000
-    Order:
-      type: object
-      required:
-      - eligibilityCheckFlag
-      - extTransactionId
-      - channelName
-      - timestamp
-      properties:
-        customer:
-          $ref: '#/components/schemas/customerRef'
-        product:
-          $ref: '#/components/schemas/productRef'
-        timestamp:
-          type: string
-          description: Timestamp of order generation
-          format: date-time
-        eligibilityCheckFlag:
-          type: boolean
-          description: Flag determines if eligibiity check has to be performed or not. If eligibilty check is required then value should passed as "true" otherwise "false".
-        extTransactionId:
-          type: string
-          description: Transaction Id of channel
-          example: FB123456
-        channelName:
-          type: string
-          description: Name of call intiating channel
-          example: FB
-    customerRef:
-      type: object
-      required:
-      - customerId
-      - customerName
-      properties:
-        customerId:
-          type: string
-          description: Customer who is purchasing
-          example: 2349062059569
-        beneficiaryId:
-          type: string
-          description: Id of beneficiary for whom Customer wants to purchase, if purchase is for self , this value need not be populated
-          example: 2349062059534
-        customerName:
-          type: string
-          description: Customer name who is purchasing
-          example: Jack
-        customerEmail:
-          type: string
-          description: Contact email id of Customer who is purchasing
-          example: jack@mtn.com
     OrderResponse:
       type: object
       properties:
@@ -212,6 +162,56 @@ components:
               type: string
               description: Payment page redirection URL
               example: https://paymentpage.com/pay
+    Error:
+      required:
+      - statusCode
+      - statusMessage
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          description: Timestamp of the error
+          format: date-time
+    Order:
+      type: object
+      required:
+      - eligibilityCheckFlag
+      - extTransactionId
+      - channelName
+      - timestamp
+      properties:
+        customer:
+          $ref: '#/components/schemas/customerRef'
+        product:
+          $ref: '#/components/schemas/productRef'
+        timestamp:
+          type: string
+          description: Timestamp of order generation
+          format: date-time
+        eligibilityCheckFlag:
+          type: boolean
+          description: Flag determines if eligibiity check has to be performed or not. If eligibilty check is required then value should passed as "true" otherwise "false".
+        extTransactionId:
+          type: string
+          description: Transaction Id of channel
+          example: FB123456
+        channelName:
+          type: string
+          description: Name of call intiating channel
+          example: FB
   securitySchemes:
     APIKeyAuth:
       type: apiKey

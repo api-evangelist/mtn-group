@@ -240,87 +240,6 @@ paths:
         required: true
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      - transactionId
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Response Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific Canonical Response Codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '3001'
-        statusMessage:
-          type: string
-          description: More details on the returned status code which can be shown to a client
-          example: A system error has occured
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-          example: 400 Bad Request
-        transactionId:
-          type: string
-          description: MADAPI generated Id to include for tracing requests
-          example: xyz-t960-tuy
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: 2020-08-01T12:34
-        path:
-          type: string
-          description: The path that caused the error
-          example: https://api.mtn.com/v1/<path>
-        method:
-          type: string
-          description: The HTTP method type that was used
-          example: POST
-    SubscriptionRequest:
-      type: object
-      required:
-      - serviceCode
-      - callbackUrl
-      - targetSystem
-      properties:
-        serviceCode:
-          type: string
-          example: '*1234*356#'
-        callbackUrl:
-          type: string
-          description: URL from which the 3PP will receive MO-generated USSD message.
-          example: http://10.138.40.69:11400/xportal/services/NetworkNotify
-        targetSystem:
-          type: string
-          description: Name of the destined system for the callback url.
-          example: AYO
-    SubscriptionResponse:
-      type: object
-      required:
-      - data
-      - statusCode
-      - statusMessage
-      - transactionId
-      - _link
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Created
-        transactionId:
-          type: string
-          example: xyz-0hij0hjh0-9y6
-        data:
-          type: object
-          properties:
-            subscriptionId:
-              type: string
-              description: The value is a random number defined by MADAPI and must be unique. Associated with the registered USSD.
-              example: 123-xyz-456
-        _link:
-          $ref: '#/components/schemas/Links'
     Links:
       type: object
       required:
@@ -364,6 +283,87 @@ components:
           type: string
           description: USSD message content. If messageType is of type 4-Abort, this attribute will contain the abort reason or message.
           example: Please vote for xxx.
+    SubscriptionRequest:
+      type: object
+      required:
+      - serviceCode
+      - callbackUrl
+      - targetSystem
+      properties:
+        serviceCode:
+          type: string
+          example: '*1234*356#'
+        callbackUrl:
+          type: string
+          description: URL from which the 3PP will receive MO-generated USSD message.
+          example: http://10.138.40.69:11400/xportal/services/NetworkNotify
+        targetSystem:
+          type: string
+          description: Name of the destined system for the callback url.
+          example: AYO
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - transactionId
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Response Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific Canonical Response Codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3001'
+        statusMessage:
+          type: string
+          description: More details on the returned status code which can be shown to a client
+          example: A system error has occured
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+          example: 400 Bad Request
+        transactionId:
+          type: string
+          description: MADAPI generated Id to include for tracing requests
+          example: xyz-t960-tuy
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: https://api.mtn.com/v1/<path>
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: POST
+    SubscriptionResponse:
+      type: object
+      required:
+      - data
+      - statusCode
+      - statusMessage
+      - transactionId
+      - _link
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Created
+        transactionId:
+          type: string
+          example: xyz-0hij0hjh0-9y6
+        data:
+          type: object
+          properties:
+            subscriptionId:
+              type: string
+              description: The value is a random number defined by MADAPI and must be unique. Associated with the registered USSD.
+              example: 123-xyz-456
+        _link:
+          $ref: '#/components/schemas/Links'
     OutboundResponse:
       type: object
       required:

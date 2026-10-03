@@ -1200,218 +1200,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    CustomerVerificationResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Request has been Processed Successfully
-        customerId:
-          type: string
-          description: CustomerId provided in the input
-          example: '2348064816499'
-        transactionId:
-          type: string
-          description: Client or API generated Id to include for tracing requests
-        sequenceNo:
-          type: string
-          description: A unique trace id associated with every requests made by 3PPs
-          example: '12345'
-        data:
-          $ref: '#/components/schemas/MsisdnVerificationData'
-        _links:
-          type: object
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
-                  example: https://api.mtn.com/v1/cusomers/2348064736482
-    ErrorPayload:
-      type: object
-      properties:
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: cbd4772b-d1cf-5905-be9d-7a04adedf5b2
-        path:
-          type: string
-          description: API url path to which the call was made to
-          example: /customers
-        method:
-          type: string
-          description: HTTP verb or method associated with the called API endpoint
-          example: GET
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp of the error
-          example: 2019-08-23T07:29:25.593+0000
-    CustomerKYCVerificationMultipleRequest:
-      type: object
-      properties:
-        bvns:
-          type: array
-          items:
-            $ref: '#/components/schemas/BasicKYCRequestData'
-        binaryAttachment:
-          $ref: '#/components/schemas/BinaryAttachmentData'
-        deviceId:
-          type: string
-          description: A device id
-    FaceMatchingResponse:
-      description: Response object
-      type: object
-      properties:
-        id:
-          type: string
-          example: 2340399993094
-          description: A unique identifier for a customer, either a bvn, msisdn etc.
-        dateOfBirth:
-          type: string
-          example: 23-Apr-1985
-          description: A date of birth associated with the customer whose verification has been done
-        score:
-          type: number
-          example: 100
-          description: Total validation score for face matching if targetSystem is BIOSMART
-        confidenceValidationScore:
-          type: number
-          example: 100.0
-          description: Confidence validation score for face matching
-        confidenceMinRange:
-          type: number
-          example: 23.0
-          description: Face matching validation minimum validation range
-        confidenceMaxRange:
-          type: number
-          example: 45.0
-          description: Face matching validation maximum validation range
-        matchDescription:
-          type: string
-          example: MATCH_FOUND
-          description: Whether a match was found or not
-        matchTime:
-          type: string
-        matchThreshold:
-          type: number
-          example: 57.0
-    KYCVerificationResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Request has been Processed Successfully
-        customerId:
-          type: string
-          example: 2348064816499
-          description: CustomerId provided in the input
-        transactionId:
-          type: string
-          description: Client or API generated Id to include for tracing requests
-        sequenceNo:
-          type: string
-          description: A unique trace id associated with every requests made by 3PPs
-          example: '12345'
-        data:
-          $ref: '#/components/schemas/KYCVerificationResponseData'
-        _links:
-          type: object
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
-                  example: https://api.mtn.com/v1/kycVerification/customers/2348064736482
-    KYCNameVerificationScoreResponseData:
-      type: object
-      properties:
-        firstName:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        lastName:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        phoneNumber:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-    KYCVerificationScoreResponseData:
-      type: object
-      properties:
-        firstName:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        lastName:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        phoneNumber:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        emailAddress:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        nationalIdNumber:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        streetAddress:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        city:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        postCode:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        country:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-    Error401:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 4000
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-          example: Unauthorised
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-          example: Please verify token environment and key
-        faultMessage1:
-          type: string
-          description: ''
-        faultMessage2:
-          type: string
-          description: fault message
-          example: oauth.v2.InvalidApiKey
     KYCVerificationResponseData:
       type: object
       properties:
@@ -1467,6 +1255,56 @@ components:
         watchListed:
           type: string
           example: 'NO'
+    BIOMetricResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request has been Processed Successfully
+        customerId:
+          type: string
+          example: 2348064816499
+          description: CustomerId provided in the input
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        sequenceNo:
+          type: string
+          description: A unique trace id associated with every requests made by 3PPs
+          example: '12345'
+        data:
+          $ref: '#/components/schemas/FaceMatchingResponse'
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+          example: oauth.v2.InvalidApiKey
+    CustomerVerificationKYCMultiResponseData:
+      type: object
+      properties:
+        bvnDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/BVNVerificationResponseData'
     Error400:
       properties:
         timestamp:
@@ -1488,6 +1326,215 @@ components:
           type: string
           description: ''
           example: /customers/1234567890321/identityStatus
+    identityStatusResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes',
+          example: '0000'
+          maxLength: 30
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client. Success for 200. Mapped from REASON from backend. mapped from staus from backend.
+          enum:
+          - success, failed
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: Unique Id sent with the request
+        data:
+          type: object
+          properties:
+            customerId:
+              type: string
+              description: Unique Customer ID used during enrollment
+              example: '8606165224086'
+            customerStatus:
+              type: string
+              enum:
+              - NotEnrolled
+              - EnrolledValid
+              - EnrolledInvalid
+              - EnrolledError
+              - EnrolledExpired
+              example: NotEnrolled
+            externalStatus:
+              type: string
+              enum:
+              - DHAOffline
+              - DHAOnline
+              - DHAOnlineC2Pass
+              - DHAOnlineC3Pass
+              example: DHAOnlineC3Pass
+            modality:
+              type: string
+              enum:
+              - face
+              - finger
+              example: face
+            enrollmentId:
+              type: string
+              description: Unique ID of enrollment
+              example: 6527c968e681c3aef989ff0c
+            enrollmentTimestamp:
+              type: string
+              description: Timestamp of the original enrollment
+              example: '2023-10-12T10:24:40.966Z'
+            agentId:
+              type: string
+              description: Agent ID provided during enrollment for audit purposes
+            channelId:
+              type: string
+              description: Channel ID provided during enrollment for audit purposes
+            lastVerifiedId:
+              type: string
+              description: Unique ID of last verification transaction for audit purposes
+            lastVerifiedtimestamp:
+              type: string
+              description: Timestamp of the most recent re-authentication
+            lastVerifiedagentId:
+              type: string
+              description: Agent ID provided during verification for audit purposes
+            lastVerifiedchannelId:
+              type: string
+              description: Channel ID provided during verification for audit purposes
+    KYCAddressRequestDataScore:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          description: Customer's phone number
+          example: 0399948893822
+        streetAddress:
+          type: string
+          example: 1st Park Avenue, Mzansi, Johannesburg
+          description: Customer's street address
+        city:
+          type: string
+          example: Johannesburg
+          description: Customer's city
+        postCode:
+          type: string
+          example: 20200
+          description: Customer's postal code
+        country:
+          type: string
+          example: South Africa
+          description: Customer's country
+    BinaryAttachmentData:
+      type: array
+      items:
+        properties:
+          id:
+            type: string
+            description: Unique identifier for this particular attachment, a nist_impression_type when verification is biometric with a face image or fingerprint
+          attachmentType:
+            type: string
+            description: Attachment type such as video, picture
+          content:
+            type: string
+            description: A narrative text describing the content of the attachment
+          mimeType:
+            type: string
+            description: Attachment mime type such as extension file for video, picture and document
+          name:
+            type: string
+            description: The name of the attachment
+          status:
+            type: string
+            example: Successful
+          description:
+            type: string
+            description: A narrative text describing the content of the attachment, it can also be the POSITION value if attached document is fingerprint
+    KYCVerificationScoreResponseData:
+      type: object
+      properties:
+        firstName:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        lastName:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        phoneNumber:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        emailAddress:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        nationalIdNumber:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        streetAddress:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        city:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        postCode:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        country:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+    Error404:
+      properties:
+        fault:
+          properties:
+            faultstring:
+              type: string
+              description: ''
+              example: 'Unable to identify proxy for host: southafrica and url: /v1o/kycVerification/customers/1234567890123333/identityStatus'
+            detail:
+              properties:
+                errorcode:
+                  type: string
+                  description: ''
+                  example: messaging.adaptors.http.flow.ApplicationNotFound
+    KYCNameVerificationScoreResponseData:
+      type: object
+      properties:
+        firstName:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        lastName:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        phoneNumber:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+    KYCNameVerificationScoreResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request has been Processed Successfully
+        customerId:
+          type: string
+          example: 2348064816499
+          description: CustomerId provided in the input
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        data:
+          $ref: '#/components/schemas/KYCNameVerificationScoreResponseData'
     BVNVerificationResponseData:
       type: object
       properties:
@@ -1569,104 +1616,43 @@ components:
           type: string
           description: Indicates the validity of a customer account
           example: VALID
-    KYCAddressVerificationScoreResponseData:
+    FaceMatchingResponse:
+      description: Response object
       type: object
       properties:
-        phoneNumber:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        streetAddress:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        city:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        postCode:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-        country:
-          type: number
-          example: 100
-          description: Score in percentage based on match between request and backend record
-    identityStatusResponse:
-      type: object
-      properties:
-        statusCode:
+        id:
           type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes',
-          example: '0000'
-          maxLength: 30
-        statusMessage:
+          example: 2340399993094
+          description: A unique identifier for a customer, either a bvn, msisdn etc.
+        dateOfBirth:
           type: string
-          description: More details and corrective actions related to the error which can be shown to a client. Success for 200. Mapped from REASON from backend. mapped from staus from backend.
-          enum:
-          - success, failed
-        supportMessage:
+          example: 23-Apr-1985
+          description: A date of birth associated with the customer whose verification has been done
+        score:
+          type: number
+          example: 100
+          description: Total validation score for face matching if targetSystem is BIOSMART
+        confidenceValidationScore:
+          type: number
+          example: 100.0
+          description: Confidence validation score for face matching
+        confidenceMinRange:
+          type: number
+          example: 23.0
+          description: Face matching validation minimum validation range
+        confidenceMaxRange:
+          type: number
+          example: 45.0
+          description: Face matching validation maximum validation range
+        matchDescription:
           type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
+          example: MATCH_FOUND
+          description: Whether a match was found or not
+        matchTime:
           type: string
-          description: Unique Id sent with the request
-        data:
-          type: object
-          properties:
-            customerId:
-              type: string
-              description: Unique Customer ID used during enrollment
-              example: '8606165224086'
-            customerStatus:
-              type: string
-              enum:
-              - NotEnrolled
-              - EnrolledValid
-              - EnrolledInvalid
-              - EnrolledError
-              - EnrolledExpired
-              example: NotEnrolled
-            externalStatus:
-              type: string
-              enum:
-              - DHAOffline
-              - DHAOnline
-              - DHAOnlineC2Pass
-              - DHAOnlineC3Pass
-              example: DHAOnlineC3Pass
-            modality:
-              type: string
-              enum:
-              - face
-              - finger
-              example: face
-            enrollmentId:
-              type: string
-              description: Unique ID of enrollment
-              example: 6527c968e681c3aef989ff0c
-            enrollmentTimestamp:
-              type: string
-              description: Timestamp of the original enrollment
-              example: '2023-10-12T10:24:40.966Z'
-            agentId:
-              type: string
-              description: Agent ID provided during enrollment for audit purposes
-            channelId:
-              type: string
-              description: Channel ID provided during enrollment for audit purposes
-            lastVerifiedId:
-              type: string
-              description: Unique ID of last verification transaction for audit purposes
-            lastVerifiedtimestamp:
-              type: string
-              description: Timestamp of the most recent re-authentication
-            lastVerifiedagentId:
-              type: string
-              description: Agent ID provided during verification for audit purposes
-            lastVerifiedchannelId:
-              type: string
-              description: Channel ID provided during verification for audit purposes
+        matchThreshold:
+          type: number
+          example: 57.0
     MsisdnVerificationData:
       type: object
       properties:
@@ -1693,45 +1679,18 @@ components:
           example: 2
         details:
           $ref: '#/components/schemas/KYCVerificationResponseData'
-    KYCRequestDataScore:
+    identityStatusRequest:
       type: object
       properties:
-        firstName:
+        customerId:
           type: string
-          example: Joe
-          description: Customer first name
-        lastName:
+          description: Unique Customer ID used during enrollment
+        agentId:
           type: string
-          example: Doe
-          description: Customer last name
-        phoneNumber:
+          description: ID of the agent triggering the request
+        channelId:
           type: string
-          description: Customer's phone number
-          example: 0399948893822
-        emailAddress:
-          type: string
-          example: example@example.com
-          description: Email address of the customer or the agent
-        nationalIdNumber:
-          type: string
-          description: Customer's National ID Number
-          example: 123456789
-        streetAddress:
-          type: string
-          example: 1st Park Avenue, Mzansi, Johannesburg
-          description: Customer's street address
-        city:
-          type: string
-          example: Johannesburg
-          description: Customer's city
-        postCode:
-          type: string
-          example: 20200
-          description: Customer's postal code
-        country:
-          type: string
-          example: South Africa
-          description: Customer's country
+          description: Channel Id
     BasicKYCRequestData:
       type: object
       properties:
@@ -1791,65 +1750,6 @@ components:
           - M
           - S
           - D
-    KYCNameRequestDataScore:
-      type: object
-      properties:
-        firstName:
-          type: string
-          example: Joe
-          description: Customer first name
-        lastName:
-          type: string
-          example: Doe
-          description: Customer last name
-        phoneNumber:
-          type: string
-          description: Customer's phone number
-          example: 0399948893822
-    Error404:
-      properties:
-        fault:
-          properties:
-            faultstring:
-              type: string
-              description: ''
-              example: 'Unable to identify proxy for host: southafrica and url: /v1o/kycVerification/customers/1234567890123333/identityStatus'
-            detail:
-              properties:
-                errorcode:
-                  type: string
-                  description: ''
-                  example: messaging.adaptors.http.flow.ApplicationNotFound
-    identityStatusRequest:
-      type: object
-      properties:
-        customerId:
-          type: string
-          description: Unique Customer ID used during enrollment
-        agentId:
-          type: string
-          description: ID of the agent triggering the request
-        channelId:
-          type: string
-          description: Channel Id
-    KYCAddressVerificationScoreResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Request has been Processed Successfully
-        customerId:
-          type: string
-          example: 2348064816499
-          description: CustomerId provided in the input
-        transactionId:
-          type: string
-          description: Client or API generated Id to include for tracing requests
-        data:
-          $ref: '#/components/schemas/KYCAddressVerificationScoreResponseData'
     FaceMatchingRequest:
       description: Request for biometric matching
       type: object
@@ -1899,6 +1799,71 @@ components:
         correlationId:
           type: string
           description: A Unique ID, a reference number generated with a pattern that uniquely identifies a specific request/transaction
+    KYCRequestDataScore:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: Joe
+          description: Customer first name
+        lastName:
+          type: string
+          example: Doe
+          description: Customer last name
+        phoneNumber:
+          type: string
+          description: Customer's phone number
+          example: 0399948893822
+        emailAddress:
+          type: string
+          example: example@example.com
+          description: Email address of the customer or the agent
+        nationalIdNumber:
+          type: string
+          description: Customer's National ID Number
+          example: 123456789
+        streetAddress:
+          type: string
+          example: 1st Park Avenue, Mzansi, Johannesburg
+          description: Customer's street address
+        city:
+          type: string
+          example: Johannesburg
+          description: Customer's city
+        postCode:
+          type: string
+          example: 20200
+          description: Customer's postal code
+        country:
+          type: string
+          example: South Africa
+          description: Customer's country
+    ErrorPayload:
+      type: object
+      properties:
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: cbd4772b-d1cf-5905-be9d-7a04adedf5b2
+        path:
+          type: string
+          description: API url path to which the call was made to
+          example: /customers
+        method:
+          type: string
+          description: HTTP verb or method associated with the called API endpoint
+          example: GET
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+          example: 2019-08-23T07:29:25.593+0000
     KYCVerificationScoreResponse:
       type: object
       properties:
@@ -1917,13 +1882,121 @@ components:
           description: Client or API generated Id to include for tracing requests
         data:
           $ref: '#/components/schemas/KYCVerificationScoreResponseData'
-    CustomerVerificationKYCMultiResponseData:
+    KYCVerificationResponse:
       type: object
       properties:
-        bvnDetails:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request has been Processed Successfully
+        customerId:
+          type: string
+          example: 2348064816499
+          description: CustomerId provided in the input
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        sequenceNo:
+          type: string
+          description: A unique trace id associated with every requests made by 3PPs
+          example: '12345'
+        data:
+          $ref: '#/components/schemas/KYCVerificationResponseData'
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/kycVerification/customers/2348064736482
+    KYCAddressVerificationScoreResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request has been Processed Successfully
+        customerId:
+          type: string
+          example: 2348064816499
+          description: CustomerId provided in the input
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        data:
+          $ref: '#/components/schemas/KYCAddressVerificationScoreResponseData'
+    KYCAddressVerificationScoreResponseData:
+      type: object
+      properties:
+        phoneNumber:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        streetAddress:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        city:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        postCode:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+        country:
+          type: number
+          example: 100
+          description: Score in percentage based on match between request and backend record
+    CustomerKYCVerificationMultipleRequest:
+      type: object
+      properties:
+        bvns:
           type: array
           items:
-            $ref: '#/components/schemas/BVNVerificationResponseData'
+            $ref: '#/components/schemas/BasicKYCRequestData'
+        binaryAttachment:
+          $ref: '#/components/schemas/BinaryAttachmentData'
+        deviceId:
+          type: string
+          description: A device id
+    CustomerVerificationResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request has been Processed Successfully
+        customerId:
+          type: string
+          description: CustomerId provided in the input
+          example: '2348064816499'
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        sequenceNo:
+          type: string
+          description: A unique trace id associated with every requests made by 3PPs
+          example: '12345'
+        data:
+          $ref: '#/components/schemas/MsisdnVerificationData'
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/cusomers/2348064736482
     CustomerVerificationKYCMultiResponse:
       type: object
       properties:
@@ -1942,94 +2015,21 @@ components:
           example: '12345'
         data:
           $ref: '#/components/schemas/CustomerVerificationKYCMultiResponseData'
-    KYCAddressRequestDataScore:
+    KYCNameRequestDataScore:
       type: object
       properties:
+        firstName:
+          type: string
+          example: Joe
+          description: Customer first name
+        lastName:
+          type: string
+          example: Doe
+          description: Customer last name
         phoneNumber:
           type: string
           description: Customer's phone number
           example: 0399948893822
-        streetAddress:
-          type: string
-          example: 1st Park Avenue, Mzansi, Johannesburg
-          description: Customer's street address
-        city:
-          type: string
-          example: Johannesburg
-          description: Customer's city
-        postCode:
-          type: string
-          example: 20200
-          description: Customer's postal code
-        country:
-          type: string
-          example: South Africa
-          description: Customer's country
-    BinaryAttachmentData:
-      type: array
-      items:
-        properties:
-          id:
-            type: string
-            description: Unique identifier for this particular attachment, a nist_impression_type when verification is biometric with a face image or fingerprint
-          attachmentType:
-            type: string
-            description: Attachment type such as video, picture
-          content:
-            type: string
-            description: A narrative text describing the content of the attachment
-          mimeType:
-            type: string
-            description: Attachment mime type such as extension file for video, picture and document
-          name:
-            type: string
-            description: The name of the attachment
-          status:
-            type: string
-            example: Successful
-          description:
-            type: string
-            description: A narrative text describing the content of the attachment, it can also be the POSITION value if attached document is fingerprint
-    KYCNameVerificationScoreResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Request has been Processed Successfully
-        customerId:
-          type: string
-          example: 2348064816499
-          description: CustomerId provided in the input
-        transactionId:
-          type: string
-          description: Client or API generated Id to include for tracing requests
-        data:
-          $ref: '#/components/schemas/KYCNameVerificationScoreResponseData'
-    BIOMetricResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Request has been Processed Successfully
-        customerId:
-          type: string
-          example: 2348064816499
-          description: CustomerId provided in the input
-        transactionId:
-          type: string
-          description: Client or API generated Id to include for tracing requests
-        sequenceNo:
-          type: string
-          description: A unique trace id associated with every requests made by 3PPs
-          example: '12345'
-        data:
-          $ref: '#/components/schemas/FaceMatchingResponse'
   securitySchemes:
     basicAuth:
       type: http

@@ -1171,6 +1171,243 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    ProductSpecCharacteristicRef:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        maxCardinality:
+          type: string
+        minCardinality:
+          type: string
+        value:
+          type: string
+          description: A discrete value that the characteristic can take on. the value type is defined by 'valueType' characteristic
+        unitOfMeasure:
+          type: string
+          description: Could be minutes, GB, SMS, minutes
+        '@type':
+          type: string
+          description: description on the type of the resouce eg data, voice,SMS,
+        '@schemaLocation':
+          type: string
+          description: Hyperlink reference to schema describing this object
+    ProductOffering_level_2:
+      type: object
+      required:
+      - productSpecification
+      - id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        productSpecification:
+          $ref: '#/components/schemas/productSpecification'
+        productOfferingTerm:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductTerm'
+        productOfferingPrice:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOfferingPriceRef'
+    Category_level_2:
+      type: object
+      required:
+      - productoffering
+      properties:
+        productoffering:
+          $ref: '#/components/schemas/ProductOffering_level_2'
+    validity:
+      type: object
+      properties:
+        amount:
+          type: number
+          description: number representing the validity
+          example: 7
+        unitofmeasure:
+          type: string
+          description: amount unit of mesure e.g days, month, weekly
+          example: days
+    productSpecificationRef:
+      type: object
+      required:
+      - productSpecCharacteristic
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        lifeCycleStatus:
+          type: string
+        href:
+          type: string
+        version:
+          type: string
+        lastUpdate:
+          type: string
+        type:
+          type: string
+        productSpecCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSpecCharacteristic'
+    Catalog_level-1:
+      type: object
+      description: A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the Catalog
+          example: 63514374jfgfs
+        name:
+          type: string
+          description: Name of the catalog
+          example: Ketir Bundles
+    TimePeriod:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          type: string
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+    ProductOfferingPriceRef:
+      type: object
+      properties:
+        name:
+          type: string
+        recurringChargePeriodType:
+          type: string
+          example: weekly
+        priceType:
+          type: string
+          description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth.
+        recurringChargePeriodLength:
+          type: integer
+          description: 'the period of the recurring charge:  1, 2, ... .It sets to zero if it is not applicable'
+        price:
+          $ref: '#/components/schemas/price'
+        constraint:
+          type: object
+          properties:
+            prodSpecCharValueUse:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProdSpecCharValueUse'
+            productOfferingPrice:
+              type: object
+              properties:
+                price:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/price'
+    ProductTerm:
+      type: object
+      description: Description of a productTerm linked to this product. This represent a commitment with a duration
+      properties:
+        validFor:
+          $ref: '#/components/schemas/validity'
+    ProductSpecCharacteristic:
+      type: array
+      items:
+        $ref: '#/components/schemas/ProductSpecCharacteristicRef'
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Catalog_level-2:
+      type: object
+      required:
+      - category
+      properties:
+        name:
+          type: string
+        businessType:
+          type: string
+        version:
+          type: string
+        lifecycleStatus:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category_level_2'
+    productSpecification:
+      type: array
+      items:
+        $ref: '#/components/schemas/productSpecificationRef'
+    price:
+      type: object
+      properties:
+        value:
+          type: number
+          description: number representing value of the price/amount
+          example: 10
+        unit:
+          type: string
+          description: unit of mesureof the value/amount eg. SSP
+          example: SSP
+    ProdSpecCharValueUse:
+      type: object
+      description: A use of the ProdSpecCharacteristicValue by a ProductOffering to which additional properties (attributes) apply or override the properties of similar properties contained in ProdSpecCharacteristicValue. It should be noted that characteristics which their value(s) addressed by this object must exist in corresponding product specification. The available characteristic values for a ProductSpecCharacteristic in a Product specification can be modified at the ProductOffering level. For example, a characteristic 'Color' might have values White, Blue, Green, and Red. But, the list of values can be restricted to e.g. White and Blue in an associated product offering. It should be noted that the list of values in 'ProdSpecCharValueUse' is a strict subset of the list of values as defined in the corresponding product specification characteristics.
+      properties:
+        name:
+          type: string
+          description: Name of the associated productSpecCharacteristic
+        description:
+          type: string
+          description: A narrative that explains in detail what the productSpecCharacteristic is
+        valueType:
+          type: string
+          description: A kind of value that the characteristic can take on, such as numeric, text and so forth
+        minCardinality:
+          type: integer
+          description: The minimum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where zero is the value for the minCardinality.
+        maxCardinality:
+          type: integer
+          description: The maximum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where five is the value for the maxCardinality.
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the productSpecCharacteristic is valid
+        productSpecCharacteristicValue:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSpecCharacteristicRef'
     Response_Catalog:
       type: object
       required:
@@ -1209,243 +1446,6 @@ components:
           description: Transaction id returned by the provider system.
         catalog:
           $ref: '#/components/schemas/Catalog_level-2'
-    Error:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        code:
-          type: string
-          description: Application relevant detail, defined in the API or a common list.
-        reason:
-          type: string
-          description: Explanation of the reason for the error which can be shown to a client user.
-        message:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client user.
-        status:
-          type: string
-          description: HTTP Error code extension
-        referenceError:
-          type: string
-          format: uri
-          description: URI of documentation describing the error.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class.
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    ProductOffering_level_2:
-      type: object
-      required:
-      - productSpecification
-      - id
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        productSpecification:
-          $ref: '#/components/schemas/productSpecification'
-        productOfferingTerm:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductTerm'
-        productOfferingPrice:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductOfferingPriceRef'
-    validity:
-      type: object
-      properties:
-        amount:
-          type: number
-          description: number representing the validity
-          example: 7
-        unitofmeasure:
-          type: string
-          description: amount unit of mesure e.g days, month, weekly
-          example: days
-    ProductSpecCharacteristic:
-      type: array
-      items:
-        $ref: '#/components/schemas/ProductSpecCharacteristicRef'
-    ProdSpecCharValueUse:
-      type: object
-      description: A use of the ProdSpecCharacteristicValue by a ProductOffering to which additional properties (attributes) apply or override the properties of similar properties contained in ProdSpecCharacteristicValue. It should be noted that characteristics which their value(s) addressed by this object must exist in corresponding product specification. The available characteristic values for a ProductSpecCharacteristic in a Product specification can be modified at the ProductOffering level. For example, a characteristic 'Color' might have values White, Blue, Green, and Red. But, the list of values can be restricted to e.g. White and Blue in an associated product offering. It should be noted that the list of values in 'ProdSpecCharValueUse' is a strict subset of the list of values as defined in the corresponding product specification characteristics.
-      properties:
-        name:
-          type: string
-          description: Name of the associated productSpecCharacteristic
-        description:
-          type: string
-          description: A narrative that explains in detail what the productSpecCharacteristic is
-        valueType:
-          type: string
-          description: A kind of value that the characteristic can take on, such as numeric, text and so forth
-        minCardinality:
-          type: integer
-          description: The minimum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where zero is the value for the minCardinality.
-        maxCardinality:
-          type: integer
-          description: The maximum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where five is the value for the maxCardinality.
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the productSpecCharacteristic is valid
-        productSpecCharacteristicValue:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductSpecCharacteristicRef'
-    ProductSpecCharacteristicRef:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        maxCardinality:
-          type: string
-        minCardinality:
-          type: string
-        value:
-          type: string
-          description: A discrete value that the characteristic can take on. the value type is defined by 'valueType' characteristic
-        unitOfMeasure:
-          type: string
-          description: Could be minutes, GB, SMS, minutes
-        '@type':
-          type: string
-          description: description on the type of the resouce eg data, voice,SMS,
-        '@schemaLocation':
-          type: string
-          description: Hyperlink reference to schema describing this object
-    productSpecificationRef:
-      type: object
-      required:
-      - productSpecCharacteristic
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        lifeCycleStatus:
-          type: string
-        href:
-          type: string
-        version:
-          type: string
-        lastUpdate:
-          type: string
-        type:
-          type: string
-        productSpecCharacteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductSpecCharacteristic'
-    TimePeriod:
-      type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
-      properties:
-        endDateTime:
-          type: string
-          format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
-          type: string
-          format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
-    Catalog_level-1:
-      type: object
-      description: A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the Catalog
-          example: 63514374jfgfs
-        name:
-          type: string
-          description: Name of the catalog
-          example: Ketir Bundles
-    productSpecification:
-      type: array
-      items:
-        $ref: '#/components/schemas/productSpecificationRef'
-    Category_level_2:
-      type: object
-      required:
-      - productoffering
-      properties:
-        productoffering:
-          $ref: '#/components/schemas/ProductOffering_level_2'
-    ProductTerm:
-      type: object
-      description: Description of a productTerm linked to this product. This represent a commitment with a duration
-      properties:
-        validFor:
-          $ref: '#/components/schemas/validity'
-    price:
-      type: object
-      properties:
-        value:
-          type: number
-          description: number representing value of the price/amount
-          example: 10
-        unit:
-          type: string
-          description: unit of mesureof the value/amount eg. SSP
-          example: SSP
-    ProductOfferingPriceRef:
-      type: object
-      properties:
-        name:
-          type: string
-        recurringChargePeriodType:
-          type: string
-          example: weekly
-        priceType:
-          type: string
-          description: A category that describes the price, such as recurring, discount, allowance, penalty, and so forth.
-        recurringChargePeriodLength:
-          type: integer
-          description: 'the period of the recurring charge:  1, 2, ... .It sets to zero if it is not applicable'
-        price:
-          $ref: '#/components/schemas/price'
-        constraint:
-          type: object
-          properties:
-            prodSpecCharValueUse:
-              type: array
-              items:
-                $ref: '#/components/schemas/ProdSpecCharValueUse'
-            productOfferingPrice:
-              type: object
-              properties:
-                price:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/price'
-    Catalog_level-2:
-      type: object
-      required:
-      - category
-      properties:
-        name:
-          type: string
-        businessType:
-          type: string
-        version:
-          type: string
-        lifecycleStatus:
-          type: string
-        category:
-          $ref: '#/components/schemas/Category_level_2'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -83,39 +83,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-        path:
-          type: string
-          description: The path that caused the error
-        method:
-          type: string
-          description: The HTTP method type that was used
-          example: GET
-        sequenceNo:
-          type: string
-          description: A unique identifier for tracking all requests
-          example: '12939993'
     PremiumError:
       type: object
       properties:
@@ -131,19 +98,17 @@ components:
         transactionId:
           type: string
           description: Message ID
-    CustomerPremium:
+    PremiumData:
       type: object
-      required:
-      - originReferenceId
+      description: Contains response information pertaining to the premium request.
       properties:
-        originReferenceId:
+        message:
           type: string
-          description: Origin Reference Id
-        statusCode:
-          type: string
-          description: This will have MADAPI response mapping, based on the value received from the downstream system
-        data:
-          $ref: '#/components/schemas/PremiumData'
+          description: A message send by the back end pertaining to the premium calculation request
+        premium:
+          $ref: '#/components/schemas/Amount'
+        loyaltyInformation:
+          $ref: '#/components/schemas/LoyaltyBalances'
     PremiumRequest:
       type: object
       required:
@@ -177,27 +142,6 @@ components:
         message:
           type: string
           description: The calling customer can populate a message intended for the back-end application.
-    LoyaltyBalances:
-      type: object
-      description: Contains all the loyalty balances associated with a customer.
-      properties:
-        generatedAmount:
-          $ref: '#/components/schemas/Amount'
-        consumedAmount:
-          $ref: '#/components/schemas/Amount'
-        newBalance:
-          $ref: '#/components/schemas/Amount'
-    PremiumData:
-      type: object
-      description: Contains response information pertaining to the premium request.
-      properties:
-        message:
-          type: string
-          description: A message send by the back end pertaining to the premium calculation request
-        premium:
-          $ref: '#/components/schemas/Amount'
-        loyaltyInformation:
-          $ref: '#/components/schemas/LoyaltyBalances'
     Amount:
       type: object
       required:
@@ -229,6 +173,62 @@ components:
           - SMS
           - FCFA
           example: NGN
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+        sequenceNo:
+          type: string
+          description: A unique identifier for tracking all requests
+          example: '12939993'
+    CustomerPremium:
+      type: object
+      required:
+      - originReferenceId
+      properties:
+        originReferenceId:
+          type: string
+          description: Origin Reference Id
+        statusCode:
+          type: string
+          description: This will have MADAPI response mapping, based on the value received from the downstream system
+        data:
+          $ref: '#/components/schemas/PremiumData'
+    LoyaltyBalances:
+      type: object
+      description: Contains all the loyalty balances associated with a customer.
+      properties:
+        generatedAmount:
+          $ref: '#/components/schemas/Amount'
+        consumedAmount:
+          $ref: '#/components/schemas/Amount'
+        newBalance:
+          $ref: '#/components/schemas/Amount'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

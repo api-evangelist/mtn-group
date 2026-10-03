@@ -171,39 +171,29 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Error:
-      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+    HeaderItem:
       type: object
+      description: An item typically included in a request or response
       required:
-      - code
-      - reason
+      - name
+      - value
       properties:
-        code:
+        name:
           type: string
-          description: Application relevant detail, defined in the API or a common list.
-        reason:
+          description: The name of the header item, e.g. locale
+        value:
           type: string
-          description: Explanation of the reason for the error which can be shown to a client user.
-        message:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client user.
-        status:
-          type: string
-          description: HTTP Error code extension
-        referenceError:
-          type: string
-          format: uri
-          description: URI of documentation describing the error.
+          description: The value of the header item, e.g. en-us
         '@baseType':
           type: string
-          description: When sub-classing, this defines the super-class.
+          description: When sub-classing, this defines the super-class
         '@schemaLocation':
           type: string
           format: uri
           description: A URI to a JSON-Schema file that defines additional attributes and relationships
         '@type':
           type: string
-          description: When sub-classing, this defines the sub-class entity name.
+          description: When sub-classing, this defines the sub-class entity name
     Monitor:
       type: object
       description: Monitoring of resources
@@ -226,29 +216,6 @@ components:
         response:
           $ref: '#/components/schemas/Response'
           description: Represents the response
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    HeaderItem:
-      type: object
-      description: An item typically included in a request or response
-      required:
-      - name
-      - value
-      properties:
-        name:
-          type: string
-          description: The name of the header item, e.g. locale
-        value:
-          type: string
-          description: The value of the header item, e.g. en-us
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -288,6 +255,39 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
+    Error:
+      description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+      type: object
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name.
     Request:
       type: object
       description: A response to a request

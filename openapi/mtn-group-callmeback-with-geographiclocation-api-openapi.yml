@@ -59,20 +59,27 @@ paths:
       x-operation-id-original: getGeographicLocation and postCallMeBack
 components:
   schemas:
-    Error404:
+    Error401:
       properties:
-        fault:
-          properties:
-            faultstring:
-              type: string
-              description: ''
-              example: 'Unable to identify proxy for host: southafrica and url: /v9/products/productOffering/roaming'
-        detail:
-          properties:
-            errorcode:
-              type: string
-              description: ''
-              example: messaging.adaptors.http.flow.ApplicationNotFound
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status.
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+          example: oauth.v2.InvalidApiKey
     Error400:
       properties:
         statusCode:
@@ -111,27 +118,20 @@ components:
           type: string
           description: This is the same transactionId that is sent in the request
           example: cdfa7bc3-cbcd-473b-a743-4fc90dcc91e4
-    Error401:
+    Error404:
       properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status.
-          example: 4000
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-          example: Unauthorised
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-          example: Please verify token environment and key
-        faultMessage1:
-          type: string
-          description: ''
-        faultMessage2:
-          type: string
-          description: fault message
-          example: oauth.v2.InvalidApiKey
+        fault:
+          properties:
+            faultstring:
+              type: string
+              description: ''
+              example: 'Unable to identify proxy for host: southafrica and url: /v9/products/productOffering/roaming'
+        detail:
+          properties:
+            errorcode:
+              type: string
+              description: ''
+              example: messaging.adaptors.http.flow.ApplicationNotFound
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -163,29 +163,6 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    Error400:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
-        links:
-          type: array
-          items:
-            properties:
-              rel:
-                type: string
-              href:
-                type: string
     ServiceOrderItem:
       type: object
       required:
@@ -212,6 +189,71 @@ components:
         packages:
           description: Packages details
           $ref: '#/components/schemas/Package'
+    Product:
+      type: object
+      required:
+      - action
+      - id
+      properties:
+        action:
+          type: string
+          example: add
+          description: Product Action to determine the action of the product will be added or removed
+          enum:
+          - add
+          - remove
+        features:
+          type: array
+          description: List of feature
+          items:
+            $ref: '#/components/schemas/Feature'
+        id:
+          type: string
+          example: APN
+          description: Product offering code is used to identify the product
+      title: Product
+    Service:
+      type: object
+      properties:
+        itemAction:
+          type: string
+          example: add
+          description: Item Action to determine the action of the equipment such add/remove
+          enum:
+          - add
+          - remove
+        type:
+          type: string
+          example: MSISDN
+          description: Service Type defines the equipment type such as MSISDN/SIM Card
+          enum:
+          - MSISDN
+          - SIM Card
+          - APN
+          - IP Address
+        value:
+          type: string
+          example: 27xxxxxxxxx
+          description: Service Value contains the value of the given equipment
+    Error403:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '6000'
+        statusMessage:
+          type: string
+          description: Short description of the error
+          example: Forbidden
+        supportMessage:
+          type: string
+          description: Longer description of the error
+          example: Please verify token environment or access token or API key
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
     Error500:
       properties:
         statusCode:
@@ -237,99 +279,67 @@ components:
         method:
           type: string
           description: method used by MADAPI to get the response
-    GetServiceOrderResponse:
-      type: object
+    Error401:
       properties:
         statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '0000'
-        statusMessage:
-          type: string
-          description: Message.
-          example: Successful
-        transactionId:
-          type: string
-          description: transactionId from the backend or MADAPI generated during request.
-          example: 1f73e9a3-39fa-596a-a030-e03d8cb01a2c
-        supportMessage:
-          type: string
-          example: API Executed Successfully
-          description: Short description
-        apnDetails:
-          type: array
-          items:
-            properties:
-              apnId:
-                type: string
-                description: APN Id associated with Partner
-                example: '34345'
-              apnName:
-                type: string
-                description: APN name associated with Partner
-                example: apn_34345.co.za
-    CreateServiceOrder_SuccessResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '0000'
-        statusMessage:
-          type: string
-          description: status of Message.
-          example: Successful
-        transactionId:
-          type: string
-          description: transactionId from the backend or MADAPI generated during request.
-          example: 1f73e9a3-39fa-596a-a030-e03d8cb01a2c
-        supportMessage:
-          type: string
-          example: Order has been modified
-          description: Short description
-        requestorRefNum:
-          type: string
-          example: '320055544792213'
-          description: Requester reference number consumer uses for identify the order
-        sorbRefNum:
-          type: string
-          example: 1700037701915-n-0
-          description: Sorb reference number is the Id used to identify the SORB Order Request
-    Feature:
-      type: object
-      required:
-      - name
-      - value
-      properties:
-        name:
-          type: string
-          example: ID
-          description: Name is used identify the name of the parameter
-        value:
-          type: string
-          example: '01575'
-          description: Value is used to get the incoming parameter value in the request
-    Error405:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
           type: integer
           description: Status code from target system to indicate transaction status
-          example: 405
-        error:
+          example: 4000
+        statusMessage:
           type: string
-          description: error message
-          example: Method Not Allowed
-        message:
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
           type: string
-          description: details
-        path:
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
           type: string
-          description: The path that caused the error
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+    ServiceOrder_Create:
+      type: object
+      required:
+      - externalId
+      - operatorId
+      - serviceOrderItem
+      - sourceIdentifier
+      - sourceSystem
+      properties:
+        accessId:
+          type: string
+          example: PROVIDENT
+          description: Access Id as part of IBF RA
+        externalId:
+          type: string
+          example: '320055544792213'
+          description: Requestor reference number consumer uses for identifiy the order
+        operatorId:
+          type: string
+          example: Operator1
+          description: Operator Id is used to identify the user operates on the order
+        otn:
+          type: string
+          example: 20231209212028-320055544792213
+          description: OTN value as part of IBF RA
+        requestedStartDate:
+          type: string
+          example: 2019-09-16+02:00
+          description: Effective date is the date when will be order is provision from
+        serviceOrderItem:
+          type: array
+          description: Lis of service order items
+          items:
+            $ref: '#/components/schemas/ServiceOrderItem'
+        sourceSystem:
+          type: string
+          example: MADAPI
+          description: System where the SORB order was initiated
+          enum:
+          - MADAPI
+          - PROVIDENT
     Package:
       type: object
       required:
@@ -397,68 +407,122 @@ components:
           description: List of service which includes equipment details such as MSISDN and SIM
           items:
             $ref: '#/components/schemas/Service'
-    Error403:
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        links:
+          type: array
+          items:
+            properties:
+              rel:
+                type: string
+              href:
+                type: string
+    CreateServiceOrder_SuccessResponse:
       type: object
       properties:
         statusCode:
           type: string
           description: HTTP error code extension
-          example: '6000'
+          example: '0000'
         statusMessage:
           type: string
-          description: Short description of the error
-          example: Forbidden
-        supportMessage:
-          type: string
-          description: Longer description of the error
-          example: Please verify token environment or access token or API key
+          description: status of Message.
+          example: Successful
         transactionId:
           type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
-    Service:
-      type: object
-      properties:
-        itemAction:
-          type: string
-          example: add
-          description: Item Action to determine the action of the equipment such add/remove
-          enum:
-          - add
-          - remove
-        type:
-          type: string
-          example: MSISDN
-          description: Service Type defines the equipment type such as MSISDN/SIM Card
-          enum:
-          - MSISDN
-          - SIM Card
-          - APN
-          - IP Address
-        value:
-          type: string
-          example: 27xxxxxxxxx
-          description: Service Value contains the value of the given equipment
-    Error401:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 4000
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-          example: Unauthorised
+          description: transactionId from the backend or MADAPI generated during request.
+          example: 1f73e9a3-39fa-596a-a030-e03d8cb01a2c
         supportMessage:
           type: string
-          description: detail message from target system to indicate transaction status.
-          example: Please verify token environment and key
-        faultMessage1:
+          example: Order has been modified
+          description: Short description
+        requestorRefNum:
           type: string
-          description: ''
-        faultMessage2:
+          example: '320055544792213'
+          description: Requester reference number consumer uses for identify the order
+        sorbRefNum:
           type: string
-          description: fault message
+          example: 1700037701915-n-0
+          description: Sorb reference number is the Id used to identify the SORB Order Request
+    GetServiceOrderResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '0000'
+        statusMessage:
+          type: string
+          description: Message.
+          example: Successful
+        transactionId:
+          type: string
+          description: transactionId from the backend or MADAPI generated during request.
+          example: 1f73e9a3-39fa-596a-a030-e03d8cb01a2c
+        supportMessage:
+          type: string
+          example: API Executed Successfully
+          description: Short description
+        apnDetails:
+          type: array
+          items:
+            properties:
+              apnId:
+                type: string
+                description: APN Id associated with Partner
+                example: '34345'
+              apnName:
+                type: string
+                description: APN name associated with Partner
+                example: apn_34345.co.za
+    Feature:
+      type: object
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          example: ID
+          description: Name is used identify the name of the parameter
+        value:
+          type: string
+          example: '01575'
+          description: Value is used to get the incoming parameter value in the request
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
     Error404:
       properties:
         timestamp:
@@ -480,70 +544,6 @@ components:
         path:
           type: string
           description: The path that caused the error
-    ServiceOrder_Create:
-      type: object
-      required:
-      - externalId
-      - operatorId
-      - serviceOrderItem
-      - sourceIdentifier
-      - sourceSystem
-      properties:
-        accessId:
-          type: string
-          example: PROVIDENT
-          description: Access Id as part of IBF RA
-        externalId:
-          type: string
-          example: '320055544792213'
-          description: Requestor reference number consumer uses for identifiy the order
-        operatorId:
-          type: string
-          example: Operator1
-          description: Operator Id is used to identify the user operates on the order
-        otn:
-          type: string
-          example: 20231209212028-320055544792213
-          description: OTN value as part of IBF RA
-        requestedStartDate:
-          type: string
-          example: 2019-09-16+02:00
-          description: Effective date is the date when will be order is provision from
-        serviceOrderItem:
-          type: array
-          description: Lis of service order items
-          items:
-            $ref: '#/components/schemas/ServiceOrderItem'
-        sourceSystem:
-          type: string
-          example: MADAPI
-          description: System where the SORB order was initiated
-          enum:
-          - MADAPI
-          - PROVIDENT
-    Product:
-      type: object
-      required:
-      - action
-      - id
-      properties:
-        action:
-          type: string
-          example: add
-          description: Product Action to determine the action of the product will be added or removed
-          enum:
-          - add
-          - remove
-        features:
-          type: array
-          description: List of feature
-          items:
-            $ref: '#/components/schemas/Feature'
-        id:
-          type: string
-          example: APN
-          description: Product offering code is used to identify the product
-      title: Product
   securitySchemes:
     OAuth2:
       type: oauth2

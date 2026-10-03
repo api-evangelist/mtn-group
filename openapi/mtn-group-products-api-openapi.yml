@@ -57,8 +57,8 @@ paths:
         schema:
           type: string
           enum:
-          - true
-          - false
+          - 'YES'
+          - 'NO'
       - name: serviceClass
         in: query
         description: Specify the class of service
@@ -214,8 +214,8 @@ paths:
         schema:
           type: string
           enum:
-          - true
-          - false
+          - 'YES'
+          - 'NO'
       - name: serviceClass
         in: query
         description: Specify the class of service
@@ -1288,6 +1288,197 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    Money:
+      type: object
+      description: A base / value business entity used to represent money
+      properties:
+        unit:
+          type: string
+          description: Currency (ISO4217 norm uses 3 letters to define the currency)
+        value:
+          type: number
+          format: float
+          description: A positive floating point number
+    OfferCategory:
+      type: array
+      example: '"Topdeal", "Recharge", "DataBundle", "Combo", "Voice", "VAS"'
+      items:
+        type: string
+    Data:
+      type: object
+      required:
+      - voice
+      - data
+      - yolo
+      - music
+      - stream
+      - others
+      properties:
+        MABand:
+          type: string
+          description: This is a band defined to show the range of the MSISDN Main Account. E.g. A.<br/>where the MSISDN MA is > 0 <= 1000. Available when filterByMABand is TRUE."
+          example: A
+        combinedBand:
+          type: string
+          description: This is a band defined to show the range of the MSISDN Positive Main Account added with the DAAccount balance. E.g. A.<br/>where the MSISDN MA is > 0 <= 1000. Available when filterByMABand is TRUE."
+          example: A
+        providerRef:
+          type: string
+          description: Reference number from the payment channel
+        traceId:
+          type: string
+          description: String provided by Lumos. Should be returned by Payment Provider in the notification API. Up to 50 characters
+        customerName:
+          type: string
+          description: Name of the  customer the payment is done for
+        voice:
+          type: object
+          description: the voice products available
+          $ref: '#/components/schemas/ProductFrequency'
+        data:
+          type: object
+          description: the data products available
+          $ref: '#/components/schemas/ProductFrequency'
+        yolo:
+          type: object
+          description: the yolo products available
+          $ref: '#/components/schemas/ProductFrequency'
+        music:
+          type: object
+          description: the music products available
+          $ref: '#/components/schemas/ProductFrequency'
+        stream:
+          type: object
+          description: the stream products available
+          $ref: '#/components/schemas/ProductFrequency'
+        others:
+          type: object
+          description: a generic category of products available
+          $ref: '#/components/schemas/OthersProductFrequency'
+    PlanMsgList:
+      type: object
+      properties:
+        msgTypeId:
+          type: string
+          description: ID of Message Type.
+        msgTypeName:
+          type: string
+          description: Suspend Deactivation.
+        isFreqReq:
+          type: string
+          description: Is Frequency Required 0 – Not Required 1 - Required.
+        frequencyId:
+          type: string
+          description: Frequency Id of the message.
+        frequency:
+          type: string
+          description: Frequency.
+        messageListResponse:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageList'
+        isActive:
+          type: string
+          description: isActive.
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status.
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+          example: oauth.v2.InvalidApiKey
+    ProductSpecificationCharacteristicValueUse:
+      type: object
+      description: A use of the ProductSpecificationCharacteristicValue by a ProductOffering to which additional properties (attributes) apply or override the properties of similar properties contained in ProductSpecificationCharacteristicValue. It should be noted that characteristics which their value(s) addressed by this object must exist in corresponding product specification. The available characteristic values for a ProductSpecificationCharacteristic in a Product specification can be modified at the ProductOffering level. For example, a characteristic 'Color' might have values White, Blue, Green, and Red. But, the list of values can be restricted to e.g. White and Blue in an associated product offering. It should be noted that the list of values in 'ProductSpecificationCharacteristicValueUse' is a strict subset of the list of values as defined in the corresponding product specification characteristics.
+      properties:
+        description:
+          type: string
+          description: A narrative that explains in detail what the productSpecificationCharacteristic is
+        deviceSize:
+          type: integer
+          description: The maximum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where five is the value for the maxCardinality.
+        deviceSizeUOM:
+          type: string
+          description: Device Size UOM
+        name:
+          type: string
+          description: Name of the associated productSpecificationCharacteristic
+        deviceBrandName:
+          type: string
+          description: Gives brand name and specifications
+        deviceRank:
+          type: integer
+          description: This parameter holds the ranking of the device. The ranking defines the popularity of the device
+        devicePrice:
+          $ref: '#/components/schemas/Money'
+        deviceType:
+          type: string
+          description: Gives device type details, e.g.Laptop
+        productSpecCharacteristicValue:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSpecificationCharacteristicValue'
+          description: A number or text that can be assigned to a ProductSpecificationCharacteristic.
+        productSpecification:
+          $ref: '#/components/schemas/ProductSpecificationRef'
+          description: A ProductSpecification is a detailed description of a tangible or intangible object made available externally in the form of a ProductOffering to customers or other parties playing a party role.
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the productSpecificationCharacteristic is valid
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status.
+          example: 5000
+        statusMessage:
+          type: string
+          description: Text explaining the reason for the error
+        transactionId:
+          type: string
+          description: transaction Id from target system to indicate transaction status.
+          example: 77657232-e6a9-54b8-9c05-094c6a4f4f23
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+    ProductOfferingTerm:
+      $ref: '#/components/schemas/Freebies'
+      description: Contains Offer Freebies details
+    DormantRequest:
+      type: object
+      properties:
+        nodeId:
+          description: 3rd party assigned unique id. iname of the 3PPs which can call these service and must be whitelisted first
+          type: string
+          example: Comviva
+        productType:
+          type: string
+          description: Type of product to blacklist customer from accessing
+          enum:
+          - product
+          - service
+        productCategory:
+          type: string
+          example: SMS
+          description: Product Category
+        registrationChannel:
+          type: string
+          example: SMS
+          description: Channel making request
     Response_ProductCatalogue:
       type: object
       required:
@@ -1316,36 +1507,6 @@ components:
           type: object
           description: The data envelope containing the voice, data and yolo information
           $ref: '#/components/schemas/ProductCatalogData'
-    ProductFrequency:
-      type: object
-      required:
-      - _link
-      properties:
-        daily:
-          type: array
-          description: The daily products of this type
-          items:
-            $ref: '#/components/schemas/Product'
-        weekly:
-          type: array
-          description: The weekly products of this type
-          items:
-            $ref: '#/components/schemas/Product'
-        monthly:
-          type: array
-          description: The monthly products of this type
-          items:
-            $ref: '#/components/schemas/Product'
-        days:
-          type: array
-          description: Other products that don't strictly fall into the above periods
-          items:
-            $ref: '#/components/schemas/Product'
-        _link:
-          type: string
-          description: The link to retrieve the products for this type.
-          $ref: '#/components/schemas/Links'
-          example: https://api.mtn.com/v1/products/27832000000?type=Voice
     PlanMapping:
       type: object
       required:
@@ -1517,6 +1678,161 @@ components:
         validityType:
           type: string
           description: Validity Type of validity, grace, parking & suspend DD- Days HH – Hours
+    OtherProduct:
+      type: object
+      required:
+      - id
+      - name
+      - amount
+      description: The product a customer can purchase.
+      properties:
+        id:
+          type: string
+          description: Identifies the product. This must be an echoed back input from the 3pp
+          example: '97'
+        name:
+          type: string
+          description: The name of the product.
+          example: 5,000Frw(7GB)/30Days
+        currency:
+          type: string
+          description: ISO 4217 Three-letter ISO code for the currency.
+          example: RWF
+        amount:
+          type: number
+          description: The amount that the product will cost
+          example: 5000
+        bundleCategory:
+          type: string
+          description: The category of the bundle
+          example: 3G Bundles Daily
+        bundleType:
+          type: string
+          description: The type of the bundle
+          example: DataBundle
+        bundleValidity:
+          type: string
+          description: The period this product is valid for
+          example: 14 days
+        promotionApplicable:
+          type: boolean
+          description: ''
+          example: true
+        buyForOthers:
+          type: boolean
+          description: ''
+          example: 'false'
+        paymentMode:
+          type: array
+          description: ''
+          example:
+          - SCAPv2
+          items:
+            type: string
+        description:
+          type: string
+          description: ''
+          example: Data and Voice Bundle of 52N, valid for 1 Day
+        actions:
+          type: array
+          description: A list of actions and their product code prefixes that a 3PP can perform on a product
+          items:
+            type: string
+        activationId:
+          type: string
+          description: Tariff Id expected when fulfilling a purchase for this product. This will be populated if the nodeId is ERS
+          example: 1
+        activationTime:
+          type: string
+          description: The time the product was activated
+          example: ''
+        orders:
+          type: string
+          description: The number of times the product was ordered
+          example: '2'
+        serviceType:
+          type: string
+          description: The number of times the product was ordered
+          example: '2'
+        transactionDate:
+          type: string
+          description: The date the transaction was done
+          example: ''
+        bundleUpdateTime:
+          type: string
+          description: The time bundle was updated
+          example: '2'
+        uploadType:
+          type: string
+          description: The number of times the product was ordered
+          example: '2'
+    TimePeriod:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          type: string
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+    ProductEligibilityResponse:
+      type: object
+      required:
+      - data
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Status
+        transactionId:
+          type: string
+          description: Unique identifier for every request to the backend. Mapped from input request.
+          example: 5345345
+        customerId:
+          type: string
+          example: '0'
+        nodeId:
+          type: string
+          example: Comviva
+        registrationChannel:
+          type: string
+          example: SMS
+        notification:
+          type: string
+          example: Subscriber is eligible for Bundle subscription
+        eligible:
+          type: boolean
+          example: true
+          description: Is customer qualifies to buy the product
+        sequenceNo:
+          type: string
+          description: This is the MADAPI unique transaction ID to be used for tracing purposes
+          example: '12345'
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Identifies the product. This must be an echoed back input from the 3pp
+              example: '97'
+            name:
+              type: string
+              description: The name of the product.
+              example: Product X
+        _link:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/products/234809878766/eligibility/2315172
     OfferResponse:
       type: object
       properties:
@@ -1547,210 +1863,6 @@ components:
                 href:
                   type: string
                   example: https://api.mtn.com/v1/products/2348064816493/eligible
-    Data:
-      type: object
-      required:
-      - voice
-      - data
-      - yolo
-      - music
-      - stream
-      - others
-      properties:
-        MABand:
-          type: string
-          description: This is a band defined to show the range of the MSISDN Main Account. E.g. A.<br/>where the MSISDN MA is > 0 <= 1000. Available when filterByMABand is TRUE."
-          example: A
-        combinedBand:
-          type: string
-          description: This is a band defined to show the range of the MSISDN Positive Main Account added with the DAAccount balance. E.g. A.<br/>where the MSISDN MA is > 0 <= 1000. Available when filterByMABand is TRUE."
-          example: A
-        providerRef:
-          type: string
-          description: Reference number from the payment channel
-        traceId:
-          type: string
-          description: String provided by Lumos. Should be returned by Payment Provider in the notification API. Up to 50 characters
-        customerName:
-          type: string
-          description: Name of the  customer the payment is done for
-        voice:
-          type: object
-          description: the voice products available
-          $ref: '#/components/schemas/ProductFrequency'
-        data:
-          type: object
-          description: the data products available
-          $ref: '#/components/schemas/ProductFrequency'
-        yolo:
-          type: object
-          description: the yolo products available
-          $ref: '#/components/schemas/ProductFrequency'
-        music:
-          type: object
-          description: the music products available
-          $ref: '#/components/schemas/ProductFrequency'
-        stream:
-          type: object
-          description: the stream products available
-          $ref: '#/components/schemas/ProductFrequency'
-        others:
-          type: object
-          description: a generic category of products available
-          $ref: '#/components/schemas/OthersProductFrequency'
-    ProductOffering:
-      type: object
-      description: Represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the productOffering
-        offerRank:
-          type: integer
-          description: This parameter holds the ranking of the offer. The ranking defines the popularity of the deal.
-        offerPrice:
-          $ref: '#/components/schemas/Money'
-        href:
-          type: string
-          description: Reference of the ProductOffering
-        description:
-          type: string
-          description: Description of the productOffering
-        simOnly:
-          type: boolean
-          description: returns true or false, based on specification of offer
-        name:
-          type: string
-          description: Name of the productOffering
-        statusReason:
-          type: string
-          description: A string providing a complementary information on the value of the lifecycle status attribute.
-        version:
-          type: string
-          description: ProductOffering version
-        offerProductId:
-          type: string
-          description: Represents the productId of the offer.
-        duration:
-          type: string
-          description: Represents the duration of the offer (For example :1 month)
-        yelloTraderId:
-          type: string
-          description: Represents the duration of the offer (For example :2018462 CT212)
-        prodSpecCharValueUse:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductSpecificationCharacteristicValueUse'
-          description: A use of the ProductSpecificationCharacteristicValue by a ProductOffering to which additional properties (attributes) apply or override the properties of similar properties contained in ProductSpecificationCharacteristicValue. It should be noted that characteristics which their value(s) addressed by this object must exist in corresponding product specification. The available characteristic values for a ProductSpecificationCharacteristic in a Product specification can be modified at the ProductOffering level. For example, a characteristic 'Color' might have values White, Blue, Green, and Red. But, the list of values can be restricted to e.g. White and Blue in an associated product offering. It should be noted that the list of values in 'ProductSpecificationCharacteristicValueUse' is a strict subset of the list of values as defined in the corresponding product specification characteristics.
-        productOfferingAdditionalAttributes:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductOfferingTerm'
-          description: A condition under which a ProductOffering is made available to Customers. For instance, a productOffering can be offered with multiple commitment periods.
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the productOffering is valid
-    ConsentChannel:
-      type: object
-      description: Represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
-      properties:
-        bearerId:
-          type: string
-          description: Bearer Id. ID of channels such as SMS, USSD, WAP, etc from which subscription request arrives, or consent is taken. It is generated in SM system.
-          example: '105'
-        bearerName:
-          type: integer
-          description: Bearer Id. ID of channels such as SMS, USSD, WAP, etc from which subscription request arrives, or consent is taken. It is generated in SM system.
-          example: USSD
-        consentChannelId:
-          type: string
-          description: Id of consent channel
-          example: '105'
-        consentChannelName:
-          type: string
-          description: Name of consent channel
-          example: USSD
-    BeareList:
-      type: object
-      description: Represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
-      properties:
-        bearerId:
-          type: string
-          description: Bearer Id. ID of channels such as SMS, USSD, WAP, etc from which subscription request arrives, or consent is taken. It is generated in SM system.
-          example: '103'
-        bearerName:
-          type: integer
-          description: This parameter holds the ranking of the offer. The ranking defines the popularity of the deal.
-          example: SMS
-        status:
-          type: string
-          description: Service status of subscriber A:Active G:Grace P:Suspend
-          example: '1'
-    Error401:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status.
-          example: 4000
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-          example: Unauthorised
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-          example: Please verify token environment and key
-        faultMessage1:
-          type: string
-          description: ''
-        faultMessage2:
-          type: string
-          description: fault message
-          example: oauth.v2.InvalidApiKey
-    productConfigurationResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-        data:
-          type: object
-          properties:
-            digitalProduct:
-              $ref: '#/components/schemas/digitalProductsResponse'
-    Money:
-      type: object
-      description: A base / value business entity used to represent money
-      properties:
-        unit:
-          type: string
-          description: Currency (ISO4217 norm uses 3 letters to define the currency)
-        value:
-          type: number
-          format: float
-          description: A positive floating point number
-    Error400:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status.
-          example: 5000
-        statusMessage:
-          type: string
-          description: Text explaining the reason for the error
-        transactionId:
-          type: string
-          description: transaction Id from target system to indicate transaction status.
-          example: 77657232-e6a9-54b8-9c05-094c6a4f4f23
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
     Error:
       properties:
         timestamp:
@@ -1772,6 +1884,272 @@ components:
           type: string
           description: This is the MADAPI unique transaction ID to be used for tracing purposes
           example: '12345'
+    ProductSpecificationCharacteristicValue:
+      type: object
+      description: A ProductSpecificationCharacteristicValue object is used to define a set of attributes, each of which can be assigned to a corresponding set of attributes in a ProductSpecificationCharacteristic object. The values of the attributes in the ProductSpecificationCharacteristicValue object describe the values of the attributes that a corresponding ProductSpecificationCharacteristic object can take on.
+      properties:
+        deviceColor:
+          type: string
+          description: Describes the colour of the device
+        deviceColorCode:
+          type: string
+          description: Describes the colour code of the device
+        deviceSkuId:
+          type: string
+          description: This is unique id which references stock keeping unit.
+        imageURL:
+          type: string
+          description: Image URL
+        lowStock:
+          type: boolean
+          description: This parameter indicates whether stock level is below threshold or not.
+    OthersProductFrequency:
+      type: object
+      required:
+      - _link
+      properties:
+        daily:
+          type: array
+          description: The daily products of this type
+          items:
+            $ref: '#/components/schemas/Product'
+        weekly:
+          type: array
+          description: The weekly products of this type
+          items:
+            $ref: '#/components/schemas/Product'
+        monthly:
+          type: array
+          description: The monthly products of this type
+          items:
+            $ref: '#/components/schemas/Product'
+        days:
+          type: array
+          description: Other products that don't strictly fall into the above periods
+          items:
+            $ref: '#/components/schemas/Product'
+        otherProducts:
+          type: array
+          description: Other products that cannot be categorized by any of the above frequencies
+          items:
+            $ref: '#/components/schemas/OtherProduct'
+        _link:
+          type: string
+          description: The link to retrieve the products for this type.
+          $ref: '#/components/schemas/Links'
+          example: https://api.mtn.com/v1/products/27832000000?type=Voice
+    ProductCatalogData:
+      type: object
+      required:
+      - productId
+      properties:
+        productId:
+          type: string
+          description: Transaction id returned by the provider system.
+        serviceType:
+          type: string
+          description: Service Type of the service, if “isServiceTypeUserDef” is taken as 1. System generated value that identifies a service.
+        spId:
+          type: string
+          description: Service partner Id
+        spName:
+          type: string
+          description: Service partner name.
+        tenantId:
+          type: string
+          description: A unique id to distinguish a user session. Should be same in all requests of a session.
+        tenantName:
+          type: string
+          description: tenant name.
+        serviceName:
+          type: string
+          description: Service Name.
+        serviceDesc:
+          type: string
+          description: Service description.
+        beareList:
+          type: array
+          items:
+            $ref: '#/components/schemas/BeareList'
+        cli:
+          type: string
+          description: CLI for Service.
+        isCallBackReq:
+          type: string
+          description: 0 – Callback Required, 1 – Callback not required.
+        primaryURL:
+          type: string
+          description: Primary Callback URL.
+        category:
+          type: string
+          description: Category of Service.
+        chargingMode:
+          type: string
+          description: S – Subscription E – Event T – Tone Subscription.
+        serviceValidity:
+          type: string
+          description: N – Not Available E – Extended O - Overwrite.
+        planMapping:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlanMapping'
+        serviceMsgResponse:
+          type: array
+          example: []
+          items:
+            description: List of plan messages of the productcatalog
+        status:
+          type: string
+          description: STATE_INITIAL_SAVE.
+        activeStatus:
+          type: string
+          description: Service is active/inactive 0 – Inactive 1 – Active.
+        serviceAction:
+          type: string
+          description: activeStatus.
+        typeOfService:
+          type: string
+          description: R – Regular E - Enterprise.
+        isConsentReq:
+          type: string
+          description: If consent is required before subscription from subscriber. 1 - Consent Required, 0 - Consent not required.
+        consentKeywords:
+          type: string
+          description: Consent keyword is the keyword which is to be sent for providing the consent for subscription. .
+        consentChannels:
+          type: array
+          description: Consent channels are the list of channels such as SMS, USSD, WAP,etc from which consent can be taken. Here bearer is the channel from which subscription request is coming, and consent channel is the channel from which consent is to be taken.
+          items:
+            $ref: '#/components/schemas/ConsentChannel'
+        smscCharging:
+          type: string
+          description: SMSC Charging 0 – Not enabled 1 - Enabled.
+        freeCounter:
+          type: string
+          description: Free Counter 0 – None Free -1 – All Free Any Specific count Optional.
+        isPriceQueryReq:
+          type: string
+          description: Is balance query required 0 – Price query not required 1 – Price query required.
+        isBalanceQueryReq:
+          type: string
+          description: Is Balance Query Required 1 – Balance Query Required 0 – Balance Query not required.
+        accessTo:
+          type: string
+          description: Service access O – Open to all B – Blacklisted enabled W – Whitelisted enabled.
+        isFreeMOService:
+          type: string
+          description: Is this a Free MO Service 0 – Not a Free MO Service 1 – Free MO Service.
+        isReady:
+          type: string
+          description: isReady.
+        subMtCpPerDay:
+          type: string
+          description: Subscription MT by CP Per Day 0 – No MT -1 – Unlimited Any Specific count. Optional. Any limit for Subscription MT(Mobile termination) for a CP per day.
+        mtPushEnabled:
+          type: string
+          description: Is MT Push Enabled.
+        isDirectSub:
+          type: string
+          description: Is direct subscription allowed It can be 0 or 1 0 – Direct subscription not available 1 – Direct subscription.
+        isThirdConsentReq:
+          type: string
+          description: Is Third consent required.
+        isPlanLinked:
+          type: string
+          description: 0 – Normal flow(Default) 1 – Linked Plan flow Optional.
+        isServiceTypeUserDef:
+          type: string
+          description: Is Service Type user defined or Is it system generated 0 – If Service Type is system generated 1 – If ServiceType is user defined.
+        _link:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/productCatalogue
+    Error404:
+      properties:
+        fault:
+          properties:
+            faultstring:
+              type: string
+              description: ''
+              example: 'Unable to identify proxy for host: southafrica and url: /v9/products/productOffering/roaming'
+            detail:
+              properties:
+                errorcode:
+                  type: string
+                  description: ''
+                  example: messaging.adaptors.http.flow.ApplicationNotFound
+    productConfigurationResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            digitalProduct:
+              $ref: '#/components/schemas/digitalProductsResponse'
+    FallBackPlanResponse:
+      type: object
+      properties:
+        planId:
+          type: string
+          description: Actual Plan ID.
+        masterAggregatorPlanId:
+          type: string
+          description: MA Plan ID. Master Aggregator ID (Optional).
+        parentPlanId:
+          type: string
+          description: Parent plan ID of the fallback and renewal fallback plans, if any.
+        planName:
+          type: string
+          description: Plan Name.
+        planDesc:
+          type: string
+          description: Plan description.
+        price:
+          $ref: '#/components/schemas/Money'
+        adjustmentCode:
+          type: string
+          description: Adjustment code of fallback plan.
+        pricePoint:
+          type: string
+          description: Price Point. Price point is generated by SM, corresponding to price of any plan
+        lifeCycleId:
+          type: string
+          description: Lifecycle ID. Lifecycle ID is generated by SM, it is the mapping of validity of any plan.
+        validityPeriod:
+          type: string
+          description: Validity Period Default Value = 0.
+        gracePeriod:
+          type: string
+          description: Grace Period Default Value = 0.
+        suspendPeriod:
+          type: string
+          description: Suspend Period Default Value = 0.
+        isfallBackReq:
+          type: string
+          description: Is Fallback plans required 0 – no fallback plans 1 – fallback plans are present.
+        fallBackPlanResponse:
+          $ref: '#/components/schemas/FallBackPlanChildResponse'
+        renValPeriod:
+          type: string
+          description: Renewal Validity Period Validity period of renewal plan of any primary plan Default Value = 0.
+        isGenPlanBulkUpload:
+          type: boolean
+          example: 'false'
+          description: This would be false in response, as the plans are not getting uploaded in bulk
     digitalProductsResponse:
       properties:
         subscriptions:
@@ -2069,65 +2447,150 @@ components:
                     type: string
                   integratorPartnerId:
                     type: string
-    DormantRequest:
+    BeareList:
       type: object
+      description: Represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
       properties:
-        nodeId:
-          description: 3rd party assigned unique id. iname of the 3PPs which can call these service and must be whitelisted first
+        bearerId:
           type: string
-          example: Comviva
-        productType:
-          type: string
-          description: Type of product to blacklist customer from accessing
-          enum:
-          - product
-          - service
-        productCategory:
-          type: string
-          example: SMS
-          description: Product Category
-        registrationChannel:
-          type: string
-          example: SMS
-          description: Channel making request
-    ProductSpecificationCharacteristicValueUse:
-      type: object
-      description: A use of the ProductSpecificationCharacteristicValue by a ProductOffering to which additional properties (attributes) apply or override the properties of similar properties contained in ProductSpecificationCharacteristicValue. It should be noted that characteristics which their value(s) addressed by this object must exist in corresponding product specification. The available characteristic values for a ProductSpecificationCharacteristic in a Product specification can be modified at the ProductOffering level. For example, a characteristic 'Color' might have values White, Blue, Green, and Red. But, the list of values can be restricted to e.g. White and Blue in an associated product offering. It should be noted that the list of values in 'ProductSpecificationCharacteristicValueUse' is a strict subset of the list of values as defined in the corresponding product specification characteristics.
-      properties:
-        description:
-          type: string
-          description: A narrative that explains in detail what the productSpecificationCharacteristic is
-        deviceSize:
+          description: Bearer Id. ID of channels such as SMS, USSD, WAP, etc from which subscription request arrives, or consent is taken. It is generated in SM system.
+          example: '103'
+        bearerName:
           type: integer
-          description: The maximum number of instances a CharacteristicValue can take on. For example, zero to five phone numbers in a group calling plan, where five is the value for the maxCardinality.
-        deviceSizeUOM:
+          description: This parameter holds the ranking of the offer. The ranking defines the popularity of the deal.
+          example: SMS
+        status:
           type: string
-          description: Device Size UOM
+          description: Service status of subscriber A:Active G:Grace P:Suspend
+          example: '1'
+    ProductSpecificationRef:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity. This can be product id or offer id etc.
         name:
           type: string
-          description: Name of the associated productSpecificationCharacteristic
-        deviceBrandName:
+          description: Name of the related entity. This can be product name or offer name etc.
+        type:
           type: string
-          description: Gives brand name and specifications
-        deviceRank:
-          type: integer
-          description: This parameter holds the ranking of the device. The ranking defines the popularity of the device
-        devicePrice:
+          description: Type of a product or offer,e.g., Data, SMS, Voice etc.
+        validity:
+          type: string
+          description: Validity of a product or offer.
+        planPrice:
           $ref: '#/components/schemas/Money'
-        deviceType:
+        planSize:
           type: string
-          description: Gives device type details, e.g.Laptop
-        productSpecCharacteristicValue:
+          description: Gives plan size
+        planFreebies:
+          $ref: '#/components/schemas/Freebies'
+    ProductCatalogue:
+      type: object
+      required:
+      - statusCode
+      - customerId
+      - data
+      - _links
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        customerId:
+          type: string
+        statusMessage:
+          type: string
+          description: This is a description of the status message
+        transactionId:
+          type: string
+          description: Generated transaction Id
+        sequenceNo:
+          type: string
+          description: This is the MADAPI unique transaction ID to be used for tracing purposes
+          example: '12345'
+        data:
+          type: object
+          description: The data envelope containing the voice, data and yolo information
+          $ref: '#/components/schemas/Data'
+    Product:
+      type: object
+      required:
+      - id
+      - name
+      - amount
+      description: The product a customer can purchase.
+      properties:
+        id:
+          type: string
+          description: Identifies the product. This must be an echoed back input from the 3pp
+          example: '97'
+        name:
+          type: string
+          description: The name of the product.
+          example: 5,000Frw(7GB)/30Days
+        currency:
+          type: string
+          description: ISO 4217 Three-letter ISO code for the currency.
+          example: RWF
+        amount:
+          type: number
+          description: The amount that the product will cost
+          example: 5000
+        bundleCategory:
+          type: string
+          description: The category of the bundle
+          example: 3G Bundles Daily
+        bundleType:
+          type: string
+          description: The type of the bundle
+          example: DataBundle
+        bundleValidity:
+          type: string
+          description: The period this product is valid for
+          example: 14 days
+        bundleValue:
+          type: object
+          properties:
+            value:
+              type: number
+              description: The bundle value
+              example: 7
+            units:
+              type: string
+              description: The unit value of the bundle e.g. GB, MB etc.
+              example: GB
+        promotionApplicable:
+          type: boolean
+          description: ''
+          example: true
+        buyForOthers:
+          type: boolean
+          description: ''
+          example: 'false'
+        paymentMode:
+          type: array
+          description: ''
+          example:
+          - SCAPv2
+          items:
+            type: string
+        description:
+          type: string
+          description: ''
+          example: Data and Voice Bundle of 52N, valid for 1 Day
+        actions:
+          type: array
+          description: A list of actions and their product code prefixes that a 3PP can perform on a product
+          items:
+            type: string
+        activationId:
+          type: string
+          description: Tariff Id expected when fulfilling a purchase for this product. This will be populated if the nodeId is ERS
+          example: 1
+        additionalBundleInformation:
           type: array
           items:
-            $ref: '#/components/schemas/ProductSpecificationCharacteristicValue'
-          description: A number or text that can be assigned to a ProductSpecificationCharacteristic.
-        productSpecification:
-          $ref: '#/components/schemas/ProductSpecificationRef'
-          description: A ProductSpecification is a detailed description of a tangible or intangible object made available externally in the form of a ProductOffering to customers or other parties playing a party role.
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the productSpecificationCharacteristic is valid
+            $ref: '#/components/schemas/AdditionalInformation'
     roamingProducts:
       type: object
       description: Displays the roaming bundles that are available for the country and subscriber type.
@@ -2188,44 +2651,14 @@ components:
           type: string
           description: Provides support details. This is only limited to country list response.
           example: Y
-    ProductSpecificationCharacteristicValue:
-      type: object
-      description: A ProductSpecificationCharacteristicValue object is used to define a set of attributes, each of which can be assigned to a corresponding set of attributes in a ProductSpecificationCharacteristic object. The values of the attributes in the ProductSpecificationCharacteristicValue object describe the values of the attributes that a corresponding ProductSpecificationCharacteristic object can take on.
-      properties:
-        deviceColor:
-          type: string
-          description: Describes the colour of the device
-        deviceColorCode:
-          type: string
-          description: Describes the colour code of the device
-        deviceSkuId:
-          type: string
-          description: This is unique id which references stock keeping unit.
-        imageURL:
-          type: string
-          description: Image URL
-        lowStock:
-          type: boolean
-          description: This parameter indicates whether stock level is below threshold or not.
-    TimePeriod:
-      type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
-      properties:
-        endDateTime:
-          type: string
-          format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
-          type: string
-          format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
-    RenewalFallBackPlanChildResponse:
+    FallBackPlanChildResponse:
       type: object
       description: Displays the freebies associated with the plan
       properties:
         planId:
           type: string
           description: Unique identifier of a related entity. This can be product id or offer id etc.
+          example: P_ALL_ReqRe_2320
         masterAggregatorPlanId:
           type: string
           description: Name of the related entity. This can be product name or offer name etc.
@@ -2264,102 +2697,82 @@ components:
         renewalValPeriod:
           type: string
           description: Renewal Validity Period Validity period of renewal plan of any primary plan Default Value = 0.
-        fallBackType:
-          type: string
-          description: Gives plan size
         isGenPlanBulkUpload:
           type: boolean
           example: 'false'
           description: This would be false in response, as the plans are not getting uploaded in bulk
-    Error404:
-      properties:
-        fault:
-          properties:
-            faultstring:
-              type: string
-              description: ''
-              example: 'Unable to identify proxy for host: southafrica and url: /v9/products/productOffering/roaming'
-            detail:
-              properties:
-                errorcode:
-                  type: string
-                  description: ''
-                  example: messaging.adaptors.http.flow.ApplicationNotFound
-    OfferCategoryResponse:
+    ProductInfo:
       type: object
       properties:
-        statusCode:
+        expiryTime:
           type: string
-          description: HTTP Error code extension
-          example: '0000'
-        statusMessage:
+          description: Offer Expire Time
+          example: 2019-06-20 23:59:00 +0100
+        message:
           type: string
-          example: Success
-        transactionId:
+          description: Offer Description
+          example: 'Get 4GB Data for as low as N1,000 only. Data is valid for 7days. Press
+
+            Accept to activate'
+        messageLanguage:
           type: string
-          description: This is the same transactionId that is sent in the request
-        sequenceNo:
-          type: string
-          description: This is the MADAPI unique transaction ID to be used for tracing purposes
-          example: '12345'
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/OfferCategory'
-        _link:
-          type: object
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
-                  example: https://api.mtn.com/v1/products/2348064816493/category
-    Links:
-      type: object
-      required:
-      - self
-      properties:
-        self:
-          type: object
-          required:
-          - href
           description: ''
+          example: English (UK)
+        messageEncoding:
+          type: string
+          description: ''
+          example: UTF-8
+        id:
+          type: integer
+          description: Identifies the product. This must be an echoed back input from the 3pp
+          example: '1565'
+        category:
+          type: string
+          description: Offer Category
+          example: Bundle
+        offerType:
+          type: string
+          description: ''
+          example: usage or recharge
+        order:
+          type: string
+          description: ''
+          example: Bundle
+        description:
+          type: string
+          description: A description of the offer
+          example: SWZ_Data_109200
+        additionalParams:
+          type: object
+          description: More params
           properties:
-            href:
+            offerPrice:
               type: string
               description: ''
-    checkBalanceResponse:
+              example: '1000'
+            offerId:
+              type: string
+              description: This field <offerId > shows the offer Id of the provisioned product
+              example: '11015'
+            accountId:
+              type: integer
+              description: Account Identifies
+              example: 213
+            rewardValidity:
+              type: string
+              description: ''
+              example: '7'
+            productId:
+              type: string
+              description: Unique Product Id defined in CIS database.
+              example: RACT_NG_Data_213
+        shortMessage:
+          type: string
+          description: Short message to describe the offer
+          example: ''
+    Freebies:
       type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP Error code extension
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Success
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        success:
-          type: boolean
-          example: true
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductBalances'
-        _link:
-          type: object
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
-                  example: https://api.mtn.com/v1/products/2348064816493/checkBalance
-    ProductSpecificationRef:
-      type: object
+      description: Displays the freebies associated with the plan
       properties:
         id:
           type: string
@@ -2375,133 +2788,43 @@ components:
           description: Validity of a product or offer.
         planPrice:
           $ref: '#/components/schemas/Money'
-        planSize:
-          type: string
-          description: Gives plan size
-        planFreebies:
-          $ref: '#/components/schemas/Freebies'
-    ProductCatalogData:
+    Response_ProductOffering:
       type: object
       required:
-      - productId
+      - statusCode
+      - statusMessage
+      - supportMessage
+      - Offers
+      - topOffers
       properties:
-        productId:
+        statusCode:
+          type: string
+          description: Result code. Example- '0000'
+        statusMessage:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        supportMessage:
+          type: string
+          description: Description message for Support teams
+        transactionId:
           type: string
           description: Transaction id returned by the provider system.
-        serviceType:
+        sequenceNo:
           type: string
-          description: Service Type of the service, if “isServiceTypeUserDef” is taken as 1. System generated value that identifies a service.
-        spId:
+          description: This is the MADAPI unique transaction ID to be used for tracing purposes
+          example: '12345'
+        cookie:
           type: string
-          description: Service partner Id
-        spName:
-          type: string
-          description: Service partner name.
-        tenantId:
-          type: string
-          description: A unique id to distinguish a user session. Should be same in all requests of a session.
-        tenantName:
-          type: string
-          description: tenant name.
-        serviceName:
-          type: string
-          description: Service Name.
-        serviceDesc:
-          type: string
-          description: Service description.
-        beareList:
+          description: cookie returned by ATG system
+          example: OK7ak-pwrjXi13OXOLm
+        Offers:
           type: array
           items:
-            $ref: '#/components/schemas/BeareList'
-        cli:
-          type: string
-          description: CLI for Service.
-        isCallBackReq:
-          type: string
-          description: 0 – Callback Required, 1 – Callback not required.
-        primaryURL:
-          type: string
-          description: Primary Callback URL.
-        category:
-          type: string
-          description: Category of Service.
-        chargingMode:
-          type: string
-          description: S – Subscription E – Event T – Tone Subscription.
-        serviceValidity:
-          type: string
-          description: N – Not Available E – Extended O - Overwrite.
-        planMapping:
+            $ref: '#/components/schemas/ProductOffering'
+        topOffers:
           type: array
           items:
-            $ref: '#/components/schemas/PlanMapping'
-        serviceMsgResponse:
-          type: array
-          example: []
-          items:
-            description: List of plan messages of the productcatalog
-        status:
-          type: string
-          description: STATE_INITIAL_SAVE.
-        activeStatus:
-          type: string
-          description: Service is active/inactive 0 – Inactive 1 – Active.
-        serviceAction:
-          type: string
-          description: activeStatus.
-        typeOfService:
-          type: string
-          description: R – Regular E - Enterprise.
-        isConsentReq:
-          type: string
-          description: If consent is required before subscription from subscriber. 1 - Consent Required, 0 - Consent not required.
-        consentKeywords:
-          type: string
-          description: Consent keyword is the keyword which is to be sent for providing the consent for subscription. .
-        consentChannels:
-          type: array
-          description: Consent channels are the list of channels such as SMS, USSD, WAP,etc from which consent can be taken. Here bearer is the channel from which subscription request is coming, and consent channel is the channel from which consent is to be taken.
-          items:
-            $ref: '#/components/schemas/ConsentChannel'
-        smscCharging:
-          type: string
-          description: SMSC Charging 0 – Not enabled 1 - Enabled.
-        freeCounter:
-          type: string
-          description: Free Counter 0 – None Free -1 – All Free Any Specific count Optional.
-        isPriceQueryReq:
-          type: string
-          description: Is balance query required 0 – Price query not required 1 – Price query required.
-        isBalanceQueryReq:
-          type: string
-          description: Is Balance Query Required 1 – Balance Query Required 0 – Balance Query not required.
-        accessTo:
-          type: string
-          description: Service access O – Open to all B – Blacklisted enabled W – Whitelisted enabled.
-        isFreeMOService:
-          type: string
-          description: Is this a Free MO Service 0 – Not a Free MO Service 1 – Free MO Service.
-        isReady:
-          type: string
-          description: isReady.
-        subMtCpPerDay:
-          type: string
-          description: Subscription MT by CP Per Day 0 – No MT -1 – Unlimited Any Specific count. Optional. Any limit for Subscription MT(Mobile termination) for a CP per day.
-        mtPushEnabled:
-          type: string
-          description: Is MT Push Enabled.
-        isDirectSub:
-          type: string
-          description: Is direct subscription allowed It can be 0 or 1 0 – Direct subscription not available 1 – Direct subscription.
-        isThirdConsentReq:
-          type: string
-          description: Is Third consent required.
-        isPlanLinked:
-          type: string
-          description: 0 – Normal flow(Default) 1 – Linked Plan flow Optional.
-        isServiceTypeUserDef:
-          type: string
-          description: Is Service Type user defined or Is it system generated 0 – If Service Type is system generated 1 – If ServiceType is user defined.
+            $ref: '#/components/schemas/ProductOffering'
         _link:
           type: object
           properties:
@@ -2510,7 +2833,33 @@ components:
               properties:
                 href:
                   type: string
-                  example: https://api.mtn.com/v1/productCatalogue
+                  example: https://api.mtn.com/v1/productOffering
+    ProductBundlePrice:
+      type: object
+      required:
+      - statusCode
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        customerId:
+          type: string
+        sequenceNo:
+          type: string
+          description: This is the MADAPI unique transaction ID to be used for tracing purposes
+          example: '12345'
+        data:
+          example:
+            id: '97'
+            name: Daily bundle of 15MB
+            currency: UGX
+            amount: 250
+            bundleCategory: 3G Bundle Daily
+            bundleType: DATA
+            bundleValidaty: 1 Days
+            _link:
+              self:
+                href: string
     AdditionalInformation:
       description: Additional information related to the item details.
       type: object
@@ -2897,68 +3246,26 @@ components:
           type: string
           description: diy Multiplicator
           example: NA
-    PlanMsgList:
+    checkBalanceResponse:
       type: object
-      properties:
-        msgTypeId:
-          type: string
-          description: ID of Message Type.
-        msgTypeName:
-          type: string
-          description: Suspend Deactivation.
-        isFreqReq:
-          type: string
-          description: Is Frequency Required 0 – Not Required 1 - Required.
-        frequencyId:
-          type: string
-          description: Frequency Id of the message.
-        frequency:
-          type: string
-          description: Frequency.
-        messageListResponse:
-          type: array
-          items:
-            $ref: '#/components/schemas/MessageList'
-        isActive:
-          type: string
-          description: isActive.
-    Response_ProductOffering:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      - supportMessage
-      - Offers
-      - topOffers
       properties:
         statusCode:
           type: string
-          description: Result code. Example- '0000'
+          description: HTTP Error code extension
+          example: '0000'
         statusMessage:
           type: string
-          description: Result message. Example- 'Successfully processed'
-        supportMessage:
-          type: string
-          description: Description message for Support teams
+          example: Success
         transactionId:
           type: string
-          description: Transaction id returned by the provider system.
-        sequenceNo:
-          type: string
-          description: This is the MADAPI unique transaction ID to be used for tracing purposes
-          example: '12345'
-        cookie:
-          type: string
-          description: cookie returned by ATG system
-          example: OK7ak-pwrjXi13OXOLm
-        Offers:
+          description: This is the same transactionId that is sent in the request
+        success:
+          type: boolean
+          example: true
+        data:
           type: array
           items:
-            $ref: '#/components/schemas/ProductOffering'
-        topOffers:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductOffering'
+            $ref: '#/components/schemas/ProductBalances'
         _link:
           type: object
           properties:
@@ -2967,26 +3274,79 @@ components:
               properties:
                 href:
                   type: string
-                  example: https://api.mtn.com/v1/productOffering
-    Freebies:
+                  example: https://api.mtn.com/v1/products/2348064816493/checkBalance
+    OfferCategoryResponse:
       type: object
-      description: Displays the freebies associated with the plan
       properties:
-        id:
+        statusCode:
           type: string
-          description: Unique identifier of a related entity. This can be product id or offer id etc.
-        name:
+          description: HTTP Error code extension
+          example: '0000'
+        statusMessage:
           type: string
-          description: Name of the related entity. This can be product name or offer name etc.
-        type:
+          example: Success
+        transactionId:
           type: string
-          description: Type of a product or offer,e.g., Data, SMS, Voice etc.
-        validity:
+          description: This is the same transactionId that is sent in the request
+        sequenceNo:
           type: string
-          description: Validity of a product or offer.
-        planPrice:
-          $ref: '#/components/schemas/Money'
-    OthersProductFrequency:
+          description: This is the MADAPI unique transaction ID to be used for tracing purposes
+          example: '12345'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferCategory'
+        _link:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/products/2348064816493/category
+    BlacklistRequest:
+      type: object
+      properties:
+        nodeId:
+          description: 3rd party assigned unique id. iname of the 3PPs which can call these service and must be whitelisted first
+          type: string
+          example: Comviva
+        productType:
+          type: string
+          description: Type of product to blacklist customer from accessing
+          enum:
+          - product
+          - service
+        productCategory:
+          type: string
+          example: SMS
+          description: Product Category
+        registrationChannel:
+          type: string
+          example: SMS
+          description: Channel making request
+    ConsentChannel:
+      type: object
+      description: Represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
+      properties:
+        bearerId:
+          type: string
+          description: Bearer Id. ID of channels such as SMS, USSD, WAP, etc from which subscription request arrives, or consent is taken. It is generated in SM system.
+          example: '105'
+        bearerName:
+          type: integer
+          description: Bearer Id. ID of channels such as SMS, USSD, WAP, etc from which subscription request arrives, or consent is taken. It is generated in SM system.
+          example: USSD
+        consentChannelId:
+          type: string
+          description: Id of consent channel
+          example: '105'
+        consentChannelName:
+          type: string
+          description: Name of consent channel
+          example: USSD
+    ProductFrequency:
       type: object
       required:
       - _link
@@ -3011,64 +3371,11 @@ components:
           description: Other products that don't strictly fall into the above periods
           items:
             $ref: '#/components/schemas/Product'
-        otherProducts:
-          type: array
-          description: Other products that cannot be categorized by any of the above frequencies
-          items:
-            $ref: '#/components/schemas/OtherProduct'
         _link:
           type: string
           description: The link to retrieve the products for this type.
           $ref: '#/components/schemas/Links'
           example: https://api.mtn.com/v1/products/27832000000?type=Voice
-    MessageList:
-      type: object
-      properties:
-        msgId:
-          type: string
-          description: Message id.
-        msgTypeId:
-          type: string
-          description: ID of Message Type.
-        langCode:
-          type: string
-          description: Language code.
-        langName:
-          type: string
-          description: Language name.
-        msg:
-          type: string
-          description: Message for the desired language.
-        isFilled:
-          type: string
-          description: isFilled.
-    ProductCatalogue:
-      type: object
-      required:
-      - statusCode
-      - customerId
-      - data
-      - _links
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        customerId:
-          type: string
-        statusMessage:
-          type: string
-          description: This is a description of the status message
-        transactionId:
-          type: string
-          description: Generated transaction Id
-        sequenceNo:
-          type: string
-          description: This is the MADAPI unique transaction ID to be used for tracing purposes
-          example: '12345'
-        data:
-          type: object
-          description: The data envelope containing the voice, data and yolo information
-          $ref: '#/components/schemas/Data'
     RenewalFallBackPlanResponse:
       type: object
       properties:
@@ -3122,317 +3429,27 @@ components:
           type: boolean
           example: 'false'
           description: This would be false in response, as the plans are not getting uploaded in bulk
-    ProductBundlePrice:
+    Links:
       type: object
       required:
-      - statusCode
+      - self
       properties:
-        statusCode:
-          type: string
-          example: '0000'
-        customerId:
-          type: string
-        sequenceNo:
-          type: string
-          description: This is the MADAPI unique transaction ID to be used for tracing purposes
-          example: '12345'
-        data:
-          example:
-            id: '97'
-            name: Daily bundle of 15MB
-            currency: UGX
-            amount: 250
-            bundleCategory: 3G Bundle Daily
-            bundleType: DATA
-            bundleValidaty: 1 Days
-            _link:
-              self:
-                href: string
-    ProductOfferingTerm:
-      $ref: '#/components/schemas/Freebies'
-      description: Contains Offer Freebies details
-    ProductBalances:
-      type: object
-      properties:
-        dataBalance:
-          type: number
-          description: Data Balance
-          example: 1.5 GB
-        voiceOnnet:
-          type: number
-          description: Voice onnet Balance
-          example: ''
-        voiceOffnet:
-          type: number
-          description: ''
-        smsOnnet:
-          type: number
-          description: ''
-        smsOffnet:
-          type: number
-          description: ''
-        international:
-          type: number
-          description: International Roaming balance
-        money:
-          type: number
-          description: ''
-    ProductEligibilityResponse:
-      type: object
-      required:
-      - data
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Status
-        transactionId:
-          type: string
-          description: Unique identifier for every request to the backend. Mapped from input request.
-          example: 5345345
-        customerId:
-          type: string
-          example: '0'
-        nodeId:
-          type: string
-          example: Comviva
-        registrationChannel:
-          type: string
-          example: SMS
-        notification:
-          type: string
-          example: Subscriber is eligible for Bundle subscription
-        eligible:
-          type: boolean
-          example: true
-          description: Is customer qualifies to buy the product
-        sequenceNo:
-          type: string
-          description: This is the MADAPI unique transaction ID to be used for tracing purposes
-          example: '12345'
-        data:
+        self:
           type: object
+          required:
+          - href
+          description: ''
           properties:
-            id:
+            href:
               type: string
-              description: Identifies the product. This must be an echoed back input from the 3pp
-              example: '97'
-            name:
-              type: string
-              description: The name of the product.
-              example: Product X
-        _link:
-          type: object
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
-                  example: https://api.mtn.com/v1/products/234809878766/eligibility/2315172
-    OtherProduct:
-      type: object
-      required:
-      - id
-      - name
-      - amount
-      description: The product a customer can purchase.
-      properties:
-        id:
-          type: string
-          description: Identifies the product. This must be an echoed back input from the 3pp
-          example: '97'
-        name:
-          type: string
-          description: The name of the product.
-          example: 5,000Frw(7GB)/30Days
-        currency:
-          type: string
-          description: ISO 4217 Three-letter ISO code for the currency.
-          example: RWF
-        amount:
-          type: number
-          description: The amount that the product will cost
-          example: 5000
-        bundleCategory:
-          type: string
-          description: The category of the bundle
-          example: 3G Bundles Daily
-        bundleType:
-          type: string
-          description: The type of the bundle
-          example: DataBundle
-        bundleValidity:
-          type: string
-          description: The period this product is valid for
-          example: 14 days
-        promotionApplicable:
-          type: boolean
-          description: ''
-          example: true
-        buyForOthers:
-          type: boolean
-          description: ''
-          example: 'false'
-        paymentMode:
-          type: array
-          description: ''
-          example:
-          - SCAPv2
-          items:
-            type: string
-        description:
-          type: string
-          description: ''
-          example: Data and Voice Bundle of 52N, valid for 1 Day
-        actions:
-          type: array
-          description: A list of actions and their product code prefixes that a 3PP can perform on a product
-          items:
-            type: string
-        activationId:
-          type: string
-          description: Tariff Id expected when fulfilling a purchase for this product. This will be populated if the nodeId is ERS
-          example: 1
-        activationTime:
-          type: string
-          description: The time the product was activated
-          example: ''
-        orders:
-          type: string
-          description: The number of times the product was ordered
-          example: '2'
-        serviceType:
-          type: string
-          description: The number of times the product was ordered
-          example: '2'
-        transactionDate:
-          type: string
-          description: The date the transaction was done
-          example: ''
-        bundleUpdateTime:
-          type: string
-          description: The time bundle was updated
-          example: '2'
-        uploadType:
-          type: string
-          description: The number of times the product was ordered
-          example: '2'
-    FallBackPlanResponse:
-      type: object
-      properties:
-        planId:
-          type: string
-          description: Actual Plan ID.
-        masterAggregatorPlanId:
-          type: string
-          description: MA Plan ID. Master Aggregator ID (Optional).
-        parentPlanId:
-          type: string
-          description: Parent plan ID of the fallback and renewal fallback plans, if any.
-        planName:
-          type: string
-          description: Plan Name.
-        planDesc:
-          type: string
-          description: Plan description.
-        price:
-          $ref: '#/components/schemas/Money'
-        adjustmentCode:
-          type: string
-          description: Adjustment code of fallback plan.
-        pricePoint:
-          type: string
-          description: Price Point. Price point is generated by SM, corresponding to price of any plan
-        lifeCycleId:
-          type: string
-          description: Lifecycle ID. Lifecycle ID is generated by SM, it is the mapping of validity of any plan.
-        validityPeriod:
-          type: string
-          description: Validity Period Default Value = 0.
-        gracePeriod:
-          type: string
-          description: Grace Period Default Value = 0.
-        suspendPeriod:
-          type: string
-          description: Suspend Period Default Value = 0.
-        isfallBackReq:
-          type: string
-          description: Is Fallback plans required 0 – no fallback plans 1 – fallback plans are present.
-        fallBackPlanResponse:
-          $ref: '#/components/schemas/FallBackPlanChildResponse'
-        renValPeriod:
-          type: string
-          description: Renewal Validity Period Validity period of renewal plan of any primary plan Default Value = 0.
-        isGenPlanBulkUpload:
-          type: boolean
-          example: 'false'
-          description: This would be false in response, as the plans are not getting uploaded in bulk
-    roamingProductOffering:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      - supportMessage
-      - transactionId
-      - roamingProducts
-      properties:
-        statusCode:
-          type: string
-          description: Result code. Example- '0000'
-        statusMessage:
-          type: string
-          description: Result message. Example- 'Successfully processed'
-        supportMessage:
-          type: string
-          description: Description message for Support teams
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
-        sequenceNo:
-          type: string
-          description: This is the MADAPI unique transaction ID to be used for tracing purposes
-          example: '12345'
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/roamingProducts'
-    OfferCategory:
-      type: array
-      example: '"Topdeal", "Recharge", "DataBundle", "Combo", "Voice", "VAS"'
-      items:
-        type: string
-    BlacklistRequest:
-      type: object
-      properties:
-        nodeId:
-          description: 3rd party assigned unique id. iname of the 3PPs which can call these service and must be whitelisted first
-          type: string
-          example: Comviva
-        productType:
-          type: string
-          description: Type of product to blacklist customer from accessing
-          enum:
-          - product
-          - service
-        productCategory:
-          type: string
-          example: SMS
-          description: Product Category
-        registrationChannel:
-          type: string
-          example: SMS
-          description: Channel making request
-    FallBackPlanChildResponse:
+              description: ''
+    RenewalFallBackPlanChildResponse:
       type: object
       description: Displays the freebies associated with the plan
       properties:
         planId:
           type: string
           description: Unique identifier of a related entity. This can be product id or offer id etc.
-          example: P_ALL_ReqRe_2320
         masterAggregatorPlanId:
           type: string
           description: Name of the related entity. This can be product name or offer name etc.
@@ -3471,158 +3488,141 @@ components:
         renewalValPeriod:
           type: string
           description: Renewal Validity Period Validity period of renewal plan of any primary plan Default Value = 0.
+        fallBackType:
+          type: string
+          description: Gives plan size
         isGenPlanBulkUpload:
           type: boolean
           example: 'false'
           description: This would be false in response, as the plans are not getting uploaded in bulk
-    Product:
+    MessageList:
+      type: object
+      properties:
+        msgId:
+          type: string
+          description: Message id.
+        msgTypeId:
+          type: string
+          description: ID of Message Type.
+        langCode:
+          type: string
+          description: Language code.
+        langName:
+          type: string
+          description: Language name.
+        msg:
+          type: string
+          description: Message for the desired language.
+        isFilled:
+          type: string
+          description: isFilled.
+    ProductBalances:
+      type: object
+      properties:
+        dataBalance:
+          type: number
+          description: Data Balance
+          example: 1.5 GB
+        voiceOnnet:
+          type: number
+          description: Voice onnet Balance
+          example: ''
+        voiceOffnet:
+          type: number
+          description: ''
+        smsOnnet:
+          type: number
+          description: ''
+        smsOffnet:
+          type: number
+          description: ''
+        international:
+          type: number
+          description: International Roaming balance
+        money:
+          type: number
+          description: ''
+    roamingProductOffering:
       type: object
       required:
-      - id
-      - name
-      - amount
-      description: The product a customer can purchase.
+      - statusCode
+      - statusMessage
+      - supportMessage
+      - transactionId
+      - roamingProducts
+      properties:
+        statusCode:
+          type: string
+          description: Result code. Example- '0000'
+        statusMessage:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        supportMessage:
+          type: string
+          description: Description message for Support teams
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        sequenceNo:
+          type: string
+          description: This is the MADAPI unique transaction ID to be used for tracing purposes
+          example: '12345'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/roamingProducts'
+    ProductOffering:
+      type: object
+      description: Represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
       properties:
         id:
           type: string
-          description: Identifies the product. This must be an echoed back input from the 3pp
-          example: '97'
+          description: Unique identifier of the productOffering
+        offerRank:
+          type: integer
+          description: This parameter holds the ranking of the offer. The ranking defines the popularity of the deal.
+        offerPrice:
+          $ref: '#/components/schemas/Money'
+        href:
+          type: string
+          description: Reference of the ProductOffering
+        description:
+          type: string
+          description: Description of the productOffering
+        simOnly:
+          type: boolean
+          description: returns true or false, based on specification of offer
         name:
           type: string
-          description: The name of the product.
-          example: 5,000Frw(7GB)/30Days
-        currency:
+          description: Name of the productOffering
+        statusReason:
           type: string
-          description: ISO 4217 Three-letter ISO code for the currency.
-          example: RWF
-        amount:
-          type: number
-          description: The amount that the product will cost
-          example: 5000
-        bundleCategory:
+          description: A string providing a complementary information on the value of the lifecycle status attribute.
+        version:
           type: string
-          description: The category of the bundle
-          example: 3G Bundles Daily
-        bundleType:
+          description: ProductOffering version
+        offerProductId:
           type: string
-          description: The type of the bundle
-          example: DataBundle
-        bundleValidity:
+          description: Represents the productId of the offer.
+        duration:
           type: string
-          description: The period this product is valid for
-          example: 14 days
-        bundleValue:
-          type: object
-          properties:
-            value:
-              type: number
-              description: The bundle value
-              example: 7
-            units:
-              type: string
-              description: The unit value of the bundle e.g. GB, MB etc.
-              example: GB
-        promotionApplicable:
-          type: boolean
-          description: ''
-          example: true
-        buyForOthers:
-          type: boolean
-          description: ''
-          example: 'false'
-        paymentMode:
-          type: array
-          description: ''
-          example:
-          - SCAPv2
-          items:
-            type: string
-        description:
+          description: Represents the duration of the offer (For example :1 month)
+        yelloTraderId:
           type: string
-          description: ''
-          example: Data and Voice Bundle of 52N, valid for 1 Day
-        actions:
-          type: array
-          description: A list of actions and their product code prefixes that a 3PP can perform on a product
-          items:
-            type: string
-        activationId:
-          type: string
-          description: Tariff Id expected when fulfilling a purchase for this product. This will be populated if the nodeId is ERS
-          example: 1
-        additionalBundleInformation:
+          description: Represents the duration of the offer (For example :2018462 CT212)
+        prodSpecCharValueUse:
           type: array
           items:
-            $ref: '#/components/schemas/AdditionalInformation'
-    ProductInfo:
-      type: object
-      properties:
-        expiryTime:
-          type: string
-          description: Offer Expire Time
-          example: 2019-06-20 23:59:00 +0100
-        message:
-          type: string
-          description: Offer Description
-          example: 'Get 4GB Data for as low as N1,000 only. Data is valid for 7days. Press
-
-            Accept to activate'
-        messageLanguage:
-          type: string
-          description: ''
-          example: English (UK)
-        messageEncoding:
-          type: string
-          description: ''
-          example: UTF-8
-        id:
-          type: integer
-          description: Identifies the product. This must be an echoed back input from the 3pp
-          example: '1565'
-        category:
-          type: string
-          description: Offer Category
-          example: Bundle
-        offerType:
-          type: string
-          description: ''
-          example: usage or recharge
-        order:
-          type: string
-          description: ''
-          example: Bundle
-        description:
-          type: string
-          description: A description of the offer
-          example: SWZ_Data_109200
-        additionalParams:
-          type: object
-          description: More params
-          properties:
-            offerPrice:
-              type: string
-              description: ''
-              example: '1000'
-            offerId:
-              type: string
-              description: This field <offerId > shows the offer Id of the provisioned product
-              example: '11015'
-            accountId:
-              type: integer
-              description: Account Identifies
-              example: 213
-            rewardValidity:
-              type: string
-              description: ''
-              example: '7'
-            productId:
-              type: string
-              description: Unique Product Id defined in CIS database.
-              example: RACT_NG_Data_213
-        shortMessage:
-          type: string
-          description: Short message to describe the offer
-          example: ''
+            $ref: '#/components/schemas/ProductSpecificationCharacteristicValueUse'
+          description: A use of the ProductSpecificationCharacteristicValue by a ProductOffering to which additional properties (attributes) apply or override the properties of similar properties contained in ProductSpecificationCharacteristicValue. It should be noted that characteristics which their value(s) addressed by this object must exist in corresponding product specification. The available characteristic values for a ProductSpecificationCharacteristic in a Product specification can be modified at the ProductOffering level. For example, a characteristic 'Color' might have values White, Blue, Green, and Red. But, the list of values can be restricted to e.g. White and Blue in an associated product offering. It should be noted that the list of values in 'ProductSpecificationCharacteristicValueUse' is a strict subset of the list of values as defined in the corresponding product specification characteristics.
+        productOfferingAdditionalAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOfferingTerm'
+          description: A condition under which a ProductOffering is made available to Customers. For instance, a productOffering can be offered with multiple commitment periods.
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the productOffering is valid
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

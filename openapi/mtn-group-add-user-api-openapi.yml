@@ -40,19 +40,18 @@ paths:
       x-operation-id-original: to add a user
 components:
   schemas:
-    RelatedParty:
+    Credential:
       required:
-      - customerMsisdn
+      - id
+      - state
       type: object
       properties:
         id:
           type: string
-          description: Unique identifier of a related entity.
-        name:
-          type: string
-          description: Name of the related entity
-      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
-    Any: {}
+          description: UserId
+        state:
+          $ref: '#/components/schemas/Any'
+          description: ' set up'
     PortfolioId:
       required:
       - id
@@ -61,8 +60,12 @@ components:
         id:
           type: string
           description: PortfolioId
-    Add_User_Response:
+    Add_User:
       type: object
+      description: 'Skipped properties: id,href'
+      required:
+      - engagedParty
+      - name
       properties:
         nickName:
           type: string
@@ -86,32 +89,8 @@ components:
           items:
             $ref: '#/components/schemas/RelatedParty'
           description: Describes the attribute of a user.
-    ResourceIdentified:
-      required:
-      - name
+    Add_User_Response:
       type: object
-      properties:
-        name:
-          type: string
-          description: User Type Id
-    Credential:
-      required:
-      - id
-      - state
-      type: object
-      properties:
-        id:
-          type: string
-          description: UserId
-        state:
-          $ref: '#/components/schemas/Any'
-          description: ' set up'
-    Add_User:
-      type: object
-      description: 'Skipped properties: id,href'
-      required:
-      - engagedParty
-      - name
       properties:
         nickName:
           type: string
@@ -143,6 +122,27 @@ components:
         name:
           type: string
           description: Jobtitleid
+    ResourceIdentified:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: User Type Id
+    Any: {}
+    RelatedParty:
+      required:
+      - customerMsisdn
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        name:
+          type: string
+          description: Name of the related entity
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -262,30 +262,21 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Error400:
+    UserReqObject:
+      type: object
+      additionalProperties: false
       properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-        statusMessage:
+        appMetadata:
+          type: object
+          description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
+          properties:
+            dpoMetadata:
+              type: object
+              allOf:
+              - $ref: '#/components/schemas/DPOMetadataObject'
+        clientId:
           type: string
-          description: Status message from target system to indicate transaction status.
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-    Error500:
-      properties:
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: Internal Server Error
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '3001'
+          description: The ID of the client (application) for which the invitation is being sent.
     UserObject:
       type: object
       properties:
@@ -368,6 +359,26 @@ components:
           type: string
           description: The user's family name
           example: Doe
+    Error500:
+      properties:
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3001'
+    Error401:
+      properties:
+        error:
+          type: string
+          description: error message from target system to indicate transaction status.
+          example: missing_authorization
+        error_description:
+          type: string
+          description: detailed error message from target system to indicate transaction status.
+          example: Missing Authorization header
     userIdentityResponse:
       type: object
       properties:
@@ -421,27 +432,20 @@ components:
                         type: object
                         allOf:
                         - $ref: '#/components/schemas/DPOMetadataObject'
-    Error405:
+    Error400:
       properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
+        statusCode:
           type: integer
           description: Status code from target system to indicate transaction status
-          example: 405
-        error:
+        statusMessage:
           type: string
-          description: error message
-          example: Method Not Allowed
-        message:
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
           type: string
-          description: details
-        path:
+          description: detail message from target system to indicate transaction status.
+        transactionId:
           type: string
-          description: The path that caused the error
+          description: This is the same transactionId that is sent in the request
     DPOMetadataObject:
       type: object
       additionalProperties: false
@@ -477,41 +481,6 @@ components:
                     type: boolean
                     description: Whether the terms have been accepted
                     example: false
-    UserReqObject:
-      type: object
-      additionalProperties: false
-      properties:
-        appMetadata:
-          type: object
-          description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
-          properties:
-            dpoMetadata:
-              type: object
-              allOf:
-              - $ref: '#/components/schemas/DPOMetadataObject'
-        clientId:
-          type: string
-          description: The ID of the client (application) for which the invitation is being sent.
-    Error401:
-      properties:
-        error:
-          type: string
-          description: error message from target system to indicate transaction status.
-          example: missing_authorization
-        error_description:
-          type: string
-          description: detailed error message from target system to indicate transaction status.
-          example: Missing Authorization header
-    Error404:
-      properties:
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 404
-        message:
-          type: string
-          description: details
-          example: no match found
     getUserResponse:
       type: object
       properties:
@@ -561,6 +530,37 @@ components:
               type: integer
               description: The number of times the user has logged in
               example: 42
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error404:
+      properties:
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        message:
+          type: string
+          description: details
+          example: no match found
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

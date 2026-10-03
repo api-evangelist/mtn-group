@@ -46,6 +46,19 @@ paths:
       x-operation-id-original: Query logback failure
 components:
   schemas:
+    queryData:
+      type: object
+      required:
+      - targetUrl
+      - requestType
+      - countryCode
+      properties:
+        targetUrl:
+          type: string
+        requestType:
+          type: string
+        countryCode:
+          type: string
     serverErrorResponse:
       type: object
       properties:
@@ -54,6 +67,31 @@ components:
         statusMessage:
           type: string
         data:
+          type: string
+    response:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/responseData'
+    clientErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date
+        status:
+          type: string
+        error:
+          type: string
+        message:
+          type: string
+        path:
           type: string
     responseData:
       type: object
@@ -78,44 +116,6 @@ components:
         transactionId:
           type: string
         countryCode:
-          type: string
-    response:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/responseData'
-    queryData:
-      type: object
-      required:
-      - targetUrl
-      - requestType
-      - countryCode
-      properties:
-        targetUrl:
-          type: string
-        requestType:
-          type: string
-        countryCode:
-          type: string
-    clientErrorResponse:
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date
-        status:
-          type: string
-        error:
-          type: string
-        message:
-          type: string
-        path:
           type: string
   securitySchemes:
     ApiKeyAuth:

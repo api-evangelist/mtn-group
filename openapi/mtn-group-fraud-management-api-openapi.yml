@@ -138,6 +138,49 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Error415:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 415
+        error:
+          type: string
+          description: error message
+          example: Unsupported Media Type
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    returnToSender_Request_dsv:
+      type: object
+      required:
+      - OrderNumber
+      - CustomerGroupCode
+      - StopType
+      properties:
+        OrderNumber:
+          type: string
+          description: sales order number of the RTS request.
+          example: OrderNum1
+        UniqueReference:
+          type: string
+          description: Unique identifier of the RTS request.
+        CustomerGroupCode:
+          type: string
+          description: customer code.
+          example: MTNM
+        StopType:
+          type: string
+          description: F is Fraud as the type of stop to be put onto the item
+          example: F
     returnToSender_Request:
       type: object
       required:
@@ -162,28 +205,6 @@ components:
           type: string
           description: IOMS order ID.
           example: '5473212'
-    Error400:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 5000
-        statusMessage:
-          type: string
-          description: Text explaining the reason for the error
-          example: Invalid parameters
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: Unable to process your request. Please try again
-        transactionId:
-          type: string
-          description: transaction Id from target system to indicate transaction status.
-          example: 00209948
-        httpStatus:
-          type: string
-          description: description of the hhtp status.
-          example: BAD_REQUEST
     returnToSender_Response:
       type: object
       properties:
@@ -208,99 +229,6 @@ components:
           type: string
           description: http response
           example: OK
-    returnToSender_Request_dsv:
-      type: object
-      required:
-      - OrderNumber
-      - CustomerGroupCode
-      - StopType
-      properties:
-        OrderNumber:
-          type: string
-          description: sales order number of the RTS request.
-          example: OrderNum1
-        UniqueReference:
-          type: string
-          description: Unique identifier of the RTS request.
-        CustomerGroupCode:
-          type: string
-          description: customer code.
-          example: MTNM
-        StopType:
-          type: string
-          description: F is Fraud as the type of stop to be put onto the item
-          example: F
-    Error415:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 415
-        error:
-          type: string
-          description: error message
-          example: Unsupported Media Type
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
-    Error405:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 405
-        error:
-          type: string
-          description: error message
-          example: Method Not Allowed
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
-    Error400dsv:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 5000
-        statusMessage:
-          type: string
-          description: Text explaining the reason for the error
-          example: Transaction Failed
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-          example: '[ST05] StopOrder already exists for this item. Created on 11/1/2023 11:47:05 AM'
-        transactionId:
-          type: string
-          description: transaction Id from target system to indicate transaction status.
-          example: '42150905'
-        data:
-          type: object
-          properties:
-            orderNumber:
-              type: string
-              description: Order number
-              example: '3221111'
-            success:
-              type: string
-              description: success message represented as true or false.
-              example: 'false'
     Error401:
       properties:
         statusCode:
@@ -354,6 +282,78 @@ components:
               type: string
               description: True or false status of the request
               example: 'true'
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 5000
+        statusMessage:
+          type: string
+          description: Text explaining the reason for the error
+          example: Invalid parameters
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: Unable to process your request. Please try again
+        transactionId:
+          type: string
+          description: transaction Id from target system to indicate transaction status.
+          example: 00209948
+        httpStatus:
+          type: string
+          description: description of the hhtp status.
+          example: BAD_REQUEST
+    Error400dsv:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 5000
+        statusMessage:
+          type: string
+          description: Text explaining the reason for the error
+          example: Transaction Failed
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+          example: '[ST05] StopOrder already exists for this item. Created on 11/1/2023 11:47:05 AM'
+        transactionId:
+          type: string
+          description: transaction Id from target system to indicate transaction status.
+          example: '42150905'
+        data:
+          type: object
+          properties:
+            orderNumber:
+              type: string
+              description: Order number
+              example: '3221111'
+            success:
+              type: string
+              description: success message represented as true or false.
+              example: 'false'
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
     Error404:
       properties:
         fault:

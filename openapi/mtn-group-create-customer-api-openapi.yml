@@ -31,24 +31,6 @@ paths:
         required: true
 components:
   schemas:
-    RelatedParty:
-      required:
-      - customerMsisdn
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity.
-        name:
-          type: string
-          description: Name of the related entity
-      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
-    ContactMedium:
-      type: object
-      properties:
-        characteristic:
-          $ref: '#/components/schemas/ContactMediumCharacteristic'
-      description: Indicates the contact medium that could be used to contact the party.
     Characteristic:
       required:
       - name
@@ -62,29 +44,6 @@ components:
           $ref: '#/components/schemas/Any'
           description: The value of the characteristic
       description: Describes a given characteristic of an object xor entity through a name/value pair.
-    Any: {}
-    Customer_Create_Response:
-      type: object
-      properties:
-        name:
-          type: string
-          example: joe
-        characteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/Characteristic'
-          description: Describes the characteristic of a customer.
-        contactMedium:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactMedium'
-        engagedParty:
-          $ref: '#/components/schemas/RelatedParty'
-          description: The party - an organization or an individual - that is engaged as a customer.
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedParty'
     ContactMediumCharacteristic:
       type: object
       properties:
@@ -128,6 +87,25 @@ components:
         name:
           type: string
           description: Address Name
+    ContactMedium:
+      type: object
+      properties:
+        characteristic:
+          $ref: '#/components/schemas/ContactMediumCharacteristic'
+      description: Indicates the contact medium that could be used to contact the party.
+    Any: {}
+    RelatedParty:
+      required:
+      - customerMsisdn
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        name:
+          type: string
+          description: Name of the related entity
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
     Customer_Create:
       type: object
       description: 'Skipped properties: id,href'
@@ -147,6 +125,28 @@ components:
         preferred:
           type: string
           description: 'preferred mailing Address.    '
+        characteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/Characteristic'
+          description: Describes the characteristic of a customer.
+        contactMedium:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactMedium'
+        engagedParty:
+          $ref: '#/components/schemas/RelatedParty'
+          description: The party - an organization or an individual - that is engaged as a customer.
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+    Customer_Create_Response:
+      type: object
+      properties:
+        name:
+          type: string
+          example: joe
         characteristic:
           type: array
           items:

@@ -195,29 +195,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Error:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        status:
-          type: string
-          description: Status/Error code returned from the provider system
-        error:
-          type: string
-          description: Status/Error description
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: the path that caused the error
     StatusType:
       type: string
       enum:
@@ -226,12 +203,11 @@ components:
       - One-Way Block
       - Two-Way Block
       - Termination
-    Response_Subscriber:
+    Response_LinkedNumber:
       type: object
       required:
       - resultCode
       - resultDescription
-      - data
       properties:
         resultCode:
           type: string
@@ -243,53 +219,12 @@ components:
           type: string
           description: Transaction id returned by the provider system.
         data:
-          $ref: '#/components/schemas/Subscriber'
-    SubscriberIdentification:
-      type: object
-      description: Represents our registration of information used as proof of identity by a subscriber (passport, national identity card, drivers license, social security number, birth certificate etc.)
-      properties:
-        identificationId:
-          type: string
-          description: Value of the chosen identification type
-        identificationType:
-          type: string
-          description: Identification type (passport, national identity card, drivers license, social security number, birth certificate etc.)
-        issuingAuthority:
-          type: string
-          description: 'Authority which has issued the identifier, such as: social security,town hall etc.'
-        issuingDate:
-          type: string
-          format: date
-          description: Date at which the identifier was issued
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the identification information is valid.
-    SubscriberAsset:
-      type: object
-      required:
-      - entityType
-      - id
-      properties:
-        id:
-          example: f066ffd5-e685-43bc-ad57-bfb7639decb1
-          type: string
-          description: Unique identifier of referenced entity within the entity/asset pair (customerId, accountId, mobile line number, imsi number, iccid,puk number, pin number ...)
-        assetType:
-          type: string
-          description: 'product/service/resource managed entities (e.g.: mobile line subscription, video platform license, mobile equipment, device information etc). Allows identifying the specific asset within the server referenced. Supported values are implementation and application specific. Other values can be added if those listed are not enough'
-        entityType:
-          type: string
-          description: 'Type of managed entity (e.g.: product, resource, service, customer, account)'
-        createDate:
-          type: string
-          description: Creation date of the asset resource,represented as an [ISO8601-2004] YYYY-MM-DD format
-        activationDate:
-          type: string
-          description: Activation date of the asset resource,represented as an [ISO8601-2004] YYYY-MM-DD format
-        role:
-          example: owner
-          type: string
-          description: 'Represents the part played by an individual in relation to being granted a set of entitlements for manageable assets (e.g.: owner, user, viewer, ...)'
+          type: object
+          properties:
+            linkedNumbers:
+              type: array
+              items:
+                type: string
     Subscriber:
       type: object
       properties:
@@ -351,11 +286,12 @@ components:
           type: string
           format: date
           description: Start of the time period,represented as an [ISO8601-2004] YYYY-MM-DD format
-    Response_LinkedNumber:
+    Response_Subscriber:
       type: object
       required:
       - resultCode
       - resultDescription
+      - data
       properties:
         resultCode:
           type: string
@@ -367,54 +303,7 @@ components:
           type: string
           description: Transaction id returned by the provider system.
         data:
-          type: object
-          properties:
-            linkedNumbers:
-              type: array
-              items:
-                type: string
-    Address:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the place
-        city:
-          type: string
-          description: City that the address is in
-        country:
-          type: string
-          description: Country that the address is in
-        buildingName:
-          type: string
-          description: allows for buildings that have well-known names
-        levelNumber:
-          type: string
-          description: used where a level type may be repeated e.g. BASEMENT 1, BASEMENT 2
-        locality:
-          type: string
-          description: An area of defined or undefined boundaries within a local authority or other legislatively defined area, usually rural or semi rural in nature. [ANZLIC-STREET], or a suburb, a bounded locality within a city, town or shire principally of urban character [ANZLICSTREET]
-        name:
-          type: string
-          description: A user-friendly name for the place, such as [Paris Store], [London Store], [Main Home]
-        postcode:
-          type: string
-          description: descriptor for a postal delivery area, used to speed and simplify the delivery of mail (also know as zipcode)
-        stateOrProvince:
-          type: string
-          description: the State or Province that the address is in
-        streetName:
-          type: string
-          description: Name of the street or other street type
-        streetType:
-          type: string
-          description: 'alley, avenue, boulevard, brae, crescent, drive, highway, lane, terrace, parade, place, tarn, way, wharf '
-        streetLine1:
-          type: string
-        streetLine2:
-          type: string
-        streetLine3:
-          type: string
+          $ref: '#/components/schemas/Subscriber'
     Subscriberinfo:
       type: object
       required:
@@ -492,6 +381,117 @@ components:
           example: America/Los_Angeles
           type: string
           description: String from zoneinfo time zone database representing the End-User's time zone. For example, Europe/Paris or America/Los_Angeles
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        status:
+          type: string
+          description: Status/Error code returned from the provider system
+        error:
+          type: string
+          description: Status/Error description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
+    Address:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the place
+        city:
+          type: string
+          description: City that the address is in
+        country:
+          type: string
+          description: Country that the address is in
+        buildingName:
+          type: string
+          description: allows for buildings that have well-known names
+        levelNumber:
+          type: string
+          description: used where a level type may be repeated e.g. BASEMENT 1, BASEMENT 2
+        locality:
+          type: string
+          description: An area of defined or undefined boundaries within a local authority or other legislatively defined area, usually rural or semi rural in nature. [ANZLIC-STREET], or a suburb, a bounded locality within a city, town or shire principally of urban character [ANZLICSTREET]
+        name:
+          type: string
+          description: A user-friendly name for the place, such as [Paris Store], [London Store], [Main Home]
+        postcode:
+          type: string
+          description: descriptor for a postal delivery area, used to speed and simplify the delivery of mail (also know as zipcode)
+        stateOrProvince:
+          type: string
+          description: the State or Province that the address is in
+        streetName:
+          type: string
+          description: Name of the street or other street type
+        streetType:
+          type: string
+          description: 'alley, avenue, boulevard, brae, crescent, drive, highway, lane, terrace, parade, place, tarn, way, wharf '
+        streetLine1:
+          type: string
+        streetLine2:
+          type: string
+        streetLine3:
+          type: string
+    SubscriberIdentification:
+      type: object
+      description: Represents our registration of information used as proof of identity by a subscriber (passport, national identity card, drivers license, social security number, birth certificate etc.)
+      properties:
+        identificationId:
+          type: string
+          description: Value of the chosen identification type
+        identificationType:
+          type: string
+          description: Identification type (passport, national identity card, drivers license, social security number, birth certificate etc.)
+        issuingAuthority:
+          type: string
+          description: 'Authority which has issued the identifier, such as: social security,town hall etc.'
+        issuingDate:
+          type: string
+          format: date
+          description: Date at which the identifier was issued
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the identification information is valid.
+    SubscriberAsset:
+      type: object
+      required:
+      - entityType
+      - id
+      properties:
+        id:
+          example: f066ffd5-e685-43bc-ad57-bfb7639decb1
+          type: string
+          description: Unique identifier of referenced entity within the entity/asset pair (customerId, accountId, mobile line number, imsi number, iccid,puk number, pin number ...)
+        assetType:
+          type: string
+          description: 'product/service/resource managed entities (e.g.: mobile line subscription, video platform license, mobile equipment, device information etc). Allows identifying the specific asset within the server referenced. Supported values are implementation and application specific. Other values can be added if those listed are not enough'
+        entityType:
+          type: string
+          description: 'Type of managed entity (e.g.: product, resource, service, customer, account)'
+        createDate:
+          type: string
+          description: Creation date of the asset resource,represented as an [ISO8601-2004] YYYY-MM-DD format
+        activationDate:
+          type: string
+          description: Activation date of the asset resource,represented as an [ISO8601-2004] YYYY-MM-DD format
+        role:
+          example: owner
+          type: string
+          description: 'Represents the part played by an individual in relation to being granted a set of entitlements for manageable assets (e.g.: owner, user, viewer, ...)'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
