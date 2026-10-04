@@ -102,6 +102,42 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    BalanceTopUpRequest:
+      type: object
+      required:
+      - balanceType
+      - amount
+      - senderAccountId
+      properties:
+        currency:
+          type: string
+          example: FCFA
+          description: Currency of the country where topup is performed
+          enum:
+          - FCFA
+        clientReference:
+          type: string
+          example: Ayo123
+          description: Comment that the client want to assign to this transaction.
+        balanceType:
+          type: string
+          example: airtime
+          description: Specifying the bucket type on which the topUp should be performed.
+          enum:
+          - airtime
+        senderAccountId:
+          type: string
+          example: 0788003055
+          description: the AccountId on ERS of the sender. This is needed ot identify the Reseller's account on ERS
+        amount:
+          $ref: '#/components/schemas/Amount'
+    BalanceTopUpResponse__links_self:
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://host:port/accounts/v1/balanceTopUp/12345
+          description: Hyperlink to access the problem.
     BalanceTopUpResponse__links:
       type: object
       properties:
@@ -151,52 +187,23 @@ components:
               $ref: '#/components/schemas/Amount'
             actualTopUpAmount:
               $ref: '#/components/schemas/Amount'
-    BalanceTopUpResponse__links_self:
-      type: object
-      properties:
-        href:
-          type: string
-          example: https://host:port/accounts/v1/balanceTopUp/12345
-          description: Hyperlink to access the problem.
-    BalanceTopUpResponse:
+    Error:
       type: object
       properties:
         statusCode:
           type: string
           description: HTTP error code extension
-        Data:
-          $ref: '#/components/schemas/Data'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+        supportMessage:
+          type: string
+          description: Support Message
+        transactionId:
+          type: string
+          description: Message ID
         _links:
           $ref: '#/components/schemas/BalanceTopUpResponse__links'
-    BalanceTopUpRequest:
-      type: object
-      required:
-      - balanceType
-      - amount
-      - senderAccountId
-      properties:
-        currency:
-          type: string
-          example: FCFA
-          description: Currency of the country where topup is performed
-          enum:
-          - FCFA
-        clientReference:
-          type: string
-          example: Ayo123
-          description: Comment that the client want to assign to this transaction.
-        balanceType:
-          type: string
-          example: airtime
-          description: Specifying the bucket type on which the topUp should be performed.
-          enum:
-          - airtime
-        senderAccountId:
-          type: string
-          example: 0788003055
-          description: the AccountId on ERS of the sender. This is needed ot identify the Reseller's account on ERS
-        amount:
-          $ref: '#/components/schemas/Amount'
     Amount:
       type: object
       required:
@@ -229,21 +236,14 @@ components:
           - SMS
           - FCFA
           example: NGN
-    Error:
+    BalanceTopUpResponse:
       type: object
       properties:
         statusCode:
           type: string
           description: HTTP error code extension
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client.
-        supportMessage:
-          type: string
-          description: Support Message
-        transactionId:
-          type: string
-          description: Message ID
+        Data:
+          $ref: '#/components/schemas/Data'
         _links:
           $ref: '#/components/schemas/BalanceTopUpResponse__links'
   securitySchemes:

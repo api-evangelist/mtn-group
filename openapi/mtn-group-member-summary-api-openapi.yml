@@ -90,6 +90,37 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ayocoverDetails:
+      type: object
+      properties:
+        benefit:
+          type: string
+          example: CARE365MYFAPH
+          description: Benefits are the additions information given to the customer as defined by AYO
+        policyNumber:
+          type: string
+          example: 7132669
+          description: Policy Number is string value defined in AYO
+        policyStatus:
+          type: string
+          example: In Force
+          description: Policy Status is defined in three different values 'Not Takenup', 'In Force', 'Termination Notice'
+        productCode:
+          type: string
+          example: MyMTN Prepaid Funeral Khava
+          description: product code is commercial name of the product used by the customer as defined in AYO
+        consents:
+          type: string
+          description: consent
+          example: y
+        coverPeriod:
+          type: integer
+          example: 6
+          description: Policy Cover Period is numerical value which defines the duration calculated in months
+        coverAmount:
+          $ref: '#/components/schemas/ayoAmount'
+        totalPremium:
+          $ref: '#/components/schemas/ayoAmount'
     ayoSummaryError:
       type: object
       required:
@@ -126,6 +157,17 @@ components:
           type: string
           example: business error
           description: type of error is shown for non 200 response and mapped from AYO response
+    ayoAmount:
+      type: object
+      properties:
+        amount:
+          type: integer
+          example: 3000
+          description: amount is numerical value  defined in different features like premium and cover
+        currencyCode:
+          type: string
+          example: ZAR
+          description: Currecy code is currency in which amount is defined, for southAfrica it is ZAR
     ayoSummaryResponse:
       type: object
       required:
@@ -155,48 +197,6 @@ components:
         coverDetails:
           description: Cover details consist of all the information related to policy associated with the customer
           $ref: '#/components/schemas/ayocoverDetails'
-    ayoAmount:
-      type: object
-      properties:
-        amount:
-          type: integer
-          example: 3000
-          description: amount is numerical value  defined in different features like premium and cover
-        currencyCode:
-          type: string
-          example: ZAR
-          description: Currecy code is currency in which amount is defined, for southAfrica it is ZAR
-    ayocoverDetails:
-      type: object
-      properties:
-        benefit:
-          type: string
-          example: CARE365MYFAPH
-          description: Benefits are the additions information given to the customer as defined by AYO
-        policyNumber:
-          type: string
-          example: 7132669
-          description: Policy Number is string value defined in AYO
-        policyStatus:
-          type: string
-          example: In Force
-          description: Policy Status is defined in three different values 'Not Takenup', 'In Force', 'Termination Notice'
-        productCode:
-          type: string
-          example: MyMTN Prepaid Funeral Khava
-          description: product code is commercial name of the product used by the customer as defined in AYO
-        consents:
-          type: string
-          description: consent
-          example: y
-        coverPeriod:
-          type: integer
-          example: 6
-          description: Policy Cover Period is numerical value which defines the duration calculated in months
-        coverAmount:
-          $ref: '#/components/schemas/ayoAmount'
-        totalPremium:
-          $ref: '#/components/schemas/ayoAmount'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

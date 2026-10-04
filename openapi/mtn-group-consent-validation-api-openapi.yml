@@ -88,6 +88,35 @@ paths:
         required: true
 components:
   schemas:
+    ConsentRequest:
+      type: object
+      required:
+      - flowType
+      - confirmationMessage
+      - callbackUrl
+      properties:
+        confirmationMessage:
+          type: string
+          example: Do you consent to making this purchase? . Press 1 to accept , Press 2 to reject.
+        flowType:
+          type: string
+          example: ussd
+          description: ussd or sms
+          enum:
+          - ussd
+          - sms
+        callbackUrl:
+          type: string
+          example: https://your-domain/notification
+          description: The callback url where the user's consent will be posted to
+        customData:
+          type: array
+          items:
+            type: string
+          example:
+          - custom data 1
+          - custom data 2
+          description: This is a custom list of strings that you want to be sent back to you when the user's consent is posted back in ConsentNotificationResponse object.
     SuccessConsentResponseLink:
       type: object
       properties:
@@ -130,35 +159,6 @@ components:
               example: true
         _links:
           $ref: '#/components/schemas/SuccessConsentResponseLink'
-    ConsentRequest:
-      type: object
-      required:
-      - flowType
-      - confirmationMessage
-      - callbackUrl
-      properties:
-        confirmationMessage:
-          type: string
-          example: Do you consent to making this purchase? . Press 1 to accept , Press 2 to reject.
-        flowType:
-          type: string
-          example: ussd
-          description: ussd or sms
-          enum:
-          - ussd
-          - sms
-        callbackUrl:
-          type: string
-          example: https://your-domain/notification
-          description: The callback url where the user's consent will be posted to
-        customData:
-          type: array
-          items:
-            type: string
-          example:
-          - custom data 1
-          - custom data 2
-          description: This is a custom list of strings that you want to be sent back to you when the user's consent is posted back in ConsentNotificationResponse object.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -179,59 +179,27 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    outboundSubscriptionDeleteResponse:
+    UpdateSubscriptionRequest:
       type: object
-      required:
-      - data
-      - statusCode
-      - statusMessage
-      - transactionId
       properties:
-        statusCode:
+        serviceCode:
           type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
+          description: Service code that is being shared
+        callbackUrl:
           type: string
-          description: More details and corrective actions related to the error which can be shown to a client.
-          example: Successful
-        transactionId:
+          description: This is the callback URL
+          example: http://www....
+        deliveryReportUrl:
           type: string
-          description: MADAPI generated Id to include for tracing requests
-          example: 1365478abcz-fdhsdfh54351
-        data:
-          type: object
-          properties:
-            subscriptionId:
-              type: string
-              example: 63284250bde7cd4938630ada
-    subscriptionResponse:
-      type: object
-      required:
-      - data
-      - statusCode
-      - statusMessage
-      - transactionId
-      properties:
-        statusCode:
+          description: This is the delivery URL
+          example: http://www....
+        targetSystem:
           type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client.
-          example: Sms Subscriptions successful Please keep the subscription id safely 6328...., if you need to delete it later.
-        transactionId:
-          type: string
-          description: MADAPI generated Id to include for tracing requests
-          example: 1365478abcz-fdhsdfh54351
-        data:
-          type: object
-          properties:
-            subscriptionId:
-              type: string
-              description: Unique identifier for the subscription
-              example: sub123456
+        keywords:
+          type: array
+          items:
+            type: string
+          description: Keywords applies to a shared short code . This is applicable only for the Nigeria opco.
     ForbiddenResponse:
       type: object
       required:
@@ -267,6 +235,59 @@ components:
           type: string
           description: The HTTP method type that was used
           example: POST
+    subscriptionResponse:
+      type: object
+      required:
+      - data
+      - statusCode
+      - statusMessage
+      - transactionId
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+          example: Sms Subscriptions successful Please keep the subscription id safely 6328...., if you need to delete it later.
+        transactionId:
+          type: string
+          description: MADAPI generated Id to include for tracing requests
+          example: 1365478abcz-fdhsdfh54351
+        data:
+          type: object
+          properties:
+            subscriptionId:
+              type: string
+              description: Unique identifier for the subscription
+              example: sub123456
+    outboundSubscriptionDeleteResponse:
+      type: object
+      required:
+      - data
+      - statusCode
+      - statusMessage
+      - transactionId
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+          example: Successful
+        transactionId:
+          type: string
+          description: MADAPI generated Id to include for tracing requests
+          example: 1365478abcz-fdhsdfh54351
+        data:
+          type: object
+          properties:
+            subscriptionId:
+              type: string
+              example: 63284250bde7cd4938630ada
     ShortCodeSubscription:
       type: object
       required:
@@ -289,27 +310,6 @@ components:
         serviceCode:
           type: string
           description: This is the service code that is being registered for Mobile originating and delivery receipt calls
-    UpdateSubscriptionRequest:
-      type: object
-      properties:
-        serviceCode:
-          type: string
-          description: Service code that is being shared
-        callbackUrl:
-          type: string
-          description: This is the callback URL
-          example: http://www....
-        deliveryReportUrl:
-          type: string
-          description: This is the delivery URL
-          example: http://www....
-        targetSystem:
-          type: string
-        keywords:
-          type: array
-          items:
-            type: string
-          description: Keywords applies to a shared short code . This is applicable only for the Nigeria opco.
     Error:
       type: object
       required:

@@ -187,6 +187,22 @@ paths:
       x-operation-id-original: Get Product
 components:
   schemas:
+    ProductProgramCategoriesResponseData:
+      title: ProductProgramUpdate
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        description:
+          type: string
+        productStatus:
+          type: string
+        characteristics:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductCharacteristics'
     Quantity:
       title: Quantity
       type: object
@@ -207,22 +223,14 @@ components:
           $ref: '#/components/schemas/Quantity'
       required:
       - quantity
-    ProductProgramCategoriesResponseData:
-      title: ProductProgramUpdate
+    LoyaltyAccountCreate:
+      title: LoyaltyAccountCreate
       type: object
       properties:
-        name:
-          type: string
         id:
           type: string
-        description:
-          type: string
-        productStatus:
-          type: string
-        characteristics:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductCharacteristics'
+        loyaltyBalance:
+          $ref: '#/components/schemas/CreateLoyaltyBalance'
     ProductProgramRef:
       title: ProductProgram
       type: object
@@ -252,14 +260,14 @@ components:
       required:
       - name
       - productSpecId
-    LoyaltyAccountCreate:
-      title: LoyaltyAccountCreate
+    ProductCharacteristics:
+      title: ProductLinkRef
       type: object
       properties:
-        id:
+        name:
           type: string
-        loyaltyBalance:
-          $ref: '#/components/schemas/CreateLoyaltyBalance'
+        value:
+          type: string
     Error:
       type: object
       required:
@@ -284,14 +292,6 @@ components:
           format: date-time
           description: Timestamp of the error
           example: 2019-08-23T07:29:25.593+0000
-    ProductCharacteristics:
-      title: ProductLinkRef
-      type: object
-      properties:
-        name:
-          type: string
-        value:
-          type: string
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

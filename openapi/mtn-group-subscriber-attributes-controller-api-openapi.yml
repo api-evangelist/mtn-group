@@ -132,6 +132,16 @@ paths:
       deprecated: false
 components:
   schemas:
+    Error403:
+      properties:
+        error:
+          type: string
+          description: error message from target system to indicate transaction status.
+          example: access_denied
+        error_description:
+          type: string
+          description: detailed error message from target system to indicate transaction status.
+          example: Unauthorized
     SubscriberAttributeV2error:
       type: object
       required:
@@ -162,16 +172,26 @@ components:
           type: string
           description: The HTTP method type that was used
           example: PATCH
-    Error403:
+    Error400:
+      type: object
       properties:
-        error:
+        statusCode:
           type: string
-          description: error message from target system to indicate transaction status.
-          example: access_denied
-        error_description:
+          description: HTTP error code extension
+          example: '5000'
+        statusMessage:
           type: string
-          description: detailed error message from target system to indicate transaction status.
-          example: Unauthorized
+          description: 5000-The input parameters provided are invalid
+          example: Bad Request
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+        links:
+          type: array
+          items:
+            type: string
+            description: details of error
     SubscriberAttributeV2Response:
       type: object
       properties:
@@ -270,26 +290,6 @@ components:
           type: string
           description: detailed error message from target system to indicate transaction status.
           example: Missing Authorization header
-    Error400:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '5000'
-        statusMessage:
-          type: string
-          description: 5000-The input parameters provided are invalid
-          example: Bad Request
-        transactionId:
-          type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
-        links:
-          type: array
-          items:
-            type: string
-            description: details of error
     SubscriberAttributeV3Response:
       type: object
       properties:

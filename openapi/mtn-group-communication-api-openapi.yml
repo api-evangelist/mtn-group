@@ -271,68 +271,6 @@ paths:
       x-operation-id-original: deregister Callback
 components:
   schemas:
-    MessageSentResponseSMS:
-      title: MessageSentResponse
-      type: object
-      properties:
-        messages:
-          description: An array of messages.
-          type: array
-          items:
-            $ref: '#/components/schemas/Message'
-      required:
-      - messages
-    Message:
-      title: Message
-      type: object
-      properties:
-        to:
-          description: The number the sms is sent to.
-          type: string
-          example: '+27832008963'
-        deliveryStatus:
-          description: 'Indicates whether or not the sms has been accepted for delivery
-
-            '
-          type: string
-          example: DeliveredToNetwork
-        messageId:
-          description: 'A unique id to check the messages status. Id generated during delivery
-
-            '
-          type: string
-          example: d997474900097a1f0000000008d7e18102cc0901
-        smsStatusURL:
-          description: 'This is the url that can be used to query sms delivery status
-
-            '
-          type: string
-          example: 'https://api.mtn.com/v1/messages/sms/d997474900097a1f0000000008d7e18102cc0901/status
-
-            '
-      required:
-      - to
-      - deliveryStatus
-      - messageId
-      - smsStatusUrl
-    CallbackResponse:
-      required:
-      - accessCode
-      - callbackUrl
-      properties:
-        accessCode:
-          type: string
-          description: Id of the registered callback
-        callbackUrl:
-          type: string
-          description: The callback being registered.
-        status:
-          type: string
-          enum:
-          - successful
-          - unsuccessful
-        message:
-          type: string
     OutboundPollResponse:
       title: OutboundPollResponse
       type: object
@@ -368,33 +306,39 @@ components:
       - REJECTED
       - READ
       example: DELIVERED
-    CallbackInfo:
-      required:
-      - callbackURL
+    Message:
+      title: Message
+      type: object
       properties:
-        callbackURL:
+        to:
+          description: The number the sms is sent to.
           type: string
-          description: The callback being registered.
-        accessCode:
+          example: '+27832008963'
+        deliveryStatus:
+          description: 'Indicates whether or not the sms has been accepted for delivery
+
+            '
           type: string
-          description: Developer assigned short code
-        clientId:
+          example: DeliveredToNetwork
+        messageId:
+          description: 'A unique id to check the messages status. Id generated during delivery
+
+            '
           type: string
-          description: App ID
-    Error:
+          example: d997474900097a1f0000000008d7e18102cc0901
+        smsStatusURL:
+          description: 'This is the url that can be used to query sms delivery status
+
+            '
+          type: string
+          example: 'https://api.mtn.com/v1/messages/sms/d997474900097a1f0000000008d7e18102cc0901/status
+
+            '
       required:
-      - code
-      - reason
-      properties:
-        code:
-          type: integer
-          description: Application related code.
-        reason:
-          type: integer
-          description: Text that explains the reason for error.
-        message:
-          type: string
-          description: (optional) Text that provide more details and corrective actions related to the error.
+      - to
+      - deliveryStatus
+      - messageId
+      - smsStatusUrl
     SendSMS:
       title: SendSMS
       type: object
@@ -427,6 +371,37 @@ components:
           description: client app name
           type: string
           example: My_SMS_APP
+    CallbackResponse:
+      required:
+      - accessCode
+      - callbackUrl
+      properties:
+        accessCode:
+          type: string
+          description: Id of the registered callback
+        callbackUrl:
+          type: string
+          description: The callback being registered.
+        status:
+          type: string
+          enum:
+          - successful
+          - unsuccessful
+        message:
+          type: string
+    CallbackInfo:
+      required:
+      - callbackURL
+      properties:
+        callbackURL:
+          type: string
+          description: The callback being registered.
+        accessCode:
+          type: string
+          description: Developer assigned short code
+        clientId:
+          type: string
+          description: App ID
     ReceivePollResponse:
       title: ReceivePollResponse
       description: 'Poll for incoming messages specifying the number of messages to receive
@@ -461,6 +436,31 @@ components:
               sentTimestamp:
                 description: The date and time when the message was sent by recipient.
                 type: string
+    MessageSentResponseSMS:
+      title: MessageSentResponse
+      type: object
+      properties:
+        messages:
+          description: An array of messages.
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+      required:
+      - messages
+    Error:
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: integer
+          description: Application related code.
+        reason:
+          type: integer
+          description: Text that explains the reason for error.
+        message:
+          type: string
+          description: (optional) Text that provide more details and corrective actions related to the error.
   securitySchemes:
     OAuth2:
       type: oauth2

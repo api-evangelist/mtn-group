@@ -316,48 +316,36 @@ paths:
         required: true
 components:
   schemas:
-    Banks:
-      description: Representation of a tokenized card
+    PaymentMethodType:
+      description: Representation of a payment method
       properties:
-        bankName:
+        id:
           type: string
-          example: Zenith
-        accountNumber:
+          description: Unique id of the payment method in the server
+        type:
           type: string
-          description: bank account number
-        bankAccountHolderName:
-          type: string
-          description: bankAccountHolderName
-          example: LINDA HLATSHWAYO
-        bankAccountType:
-          type: string
-          description: bankAccountType
-          example: Savings
-        bankBranchCode:
-          type: string
-          description: bankBranchCode
-          example: '051001'
-        value:
-          type: string
-          description: Account UID
-          example: rEUcjfh+RQysxSJpuFtOddMTYA28G3GI=
-        issuer:
-          type: string
-          description: Account issuer
-          example: Guarantee Trust Bank Plc
-        logoUrl:
-          type: string
-          description: URL Pointing to the logo resource
-          example: https://cdn.pay.mtn.com/bank/fcmb.png
-        reccuring:
-          type: boolean
-          description: Shows if the account is reccuring or not
-          example: false
-        paymentDay:
-          type: string
-          format: date
-          description: Payment date in YYYY-MM-DD
-          example: '2022-02-22'
+          enum:
+          - bank
+          - bankCard
+          - tokenizedCard
+          description: Payment method type. The content of the details field depends on the value of this one
+        details:
+          type: object
+          properties:
+            tokenizedCard:
+              description: List of tokenized cards
+              type: array
+              items:
+                $ref: '#/components/schemas/TokenizedCard'
+            bank:
+              description: List of tokenized cards
+              type: array
+              items:
+                $ref: '#/components/schemas/Banks'
+      required:
+      - id
+      - type
+      - details
     bankDetails:
       type: object
       description: Bank details of the customer. Mandatory if paymentMethod is Debit Order
@@ -442,6 +430,48 @@ components:
           type: string
           description: a registration date associated with the token
           example: '2022-04-15T15:39:33.881Z'
+    Banks:
+      description: Representation of a tokenized card
+      properties:
+        bankName:
+          type: string
+          example: Zenith
+        accountNumber:
+          type: string
+          description: bank account number
+        bankAccountHolderName:
+          type: string
+          description: bankAccountHolderName
+          example: LINDA HLATSHWAYO
+        bankAccountType:
+          type: string
+          description: bankAccountType
+          example: Savings
+        bankBranchCode:
+          type: string
+          description: bankBranchCode
+          example: '051001'
+        value:
+          type: string
+          description: Account UID
+          example: rEUcjfh+RQysxSJpuFtOddMTYA28G3GI=
+        issuer:
+          type: string
+          description: Account issuer
+          example: Guarantee Trust Bank Plc
+        logoUrl:
+          type: string
+          description: URL Pointing to the logo resource
+          example: https://cdn.pay.mtn.com/bank/fcmb.png
+        reccuring:
+          type: boolean
+          description: Shows if the account is reccuring or not
+          example: false
+        paymentDay:
+          type: string
+          format: date
+          description: Payment date in YYYY-MM-DD
+          example: '2022-02-22'
     Error:
       type: object
       required:
@@ -475,36 +505,6 @@ components:
           type: string
           description: The HTTP method type that was used
           example: PUT
-    PaymentMethodType:
-      description: Representation of a payment method
-      properties:
-        id:
-          type: string
-          description: Unique id of the payment method in the server
-        type:
-          type: string
-          enum:
-          - bank
-          - bankCard
-          - tokenizedCard
-          description: Payment method type. The content of the details field depends on the value of this one
-        details:
-          type: object
-          properties:
-            tokenizedCard:
-              description: List of tokenized cards
-              type: array
-              items:
-                $ref: '#/components/schemas/TokenizedCard'
-            bank:
-              description: List of tokenized cards
-              type: array
-              items:
-                $ref: '#/components/schemas/Banks'
-      required:
-      - id
-      - type
-      - details
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

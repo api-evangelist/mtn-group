@@ -78,7 +78,7 @@ paths:
       x-operation-id-original: Query logback by targetURL and country code
 components:
   schemas:
-    serverErrorResponse:
+    response:
       type: object
       properties:
         statusCode:
@@ -86,6 +86,22 @@ components:
         statusMessage:
           type: string
         data:
+          type: array
+          items:
+            $ref: '#/components/schemas/responseData'
+    clientErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date
+        status:
+          type: string
+        error:
+          type: string
+        message:
+          type: string
+        path:
           type: string
     responseData:
       type: object
@@ -111,7 +127,7 @@ components:
           type: string
         countryCode:
           type: string
-    response:
+    serverErrorResponse:
       type: object
       properties:
         statusCode:
@@ -119,22 +135,6 @@ components:
         statusMessage:
           type: string
         data:
-          type: array
-          items:
-            $ref: '#/components/schemas/responseData'
-    clientErrorResponse:
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date
-        status:
-          type: string
-        error:
-          type: string
-        message:
-          type: string
-        path:
           type: string
   securitySchemes:
     ApiKeyAuth:

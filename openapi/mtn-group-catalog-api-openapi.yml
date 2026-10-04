@@ -1171,114 +1171,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    ProductSpecCharacteristicRef:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        maxCardinality:
-          type: string
-        minCardinality:
-          type: string
-        value:
-          type: string
-          description: A discrete value that the characteristic can take on. the value type is defined by 'valueType' characteristic
-        unitOfMeasure:
-          type: string
-          description: Could be minutes, GB, SMS, minutes
-        '@type':
-          type: string
-          description: description on the type of the resouce eg data, voice,SMS,
-        '@schemaLocation':
-          type: string
-          description: Hyperlink reference to schema describing this object
-    ProductOffering_level_2:
-      type: object
-      required:
-      - productSpecification
-      - id
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        productSpecification:
-          $ref: '#/components/schemas/productSpecification'
-        productOfferingTerm:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductTerm'
-        productOfferingPrice:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductOfferingPriceRef'
-    Category_level_2:
-      type: object
-      required:
-      - productoffering
-      properties:
-        productoffering:
-          $ref: '#/components/schemas/ProductOffering_level_2'
-    validity:
-      type: object
-      properties:
-        amount:
-          type: number
-          description: number representing the validity
-          example: 7
-        unitofmeasure:
-          type: string
-          description: amount unit of mesure e.g days, month, weekly
-          example: days
-    productSpecificationRef:
-      type: object
-      required:
-      - productSpecCharacteristic
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        lifeCycleStatus:
-          type: string
-        href:
-          type: string
-        version:
-          type: string
-        lastUpdate:
-          type: string
-        type:
-          type: string
-        productSpecCharacteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductSpecCharacteristic'
-    Catalog_level-1:
-      type: object
-      description: A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the Catalog
-          example: 63514374jfgfs
-        name:
-          type: string
-          description: Name of the catalog
-          example: Ketir Bundles
-    TimePeriod:
-      type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
-      properties:
-        endDateTime:
-          type: string
-          format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
-          type: string
-          format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
     ProductOfferingPriceRef:
       type: object
       properties:
@@ -1315,62 +1207,40 @@ components:
       properties:
         validFor:
           $ref: '#/components/schemas/validity'
-    ProductSpecCharacteristic:
-      type: array
-      items:
-        $ref: '#/components/schemas/ProductSpecCharacteristicRef'
-    Error:
+    validity:
       type: object
-      title: Error
-      required:
-      - status
-      - message
       properties:
-        code:
+        amount:
+          type: number
+          description: number representing the validity
+          example: 7
+        unitofmeasure:
           type: string
-          description: Application relevant detail, defined in the API or a common list.
-        reason:
-          type: string
-          description: Explanation of the reason for the error which can be shown to a client user.
-        message:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client user.
-        status:
-          type: string
-          description: HTTP Error code extension
-        referenceError:
-          type: string
-          format: uri
-          description: URI of documentation describing the error.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class.
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    Catalog_level-2:
+          description: amount unit of mesure e.g days, month, weekly
+          example: days
+    ProductSpecCharacteristicRef:
       type: object
-      required:
-      - category
       properties:
         name:
           type: string
-        businessType:
+        description:
           type: string
-        version:
+        maxCardinality:
           type: string
-        lifecycleStatus:
+        minCardinality:
           type: string
-        category:
-          $ref: '#/components/schemas/Category_level_2'
-    productSpecification:
-      type: array
-      items:
-        $ref: '#/components/schemas/productSpecificationRef'
+        value:
+          type: string
+          description: A discrete value that the characteristic can take on. the value type is defined by 'valueType' characteristic
+        unitOfMeasure:
+          type: string
+          description: Could be minutes, GB, SMS, minutes
+        '@type':
+          type: string
+          description: description on the type of the resouce eg data, voice,SMS,
+        '@schemaLocation':
+          type: string
+          description: Hyperlink reference to schema describing this object
     price:
       type: object
       properties:
@@ -1408,6 +1278,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProductSpecCharacteristicRef'
+    Category_level_2:
+      type: object
+      required:
+      - productoffering
+      properties:
+        productoffering:
+          $ref: '#/components/schemas/ProductOffering_level_2'
     Response_Catalog:
       type: object
       required:
@@ -1428,6 +1305,92 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Catalog_level-1'
+    ProductOffering_level_2:
+      type: object
+      required:
+      - productSpecification
+      - id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        productSpecification:
+          $ref: '#/components/schemas/productSpecification'
+        productOfferingTerm:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductTerm'
+        productOfferingPrice:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOfferingPriceRef'
+    Catalog_level-2:
+      type: object
+      required:
+      - category
+      properties:
+        name:
+          type: string
+        businessType:
+          type: string
+        version:
+          type: string
+        lifecycleStatus:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category_level_2'
+    ProductSpecCharacteristic:
+      type: array
+      items:
+        $ref: '#/components/schemas/ProductSpecCharacteristicRef'
+    TimePeriod:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          type: string
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+    productSpecificationRef:
+      type: object
+      required:
+      - productSpecCharacteristic
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        lifeCycleStatus:
+          type: string
+        href:
+          type: string
+        version:
+          type: string
+        lastUpdate:
+          type: string
+        type:
+          type: string
+        productSpecCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSpecCharacteristic'
+    Catalog_level-1:
+      type: object
+      description: A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the Catalog
+          example: 63514374jfgfs
+        name:
+          type: string
+          description: Name of the catalog
+          example: Ketir Bundles
     Response_Catalog2:
       type: object
       required:
@@ -1446,6 +1409,43 @@ components:
           description: Transaction id returned by the provider system.
         catalog:
           $ref: '#/components/schemas/Catalog_level-2'
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        code:
+          type: string
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
+        message:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
+          type: string
+          description: HTTP Error code extension
+        referenceError:
+          type: string
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    productSpecification:
+      type: array
+      items:
+        $ref: '#/components/schemas/productSpecificationRef'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

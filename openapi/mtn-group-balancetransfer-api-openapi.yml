@@ -51,44 +51,65 @@ paths:
         description: The Transfer to be modify.
 components:
   schemas:
-    ContactItem:
+    ContactMedium:
       type: object
       properties:
-        contactType:
+        preferred:
+          type: boolean
+          example: false
+          description: Whether this should be the preferred contact or not
+        isEnabled:
+          type: boolean
+          example: false
+        mediumType:
           type: string
-          description: The contact type
-          example: EmailAddress, PhoneNumber etc
-        contactMedium:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactMedium'
-    Money:
+          description: Medium type
+          example: example@email.com
+        characteristic:
+          $ref: '#/components/schemas/ContactMediumCharacteristic'
+    LogicalResourceRef:
       type: object
-      description: A base / value business entity used to represent money
+      description: reference to the LogicalResource eg MSISDN
       properties:
-        units:
+        id:
           type: string
-          description: Currency (ISO4217 norm uses 3 letters to define the currency)
+          description: unique identifier
+        href:
+          type: string
+          description: Hyperlink reference
+        name:
+          type: string
+          description: Name of the related entity.
+        '@baseType':
+          example: ResourceSpecification
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          example: https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          example: LogicalResourceSpecification
+          type: string
+          description: When sub-classing, this defines the sub-class Extensible name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    Quantity:
+      type: object
+      description: An amount in a given unit
+      properties:
         amount:
+          default: 1
           type: number
           format: float
-          description: A positive floating point number
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    QuantityType:
-      description: Representation of a quantity of something. I can also be used to represent a quantity range
-      properties:
-        amount:
-          format: decimal
-          type: number
-          description: Measured amount
+          description: Numeric value in a given unit
         units:
           type: string
-          description: Units the quantity is measured in
-      required:
-      - units
-      - amount
+          description: Unit
     BucketRef:
       type: object
       required:
@@ -131,18 +152,72 @@ components:
           example: LogicalResourceSpecification
           type: string
           description: When sub-classing, this defines the sub-class Extensible name
-    Quantity:
+    RelatedParty:
       type: object
-      description: An amount in a given unit
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
       properties:
-        amount:
-          default: 1
-          type: number
-          format: float
-          description: Numeric value in a given unit
-        units:
+        id:
           type: string
-          description: Unit
+          description: Unique identifier
+        name:
+          type: string
+          description: Name or ID of the related entity.
+        role:
+          type: string
+          description: Role played by the related party.
+        status:
+          type: string
+          description: Status of the related party.
+        href:
+          type: string
+          description: Link
+          example: link://something-here.send
+        description:
+          type: string
+          description: Description of the related party
+        bucket:
+          type: array
+          items:
+            $ref: '#/components/schemas/BucketRef'
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+    ContactMediumCharacteristic:
+      type: object
+      properties:
+        emailAddress:
+          type: string
+          example: exampl@example.com
+          description: Contact email address
+    ChannelRef:
+      type: object
+      description: The channel to which the resource reference to. e.g. channel for selling product offerings, channel for opening a trouble ticket etc..
+      properties:
+        id:
+          type: string
+          description: Unique identifier. This can be channel id , reference id etc
+        name:
+          type: string
+          description: Name of the channel. This can be channel short code or shrot name etc.
+        href:
+          type: string
+          description: channel url.
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      required:
+      - name
     TransferBalance:
       type: object
       description: The TransferBalance resource is a detailed description of credit transfer operation requested between two buckets (reference to products owned by customers and consuming credit when using a service).
@@ -243,6 +318,20 @@ components:
           type: number
           description: Number of times the recurring event should happen
           example: 2
+    Money:
+      type: object
+      description: A base / value business entity used to represent money
+      properties:
+        units:
+          type: string
+          description: Currency (ISO4217 norm uses 3 letters to define the currency)
+        amount:
+          type: number
+          format: float
+          description: A positive floating point number
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
     BalanceTransferBody:
       properties:
         direction:
@@ -291,88 +380,6 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    ContactMediumCharacteristic:
-      type: object
-      properties:
-        emailAddress:
-          type: string
-          example: exampl@example.com
-          description: Contact email address
-    ContactMedium:
-      type: object
-      properties:
-        preferred:
-          type: boolean
-          example: false
-          description: Whether this should be the preferred contact or not
-        isEnabled:
-          type: boolean
-          example: false
-        mediumType:
-          type: string
-          description: Medium type
-          example: example@email.com
-        characteristic:
-          $ref: '#/components/schemas/ContactMediumCharacteristic'
-    ChannelRef:
-      type: object
-      description: The channel to which the resource reference to. e.g. channel for selling product offerings, channel for opening a trouble ticket etc..
-      properties:
-        id:
-          type: string
-          description: Unique identifier. This can be channel id , reference id etc
-        name:
-          type: string
-          description: Name of the channel. This can be channel short code or shrot name etc.
-        href:
-          type: string
-          description: channel url.
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-      required:
-      - name
-    RelatedParty:
-      type: object
-      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
-      properties:
-        id:
-          type: string
-          description: Unique identifier
-        name:
-          type: string
-          description: Name or ID of the related entity.
-        role:
-          type: string
-          description: Role played by the related party.
-        status:
-          type: string
-          description: Status of the related party.
-        href:
-          type: string
-          description: Link
-          example: link://something-here.send
-        description:
-          type: string
-          description: Description of the related party
-        bucket:
-          type: array
-          items:
-            $ref: '#/components/schemas/BucketRef'
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
     ProductRef:
       type: object
       properties:
@@ -433,6 +440,19 @@ components:
       required:
       - id
       - href
+    QuantityType:
+      description: Representation of a quantity of something. I can also be used to represent a quantity range
+      properties:
+        amount:
+          format: decimal
+          type: number
+          description: Measured amount
+        units:
+          type: string
+          description: Units the quantity is measured in
+      required:
+      - units
+      - amount
     UsageType:
       type: string
       description: Valid values for the usage type are
@@ -441,37 +461,17 @@ components:
       - voice
       - data
       - sms
-    LogicalResourceRef:
+    ContactItem:
       type: object
-      description: reference to the LogicalResource eg MSISDN
       properties:
-        id:
+        contactType:
           type: string
-          description: unique identifier
-        href:
-          type: string
-          description: Hyperlink reference
-        name:
-          type: string
-          description: Name of the related entity.
-        '@baseType':
-          example: ResourceSpecification
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          example: https://mycsp.com:8080/tmf-api/schema/Resource/LogicalResourceSpecification.schema.json
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          example: LogicalResourceSpecification
-          type: string
-          description: When sub-classing, this defines the sub-class Extensible name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id
+          description: The contact type
+          example: EmailAddress, PhoneNumber etc
+        contactMedium:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactMedium'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -74,28 +74,6 @@ paths:
         required: true
 components:
   schemas:
-    customerRef:
-      type: object
-      required:
-      - customerId
-      - customerName
-      properties:
-        customerId:
-          type: string
-          description: Customer who is purchasing
-          example: 2349062059569
-        beneficiaryId:
-          type: string
-          description: Id of beneficiary for whom Customer wants to purchase, if purchase is for self , this value need not be populated
-          example: 2349062059534
-        customerName:
-          type: string
-          description: Customer name who is purchasing
-          example: Jack
-        customerEmail:
-          type: string
-          description: Contact email id of Customer who is purchasing
-          example: jack@mtn.com
     productRef:
       type: object
       required:
@@ -128,6 +106,55 @@ components:
           type: number
           description: Price of Product
           example: 1000
+    customerRef:
+      type: object
+      required:
+      - customerId
+      - customerName
+      properties:
+        customerId:
+          type: string
+          description: Customer who is purchasing
+          example: 2349062059569
+        beneficiaryId:
+          type: string
+          description: Id of beneficiary for whom Customer wants to purchase, if purchase is for self , this value need not be populated
+          example: 2349062059534
+        customerName:
+          type: string
+          description: Customer name who is purchasing
+          example: Jack
+        customerEmail:
+          type: string
+          description: Contact email id of Customer who is purchasing
+          example: jack@mtn.com
+    Order:
+      type: object
+      required:
+      - eligibilityCheckFlag
+      - extTransactionId
+      - channelName
+      - timestamp
+      properties:
+        customer:
+          $ref: '#/components/schemas/customerRef'
+        product:
+          $ref: '#/components/schemas/productRef'
+        timestamp:
+          type: string
+          description: Timestamp of order generation
+          format: date-time
+        eligibilityCheckFlag:
+          type: boolean
+          description: Flag determines if eligibiity check has to be performed or not. If eligibilty check is required then value should passed as "true" otherwise "false".
+        extTransactionId:
+          type: string
+          description: Transaction Id of channel
+          example: FB123456
+        channelName:
+          type: string
+          description: Name of call intiating channel
+          example: FB
     OrderResponse:
       type: object
       properties:
@@ -185,33 +212,6 @@ components:
           type: string
           description: Timestamp of the error
           format: date-time
-    Order:
-      type: object
-      required:
-      - eligibilityCheckFlag
-      - extTransactionId
-      - channelName
-      - timestamp
-      properties:
-        customer:
-          $ref: '#/components/schemas/customerRef'
-        product:
-          $ref: '#/components/schemas/productRef'
-        timestamp:
-          type: string
-          description: Timestamp of order generation
-          format: date-time
-        eligibilityCheckFlag:
-          type: boolean
-          description: Flag determines if eligibiity check has to be performed or not. If eligibilty check is required then value should passed as "true" otherwise "false".
-        extTransactionId:
-          type: string
-          description: Transaction Id of channel
-          example: FB123456
-        channelName:
-          type: string
-          description: Name of call intiating channel
-          example: FB
   securitySchemes:
     APIKeyAuth:
       type: apiKey

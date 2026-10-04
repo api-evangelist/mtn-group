@@ -294,6 +294,63 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
+    TaxExemptionCertificate:
+      type: object
+      description: A tax exemption certificate represents a tax exemption granted to a party (individual or organization) by a tax jurisdiction which may be a city, state, country,... An exemption has a certificate identifier (received from the jurisdiction that levied the tax) and a validity period. An exemption is per tax types and determines for each type of tax what portion of the tax is exempted (partial by percentage or complete) via the tax definition.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the certificate of the tax exemption
+        attachment:
+          $ref: '#/components/schemas/AttachmentRefOrValue'
+        taxDefinition:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxDefinition'
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    RelatedParty:
+      type: object
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      required:
+      - '@referredType'
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: Name of the related entity.
+        role:
+          type: string
+          description: Role played by the related party
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
     Result:
       type: object
       required:
@@ -309,22 +366,22 @@ components:
         transactionId:
           type: string
           description: Transaction id returned by the provider system.
-    Skill:
+    PartyCreditProfile:
       type: object
-      description: 'Skills evaluated for an individual with a level and possibly with a limited validity when an obsolescence is defined (Ex: the first-aid certificate first level is limited to one year and an update training is required each year to keep the level).'
+      description: An individual might be evaluated for its worthiness and this evaluation might be based on a credit rating given by a credit agency.
       properties:
-        comment:
+        creditAgencyName:
           type: string
-          description: A free text comment linked to the evaluation done
-        evaluatedLevel:
+          description: Name of the credit agency giving the score
+        creditAgencyType:
           type: string
-          description: Level of expertise in a skill evaluated for an individual
-        skillCode:
+          description: Type of the credit agency giving the score
+        ratingReference:
           type: string
-          description: Code of the skill
-        skillName:
-          type: string
-          description: Name of the skill such as Java language,…
+          description: Reference corresponding to the credit rating
+        ratingScore:
+          type: integer
+          description: A measure of a party’s creditworthiness calculated on the basis of a combination of factors such as their income and credit history
         validFor:
           $ref: '#/components/schemas/TimePeriod'
         '@baseType':
@@ -364,6 +421,104 @@ components:
           description: Writing proficiency evaluated for this language
         validFor:
           $ref: '#/components/schemas/TimePeriod'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    OtherNameIndividual:
+      type: object
+      description: Keeps track of other names, for example the old name of a woman before marriage or an artist name.
+      properties:
+        aristocraticTitle:
+          type: string
+          description: e.g. Baron, Graf, Earl,…
+        familyName:
+          type: string
+          description: Contains the non-chosen or inherited name. Also known as last name in the Western context
+        familyNamePrefix:
+          type: string
+          description: Family name prefix
+        formattedName:
+          type: string
+          description: . A fully formatted name in one string with all of its pieces in their proper place and all of the necessary punctuation. Useful for specific contexts (Chinese, Japanese, Korean,…)
+        fullName:
+          type: string
+          description: Full name flatten (first, middle, and last names)
+        generation:
+          type: string
+          description: e.g. Sr, Jr…
+        givenName:
+          type: string
+          description: First name
+        legalName:
+          type: string
+          description: Legal name or birth name (name one has for official purposes)
+        middleName:
+          type: string
+          description: Middle name or initial
+        preferredGivenName:
+          type: string
+          description: 'Contains the chosen name by which the person prefers to be addressed. Note: This name may be a name other than a given name, such as a nickname'
+        title:
+          type: string
+          description: 'Use for titles (aristrocatic, social, ...): Pr, Dr, Sir,....'
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+        status:
+          type: string
+          description: HTTP Status code
+        error:
+          type: string
+          description: Status description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
+    Characteristic:
+      type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          description: Name of the characteristic
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+        value:
+          type: string
+          description: The value of the characteristic
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -575,108 +730,24 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
-    Quantity:
+    Skill:
       type: object
-      description: An amount in a given unit
+      description: 'Skills evaluated for an individual with a level and possibly with a limited validity when an obsolescence is defined (Ex: the first-aid certificate first level is limited to one year and an update training is required each year to keep the level).'
       properties:
-        amount:
-          default: 1
-          type: number
-          format: float
-          description: Numeric value in a given unit
-        units:
+        comment:
           type: string
-          description: Unit
-    OtherNameIndividual:
-      type: object
-      description: Keeps track of other names, for example the old name of a woman before marriage or an artist name.
-      properties:
-        aristocraticTitle:
+          description: A free text comment linked to the evaluation done
+        evaluatedLevel:
           type: string
-          description: e.g. Baron, Graf, Earl,…
-        familyName:
+          description: Level of expertise in a skill evaluated for an individual
+        skillCode:
           type: string
-          description: Contains the non-chosen or inherited name. Also known as last name in the Western context
-        familyNamePrefix:
+          description: Code of the skill
+        skillName:
           type: string
-          description: Family name prefix
-        formattedName:
-          type: string
-          description: . A fully formatted name in one string with all of its pieces in their proper place and all of the necessary punctuation. Useful for specific contexts (Chinese, Japanese, Korean,…)
-        fullName:
-          type: string
-          description: Full name flatten (first, middle, and last names)
-        generation:
-          type: string
-          description: e.g. Sr, Jr…
-        givenName:
-          type: string
-          description: First name
-        legalName:
-          type: string
-          description: Legal name or birth name (name one has for official purposes)
-        middleName:
-          type: string
-          description: Middle name or initial
-        preferredGivenName:
-          type: string
-          description: 'Contains the chosen name by which the person prefers to be addressed. Note: This name may be a name other than a given name, such as a nickname'
-        title:
-          type: string
-          description: 'Use for titles (aristrocatic, social, ...): Pr, Dr, Sir,....'
+          description: Name of the skill such as Java language,…
         validFor:
           $ref: '#/components/schemas/TimePeriod'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    TimePeriod:
-      type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
-      properties:
-        endDateTime:
-          type: string
-          format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
-          type: string
-          format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
-    IndividualIdentification:
-      type: object
-      description: Represents our registration of information used as proof of identity by an individual (passport, national identity card, drivers license, social security number, birth certificate)
-      properties:
-        identificationId:
-          type: string
-          description: Identifier
-        identificationType:
-          type: string
-          description: Identification type (passport, national identity card, drivers license, social security number, birth certificate)
-        issuingAuthority:
-          type: string
-          description: Authority which has issued the identifier, such as 'social security','town hall' etc.
-        issuingCountry:
-          type: string
-          description: Country which has issued the identifier
-        issuingDate:
-          type: string
-          format: date-time
-          description: Date at which the identifier was issued
-        expiryDate:
-          type: string
-          format: date-time
-          description: Date till which the identifier will be valid
-        attachment:
-          $ref: '#/components/schemas/AttachmentRefOrValue'
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: The period for which the identification information is valid.
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -703,49 +774,6 @@ components:
         validFor:
           $ref: '#/components/schemas/TimePeriod'
           description: The time period that the contact medium is valid for
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    Error:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Error response code
-        status:
-          type: string
-          description: HTTP Status code
-        error:
-          type: string
-          description: Status description
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: the path that caused the error
-    ExternalReference:
-      type: object
-      description: External reference of the individual or reference in other system
-      properties:
-        externalReferenceType:
-          type: string
-          description: Type of the external reference
-        name:
-          type: string
-          description: External reference name
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -826,59 +854,6 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    TaxExemptionCertificate:
-      type: object
-      description: A tax exemption certificate represents a tax exemption granted to a party (individual or organization) by a tax jurisdiction which may be a city, state, country,... An exemption has a certificate identifier (received from the jurisdiction that levied the tax) and a validity period. An exemption is per tax types and determines for each type of tax what portion of the tax is exempted (partial by percentage or complete) via the tax definition.
-      properties:
-        id:
-          type: string
-          description: Unique identifier of the certificate of the tax exemption
-        attachment:
-          $ref: '#/components/schemas/AttachmentRefOrValue'
-        taxDefinition:
-          type: array
-          items:
-            $ref: '#/components/schemas/TaxDefinition'
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    PartyCreditProfile:
-      type: object
-      description: An individual might be evaluated for its worthiness and this evaluation might be based on a credit rating given by a credit agency.
-      properties:
-        creditAgencyName:
-          type: string
-          description: Name of the credit agency giving the score
-        creditAgencyType:
-          type: string
-          description: Type of the credit agency giving the score
-        ratingReference:
-          type: string
-          description: Reference corresponding to the credit rating
-        ratingScore:
-          type: integer
-          description: A measure of a party’s creditworthiness calculated on the basis of a combination of factors such as their income and credit history
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
     IndividualStateType:
       type: string
       description: Valid values for the lifecycle state of the individual
@@ -886,22 +861,47 @@ components:
       - initialized
       - validated
       - deceaded
-    Characteristic:
+    Quantity:
       type: object
-      description: Describes a given characteristic of an object or entity through a name/value pair.
-      required:
-      - name
-      - value
+      description: An amount in a given unit
       properties:
-        name:
+        amount:
+          default: 1
+          type: number
+          format: float
+          description: Numeric value in a given unit
+        units:
           type: string
-          description: Name of the characteristic
-        valueType:
+          description: Unit
+    IndividualIdentification:
+      type: object
+      description: Represents our registration of information used as proof of identity by an individual (passport, national identity card, drivers license, social security number, birth certificate)
+      properties:
+        identificationId:
           type: string
-          description: Data type of the value of the characteristic
-        value:
+          description: Identifier
+        identificationType:
           type: string
-          description: The value of the characteristic
+          description: Identification type (passport, national identity card, drivers license, social security number, birth certificate)
+        issuingAuthority:
+          type: string
+          description: Authority which has issued the identifier, such as 'social security','town hall' etc.
+        issuingCountry:
+          type: string
+          description: Country which has issued the identifier
+        issuingDate:
+          type: string
+          format: date-time
+          description: Date at which the identifier was issued
+        expiryDate:
+          type: string
+          format: date-time
+          description: Date till which the identifier will be valid
+        attachment:
+          $ref: '#/components/schemas/AttachmentRefOrValue'
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: The period for which the identification information is valid.
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -912,25 +912,28 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    RelatedParty:
+    TimePeriod:
       type: object
-      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
-      required:
-      - '@referredType'
-      - id
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
       properties:
-        id:
+        endDateTime:
           type: string
-          description: Unique identifier of a related entity.
-        href:
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
           type: string
-          description: Reference of the related entity.
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+    ExternalReference:
+      type: object
+      description: External reference of the individual or reference in other system
+      properties:
+        externalReferenceType:
+          type: string
+          description: Type of the external reference
         name:
           type: string
-          description: Name of the related entity.
-        role:
-          type: string
-          description: Role played by the related party
+          description: External reference name
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -941,9 +944,6 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -98,17 +98,16 @@ components:
         transactionId:
           type: string
           description: Message ID
-    PremiumData:
+    LoyaltyBalances:
       type: object
-      description: Contains response information pertaining to the premium request.
+      description: Contains all the loyalty balances associated with a customer.
       properties:
-        message:
-          type: string
-          description: A message send by the back end pertaining to the premium calculation request
-        premium:
+        generatedAmount:
           $ref: '#/components/schemas/Amount'
-        loyaltyInformation:
-          $ref: '#/components/schemas/LoyaltyBalances'
+        consumedAmount:
+          $ref: '#/components/schemas/Amount'
+        newBalance:
+          $ref: '#/components/schemas/Amount'
     PremiumRequest:
       type: object
       required:
@@ -142,37 +141,6 @@ components:
         message:
           type: string
           description: The calling customer can populate a message intended for the back-end application.
-    Amount:
-      type: object
-      required:
-      - value
-      - type
-      - unit
-      description: The amount details for a wallet.
-      properties:
-        type:
-          type: string
-          description: This is the type of the wallet value.
-          enum:
-          - CURRENCY
-          - DATA
-          - MINUTES
-          - SMS
-        value:
-          type: string
-          description: This is the value of a balance wallet.
-        unit:
-          type: string
-          description: This is the unit of the wallet value.
-          enum:
-          - ZAR
-          - NGN
-          - GB
-          - MB
-          - MINUTES
-          - SMS
-          - FCFA
-          example: NGN
     Error:
       type: object
       required:
@@ -206,6 +174,17 @@ components:
           type: string
           description: A unique identifier for tracking all requests
           example: '12939993'
+    PremiumData:
+      type: object
+      description: Contains response information pertaining to the premium request.
+      properties:
+        message:
+          type: string
+          description: A message send by the back end pertaining to the premium calculation request
+        premium:
+          $ref: '#/components/schemas/Amount'
+        loyaltyInformation:
+          $ref: '#/components/schemas/LoyaltyBalances'
     CustomerPremium:
       type: object
       required:
@@ -219,16 +198,37 @@ components:
           description: This will have MADAPI response mapping, based on the value received from the downstream system
         data:
           $ref: '#/components/schemas/PremiumData'
-    LoyaltyBalances:
+    Amount:
       type: object
-      description: Contains all the loyalty balances associated with a customer.
+      required:
+      - value
+      - type
+      - unit
+      description: The amount details for a wallet.
       properties:
-        generatedAmount:
-          $ref: '#/components/schemas/Amount'
-        consumedAmount:
-          $ref: '#/components/schemas/Amount'
-        newBalance:
-          $ref: '#/components/schemas/Amount'
+        type:
+          type: string
+          description: This is the type of the wallet value.
+          enum:
+          - CURRENCY
+          - DATA
+          - MINUTES
+          - SMS
+        value:
+          type: string
+          description: This is the value of a balance wallet.
+        unit:
+          type: string
+          description: This is the unit of the wallet value.
+          enum:
+          - ZAR
+          - NGN
+          - GB
+          - MB
+          - MINUTES
+          - SMS
+          - FCFA
+          example: NGN
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

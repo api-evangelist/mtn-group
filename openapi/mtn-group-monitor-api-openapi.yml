@@ -171,29 +171,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    HeaderItem:
-      type: object
-      description: An item typically included in a request or response
-      required:
-      - name
-      - value
-      properties:
-        name:
-          type: string
-          description: The name of the header item, e.g. locale
-        value:
-          type: string
-          description: The value of the header item, e.g. en-us
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
     Monitor:
       type: object
       description: Monitoring of resources
@@ -226,7 +203,7 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    Response:
+    Request:
       type: object
       description: A response to a request
       required:
@@ -235,16 +212,42 @@ components:
       properties:
         body:
           type: string
-          description: The body of the response. For example for an HTTP response might contain HTML for rendering.
-        statusCode:
+          description: The body of the request. For example for an HTTP request might contain content of a form .
+        method:
           type: string
-          description: The status of the response. For example for an HTTP response would be codes such as 200, 400, etc.
+          description: The protocol of the request, e.g. http
+        to:
+          type: string
+          description: The target of the request, e.g. a URL for an HTTP request
         header:
           type: array
           items:
             $ref: '#/components/schemas/HeaderItem'
           minItems: 1
-          description: Items included in the header of the response. For example for an HTTP response might contain negotiated locale.
+          description: Items included in the header of the request. For example for an HTTP request might contain requested locale, basic authentication.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    HeaderItem:
+      type: object
+      description: An item typically included in a request or response
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          description: The name of the header item, e.g. locale
+        value:
+          type: string
+          description: The value of the header item, e.g. en-us
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class
@@ -288,7 +291,7 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name.
-    Request:
+    Response:
       type: object
       description: A response to a request
       required:
@@ -297,19 +300,16 @@ components:
       properties:
         body:
           type: string
-          description: The body of the request. For example for an HTTP request might contain content of a form .
-        method:
+          description: The body of the response. For example for an HTTP response might contain HTML for rendering.
+        statusCode:
           type: string
-          description: The protocol of the request, e.g. http
-        to:
-          type: string
-          description: The target of the request, e.g. a URL for an HTTP request
+          description: The status of the response. For example for an HTTP response would be codes such as 200, 400, etc.
         header:
           type: array
           items:
             $ref: '#/components/schemas/HeaderItem'
           minItems: 1
-          description: Items included in the header of the request. For example for an HTTP request might contain requested locale, basic authentication.
+          description: Items included in the header of the response. For example for an HTTP response might contain negotiated locale.
         '@baseType':
           type: string
           description: When sub-classing, this defines the super-class

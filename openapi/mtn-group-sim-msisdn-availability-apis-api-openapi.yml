@@ -114,6 +114,30 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    RevisionValidFor:
+      type: object
+      properties:
+        startDate:
+          type: string
+        endDate:
+          type: string
+    RevisionResponseResourceItem:
+      type: object
+      properties:
+        resourceCapacityDemand:
+          $ref: '#/components/schemas/RevisionResponseResourceCapacityDemand'
+        appliedResourceCapacity:
+          $ref: '#/components/schemas/RevisionResponseAppliedResourceCapacity'
+        subReservationState:
+          type: string
+    RevisionResponseResourceCapacityDemand:
+      type: object
+      properties:
+        resourceCapacityDemandAmount:
+          type: integer
+          format: int32
+        '@type':
+          type: string
     RevisionResource:
       type: object
       properties:
@@ -127,74 +151,16 @@ components:
           type: string
         value:
           type: string
-    RevisionPatchRequestedPeriod:
+    RevisionAppliedResourceCapacity:
       type: object
       properties:
-        startDate:
-          type: string
-        endDate:
-          type: string
-    RevisionPatchItem:
-      type: object
-      properties:
-        resourceCapacityDemand:
-          $ref: '#/components/schemas/RevisionPatchResourceCapacityDemand'
-        appliedResourceCapacity:
-          $ref: '#/components/schemas/RevisionPatchAppliedResourceCapacity'
-        subReservationState:
-          type: string
-    RevisionRequest:
-      type: object
-      properties:
-        '@type':
-          type: string
-        resourceReservationItem:
-          $ref: '#/components/schemas/RevisionResourceReservationItem'
-        valid_for:
-          $ref: '#/components/schemas/RevisionValidFor'
-    RevisionResponseResourceReservationItem:
-      type: object
-      properties:
-        quantity:
+        appliedCapacityAmount:
           type: integer
           format: int32
-        items:
+        resource:
           type: array
           items:
-            $ref: '#/components/schemas/RevisionResponseResourceItem'
-    ResourceCapacityDemand:
-      type: object
-      properties:
-        resourceCapacityDemandAmount:
-          type: string
-        pattern:
-          type: string
-        '@type':
-          type: string
-    RevisionResourceCapacityDemand:
-      type: object
-      properties:
-        resourceCapacityDemandAmount:
-          type: integer
-          format: int32
-        '@type':
-          type: string
-    RevisionPatchResource:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-        value:
-          type: string
-    RevisionValidFor:
-      type: object
-      properties:
-        startDate:
-          type: string
-        endDate:
-          type: string
+            $ref: '#/components/schemas/RevisionResource'
     RevisionItem:
       type: object
       properties:
@@ -204,23 +170,6 @@ components:
           $ref: '#/components/schemas/RevisionResourceCapacityDemand'
         appliedResourceCapacity:
           $ref: '#/components/schemas/RevisionAppliedResourceCapacity'
-    RevisionResponseValidFor:
-      type: object
-      properties:
-        startDate:
-          type: string
-        endDate:
-          type: string
-    RevisionPatchResourceReservationItem:
-      type: object
-      properties:
-        quantity:
-          type: integer
-          format: int32
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/RevisionPatchItem'
     Error:
       required:
       - code
@@ -243,28 +192,6 @@ components:
           type: string
           description: URI of documentation describing the error.
           format: uri
-    RevisionPatchResponse:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-        description:
-          type: string
-        resourceReservationItem:
-          $ref: '#/components/schemas/RevisionPatchResourceReservationItem'
-        requestedPeriod:
-          $ref: '#/components/schemas/RevisionPatchRequestedPeriod'
-        createdAt:
-          type: string
-        updatedAt:
-          type: string
-        __v:
-          type: integer
-          format: int32
-        reservationState:
-          type: string
     RevisionPatchAppliedResourceCapacity:
       type: object
       properties:
@@ -274,30 +201,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RevisionPatchResource'
-    RevisionPatchResourceCapacityDemand:
+    RevisionPatchRequest:
+      type: object
+      properties:
+        reservationState:
+          type: string
+    RevisionResourceCapacityDemand:
       type: object
       properties:
         resourceCapacityDemandAmount:
           type: integer
           format: int32
-    RevisionResponse:
-      type: object
-      properties:
-        id:
-          type: string
         '@type':
           type: string
-        resourceReservationItem:
-          $ref: '#/components/schemas/RevisionResponseResourceReservationItem'
-        validfor:
-          $ref: '#/components/schemas/RevisionResponseValidFor'
-        reservationState:
+    RevisionPatchRequestedPeriod:
+      type: object
+      properties:
+        startDate:
           type: string
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RevisionResponseRelatedParty'
-        version:
+        endDate:
+          type: string
+    RevisionPatchResourceCapacityDemand:
+      type: object
+      properties:
+        resourceCapacityDemandAmount:
           type: integer
           format: int32
     RevisionResponseRelatedParty:
@@ -320,33 +247,49 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RevisionResponseResource'
-    RevisionPatchRequest:
+    RevisionPatchResourceReservationItem:
       type: object
       properties:
-        reservationState:
-          type: string
-    RevisionResponseResourceCapacityDemand:
-      type: object
-      properties:
-        resourceCapacityDemandAmount:
+        quantity:
           type: integer
           format: int32
-        '@type':
-          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RevisionPatchItem'
     AvailabilityCheck:
       type: object
       properties:
         resourceCapacityDemand:
           $ref: '#/components/schemas/ResourceCapacityDemand'
-    AppliedResourceCapacity:
+    RevisionResponseResourceReservationItem:
       type: object
       properties:
-        appliedCapacityAmount:
-          type: string
-        resource:
+        quantity:
+          type: integer
+          format: int32
+        items:
           type: array
           items:
-            $ref: '#/components/schemas/Resource'
+            $ref: '#/components/schemas/RevisionResponseResourceItem'
+    RevisionRequest:
+      type: object
+      properties:
+        '@type':
+          type: string
+        resourceReservationItem:
+          $ref: '#/components/schemas/RevisionResourceReservationItem'
+        valid_for:
+          $ref: '#/components/schemas/RevisionValidFor'
+    RevisionPatchItem:
+      type: object
+      properties:
+        resourceCapacityDemand:
+          $ref: '#/components/schemas/RevisionPatchResourceCapacityDemand'
+        appliedResourceCapacity:
+          $ref: '#/components/schemas/RevisionPatchAppliedResourceCapacity'
+        subReservationState:
+          type: string
     RevisionResponseResource:
       type: object
       properties:
@@ -358,15 +301,92 @@ components:
           type: string
         value:
           type: string
-    RevisionResponseResourceItem:
+    RevisionPatchResponse:
       type: object
       properties:
-        resourceCapacityDemand:
-          $ref: '#/components/schemas/RevisionResponseResourceCapacityDemand'
-        appliedResourceCapacity:
-          $ref: '#/components/schemas/RevisionResponseAppliedResourceCapacity'
-        subReservationState:
+        id:
           type: string
+        href:
+          type: string
+        description:
+          type: string
+        resourceReservationItem:
+          $ref: '#/components/schemas/RevisionPatchResourceReservationItem'
+        requestedPeriod:
+          $ref: '#/components/schemas/RevisionPatchRequestedPeriod'
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        __v:
+          type: integer
+          format: int32
+        reservationState:
+          type: string
+    RevisionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        '@type':
+          type: string
+        resourceReservationItem:
+          $ref: '#/components/schemas/RevisionResponseResourceReservationItem'
+        validfor:
+          $ref: '#/components/schemas/RevisionResponseValidFor'
+        reservationState:
+          type: string
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RevisionResponseRelatedParty'
+        version:
+          type: integer
+          format: int32
+    RevisionResponseValidFor:
+      type: object
+      properties:
+        startDate:
+          type: string
+        endDate:
+          type: string
+    RevisionPatchResource:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        value:
+          type: string
+    RevisionResourceReservationItem:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RevisionItem'
+    ResourceCapacityDemand:
+      type: object
+      properties:
+        resourceCapacityDemandAmount:
+          type: string
+        pattern:
+          type: string
+        '@type':
+          type: string
+    AppliedResourceCapacity:
+      type: object
+      properties:
+        appliedCapacityAmount:
+          type: string
+        resource:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
     AvailabilityResponse:
       type: object
       properties:
@@ -383,26 +403,6 @@ components:
           type: string
         value:
           type: string
-    RevisionResourceReservationItem:
-      type: object
-      properties:
-        quantity:
-          type: integer
-          format: int32
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/RevisionItem'
-    RevisionAppliedResourceCapacity:
-      type: object
-      properties:
-        appliedCapacityAmount:
-          type: integer
-          format: int32
-        resource:
-          type: array
-          items:
-            $ref: '#/components/schemas/RevisionResource'
   securitySchemes:
     Bearer:
       type: apiKey

@@ -163,55 +163,25 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    ServiceOrderItem:
+    Error403:
       type: object
-      required:
-      - orderType
-      - packges
       properties:
-        action:
+        statusCode:
           type: string
-          example: add
-          description: Action of the oder item
-          enum:
-          - add
-          - remove
-        orderType:
+          description: HTTP error code extension
+          example: '6000'
+        statusMessage:
           type: string
-          example: Modify
-          description: Order type of oder item
-          enum:
-          - Create
-          - Modify
-          - Migrate
-          - SIM Swap
-          - MSISDN Swap
-        packages:
-          description: Packages details
-          $ref: '#/components/schemas/Package'
-    Product:
-      type: object
-      required:
-      - action
-      - id
-      properties:
-        action:
+          description: Short description of the error
+          example: Forbidden
+        supportMessage:
           type: string
-          example: add
-          description: Product Action to determine the action of the product will be added or removed
-          enum:
-          - add
-          - remove
-        features:
-          type: array
-          description: List of feature
-          items:
-            $ref: '#/components/schemas/Feature'
-        id:
+          description: Longer description of the error
+          example: Please verify token environment or access token or API key
+        transactionId:
           type: string
-          example: APN
-          description: Product offering code is used to identify the product
-      title: Product
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
     Service:
       type: object
       properties:
@@ -235,70 +205,6 @@ components:
           type: string
           example: 27xxxxxxxxx
           description: Service Value contains the value of the given equipment
-    Error403:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '6000'
-        statusMessage:
-          type: string
-          description: Short description of the error
-          example: Forbidden
-        supportMessage:
-          type: string
-          description: Longer description of the error
-          example: Please verify token environment or access token or API key
-        transactionId:
-          type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
-    Error500:
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '3001'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: Internal Server Error
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        path:
-          type: string
-          description: The path that caused the error
-        method:
-          type: string
-          description: method used by MADAPI to get the response
-    Error401:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 4000
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-          example: Unauthorised
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-          example: Please verify token environment and key
-        faultMessage1:
-          type: string
-          description: ''
-        faultMessage2:
-          type: string
-          description: fault message
     ServiceOrder_Create:
       type: object
       required:
@@ -340,6 +246,54 @@ components:
           enum:
           - MADAPI
           - PROVIDENT
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        links:
+          type: array
+          items:
+            properties:
+              rel:
+                type: string
+              href:
+                type: string
+    Error500:
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3001'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: method used by MADAPI to get the response
     Package:
       type: object
       required:
@@ -407,56 +361,47 @@ components:
           description: List of service which includes equipment details such as MSISDN and SIM
           items:
             $ref: '#/components/schemas/Service'
-    Error400:
+    Error401:
       properties:
         statusCode:
           type: integer
           description: Status code from target system to indicate transaction status
+          example: 4000
         statusMessage:
           type: string
           description: Status message from target system to indicate transaction status.
+          example: Unauthorised
         supportMessage:
           type: string
           description: detail message from target system to indicate transaction status.
-        transactionId:
+          example: Please verify token environment and key
+        faultMessage1:
           type: string
-          description: This is the same transactionId that is sent in the request
-          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
-        links:
-          type: array
-          items:
-            properties:
-              rel:
-                type: string
-              href:
-                type: string
-    CreateServiceOrder_SuccessResponse:
-      type: object
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+    Error405:
       properties:
-        statusCode:
+        timestamp:
           type: string
-          description: HTTP error code extension
-          example: '0000'
-        statusMessage:
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
           type: string
-          description: status of Message.
-          example: Successful
-        transactionId:
+          description: error message
+          example: Method Not Allowed
+        message:
           type: string
-          description: transactionId from the backend or MADAPI generated during request.
-          example: 1f73e9a3-39fa-596a-a030-e03d8cb01a2c
-        supportMessage:
+          description: details
+        path:
           type: string
-          example: Order has been modified
-          description: Short description
-        requestorRefNum:
-          type: string
-          example: '320055544792213'
-          description: Requester reference number consumer uses for identify the order
-        sorbRefNum:
-          type: string
-          example: 1700037701915-n-0
-          description: Sorb reference number is the Id used to identify the SORB Order Request
+          description: The path that caused the error
     GetServiceOrderResponse:
       type: object
       properties:
@@ -488,41 +433,56 @@ components:
                 type: string
                 description: APN name associated with Partner
                 example: apn_34345.co.za
-    Feature:
+    CreateServiceOrder_SuccessResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '0000'
+        statusMessage:
+          type: string
+          description: status of Message.
+          example: Successful
+        transactionId:
+          type: string
+          description: transactionId from the backend or MADAPI generated during request.
+          example: 1f73e9a3-39fa-596a-a030-e03d8cb01a2c
+        supportMessage:
+          type: string
+          example: Order has been modified
+          description: Short description
+        requestorRefNum:
+          type: string
+          example: '320055544792213'
+          description: Requester reference number consumer uses for identify the order
+        sorbRefNum:
+          type: string
+          example: 1700037701915-n-0
+          description: Sorb reference number is the Id used to identify the SORB Order Request
+    Product:
       type: object
       required:
-      - name
-      - value
+      - action
+      - id
       properties:
-        name:
+        action:
           type: string
-          example: ID
-          description: Name is used identify the name of the parameter
-        value:
+          example: add
+          description: Product Action to determine the action of the product will be added or removed
+          enum:
+          - add
+          - remove
+        features:
+          type: array
+          description: List of feature
+          items:
+            $ref: '#/components/schemas/Feature'
+        id:
           type: string
-          example: '01575'
-          description: Value is used to get the incoming parameter value in the request
-    Error405:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 405
-        error:
-          type: string
-          description: error message
-          example: Method Not Allowed
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
+          example: APN
+          description: Product offering code is used to identify the product
+      title: Product
     Error404:
       properties:
         timestamp:
@@ -544,6 +504,46 @@ components:
         path:
           type: string
           description: The path that caused the error
+    ServiceOrderItem:
+      type: object
+      required:
+      - orderType
+      - packges
+      properties:
+        action:
+          type: string
+          example: add
+          description: Action of the oder item
+          enum:
+          - add
+          - remove
+        orderType:
+          type: string
+          example: Modify
+          description: Order type of oder item
+          enum:
+          - Create
+          - Modify
+          - Migrate
+          - SIM Swap
+          - MSISDN Swap
+        packages:
+          description: Packages details
+          $ref: '#/components/schemas/Package'
+    Feature:
+      type: object
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          example: ID
+          description: Name is used identify the name of the parameter
+        value:
+          type: string
+          example: '01575'
+          description: Value is used to get the incoming parameter value in the request
   securitySchemes:
     OAuth2:
       type: oauth2

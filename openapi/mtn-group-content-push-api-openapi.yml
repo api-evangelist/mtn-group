@@ -180,6 +180,46 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Error403:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '6000'
+        statusMessage:
+          type: string
+          description: Short description of the error
+          example: Forbidden
+        supportMessage:
+          type: string
+          description: Longer description of the error
+          example: Please verify token environment or access token or API key
+        transactionId:
+          type: string
+          description: Id for tracing.
+          example: fg545f-cf4gg4fd55-fdg85hg6
+    Error400:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+          example: '2023-10-25T09:52:55.166+00:00'
+        status:
+          type: string
+          description: Text explaining the reason for the error
+          example: '400'
+        error:
+          type: string
+          example: Bad Request
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: ''
+          example: /customers/1234567890321/identityStatus
     wigPushResponse:
       type: object
       properties:
@@ -206,25 +246,6 @@ components:
               type: string
               description: backend generated transaction id
               example: '2134432'
-    Error403:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '6000'
-        statusMessage:
-          type: string
-          description: Short description of the error
-          example: Forbidden
-        supportMessage:
-          type: string
-          description: Longer description of the error
-          example: Please verify token environment or access token or API key
-        transactionId:
-          type: string
-          description: Id for tracing.
-          example: fg545f-cf4gg4fd55-fdg85hg6
     Error500:
       properties:
         statusCode:
@@ -250,27 +271,6 @@ components:
         method:
           type: string
           description: method used by MADAPI to get the response
-    Error401:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 4000
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-          example: Unauthorised
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-          example: Please verify token environment and key
-        faultMessage1:
-          type: string
-          description: ''
-        faultMessage2:
-          type: string
-          description: fault message
-          example: oauth.v2.InvalidApiKey
     wigPushRequest:
       type: object
       required:
@@ -296,6 +296,68 @@ components:
                 example: '3'
                 type: string
                 description: unique id
+    sendSmsResponse:
+      required:
+      - data
+      - statusCode
+      - statusMessage
+      - transactionId
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+          example: '0000'
+        statusMessage:
+          type: string
+          description: Message.
+          example: Send Sms is in progress
+        transactionId:
+          type: string
+          description: MSISDN of the customer provided in the input as customerId
+          example: 0987777896789999781
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
+          example: oauth.v2.InvalidApiKey
+    Error405:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
+          type: string
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
     sendSmsRequest:
       required:
       - customerId
@@ -325,47 +387,20 @@ components:
         linkId:
           type: string
           description: Link ID
-    Error400:
+    Error404:
       properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Error response code
-          example: '2023-10-25T09:52:55.166+00:00'
-        status:
-          type: string
-          description: Text explaining the reason for the error
-          example: '400'
-        error:
-          type: string
-          example: Bad Request
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: ''
-          example: /customers/1234567890321/identityStatus
-    sendSmsResponse:
-      required:
-      - data
-      - statusCode
-      - statusMessage
-      - transactionId
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-          example: '0000'
-        statusMessage:
-          type: string
-          description: Message.
-          example: Send Sms is in progress
-        transactionId:
-          type: string
-          description: MSISDN of the customer provided in the input as customerId
-          example: 0987777896789999781
+        fault:
+          properties:
+            faultstring:
+              type: string
+              description: ''
+              example: 'Unable to identify proxy for host: southafrica and url: /v1o/kycVerification/customers/1234567890123333/identityStatus'
+            detail:
+              properties:
+                errorcode:
+                  type: string
+                  description: ''
+                  example: messaging.adaptors.http.flow.ApplicationNotFound
     Error:
       type: object
       required:
@@ -399,41 +434,6 @@ components:
           type: string
           description: The HTTP method type that was used
           example: POST
-    Error405:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 405
-        error:
-          type: string
-          description: error message
-          example: Method Not Allowed
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
-    Error404:
-      properties:
-        fault:
-          properties:
-            faultstring:
-              type: string
-              description: ''
-              example: 'Unable to identify proxy for host: southafrica and url: /v1o/kycVerification/customers/1234567890123333/identityStatus'
-            detail:
-              properties:
-                errorcode:
-                  type: string
-                  description: ''
-                  example: messaging.adaptors.http.flow.ApplicationNotFound
   securitySchemes:
     apiKey:
       type: apiKey

@@ -109,39 +109,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    ProductOfferingRef:
-      type: object
-      required:
-      - id
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity. This can be product id or offer id etc.
-        name:
-          type: string
-          description: Name of the related entity. This can be product name or offer name etc.
-        type:
-          type: string
-          description: Type of a product or offer,e.g., weekly, daily, monthly etc.
-        description:
-          type: string
-        occurance:
-          type: string
-          enum:
-          - autoRenew
-          - onceOff
-        isChargable:
-          type: boolean
-        price:
-          $ref: '#/components/schemas/Money'
-        productSpecification:
-          $ref: '#/components/schemas/ProductSpecificationRef'
-        referredType:
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-        baseType:
-          type: string
-          description: When sub-classing, this defines the super-class
     Quantity:
       type: object
       description: An amount in a given unit
@@ -154,46 +121,6 @@ components:
         units:
           type: string
           description: Unit
-    Money:
-      type: object
-      description: A base / value business entity used to represent money
-      properties:
-        unit:
-          type: string
-          description: Currency (ISO4217 norm uses 3 letters to define the currency)
-        value:
-          type: number
-          format: float
-          description: A positive floating point number
-    ProductSpecificationRef:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity. This can be product id or offer id etc.
-        name:
-          type: string
-          description: Name of the related entity. This can be product name or offer name etc.
-        type:
-          type: string
-          description: Type of a product or offer,e.g., Data, SMS, Voice etc.
-        validity:
-          type: string
-          description: Validity of a product or offer.
-        quantity:
-          $ref: '#/components/schemas/Quantity'
-    TimePeriod:
-      type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
-      properties:
-        endDateTime:
-          type: string
-          format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
-          type: string
-          format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
     SubCategory:
       type: object
       description: The category resource is used to group product offerings, service and resource candidates in logical containers. Categories can contain other categories and/or product offerings, resource or service candidates.
@@ -245,24 +172,23 @@ components:
         validFor:
           $ref: '#/components/schemas/TimePeriod'
           description: The period for which the category is valid
-    Response_Category_ID:
+    ProductSpecificationRef:
       type: object
-      required:
-      - resultCode
-      - resultDescription
-      - data
       properties:
-        resultCode:
+        id:
           type: string
-          description: Result code. Example- '0000'
-        resultDescription:
+          description: Unique identifier of a related entity. This can be product id or offer id etc.
+        name:
           type: string
-          description: Result message. Example- 'Successfully processed'
-        transactionId:
+          description: Name of the related entity. This can be product name or offer name etc.
+        type:
           type: string
-          description: Transaction id returned by the provider system.
-        data:
-          $ref: '#/components/schemas/SubCategory'
+          description: Type of a product or offer,e.g., Data, SMS, Voice etc.
+        validity:
+          type: string
+          description: Validity of a product or offer.
+        quantity:
+          $ref: '#/components/schemas/Quantity'
     SubCategoryRef:
       type: object
       description: The category for grouping recommendations
@@ -296,6 +222,80 @@ components:
           description: The actual type of the target instance when needed for disambiguation.
       required:
       - id
+    Money:
+      type: object
+      description: A base / value business entity used to represent money
+      properties:
+        unit:
+          type: string
+          description: Currency (ISO4217 norm uses 3 letters to define the currency)
+        value:
+          type: number
+          format: float
+          description: A positive floating point number
+    TimePeriod:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          type: string
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+    ProductOfferingRef:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity. This can be product id or offer id etc.
+        name:
+          type: string
+          description: Name of the related entity. This can be product name or offer name etc.
+        type:
+          type: string
+          description: Type of a product or offer,e.g., weekly, daily, monthly etc.
+        description:
+          type: string
+        occurance:
+          type: string
+          enum:
+          - autoRenew
+          - onceOff
+        isChargable:
+          type: boolean
+        price:
+          $ref: '#/components/schemas/Money'
+        productSpecification:
+          $ref: '#/components/schemas/ProductSpecificationRef'
+        referredType:
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+        baseType:
+          type: string
+          description: When sub-classing, this defines the super-class
+    Response_Category_ID:
+      type: object
+      required:
+      - resultCode
+      - resultDescription
+      - data
+      properties:
+        resultCode:
+          type: string
+          description: Result code. Example- '0000'
+        resultDescription:
+          type: string
+          description: Result message. Example- 'Successfully processed'
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
+        data:
+          $ref: '#/components/schemas/SubCategory'
     Error:
       type: object
       title: Error

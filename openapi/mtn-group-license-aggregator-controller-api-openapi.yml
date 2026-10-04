@@ -184,26 +184,14 @@ paths:
                 $ref: '#/components/schemas/ServerErrorResponse'
 components:
   schemas:
-    ServiceOrderItem:
+    Note:
       type: object
       properties:
-        itemId:
+        id:
           type: string
-        serviceOrderId:
+        text:
           type: string
-        itemAction:
-          type: string
-        payment:
-          $ref: '#/components/schemas/Payment'
-    Validity:
-      type: object
-      properties:
-        validityType:
-          type: integer
-          format: int32
-        expirationDate:
-          type: string
-    RelatedEntity:
+    RelatedParty:
       type: object
       properties:
         id:
@@ -211,6 +199,10 @@ components:
         name:
           type: string
         role:
+          type: string
+        phoneNumber:
+          type: string
+        email:
           type: string
         '@referredType':
           type: string
@@ -235,77 +227,6 @@ components:
         timestamp:
           type: string
           example: 2025-08-05 20:57:21+00:00
-    UnauthorizedErrorResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '4000'
-        statusMessage:
-          type: string
-          example: Unauthorized
-        supportMessage:
-          type: string
-          example: The supplied authentication is invalid.
-        httpStatus;:
-          type: object
-          example:
-            code: 401
-            series: CLIENT_ERROR
-            reason: Unauthorized
-        timestamp:
-          type: string
-          example: 2025-08-05 20:57:21+00:00
-    Payment:
-      type: object
-      properties:
-        paymentType:
-          type: string
-        billingInterval:
-          type: string
-        invoicingInterval:
-          type: integer
-          format: int32
-        invoicingType:
-          type: string
-    Links:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/Link'
-    Link:
-      type: object
-      properties:
-        href:
-          type: string
-        hreflang:
-          type: string
-        title:
-          type: string
-        type:
-          type: string
-        deprecation:
-          type: string
-        profile:
-          type: string
-        name:
-          type: string
-        templated:
-          type: boolean
-    RelatedParty:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        role:
-          type: string
-        phoneNumber:
-          type: string
-        email:
-          type: string
-        '@referredType':
-          type: string
     LicenseRequest:
       type: object
       properties:
@@ -350,18 +271,66 @@ components:
           type: string
         name:
           type: string
-    Note:
+    Validity:
       type: object
       properties:
-        id:
+        validityType:
+          type: integer
+          format: int32
+        expirationDate:
           type: string
-        text:
-          type: string
-    APIResponse:
+    UnauthorizedErrorResponse:
       type: object
       properties:
-        _links:
-          $ref: '#/components/schemas/Links'
+        statusCode:
+          type: string
+          example: '4000'
+        statusMessage:
+          type: string
+          example: Unauthorized
+        supportMessage:
+          type: string
+          example: The supplied authentication is invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 401
+            series: CLIENT_ERROR
+            reason: Unauthorized
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    Payment:
+      type: object
+      properties:
+        paymentType:
+          type: string
+        billingInterval:
+          type: string
+        invoicingInterval:
+          type: integer
+          format: int32
+        invoicingType:
+          type: string
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+        hreflang:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        deprecation:
+          type: string
+        profile:
+          type: string
+        name:
+          type: string
+        templated:
+          type: boolean
     ServerErrorResponse:
       type: object
       properties:
@@ -383,3 +352,34 @@ components:
         timestamp:
           type: string
           example: 2025-08-05 20:57:21+00:00
+    Links:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Link'
+    APIResponse:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/Links'
+    ServiceOrderItem:
+      type: object
+      properties:
+        itemId:
+          type: string
+        serviceOrderId:
+          type: string
+        itemAction:
+          type: string
+        payment:
+          $ref: '#/components/schemas/Payment'
+    RelatedEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        '@referredType':
+          type: string

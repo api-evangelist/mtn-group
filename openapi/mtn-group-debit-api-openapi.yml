@@ -78,19 +78,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    offerDetails:
-      type: object
-      properties:
-        offerId:
-          type: string
-          minLength: 1
-          description: Offer Identification
-          example: 12345
-        offerInfo:
-          type: string
-          minLength: 1
-          description: Offer Description
-          example: 1 GB ShowmaxBundle
     VATDetails:
       type: object
       properties:
@@ -111,65 +98,6 @@ components:
           enum:
           - Y
           - N
-    debitResponse:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      - supportMessage
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-        data:
-          type: object
-          properties:
-            msn:
-              type: string
-              minLength: 16
-              maxLength: 64
-              description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
-              example: '5115314911298406'
-            orderRef:
-              type: string
-              minLength: 1
-              description: This field is the payment reference of the transaction being queried.
-              example: '1236457'
-            timestamp:
-              type: string
-              format: date-time
-              description: Time stamp of the error
-    Error:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        statusCode:
-          type: string
-          description: Status code returned by provider system
-        statusMessage:
-          type: string
-          description: Status description
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
     debitRequest:
       type: object
       properties:
@@ -242,6 +170,78 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/offerDetails'
+    offerDetails:
+      type: object
+      properties:
+        offerId:
+          type: string
+          minLength: 1
+          description: Offer Identification
+          example: 12345
+        offerInfo:
+          type: string
+          minLength: 1
+          description: Offer Description
+          example: 1 GB ShowmaxBundle
+    debitResponse:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            msn:
+              type: string
+              minLength: 16
+              maxLength: 64
+              description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+              example: '5115314911298406'
+            orderRef:
+              type: string
+              minLength: 1
+              description: This field is the payment reference of the transaction being queried.
+              example: '1236457'
+            timestamp:
+              type: string
+              format: date-time
+              description: Time stamp of the error
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+        statusMessage:
+          type: string
+          description: Status description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

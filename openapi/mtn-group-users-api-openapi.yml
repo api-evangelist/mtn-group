@@ -262,190 +262,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    UserReqObject:
-      type: object
-      additionalProperties: false
-      properties:
-        appMetadata:
-          type: object
-          description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
-          properties:
-            dpoMetadata:
-              type: object
-              allOf:
-              - $ref: '#/components/schemas/DPOMetadataObject'
-        clientId:
-          type: string
-          description: The ID of the client (application) for which the invitation is being sent.
-    UserObject:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          description: The user's email address
-          example: user@example.com
-        emailVerified:
-          type: boolean
-          description: Whether the user's email address is verified
-          example: true
-        username:
-          type: string
-          description: The user's username
-          example: user
-        phoneNumber:
-          type: string
-          description: The user's phone number
-          example: '+1234567890'
-        phoneVerified:
-          type: boolean
-          description: Whether the user's phone number is verified
-          example: false
-        identities:
-          type: array
-          description: The user's identities
-          items:
-            type: object
-            properties:
-              userId:
-                type: string
-                description: The identity's user identifier
-                example: 5f22f7f57f5d4b45c5c3292a
-              provider:
-                type: string
-                description: The identity's provider
-                example: auth0
-              connection:
-                type: string
-                description: The identity's connection
-                example: mtnid
-              isSocial:
-                type: boolean
-                description: Whether the identity is social
-                example: false
-        picture:
-          type: string
-          description: The URL of the user's picture
-          example: https://example.com/user-picture.jpg
-        name:
-          type: string
-          description: The user's name
-          example: John Doe
-        nickname:
-          type: string
-          description: The user's nickname
-          example: johnny
-        multifactor:
-          type: array
-          description: The types of multifactor authentication the user has enrolled in
-          items:
-            type: string
-            example: guardian
-        appMetadata:
-          type: object
-          description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
-        userMetadata:
-          type: object
-          description: Metadata associated with the user that does not impact the user's core functionality and is editable by the user
-        blocked:
-          type: boolean
-          description: Whether the user is blocked
-          example: false
-        givenName:
-          type: string
-          description: The user's given name
-          example: John
-        familyName:
-          type: string
-          description: The user's family name
-          example: Doe
-    Error500:
-      properties:
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: Internal Server Error
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '3001'
-    Error401:
-      properties:
-        error:
-          type: string
-          description: error message from target system to indicate transaction status.
-          example: missing_authorization
-        error_description:
-          type: string
-          description: detailed error message from target system to indicate transaction status.
-          example: Missing Authorization header
-    userIdentityResponse:
-      type: object
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-        supportMessage:
-          type: string
-          description: Any additional message from backend
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        data:
-          type: object
-          properties:
-            users:
-              type: array
-              items:
-                properties:
-                  appMetadata:
-                    type: object
-                    description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
-                    properties:
-                      profile:
-                        type: object
-                        properties:
-                          encodedUsername:
-                            type: string
-                            description: username in encoded format
-                            example: bWFraGlsMDA2QGdtYWlsLmNvbQ
-                          phoneVerified:
-                            type: boolean
-                            description: Whether the user's phone number is verified
-                            example: 'false'
-                          profileType:
-                            type: string
-                            description: profile communication
-                            example: email_only
-                          unwantedPatterns:
-                            type: boolean
-                            description: any pattern identified
-                            example: 'false'
-                          emailAlreadyExist:
-                            type: boolean
-                            description: Checks if user email already exit in active directory
-                            example: false
-                      dpoMetadata:
-                        type: object
-                        allOf:
-                        - $ref: '#/components/schemas/DPOMetadataObject'
-    Error400:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
     DPOMetadataObject:
       type: object
       additionalProperties: false
@@ -530,6 +346,55 @@ components:
               type: integer
               description: The number of times the user has logged in
               example: 42
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+    Error500:
+      properties:
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3001'
+    UserReqObject:
+      type: object
+      additionalProperties: false
+      properties:
+        appMetadata:
+          type: object
+          description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
+          properties:
+            dpoMetadata:
+              type: object
+              allOf:
+              - $ref: '#/components/schemas/DPOMetadataObject'
+        clientId:
+          type: string
+          description: The ID of the client (application) for which the invitation is being sent.
+    Error401:
+      properties:
+        error:
+          type: string
+          description: error message from target system to indicate transaction status.
+          example: missing_authorization
+        error_description:
+          type: string
+          description: detailed error message from target system to indicate transaction status.
+          example: Missing Authorization header
     Error405:
       properties:
         timestamp:
@@ -561,6 +426,141 @@ components:
           type: string
           description: details
           example: no match found
+    UserObject:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: The user's email address
+          example: user@example.com
+        emailVerified:
+          type: boolean
+          description: Whether the user's email address is verified
+          example: true
+        username:
+          type: string
+          description: The user's username
+          example: user
+        phoneNumber:
+          type: string
+          description: The user's phone number
+          example: '+1234567890'
+        phoneVerified:
+          type: boolean
+          description: Whether the user's phone number is verified
+          example: false
+        identities:
+          type: array
+          description: The user's identities
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+                description: The identity's user identifier
+                example: 5f22f7f57f5d4b45c5c3292a
+              provider:
+                type: string
+                description: The identity's provider
+                example: auth0
+              connection:
+                type: string
+                description: The identity's connection
+                example: mtnid
+              isSocial:
+                type: boolean
+                description: Whether the identity is social
+                example: false
+        picture:
+          type: string
+          description: The URL of the user's picture
+          example: https://example.com/user-picture.jpg
+        name:
+          type: string
+          description: The user's name
+          example: John Doe
+        nickname:
+          type: string
+          description: The user's nickname
+          example: johnny
+        multifactor:
+          type: array
+          description: The types of multifactor authentication the user has enrolled in
+          items:
+            type: string
+            example: guardian
+        appMetadata:
+          type: object
+          description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
+        userMetadata:
+          type: object
+          description: Metadata associated with the user that does not impact the user's core functionality and is editable by the user
+        blocked:
+          type: boolean
+          description: Whether the user is blocked
+          example: false
+        givenName:
+          type: string
+          description: The user's given name
+          example: John
+        familyName:
+          type: string
+          description: The user's family name
+          example: Doe
+    userIdentityResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: Any additional message from backend
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        data:
+          type: object
+          properties:
+            users:
+              type: array
+              items:
+                properties:
+                  appMetadata:
+                    type: object
+                    description: Metadata associated with the user that impacts the user's core functionality and is editable by the application but not the user
+                    properties:
+                      profile:
+                        type: object
+                        properties:
+                          encodedUsername:
+                            type: string
+                            description: username in encoded format
+                            example: bWFraGlsMDA2QGdtYWlsLmNvbQ
+                          phoneVerified:
+                            type: boolean
+                            description: Whether the user's phone number is verified
+                            example: 'false'
+                          profileType:
+                            type: string
+                            description: profile communication
+                            example: email_only
+                          unwantedPatterns:
+                            type: boolean
+                            description: any pattern identified
+                            example: 'false'
+                          emailAlreadyExist:
+                            type: boolean
+                            description: Checks if user email already exit in active directory
+                            example: false
+                      dpoMetadata:
+                        type: object
+                        allOf:
+                        - $ref: '#/components/schemas/DPOMetadataObject'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
