@@ -187,6 +187,38 @@ paths:
       x-operation-id-original: Get Product
 components:
   schemas:
+    CreateLoyaltyBalance:
+      title: CreateLoyaltyBalance
+      type: object
+      properties:
+        quantity:
+          $ref: '#/components/schemas/Quantity'
+      required:
+      - quantity
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+          example: 2019-08-23T07:29:25.593+0000
     ProductProgramCategoriesResponseData:
       title: ProductProgramUpdate
       type: object
@@ -203,6 +235,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProductCharacteristics'
+    ProductCharacteristics:
+      title: ProductLinkRef
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    LoyaltyAccountCreate:
+      title: LoyaltyAccountCreate
+      type: object
+      properties:
+        id:
+          type: string
+        loyaltyBalance:
+          $ref: '#/components/schemas/CreateLoyaltyBalance'
     Quantity:
       title: Quantity
       type: object
@@ -215,22 +263,6 @@ components:
       required:
       - unit
       - balance
-    CreateLoyaltyBalance:
-      title: CreateLoyaltyBalance
-      type: object
-      properties:
-        quantity:
-          $ref: '#/components/schemas/Quantity'
-      required:
-      - quantity
-    LoyaltyAccountCreate:
-      title: LoyaltyAccountCreate
-      type: object
-      properties:
-        id:
-          type: string
-        loyaltyBalance:
-          $ref: '#/components/schemas/CreateLoyaltyBalance'
     ProductProgramRef:
       title: ProductProgram
       type: object
@@ -260,38 +292,6 @@ components:
       required:
       - name
       - productSpecId
-    ProductCharacteristics:
-      title: ProductLinkRef
-      type: object
-      properties:
-        name:
-          type: string
-        value:
-          type: string
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp of the error
-          example: 2019-08-23T07:29:25.593+0000
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

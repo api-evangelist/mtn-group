@@ -78,6 +78,32 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        statusCode:
+          type: string
+          description: Status code returned by provider system
+        statusMessage:
+          type: string
+          description: Status description
+        supportMessage:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: The path that caused the error
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        transactionId:
+          type: string
+          description: Transaction id returned by the provider system.
     VATDetails:
       type: object
       properties:
@@ -170,19 +196,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/offerDetails'
-    offerDetails:
-      type: object
-      properties:
-        offerId:
-          type: string
-          minLength: 1
-          description: Offer Identification
-          example: 12345
-        offerInfo:
-          type: string
-          minLength: 1
-          description: Offer Description
-          example: 1 GB ShowmaxBundle
     debitResponse:
       type: object
       required:
@@ -216,32 +229,19 @@ components:
               type: string
               format: date-time
               description: Time stamp of the error
-    Error:
+    offerDetails:
       type: object
-      title: Error
-      required:
-      - status
-      - message
       properties:
-        statusCode:
+        offerId:
           type: string
-          description: Status code returned by provider system
-        statusMessage:
+          minLength: 1
+          description: Offer Identification
+          example: 12345
+        offerInfo:
           type: string
-          description: Status description
-        supportMessage:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: The path that caused the error
-        timestamp:
-          type: string
-          format: date-time
-          description: Time stamp of the error
-        transactionId:
-          type: string
-          description: Transaction id returned by the provider system.
+          minLength: 1
+          description: Offer Description
+          example: 1 GB ShowmaxBundle
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

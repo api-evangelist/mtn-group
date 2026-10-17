@@ -78,23 +78,7 @@ paths:
       x-operation-id-original: getLeave Balance
 components:
   schemas:
-    Error400:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 5000
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
-    Error500:
+    Error415:
       properties:
         timestamp:
           type: string
@@ -102,17 +86,16 @@ components:
           description: Timestamp that the error occurred
           example: '2021-07-21T17:32:28Z'
         status:
-          type: string
-          description: status code from backend
-          example: '500'
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 415
         error:
           type: string
-          description: Type of error
-          example: Internal Server Error
+          description: error message
+          example: Unsupported Media Type
         message:
           type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: Internal Server Error
+          description: details
         path:
           type: string
           description: The path that caused the error
@@ -175,7 +158,7 @@ components:
                 type: string
                 description: This is the actual leave balance formatted
                 example: 31 Days
-    Error415:
+    Error500:
       properties:
         timestamp:
           type: string
@@ -183,16 +166,17 @@ components:
           description: Timestamp that the error occurred
           example: '2021-07-21T17:32:28Z'
         status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 415
+          type: string
+          description: status code from backend
+          example: '500'
         error:
           type: string
-          description: error message
-          example: Unsupported Media Type
+          description: Type of error
+          example: Internal Server Error
         message:
           type: string
-          description: details
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
         path:
           type: string
           description: The path that caused the error
@@ -216,6 +200,22 @@ components:
         faultMessage2:
           type: string
           description: fault message
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 5000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
     Error404:
       properties:
         timestamp:

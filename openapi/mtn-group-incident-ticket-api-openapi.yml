@@ -72,110 +72,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ContactMedium:
-      type: object
-      description: Indicates the contact medium that could be used to contact the party.
-      properties:
-        mediumType:
-          type: string
-          description: 'Type of the contact medium, such as: physicalAdress,postalAddress,contactPerson etc.'
-        preferred:
-          type: boolean
-          description: If true, indicates that is the preferred contact medium
-        characteristic:
-          $ref: '#/components/schemas/MediumCharacteristic'
-          description: Any additional characteristic(s) of this contact medium
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    MediumCharacteristic:
-      type: object
-      description: Describes the contact medium characteristics that could be used to contact a party (an individual or an organization)
-      properties:
-        contact:
-          type: string
-          description: Person's phone number or email
-        buildingNumber:
-          type: string
-          description: Building number
-        city:
-          type: string
-          description: The city
-        contactType:
-          type: string
-          description: 'The type of contact, for example: phone number such as mobile, fixed home, fixed office. postal address such as shipping instalation…'
-        addressType:
-          type: string
-          description: Type of address such as residential address, office address etc.
-        placeName:
-          type: string
-          description: Name of village or town or place etc.
-        sectorName:
-          type: string
-          description: Name of sector or relevant etc.
-        cellName:
-          type: string
-          description: Name of cell number or town or place etc.
-        districtName:
-          type: string
-          description: Name of village or town or place etc.
-        street1:
-          type: string
-          description: Describes the street
-        state:
-          type: string
-        region:
-          type: string
-          description: Region of the complainant
-        street:
-          type: string
-        street2:
-          type: string
-        postCode:
-          type: string
-          description: Postcode
-        stateOrProvince:
-          type: string
-          description: State or province
-        country:
-          type: string
-          description: The country
-        emailAddress:
-          type: string
-          description: Full email address in standard format
-        faxNumber:
-          type: string
-          description: The fax number of the contact
-        phoneNumber:
-          type: string
-          description: The primary phone number of the contact
-        alternateNumber:
-          type: array
-          items:
-            type: string
-            description: List of alternate phone/contact numbers of the customer
-            example:
-            - '2507865432'
-        socialNetworkId:
-          type: string
-          description: Identifier as a member of a social network
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-          format: uri
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
     updateTicket:
       type: object
       required:
@@ -309,52 +205,6 @@ components:
         commentsUpdateStaffCode:
           type: string
           description: Comment of the individual submitting the update
-    TicketCreateData:
-      type: object
-      properties:
-        referenceNumber:
-          type: string
-          description: Ticket reference number
-        estimatedResolutionTime:
-          type: string
-          description: Estimated resolition time for the ticket created
-        urgency:
-          type: string
-          description: Urgency / priority of the created ticket
-        docketRefNumber:
-          type: string
-        incidentReopenCount:
-          type: number
-          description: Number of times the ticket has been re-opened
-    ticketResponse:
-      type: object
-      required:
-      - targetIncidentNumber
-      - statusCode
-      - statusMessage
-      - originTransactionId
-      - targetTransactionId
-      properties:
-        targetIncidentNumber:
-          type: string
-          description: Target ticket identifier, this is the id of the ticket at the target system
-        statusCode:
-          type: string
-          description: Status code from target system to indicate transaction status
-        statusMessage:
-          type: string
-          description: Status response description
-          example: processed
-        originTransactionId:
-          type: string
-          description: Transaction identifier generated by system originating the request
-          example: MTN123456
-        targetTransactionId:
-          type: string
-          description: Transaction identifier generated by target
-          example: 17af7d89db62885072fa83305b961972
-        data:
-          $ref: '#/components/schemas/TicketCreateData'
     newTicket:
       type: object
       required:
@@ -462,6 +312,156 @@ components:
           description: Subscriber Name
         contactMedium:
           $ref: '#/components/schemas/ContactMedium'
+    ticketResponse:
+      type: object
+      required:
+      - targetIncidentNumber
+      - statusCode
+      - statusMessage
+      - originTransactionId
+      - targetTransactionId
+      properties:
+        targetIncidentNumber:
+          type: string
+          description: Target ticket identifier, this is the id of the ticket at the target system
+        statusCode:
+          type: string
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status response description
+          example: processed
+        originTransactionId:
+          type: string
+          description: Transaction identifier generated by system originating the request
+          example: MTN123456
+        targetTransactionId:
+          type: string
+          description: Transaction identifier generated by target
+          example: 17af7d89db62885072fa83305b961972
+        data:
+          $ref: '#/components/schemas/TicketCreateData'
+    TicketCreateData:
+      type: object
+      properties:
+        referenceNumber:
+          type: string
+          description: Ticket reference number
+        estimatedResolutionTime:
+          type: string
+          description: Estimated resolition time for the ticket created
+        urgency:
+          type: string
+          description: Urgency / priority of the created ticket
+        docketRefNumber:
+          type: string
+        incidentReopenCount:
+          type: number
+          description: Number of times the ticket has been re-opened
+    MediumCharacteristic:
+      type: object
+      description: Describes the contact medium characteristics that could be used to contact a party (an individual or an organization)
+      properties:
+        contact:
+          type: string
+          description: Person's phone number or email
+        buildingNumber:
+          type: string
+          description: Building number
+        city:
+          type: string
+          description: The city
+        contactType:
+          type: string
+          description: 'The type of contact, for example: phone number such as mobile, fixed home, fixed office. postal address such as shipping instalation…'
+        addressType:
+          type: string
+          description: Type of address such as residential address, office address etc.
+        placeName:
+          type: string
+          description: Name of village or town or place etc.
+        sectorName:
+          type: string
+          description: Name of sector or relevant etc.
+        cellName:
+          type: string
+          description: Name of cell number or town or place etc.
+        districtName:
+          type: string
+          description: Name of village or town or place etc.
+        street1:
+          type: string
+          description: Describes the street
+        state:
+          type: string
+        region:
+          type: string
+          description: Region of the complainant
+        street:
+          type: string
+        street2:
+          type: string
+        postCode:
+          type: string
+          description: Postcode
+        stateOrProvince:
+          type: string
+          description: State or province
+        country:
+          type: string
+          description: The country
+        emailAddress:
+          type: string
+          description: Full email address in standard format
+        faxNumber:
+          type: string
+          description: The fax number of the contact
+        phoneNumber:
+          type: string
+          description: The primary phone number of the contact
+        alternateNumber:
+          type: array
+          items:
+            type: string
+            description: List of alternate phone/contact numbers of the customer
+            example:
+            - '2507865432'
+        socialNetworkId:
+          type: string
+          description: Identifier as a member of a social network
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    ContactMedium:
+      type: object
+      description: Indicates the contact medium that could be used to contact the party.
+      properties:
+        mediumType:
+          type: string
+          description: 'Type of the contact medium, such as: physicalAdress,postalAddress,contactPerson etc.'
+        preferred:
+          type: boolean
+          description: If true, indicates that is the preferred contact medium
+        characteristic:
+          $ref: '#/components/schemas/MediumCharacteristic'
+          description: Any additional characteristic(s) of this contact medium
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+          format: uri
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

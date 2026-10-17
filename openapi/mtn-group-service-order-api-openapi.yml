@@ -163,6 +163,29 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
+    Product:
+      type: object
+      required:
+      - action
+      - id
+      properties:
+        action:
+          type: string
+          example: add
+          description: Product Action to determine the action of the product will be added or removed
+          enum:
+          - add
+          - remove
+        features:
+          type: array
+          description: List of feature
+          items:
+            $ref: '#/components/schemas/Feature'
+        id:
+          type: string
+          example: APN
+          description: Product offering code is used to identify the product
+      title: Product
     Error403:
       type: object
       properties:
@@ -182,29 +205,6 @@ components:
           type: string
           description: Id for tracing.
           example: fg545f-cf4gg4fd55-fdg85hg6
-    Service:
-      type: object
-      properties:
-        itemAction:
-          type: string
-          example: add
-          description: Item Action to determine the action of the equipment such add/remove
-          enum:
-          - add
-          - remove
-        type:
-          type: string
-          example: MSISDN
-          description: Service Type defines the equipment type such as MSISDN/SIM Card
-          enum:
-          - MSISDN
-          - SIM Card
-          - APN
-          - IP Address
-        value:
-          type: string
-          example: 27xxxxxxxxx
-          description: Service Value contains the value of the given equipment
     ServiceOrder_Create:
       type: object
       required:
@@ -246,29 +246,6 @@ components:
           enum:
           - MADAPI
           - PROVIDENT
-    Error400:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
-        links:
-          type: array
-          items:
-            properties:
-              rel:
-                type: string
-              href:
-                type: string
     Error500:
       properties:
         statusCode:
@@ -381,27 +358,66 @@ components:
         faultMessage2:
           type: string
           description: fault message
-    Error405:
+    Error400:
       properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
+        statusCode:
           type: integer
           description: Status code from target system to indicate transaction status
-          example: 405
-        error:
+        statusMessage:
           type: string
-          description: error message
-          example: Method Not Allowed
-        message:
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
           type: string
-          description: details
-        path:
+          description: detail message from target system to indicate transaction status.
+        transactionId:
           type: string
-          description: The path that caused the error
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        links:
+          type: array
+          items:
+            properties:
+              rel:
+                type: string
+              href:
+                type: string
+    Feature:
+      type: object
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          example: ID
+          description: Name is used identify the name of the parameter
+        value:
+          type: string
+          example: '01575'
+          description: Value is used to get the incoming parameter value in the request
+    Service:
+      type: object
+      properties:
+        itemAction:
+          type: string
+          example: add
+          description: Item Action to determine the action of the equipment such add/remove
+          enum:
+          - add
+          - remove
+        type:
+          type: string
+          example: MSISDN
+          description: Service Type defines the equipment type such as MSISDN/SIM Card
+          enum:
+          - MSISDN
+          - SIM Card
+          - APN
+          - IP Address
+        value:
+          type: string
+          example: 27xxxxxxxxx
+          description: Service Value contains the value of the given equipment
     GetServiceOrderResponse:
       type: object
       properties:
@@ -460,29 +476,27 @@ components:
           type: string
           example: 1700037701915-n-0
           description: Sorb reference number is the Id used to identify the SORB Order Request
-    Product:
-      type: object
-      required:
-      - action
-      - id
+    Error405:
       properties:
-        action:
+        timestamp:
           type: string
-          example: add
-          description: Product Action to determine the action of the product will be added or removed
-          enum:
-          - add
-          - remove
-        features:
-          type: array
-          description: List of feature
-          items:
-            $ref: '#/components/schemas/Feature'
-        id:
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
+        error:
           type: string
-          example: APN
-          description: Product offering code is used to identify the product
-      title: Product
+          description: error message
+          example: Method Not Allowed
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
     Error404:
       properties:
         timestamp:
@@ -530,20 +544,6 @@ components:
         packages:
           description: Packages details
           $ref: '#/components/schemas/Package'
-    Feature:
-      type: object
-      required:
-      - name
-      - value
-      properties:
-        name:
-          type: string
-          example: ID
-          description: Name is used identify the name of the parameter
-        value:
-          type: string
-          example: '01575'
-          description: Value is used to get the incoming parameter value in the request
   securitySchemes:
     OAuth2:
       type: oauth2

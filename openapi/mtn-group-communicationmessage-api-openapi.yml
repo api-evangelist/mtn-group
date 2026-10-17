@@ -248,27 +248,27 @@ paths:
     - url: https://api.mtn.com/v1
 components:
   schemas:
-    MessagingTemplate:
-      type: array
-      items:
+    CommunicationMessage:
+      allOf:
+      - required:
+        - statusCode
+        - statusMessage
+        - integrationId
         properties:
-          contentType:
+          statusCode:
             type: string
-            example: Attachment
-          attachment:
-            type: object
-            properties:
-              mediaType:
-                type: string
-              filename:
-                type: string
-              mime:
-                type: string
-              url:
-                type: string
-    ReferenceMediaReply:
-      required:
-      - files
+            description: Status of the transaction •  0- Success •  Any value other than 0- Failure
+            example: '0000'
+          statusMessage:
+            type: string
+            description: Indicates status of transaction
+          supportMessage:
+            type: string
+            description: Support message
+          integrationId:
+            type: string
+            description: Unique integration Id
+    TextReply:
       type: object
       properties:
         channel:
@@ -290,29 +290,112 @@ components:
           type: string
         whatsapp:
           $ref: '#/components/schemas/WhatsAppContent'
-        caption:
+        charset:
           type: string
-        files:
+        content:
+          type: string
+    ReplyEvents:
+      type: object
+      properties:
+        moText:
           type: array
-          description: 'An array of the file object with a list of media items that is attached to the inbound media message. This parameter is only applicable to MO event callbacks for media by reference '
           items:
-            $ref: '#/components/schemas/ReferenceMediaFile'
-    MessageMediaResponse:
+            $ref: '#/components/schemas/TextReply'
+        moMedia:
+          type: array
+          items:
+            $ref: '#/components/schemas/MediaReply'
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+          example: 2019-08-23T07:29:25.593+0000
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/<path>
+    WhatsAppContent:
+      type: object
+      properties:
+        profileName:
+          type: string
+    MessagingTemplate:
+      type: array
+      items:
+        properties:
+          contentType:
+            type: string
+            example: Attachment
+          attachment:
+            type: object
+            properties:
+              mediaType:
+                type: string
+              filename:
+                type: string
+              mime:
+                type: string
+              url:
+                type: string
+    ReferenceMediaFile:
+      required:
+      - byteSize
+      - contentType
+      - downloadUrl
+      type: object
+      properties:
+        contentType:
+          type: string
+          description: Media content type for the media item
+        downloadUrl:
+          type: string
+          description: Download URL to be used for downloading the media item
+        sha256Hash:
+          type: string
+        byteSize:
+          type: integer
+          description: Byte size of the file to be downloaded
+          format: int64
+        fileName:
+          type: string
+          description: Original file name (if it is available)
+    MediaResponse:
       allOf:
       - required:
-        - apiMessageId
+        - fileId
         - accepted
         - error
         properties:
-          apiMessageId:
+          fileId:
             type: string
             description: Unique identifier for every file upload response
           accepted:
             type: boolean
             description: Status of the upload
-          to:
-            type: string
-            description: Sender Id
           error:
             type: string
             description: Indicates error status
@@ -342,11 +425,25 @@ components:
           type: string
         anyOf:
           $ref: '#/components/schemas/ReferenceMediaReply'
-    WhatsAppContent:
-      type: object
-      properties:
-        profileName:
-          type: string
+    MessageMediaResponse:
+      allOf:
+      - required:
+        - apiMessageId
+        - accepted
+        - error
+        properties:
+          apiMessageId:
+            type: string
+            description: Unique identifier for every file upload response
+          accepted:
+            type: boolean
+            description: Status of the upload
+          to:
+            type: string
+            description: Sender Id
+          error:
+            type: string
+            description: Indicates error status
     CommunicationMessage_inbound:
       type: object
       properties:
@@ -356,53 +453,6 @@ components:
           type: string
         event:
           $ref: '#/components/schemas/ReplyEvents'
-    MediaResponse:
-      allOf:
-      - required:
-        - fileId
-        - accepted
-        - error
-        properties:
-          fileId:
-            type: string
-            description: Unique identifier for every file upload response
-          accepted:
-            type: boolean
-            description: Status of the upload
-          error:
-            type: string
-            description: Indicates error status
-    CommunicationMessage:
-      allOf:
-      - required:
-        - statusCode
-        - statusMessage
-        - integrationId
-        properties:
-          statusCode:
-            type: string
-            description: Status of the transaction •  0- Success •  Any value other than 0- Failure
-            example: '0000'
-          statusMessage:
-            type: string
-            description: Indicates status of transaction
-          supportMessage:
-            type: string
-            description: Support message
-          integrationId:
-            type: string
-            description: Unique integration Id
-    ReplyEvents:
-      type: object
-      properties:
-        moText:
-          type: array
-          items:
-            $ref: '#/components/schemas/TextReply'
-        moMedia:
-          type: array
-          items:
-            $ref: '#/components/schemas/MediaReply'
     CommunicationMessage_outboundMessageWithMedia:
       type: object
       properties:
@@ -450,62 +500,9 @@ components:
               type: string
         content:
           $ref: '#/components/schemas/MessagingTemplate'
-    ReferenceMediaFile:
+    ReferenceMediaReply:
       required:
-      - byteSize
-      - contentType
-      - downloadUrl
-      type: object
-      properties:
-        contentType:
-          type: string
-          description: Media content type for the media item
-        downloadUrl:
-          type: string
-          description: Download URL to be used for downloading the media item
-        sha256Hash:
-          type: string
-        byteSize:
-          type: integer
-          description: Byte size of the file to be downloaded
-          format: int64
-        fileName:
-          type: string
-          description: Original file name (if it is available)
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp of the error
-          example: 2019-08-23T07:29:25.593+0000
-        _links:
-          type: object
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
-                  example: https://api.mtn.com/v1/<path>
-    TextReply:
+      - files
       type: object
       properties:
         channel:
@@ -527,44 +524,13 @@ components:
           type: string
         whatsapp:
           $ref: '#/components/schemas/WhatsAppContent'
-        charset:
+        caption:
           type: string
-        content:
-          type: string
-    RelateParty:
-      type: object
-      description: <b><i>The party entity of the receiver (user)</i></b>
-      properties:
-        href:
-          type: string
-          description: Hypertext Reference of the party
-        id:
-          type: string
-          description: Unique identifier of party
-        name:
-          type: string
-          description: name of the party
-        postBack:
-          type: string
-          description: Send back information
-        role:
-          type: string
-          description: role of the party (customer, partner, etc)
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: Validity period of the party
-    TimePeriod:
-      type: object
-      description: A base / value business entity used to represent a period of time between two timepoints.
-      properties:
-        endDateTime:
-          type: string
-          format: date-time
-          description: An instant of time, ending at the TimePeriod.
-        startDateTime:
-          type: string
-          format: date-time
-          description: An instant of time, starting at the TimePeriod
+        files:
+          type: array
+          description: 'An array of the file object with a list of media items that is attached to the inbound media message. This parameter is only applicable to MO event callbacks for media by reference '
+          items:
+            $ref: '#/components/schemas/ReferenceMediaFile'
     Sender:
       type: object
       description: <b><i>Sender of the communication message.</i></b>
@@ -604,6 +570,44 @@ components:
           type: string
           format: date-time
           description: The time of sending communication message
+    Attachment:
+      type: object
+      description: Complements the description of an element (for instance a product) through video, pictures...
+      properties:
+        description:
+          type: string
+          description: A narrative text describing the content of the attachment
+        href:
+          type: string
+          description: Reference of the attachment
+        id:
+          type: string
+          description: Unique identifier of the attachment
+        type:
+          type: string
+          description: Attachment type such as video, picture
+        url:
+          type: string
+          description: Uniform Resource Locator, is a web page address (a subset of URI)
+    Error_2:
+      required:
+      - statusCode
+      - statusMessage
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
     CommunicationRequestCharacteristic:
       type: object
       description: <b><i>The values of parameters which are used in the content if the content contains them.</i></b>
@@ -650,6 +654,64 @@ components:
         description:
           type: string
           description: Content parameter value
+    TimePeriod:
+      type: object
+      description: A base / value business entity used to represent a period of time between two timepoints.
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+          description: An instant of time, ending at the TimePeriod.
+        startDateTime:
+          type: string
+          format: date-time
+          description: An instant of time, starting at the TimePeriod
+    RelateParty:
+      type: object
+      description: <b><i>The party entity of the receiver (user)</i></b>
+      properties:
+        href:
+          type: string
+          description: Hypertext Reference of the party
+        id:
+          type: string
+          description: Unique identifier of party
+        name:
+          type: string
+          description: name of the party
+        postBack:
+          type: string
+          description: Send back information
+        role:
+          type: string
+          description: role of the party (customer, partner, etc)
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: Validity period of the party
+    Receiver:
+      type: object
+      description: <b><i>Receivers of the communication message.</i></b>
+      properties:
+        appUserId:
+          type: string
+          description: ID of the mobile app user
+        email:
+          type: string
+          description: Receiver address of email, if the communication type is email
+        id:
+          type: string
+          description: ID of the receiver
+        ip:
+          type: string
+          description: IP address of the receiver
+        name:
+          type: string
+          description: Name of the receiver
+        phoneNumber:
+          type: string
+          description: Phone number of the receiver, if the communication type is SMS.
+        party:
+          $ref: '#/components/schemas/RelateParty'
     CommunicationMessage_Create2:
       type: object
       description: 'Communication message means a notification approach in the format of a message which can be dispatched (sent) to the certain user by the system with the content which can be felt and understood by the recipient. The user can be either a final customer or a customer service agent. The message can reach the customer in different interaction channels, including: email, short message, mobile app notification (push).
@@ -692,68 +754,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Attachment'
-    Error_2:
-      required:
-      - statusCode
-      - statusMessage
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-    Attachment:
-      type: object
-      description: Complements the description of an element (for instance a product) through video, pictures...
-      properties:
-        description:
-          type: string
-          description: A narrative text describing the content of the attachment
-        href:
-          type: string
-          description: Reference of the attachment
-        id:
-          type: string
-          description: Unique identifier of the attachment
-        type:
-          type: string
-          description: Attachment type such as video, picture
-        url:
-          type: string
-          description: Uniform Resource Locator, is a web page address (a subset of URI)
-    Receiver:
-      type: object
-      description: <b><i>Receivers of the communication message.</i></b>
-      properties:
-        appUserId:
-          type: string
-          description: ID of the mobile app user
-        email:
-          type: string
-          description: Receiver address of email, if the communication type is email
-        id:
-          type: string
-          description: ID of the receiver
-        ip:
-          type: string
-          description: IP address of the receiver
-        name:
-          type: string
-          description: Name of the receiver
-        phoneNumber:
-          type: string
-          description: Phone number of the receiver, if the communication type is SMS.
-        party:
-          $ref: '#/components/schemas/RelateParty'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

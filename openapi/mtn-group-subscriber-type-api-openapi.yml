@@ -75,29 +75,6 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    Error400:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
-        links:
-          type: array
-          items:
-            properties:
-              rel:
-                type: string
-              href:
-                type: string
     Error500:
       properties:
         statusCode:
@@ -143,6 +120,50 @@ components:
         faultMessage2:
           type: string
           description: fault message
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        links:
+          type: array
+          items:
+            properties:
+              rel:
+                type: string
+              href:
+                type: string
+    Error404:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        error:
+          type: string
+          description: error message
+          example: Not found
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
     subscriberTypeResponse:
       allOf:
       - required:
@@ -170,27 +191,6 @@ components:
         result:
           type: string
           description: Tells whether the customer is a legacy or Siyakhula customer. E.g., SIYAKHULA SUBSCRIBER ,LEGACY SUBSCRIBER
-    Error404:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 404
-        error:
-          type: string
-          description: error message
-          example: Not found
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

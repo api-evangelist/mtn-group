@@ -316,120 +316,6 @@ paths:
         required: true
 components:
   schemas:
-    PaymentMethodType:
-      description: Representation of a payment method
-      properties:
-        id:
-          type: string
-          description: Unique id of the payment method in the server
-        type:
-          type: string
-          enum:
-          - bank
-          - bankCard
-          - tokenizedCard
-          description: Payment method type. The content of the details field depends on the value of this one
-        details:
-          type: object
-          properties:
-            tokenizedCard:
-              description: List of tokenized cards
-              type: array
-              items:
-                $ref: '#/components/schemas/TokenizedCard'
-            bank:
-              description: List of tokenized cards
-              type: array
-              items:
-                $ref: '#/components/schemas/Banks'
-      required:
-      - id
-      - type
-      - details
-    bankDetails:
-      type: object
-      description: Bank details of the customer. Mandatory if paymentMethod is Debit Order
-      required:
-      - accountHolderName
-      - bankAccountType
-      - bankName
-      - bankBranchCode
-      - bankAccountNumber
-      properties:
-        accountHolderName:
-          type: string
-          description: Customer name as per the new bank account details.
-        bankAccountType:
-          type: string
-          description: Customer bank account type as per the new bank account details.
-          enum:
-          - Cheque Current
-          - Savings
-          - Bond
-          - None
-          - Other
-          - Transmission
-        bankName:
-          type: string
-          description: Customer bank account name as per the new bank account details.
-          enum:
-          - ABSA Bank
-          - Bank of Athens
-          - Bidvest Bank
-          - Capitec Bank
-          - FNB
-          - Investec Private Bank
-          - Nedbank
-          - SA Post Bank (Post Office)
-          - Standard Bank
-        bankBranchCode:
-          type: number
-          description: Bank branch code as per the new bank account details.
-        bankAccountNumber:
-          type: string
-          description: Bank account number as per the new bank account details.
-    TokenizedCard:
-      description: Representation of a tokenized card
-      properties:
-        brand:
-          type: string
-          example: MASTERCARD
-        value:
-          type: string
-          description: 'This is the card tokenized string '
-          example: FLdduzYEwOYwdEaC0D5z/vjc/iwQ/P8q3oAdAtvTTg4=
-        tokenType:
-          type: string
-          description: This is an indicator whether it is a debit or credit card
-          example: DEBIT
-        token:
-          type: string
-          description: Masked card number
-          example: 511111xxxxxx1118
-        issuer:
-          type: string
-          description: Card issuer
-          example: FISERV SOLUTIONS, LLC
-        expiry:
-          type: string
-          description: Expiry of a card
-          example: '0423'
-        id:
-          type: string
-          description: can be customer id associated with the token
-          example: 00039930433
-        expired:
-          type: boolean
-          description: Shows if the card is expired or not
-          example: false
-        recurring:
-          type: boolean
-          description: Shows if the card is reccuring or not
-          example: false
-        date:
-          type: string
-          description: a registration date associated with the token
-          example: '2022-04-15T15:39:33.881Z'
     Banks:
       description: Representation of a tokenized card
       properties:
@@ -505,6 +391,120 @@ components:
           type: string
           description: The HTTP method type that was used
           example: PUT
+    TokenizedCard:
+      description: Representation of a tokenized card
+      properties:
+        brand:
+          type: string
+          example: MASTERCARD
+        value:
+          type: string
+          description: 'This is the card tokenized string '
+          example: FLdduzYEwOYwdEaC0D5z/vjc/iwQ/P8q3oAdAtvTTg4=
+        tokenType:
+          type: string
+          description: This is an indicator whether it is a debit or credit card
+          example: DEBIT
+        token:
+          type: string
+          description: Masked card number
+          example: 511111xxxxxx1118
+        issuer:
+          type: string
+          description: Card issuer
+          example: FISERV SOLUTIONS, LLC
+        expiry:
+          type: string
+          description: Expiry of a card
+          example: '0423'
+        id:
+          type: string
+          description: can be customer id associated with the token
+          example: 00039930433
+        expired:
+          type: boolean
+          description: Shows if the card is expired or not
+          example: false
+        recurring:
+          type: boolean
+          description: Shows if the card is reccuring or not
+          example: false
+        date:
+          type: string
+          description: a registration date associated with the token
+          example: '2022-04-15T15:39:33.881Z'
+    bankDetails:
+      type: object
+      description: Bank details of the customer. Mandatory if paymentMethod is Debit Order
+      required:
+      - accountHolderName
+      - bankAccountType
+      - bankName
+      - bankBranchCode
+      - bankAccountNumber
+      properties:
+        accountHolderName:
+          type: string
+          description: Customer name as per the new bank account details.
+        bankAccountType:
+          type: string
+          description: Customer bank account type as per the new bank account details.
+          enum:
+          - Cheque Current
+          - Savings
+          - Bond
+          - None
+          - Other
+          - Transmission
+        bankName:
+          type: string
+          description: Customer bank account name as per the new bank account details.
+          enum:
+          - ABSA Bank
+          - Bank of Athens
+          - Bidvest Bank
+          - Capitec Bank
+          - FNB
+          - Investec Private Bank
+          - Nedbank
+          - SA Post Bank (Post Office)
+          - Standard Bank
+        bankBranchCode:
+          type: number
+          description: Bank branch code as per the new bank account details.
+        bankAccountNumber:
+          type: string
+          description: Bank account number as per the new bank account details.
+    PaymentMethodType:
+      description: Representation of a payment method
+      properties:
+        id:
+          type: string
+          description: Unique id of the payment method in the server
+        type:
+          type: string
+          enum:
+          - bank
+          - bankCard
+          - tokenizedCard
+          description: Payment method type. The content of the details field depends on the value of this one
+        details:
+          type: object
+          properties:
+            tokenizedCard:
+              description: List of tokenized cards
+              type: array
+              items:
+                $ref: '#/components/schemas/TokenizedCard'
+            bank:
+              description: List of tokenized cards
+              type: array
+              items:
+                $ref: '#/components/schemas/Banks'
+      required:
+      - id
+      - type
+      - details
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

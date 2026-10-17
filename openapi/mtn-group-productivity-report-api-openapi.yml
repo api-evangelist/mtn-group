@@ -90,6 +90,21 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    hateoasLinks:
+      type: object
+      required:
+      - self
+      properties:
+        self:
+          type: object
+          required:
+          - href
+          description: ''
+          properties:
+            href:
+              type: string
+              description: The HAETOS link referring to this object
+              example: https://api.mtn.com/v1/analytics/sra_mohabd/productivity
     metricValue:
       required:
       - type
@@ -107,38 +122,6 @@ components:
           type: number
           description: The metric value could be double or integer
           example: 4
-    hateoasLinks:
-      type: object
-      required:
-      - self
-      properties:
-        self:
-          type: object
-          required:
-          - href
-          description: ''
-          properties:
-            href:
-              type: string
-              description: The HAETOS link referring to this object
-              example: https://api.mtn.com/v1/analytics/sra_mohabd/productivity
-    reportWrapper:
-      type: object
-      required:
-      - _link
-      properties:
-        data:
-          type: object
-          required:
-          - report
-          properties:
-            report:
-              type: array
-              items:
-                $ref: '#/components/schemas/metric'
-        _link:
-          type: object
-          $ref: '#/components/schemas/hateoasLinks'
     Error:
       properties:
         timestamp:
@@ -161,6 +144,23 @@ components:
         path:
           type: string
           description: ''
+    reportWrapper:
+      type: object
+      required:
+      - _link
+      properties:
+        data:
+          type: object
+          required:
+          - report
+          properties:
+            report:
+              type: array
+              items:
+                $ref: '#/components/schemas/metric'
+        _link:
+          type: object
+          $ref: '#/components/schemas/hateoasLinks'
     metric:
       type: object
       properties:

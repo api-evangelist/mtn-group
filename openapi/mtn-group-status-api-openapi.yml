@@ -330,7 +330,31 @@ paths:
     - url: https://api.mtn.com/v1/customer
 components:
   schemas:
-    Any: {}
+    AccountholderProfile:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+        statusMessage:
+          type: string
+          description: Message of the transaction. Either Success or Failure.
+        transactionId:
+          type: string
+          description: Unique identifier for every request to the backend. Mapped from input request.
+          example: 5345345
+        customerId:
+          type: string
+          example: MTN123456
+          description: Id provided in the input, could be an MSISDN or an account id that was used in getting the info.
+        sequenceNo:
+          type: string
+          description: A unique id used in tracing all requests
+          example: 12345
+        data:
+          $ref: '#/components/schemas/data'
+        _links:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links'
     AccountholderProfileResponse__links_self:
       type: object
       properties:
@@ -338,6 +362,39 @@ components:
           type: string
           example: https://host:port/v1/accountholders/12345
           description: Hyperlink to access the Accountholder's Profile.
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the error occured.
+          example: 2018-05-01T00:00
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+        supportMessage:
+          type: string
+          description: Support Message
+        customerId:
+          type: string
+          description: Customer ID or msisdn
+        sequenceNo:
+          type: string
+          description: A unique id for tracing all requests
+          example: 12345
+        transactionId:
+          type: string
+          description: Message ID
+        _links:
+          $ref: '#/components/schemas/AccountholderProfileResponse__links'
+    Any: {}
     AccountholderProfileResponse__links:
       type: object
       properties:
@@ -462,63 +519,6 @@ components:
           properties:
             code:
               type: string
-    AccountholderProfile:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-        statusMessage:
-          type: string
-          description: Message of the transaction. Either Success or Failure.
-        transactionId:
-          type: string
-          description: Unique identifier for every request to the backend. Mapped from input request.
-          example: 5345345
-        customerId:
-          type: string
-          example: MTN123456
-          description: Id provided in the input, could be an MSISDN or an account id that was used in getting the info.
-        sequenceNo:
-          type: string
-          description: A unique id used in tracing all requests
-          example: 12345
-        data:
-          $ref: '#/components/schemas/data'
-        _links:
-          $ref: '#/components/schemas/AccountholderProfileResponse__links'
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp when the error occured.
-          example: 2018-05-01T00:00
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client.
-        supportMessage:
-          type: string
-          description: Support Message
-        customerId:
-          type: string
-          description: Customer ID or msisdn
-        sequenceNo:
-          type: string
-          description: A unique id for tracing all requests
-          example: 12345
-        transactionId:
-          type: string
-          description: Message ID
-        _links:
-          $ref: '#/components/schemas/AccountholderProfileResponse__links'
     ParentAttributes:
       type: object
       description: Describes a given characteristic of an object or entity through a name/value pair.
@@ -535,38 +535,6 @@ components:
         value:
           $ref: '#/components/schemas/Any'
           description: The value of the characteristic
-    tokenStatResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-        data:
-          type: object
-          properties:
-            msn:
-              type: string
-              minLength: 16
-              maxLength: 64
-              description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
-              example: '5115314911298406'
-            contentToken:
-              type: string
-              minLength: 16
-              maxLength: 96
-              description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
-              example: 81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058
-            tokenState:
-              type: string
-              minLength: 1
-              maxLength: 64
-              description: The status of the token.
-              example: Pending
     transStatResponse:
       type: object
       required:
@@ -609,6 +577,38 @@ components:
               type: string
               format: date-time
               description: Time stamp of the error
+    tokenStatResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            msn:
+              type: string
+              minLength: 16
+              maxLength: 64
+              description: This field represents the message sequence number assigned by the CGW this can be used to uniquely track submitted requests.
+              example: '5115314911298406'
+            contentToken:
+              type: string
+              minLength: 16
+              maxLength: 96
+              description: Token generated to be used for identifying the service for activation, billing, cancellation and refund.
+              example: 81B27C92607C6D47274C2859CF51B954A4EE99DFCC7DD89066F6CD41D74A10CE23CCD7C8A32B73DEDC0F2470B703F058
+            tokenState:
+              type: string
+              minLength: 1
+              maxLength: 64
+              description: The status of the token.
+              example: Pending
     Error_2:
       type: object
       title: Error

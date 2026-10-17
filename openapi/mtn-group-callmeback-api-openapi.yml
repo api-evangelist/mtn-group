@@ -89,6 +89,28 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    CallMeBackRequest:
+      required:
+      - id
+      - idType
+      - name
+      - reason
+      - information
+      description: Callmeback
+      properties:
+        id:
+          description: id is a string which countains a value, if  id is msisdn (MADAPI Encrypts msisdn as per AYO encryption Requirement), In the logs Msisdn can be shown as encrypted and nonencrypted format(DTqlExQCSuW7K+hoes45mg==)
+          example: '2345676788'
+          type: string
+        idType:
+          enum:
+          - MSISDN
+          type: string
+          description: type of id
+          example: MSISDN
+        information:
+          type: string
+          $ref: '#/components/schemas/information'
     Success:
       type: object
       required:
@@ -190,28 +212,6 @@ components:
           type: string
           example: business error
           description: type of error is shown for non 200 response and mapped from AYO response
-    CallMeBackRequest:
-      required:
-      - id
-      - idType
-      - name
-      - reason
-      - information
-      description: Callmeback
-      properties:
-        id:
-          description: id is a string which countains a value, if  id is msisdn (MADAPI Encrypts msisdn as per AYO encryption Requirement), In the logs Msisdn can be shown as encrypted and nonencrypted format(DTqlExQCSuW7K+hoes45mg==)
-          example: '2345676788'
-          type: string
-        idType:
-          enum:
-          - MSISDN
-          type: string
-          description: type of id
-          example: MSISDN
-        information:
-          type: string
-          $ref: '#/components/schemas/information'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

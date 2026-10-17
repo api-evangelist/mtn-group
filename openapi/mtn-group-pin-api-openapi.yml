@@ -749,6 +749,32 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    CreatePinResponseData:
+      type: object
+      title: CreatePinResponseData
+      properties:
+        message:
+          type: string
+          example: Subscriber secret created successfully
+          description: API Success Message. i.e. Subscriber secret created successfully
+    GetProfileDetailsResponse:
+      type: object
+      required:
+      - name
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: Success API code. '0000' in case of success
+        statusMessage:
+          type: string
+          example: String
+        transactionId:
+          type: string
+          example: String
+        data:
+          type: object
+          $ref: '#/components/schemas/GetProfileDetailsResponseData'
     ValidateSecurityAnswerResponse:
       type: object
       required:
@@ -767,165 +793,6 @@ components:
         data:
           type: object
           $ref: '#/components/schemas/ValidateSecurityAnswerResponseData'
-    ChangePinResponseData:
-      type: object
-      title: ChangePinResponseData
-      properties:
-        message:
-          type: string
-          example: Subscriber secret has been changed and SMS sent successfully
-          description: API Success Message.i.e. Subscriber secret has been changed and SMS sent successfully
-        amountCharged:
-          type: object
-          properties:
-            value:
-              type: number
-            unit:
-              type: string
-    securityquestionAnswer:
-      type: object
-      required:
-      - name
-      properties:
-        securityQuestion:
-          type: string
-          example: string
-          description: user will enter security question
-        securityAnswer:
-          type: string
-          example: string
-          description: user will enter answer for security question
-    CreatePinResponse:
-      type: object
-      required:
-      - name
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-          description: Success API code. '0000' in case of success
-        statusMessage:
-          type: string
-          example: String
-        transactionId:
-          type: string
-          example: String
-        data:
-          type: object
-          $ref: '#/components/schemas/CreatePinResponseData'
-    CreatePinResponseData:
-      type: object
-      title: CreatePinResponseData
-      properties:
-        message:
-          type: string
-          example: Subscriber secret created successfully
-          description: API Success Message. i.e. Subscriber secret created successfully
-    ValidatePinResponse:
-      type: object
-      required:
-      - name
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-          description: Success API code. '0000' in case of success
-        statusMessage:
-          type: string
-          example: String
-        transactionId:
-          type: string
-          example: String
-        data:
-          type: object
-          $ref: '#/components/schemas/ValidatePinResponseData'
-    resetPinResponse:
-      type: object
-      required:
-      - name
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-          description: Success API code. '0000' in case of success
-        statusMessage:
-          type: string
-          example: String
-        transactionId:
-          type: string
-          example: String
-        data:
-          type: object
-          $ref: '#/components/schemas/ResetPinResponseData'
-    ValidatePinResponseData:
-      type: object
-      title: ValidatePinResponseData
-      properties:
-        message:
-          type: string
-          example: Subscriber secret authenticated successfully
-          description: API Success Message. i.e. Subscriber secret authenticated successfully
-        forcePasswordChange:
-          type: string
-          example: 'false'
-          description: true/false
-        securityQuestionAvailable:
-          type: string
-          example: 'true'
-        emailID:
-          type: string
-          example: sharma.anuj@tecnotree.com
-        tncAccepted:
-          type: array
-          items:
-            type: string
-          example:
-          - Version: '2.0'
-            AcceptedDate: '2020-07-11T13:43:30.830Z'
-        tncLastUpdtdate:
-          type: string
-          example: '2020-07-01T10:10:11.830Z'
-        tncLastUpdtversion:
-          type: string
-          example: '2.0'
-    GetProfileDetailsResponseData:
-      type: object
-      title: GetProfileDetailsResponseData
-      properties:
-        message:
-          type: string
-          example: Terms & Conditions retreived Successfully
-          description: API Success Message. i.e. This is Smartapp Terms & Conditions
-    ResetPinResponseData:
-      type: object
-      title: ResetPinResponseData
-      properties:
-        message:
-          type: string
-          example: pin changed and SMS sent to customer Successfully
-          description: API Success Message.i.e. Pin changed and SMS sent to customer Successfully
-        amountCharged:
-          type: object
-          properties:
-            value:
-              type: number
-            unit:
-              type: string
-    SecurityQuestionAnswers:
-      type: array
-      items:
-        type: object
-        properties:
-          SecurityQuestionAnswer:
-            $ref: '#/components/schemas/securityquestionAnswer'
-    ValidateSecurityAnswerResponseData:
-      type: object
-      title: ValidateSecurityAnswerResponseData
-      properties:
-        message:
-          type: string
-          example: Subscriber answer validated successfully
-          description: API Success Message.i.e. Subscriber answer validated successfully
     Error:
       type: object
       required:
@@ -959,7 +826,7 @@ components:
           type: string
           description: The HTTP method type that was used
           example: GET
-    GetProfileDetailsResponse:
+    CreatePinResponse:
       type: object
       required:
       - name
@@ -976,7 +843,101 @@ components:
           example: String
         data:
           type: object
-          $ref: '#/components/schemas/GetProfileDetailsResponseData'
+          $ref: '#/components/schemas/CreatePinResponseData'
+    ChangePinResponseData:
+      type: object
+      title: ChangePinResponseData
+      properties:
+        message:
+          type: string
+          example: Subscriber secret has been changed and SMS sent successfully
+          description: API Success Message.i.e. Subscriber secret has been changed and SMS sent successfully
+        amountCharged:
+          type: object
+          properties:
+            value:
+              type: number
+            unit:
+              type: string
+    SecurityQuestionAnswers:
+      type: array
+      items:
+        type: object
+        properties:
+          SecurityQuestionAnswer:
+            $ref: '#/components/schemas/securityquestionAnswer'
+    ValidateSecurityAnswerResponseData:
+      type: object
+      title: ValidateSecurityAnswerResponseData
+      properties:
+        message:
+          type: string
+          example: Subscriber answer validated successfully
+          description: API Success Message.i.e. Subscriber answer validated successfully
+    ResetPinResponseData:
+      type: object
+      title: ResetPinResponseData
+      properties:
+        message:
+          type: string
+          example: pin changed and SMS sent to customer Successfully
+          description: API Success Message.i.e. Pin changed and SMS sent to customer Successfully
+        amountCharged:
+          type: object
+          properties:
+            value:
+              type: number
+            unit:
+              type: string
+    ValidatePinResponseData:
+      type: object
+      title: ValidatePinResponseData
+      properties:
+        message:
+          type: string
+          example: Subscriber secret authenticated successfully
+          description: API Success Message. i.e. Subscriber secret authenticated successfully
+        forcePasswordChange:
+          type: string
+          example: 'false'
+          description: true/false
+        securityQuestionAvailable:
+          type: string
+          example: 'true'
+        emailID:
+          type: string
+          example: sharma.anuj@tecnotree.com
+        tncAccepted:
+          type: array
+          items:
+            type: string
+          example:
+          - Version: '2.0'
+            AcceptedDate: '2020-07-11T13:43:30.830Z'
+        tncLastUpdtdate:
+          type: string
+          example: '2020-07-01T10:10:11.830Z'
+        tncLastUpdtversion:
+          type: string
+          example: '2.0'
+    resetPinResponse:
+      type: object
+      required:
+      - name
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: Success API code. '0000' in case of success
+        statusMessage:
+          type: string
+          example: String
+        transactionId:
+          type: string
+          example: String
+        data:
+          type: object
+          $ref: '#/components/schemas/ResetPinResponseData'
     ChangePinResponse:
       type: object
       required:
@@ -998,6 +959,45 @@ components:
         data:
           type: object
           $ref: '#/components/schemas/ChangePinResponseData'
+    securityquestionAnswer:
+      type: object
+      required:
+      - name
+      properties:
+        securityQuestion:
+          type: string
+          example: string
+          description: user will enter security question
+        securityAnswer:
+          type: string
+          example: string
+          description: user will enter answer for security question
+    GetProfileDetailsResponseData:
+      type: object
+      title: GetProfileDetailsResponseData
+      properties:
+        message:
+          type: string
+          example: Terms & Conditions retreived Successfully
+          description: API Success Message. i.e. This is Smartapp Terms & Conditions
+    ValidatePinResponse:
+      type: object
+      required:
+      - name
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: Success API code. '0000' in case of success
+        statusMessage:
+          type: string
+          example: String
+        transactionId:
+          type: string
+          example: String
+        data:
+          type: object
+          $ref: '#/components/schemas/ValidatePinResponseData'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

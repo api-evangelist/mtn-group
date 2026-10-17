@@ -271,28 +271,31 @@ paths:
       x-operation-id-original: deregister Callback
 components:
   schemas:
-    OutboundPollResponse:
-      title: OutboundPollResponse
+    MessageSentResponseSMS:
+      title: MessageSentResponse
       type: object
       properties:
-        to:
-          description: 'The phone number (recipient) the message was sent to (in E.164 format).
-
-            '
+        messages:
+          description: An array of messages.
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+      required:
+      - messages
+    Error:
+      required:
+      - code
+      - reason
+      properties:
+        code:
+          type: integer
+          description: Application related code.
+        reason:
+          type: integer
+          description: Text that explains the reason for error.
+        message:
           type: string
-          example: '+27832008963'
-        sentTimestamp:
-          description: The date and time when the message was sent.
-          type: string
-          format: date-time
-          example: {}
-        receivedTimestamp:
-          description: The date and time when the message was recieved by recipient.
-          type: string
-          format: date-time
-          example: {}
-        deliveryStatus:
-          $ref: '#/components/schemas/Status'
+          description: (optional) Text that provide more details and corrective actions related to the error.
     Status:
       title: Status
       type: string
@@ -306,39 +309,53 @@ components:
       - REJECTED
       - READ
       example: DELIVERED
-    Message:
-      title: Message
+    ReceivePollResponse:
+      title: ReceivePollResponse
+      description: 'Poll for incoming messages specifying the number of messages to receive
+
+        '
       type: object
       properties:
-        to:
-          description: The number the sms is sent to.
-          type: string
-          example: '+27832008963'
-        deliveryStatus:
-          description: 'Indicates whether or not the sms has been accepted for delivery
-
-            '
-          type: string
-          example: DeliveredToNetwork
-        messageId:
-          description: 'A unique id to check the messages status. Id generated during delivery
-
-            '
-          type: string
-          example: d997474900097a1f0000000008d7e18102cc0901
-        smsStatusURL:
-          description: 'This is the url that can be used to query sms delivery status
-
-            '
-          type: string
-          example: 'https://api.mtn.com/v1/messages/sms/d997474900097a1f0000000008d7e18102cc0901/status
-
-            '
+        batchSize:
+          description: Number of SMSes returned
+          type: integer
+        messages:
+          description: List of returned SMSes
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                description: message status
+                type: string
+              to:
+                description: The mobile number (recipient) that the message was sent to (in E.164 format).
+                type: string
+              from:
+                description: The phone number (sender) that the message was sent from (in E.164 format).
+                type: string
+              message:
+                description: Text of the message that was sent
+                type: string
+              messageId:
+                description: Message Id
+                type: string
+              sentTimestamp:
+                description: The date and time when the message was sent by recipient.
+                type: string
+    CallbackInfo:
       required:
-      - to
-      - deliveryStatus
-      - messageId
-      - smsStatusUrl
+      - callbackURL
+      properties:
+        callbackURL:
+          type: string
+          description: The callback being registered.
+        accessCode:
+          type: string
+          description: Developer assigned short code
+        clientId:
+          type: string
+          description: App ID
     SendSMS:
       title: SendSMS
       type: object
@@ -389,78 +406,61 @@ components:
           - unsuccessful
         message:
           type: string
-    CallbackInfo:
-      required:
-      - callbackURL
+    Message:
+      title: Message
+      type: object
       properties:
-        callbackURL:
+        to:
+          description: The number the sms is sent to.
           type: string
-          description: The callback being registered.
-        accessCode:
-          type: string
-          description: Developer assigned short code
-        clientId:
-          type: string
-          description: App ID
-    ReceivePollResponse:
-      title: ReceivePollResponse
-      description: 'Poll for incoming messages specifying the number of messages to receive
+          example: '+27832008963'
+        deliveryStatus:
+          description: 'Indicates whether or not the sms has been accepted for delivery
 
-        '
-      type: object
-      properties:
-        batchSize:
-          description: Number of SMSes returned
-          type: integer
-        messages:
-          description: List of returned SMSes
-          type: array
-          items:
-            type: object
-            properties:
-              status:
-                description: message status
-                type: string
-              to:
-                description: The mobile number (recipient) that the message was sent to (in E.164 format).
-                type: string
-              from:
-                description: The phone number (sender) that the message was sent from (in E.164 format).
-                type: string
-              message:
-                description: Text of the message that was sent
-                type: string
-              messageId:
-                description: Message Id
-                type: string
-              sentTimestamp:
-                description: The date and time when the message was sent by recipient.
-                type: string
-    MessageSentResponseSMS:
-      title: MessageSentResponse
-      type: object
-      properties:
-        messages:
-          description: An array of messages.
-          type: array
-          items:
-            $ref: '#/components/schemas/Message'
-      required:
-      - messages
-    Error:
-      required:
-      - code
-      - reason
-      properties:
-        code:
-          type: integer
-          description: Application related code.
-        reason:
-          type: integer
-          description: Text that explains the reason for error.
-        message:
+            '
           type: string
-          description: (optional) Text that provide more details and corrective actions related to the error.
+          example: DeliveredToNetwork
+        messageId:
+          description: 'A unique id to check the messages status. Id generated during delivery
+
+            '
+          type: string
+          example: d997474900097a1f0000000008d7e18102cc0901
+        smsStatusURL:
+          description: 'This is the url that can be used to query sms delivery status
+
+            '
+          type: string
+          example: 'https://api.mtn.com/v1/messages/sms/d997474900097a1f0000000008d7e18102cc0901/status
+
+            '
+      required:
+      - to
+      - deliveryStatus
+      - messageId
+      - smsStatusUrl
+    OutboundPollResponse:
+      title: OutboundPollResponse
+      type: object
+      properties:
+        to:
+          description: 'The phone number (recipient) the message was sent to (in E.164 format).
+
+            '
+          type: string
+          example: '+27832008963'
+        sentTimestamp:
+          description: The date and time when the message was sent.
+          type: string
+          format: date-time
+          example: {}
+        receivedTimestamp:
+          description: The date and time when the message was recieved by recipient.
+          type: string
+          format: date-time
+          example: {}
+        deliveryStatus:
+          $ref: '#/components/schemas/Status'
   securitySchemes:
     OAuth2:
       type: oauth2

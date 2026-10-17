@@ -191,20 +191,13 @@ components:
           type: string
         text:
           type: string
-    RelatedParty:
+    Validity:
       type: object
       properties:
-        id:
-          type: string
-        name:
-          type: string
-        role:
-          type: string
-        phoneNumber:
-          type: string
-        email:
-          type: string
-        '@referredType':
+        validityType:
+          type: integer
+          format: int32
+        expirationDate:
           type: string
     BadRequestErrorResponse:
       type: object
@@ -227,6 +220,125 @@ components:
         timestamp:
           type: string
           example: 2025-08-05 20:57:21+00:00
+    Links:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Link'
+    APIResponse:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/Links'
+    Payment:
+      type: object
+      properties:
+        paymentType:
+          type: string
+        billingInterval:
+          type: string
+        invoicingInterval:
+          type: integer
+          format: int32
+        invoicingType:
+          type: string
+    RelatedParty:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        phoneNumber:
+          type: string
+        email:
+          type: string
+        '@referredType':
+          type: string
+    UnauthorizedErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '4000'
+        statusMessage:
+          type: string
+          example: Unauthorized
+        supportMessage:
+          type: string
+          example: The supplied authentication is invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 401
+            series: CLIENT_ERROR
+            reason: Unauthorized
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    RelatedEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        '@referredType':
+          type: string
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+        hreflang:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        deprecation:
+          type: string
+        profile:
+          type: string
+        name:
+          type: string
+        templated:
+          type: boolean
+    ServerErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '3001'
+        statusMessage:
+          type: string
+          example: INTERNAL_SERVER_ERROR
+        supportMessage:
+          type: string
+          example: An internal server error occurred and processing could not be completed.
+        httpStatus;:
+          type: array
+          example:
+            code: 500
+            series: SERVER_ERROR
+            reason: Internal Server Error
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    ServiceOrderItem:
+      type: object
+      properties:
+        itemId:
+          type: string
+        serviceOrderId:
+          type: string
+        itemAction:
+          type: string
+        payment:
+          $ref: '#/components/schemas/Payment'
     LicenseRequest:
       type: object
       properties:
@@ -270,116 +382,4 @@ components:
         serviceType:
           type: string
         name:
-          type: string
-    Validity:
-      type: object
-      properties:
-        validityType:
-          type: integer
-          format: int32
-        expirationDate:
-          type: string
-    UnauthorizedErrorResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '4000'
-        statusMessage:
-          type: string
-          example: Unauthorized
-        supportMessage:
-          type: string
-          example: The supplied authentication is invalid.
-        httpStatus;:
-          type: object
-          example:
-            code: 401
-            series: CLIENT_ERROR
-            reason: Unauthorized
-        timestamp:
-          type: string
-          example: 2025-08-05 20:57:21+00:00
-    Payment:
-      type: object
-      properties:
-        paymentType:
-          type: string
-        billingInterval:
-          type: string
-        invoicingInterval:
-          type: integer
-          format: int32
-        invoicingType:
-          type: string
-    Link:
-      type: object
-      properties:
-        href:
-          type: string
-        hreflang:
-          type: string
-        title:
-          type: string
-        type:
-          type: string
-        deprecation:
-          type: string
-        profile:
-          type: string
-        name:
-          type: string
-        templated:
-          type: boolean
-    ServerErrorResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '3001'
-        statusMessage:
-          type: string
-          example: INTERNAL_SERVER_ERROR
-        supportMessage:
-          type: string
-          example: An internal server error occurred and processing could not be completed.
-        httpStatus;:
-          type: array
-          example:
-            code: 500
-            series: SERVER_ERROR
-            reason: Internal Server Error
-        timestamp:
-          type: string
-          example: 2025-08-05 20:57:21+00:00
-    Links:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/Link'
-    APIResponse:
-      type: object
-      properties:
-        _links:
-          $ref: '#/components/schemas/Links'
-    ServiceOrderItem:
-      type: object
-      properties:
-        itemId:
-          type: string
-        serviceOrderId:
-          type: string
-        itemAction:
-          type: string
-        payment:
-          $ref: '#/components/schemas/Payment'
-    RelatedEntity:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        role:
-          type: string
-        '@referredType':
           type: string

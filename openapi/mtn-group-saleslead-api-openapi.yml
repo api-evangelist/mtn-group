@@ -83,26 +83,72 @@ paths:
         required: true
 components:
   schemas:
-    lead_productDetails:
-      type: object
-      description: customerdetails
+    Error415:
       properties:
-        productServiceDescription:
+        timestamp:
           type: string
-          description: Indicates the nature of the salesLead
-          example: Internet Service
-        serviceRequiredPeriod:
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 415
+        error:
           type: string
-          description: ServiceRequiredPeriod
-          example: '12'
-        typeofProduct:
+          description: error message
+          example: Unsupported Media Type
+        message:
           type: string
-          description: TypeofProduct
-          example: individual service
-        productCode:
+          description: details
+        path:
           type: string
-          description: ProductCode
-          example: INT-1gbps
+          description: The path that caused the error
+    Error500:
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3010'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: method used by MADAPI to get the response
+    Error401:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 4000
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
+          type: string
+          description: ''
+        faultMessage2:
+          type: string
+          description: fault message
     lead_customerDetails:
       type: object
       description: customerdetails
@@ -290,6 +336,38 @@ components:
           type: string
           description: CampaignPromotionID
           example: campaign-1A
+    lead_leadDetails:
+      type: object
+      description: leaddetails
+      properties:
+        leadSource:
+          type: string
+          description: LeadSource
+          example: customer enquiry
+        leadOrigin:
+          type: string
+          description: LeadOrigin
+          example: IVR
+        interactionReason:
+          type: string
+          description: InteractionReason
+          example: new sales pitch
+        leadReference:
+          type: string
+          description: LeadReference
+          example: sales one
+        subSegment:
+          type: string
+          description: SubSegment
+          example: sales
+        partnerName:
+          type: string
+          description: PartnerName
+          example: partner
+        createdDate:
+          type: string
+          description: CreatedDate
+          example: '2019-08-23'
     Error400:
       properties:
         statusCode:
@@ -306,52 +384,6 @@ components:
           type: string
           description: This is the same transactionId that is sent in the request
           example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
-    Error500:
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '3010'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: Internal Server Error
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        path:
-          type: string
-          description: The path that caused the error
-        method:
-          type: string
-          description: method used by MADAPI to get the response
-    Error415:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 415
-        error:
-          type: string
-          description: error message
-          example: Unsupported Media Type
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
     SalesLead_Create:
       type: object
       description: 'A Sales Lead is the identification of a person or organization that has an interest in the goods and/or services provided in the prospect of them becoming Customers with one or more Subscriptions.
@@ -391,26 +423,6 @@ components:
           type: string
           description: This is the Id generated by backend
           example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
-    Error401:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 4000
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-          example: Unauthorised
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-          example: Please verify token environment and key
-        faultMessage1:
-          type: string
-          description: ''
-        faultMessage2:
-          type: string
-          description: fault message
     Error405:
       properties:
         timestamp:
@@ -453,38 +465,26 @@ components:
         path:
           type: string
           description: The path that caused the error
-    lead_leadDetails:
+    lead_productDetails:
       type: object
-      description: leaddetails
+      description: customerdetails
       properties:
-        leadSource:
+        productServiceDescription:
           type: string
-          description: LeadSource
-          example: customer enquiry
-        leadOrigin:
+          description: Indicates the nature of the salesLead
+          example: Internet Service
+        serviceRequiredPeriod:
           type: string
-          description: LeadOrigin
-          example: IVR
-        interactionReason:
+          description: ServiceRequiredPeriod
+          example: '12'
+        typeofProduct:
           type: string
-          description: InteractionReason
-          example: new sales pitch
-        leadReference:
+          description: TypeofProduct
+          example: individual service
+        productCode:
           type: string
-          description: LeadReference
-          example: sales one
-        subSegment:
-          type: string
-          description: SubSegment
-          example: sales
-        partnerName:
-          type: string
-          description: PartnerName
-          example: partner
-        createdDate:
-          type: string
-          description: CreatedDate
-          example: '2019-08-23'
+          description: ProductCode
+          example: INT-1gbps
   securitySchemes:
     OAuth2:
       type: oauth2

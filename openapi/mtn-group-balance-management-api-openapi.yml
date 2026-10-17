@@ -102,48 +102,61 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    BalanceTopUpRequest:
-      type: object
-      required:
-      - balanceType
-      - amount
-      - senderAccountId
-      properties:
-        currency:
-          type: string
-          example: FCFA
-          description: Currency of the country where topup is performed
-          enum:
-          - FCFA
-        clientReference:
-          type: string
-          example: Ayo123
-          description: Comment that the client want to assign to this transaction.
-        balanceType:
-          type: string
-          example: airtime
-          description: Specifying the bucket type on which the topUp should be performed.
-          enum:
-          - airtime
-        senderAccountId:
-          type: string
-          example: 0788003055
-          description: the AccountId on ERS of the sender. This is needed ot identify the Reseller's account on ERS
-        amount:
-          $ref: '#/components/schemas/Amount'
-    BalanceTopUpResponse__links_self:
-      type: object
-      properties:
-        href:
-          type: string
-          example: https://host:port/accounts/v1/balanceTopUp/12345
-          description: Hyperlink to access the problem.
     BalanceTopUpResponse__links:
       type: object
       properties:
         self:
           $ref: '#/components/schemas/BalanceTopUpResponse__links_self'
       description: Relevant links to the problem.
+    Amount:
+      type: object
+      required:
+      - value
+      - type
+      - unit
+      description: The amount details for a wallet. Decimals and negatives not allowed
+      properties:
+        type:
+          description: This is the type of the wallet value.
+          type: string
+          enum:
+          - CURRENCY
+          - DATA
+          - MINUTES
+          - SMS
+        value:
+          type: string
+          description: This is the value of a balance wallet.
+          example: '45.25'
+        unit:
+          description: This is the unit of the wallet value.
+          type: string
+          enum:
+          - ZAR
+          - NGN
+          - GB
+          - MB
+          - MINUTES
+          - SMS
+          - FCFA
+          example: NGN
+    Error:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: HTTP error code extension
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client.
+        supportMessage:
+          type: string
+          description: Support Message
+        transactionId:
+          type: string
+          description: Message ID
+        _links:
+          $ref: '#/components/schemas/BalanceTopUpResponse__links'
     Data:
       type: object
       properties:
@@ -187,55 +200,6 @@ components:
               $ref: '#/components/schemas/Amount'
             actualTopUpAmount:
               $ref: '#/components/schemas/Amount'
-    Error:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: HTTP error code extension
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client.
-        supportMessage:
-          type: string
-          description: Support Message
-        transactionId:
-          type: string
-          description: Message ID
-        _links:
-          $ref: '#/components/schemas/BalanceTopUpResponse__links'
-    Amount:
-      type: object
-      required:
-      - value
-      - type
-      - unit
-      description: The amount details for a wallet. Decimals and negatives not allowed
-      properties:
-        type:
-          description: This is the type of the wallet value.
-          type: string
-          enum:
-          - CURRENCY
-          - DATA
-          - MINUTES
-          - SMS
-        value:
-          type: string
-          description: This is the value of a balance wallet.
-          example: '45.25'
-        unit:
-          description: This is the unit of the wallet value.
-          type: string
-          enum:
-          - ZAR
-          - NGN
-          - GB
-          - MB
-          - MINUTES
-          - SMS
-          - FCFA
-          example: NGN
     BalanceTopUpResponse:
       type: object
       properties:
@@ -246,6 +210,42 @@ components:
           $ref: '#/components/schemas/Data'
         _links:
           $ref: '#/components/schemas/BalanceTopUpResponse__links'
+    BalanceTopUpRequest:
+      type: object
+      required:
+      - balanceType
+      - amount
+      - senderAccountId
+      properties:
+        currency:
+          type: string
+          example: FCFA
+          description: Currency of the country where topup is performed
+          enum:
+          - FCFA
+        clientReference:
+          type: string
+          example: Ayo123
+          description: Comment that the client want to assign to this transaction.
+        balanceType:
+          type: string
+          example: airtime
+          description: Specifying the bucket type on which the topUp should be performed.
+          enum:
+          - airtime
+        senderAccountId:
+          type: string
+          example: 0788003055
+          description: the AccountId on ERS of the sender. This is needed ot identify the Reseller's account on ERS
+        amount:
+          $ref: '#/components/schemas/Amount'
+    BalanceTopUpResponse__links_self:
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://host:port/accounts/v1/balanceTopUp/12345
+          description: Hyperlink to access the problem.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -330,12 +330,34 @@ paths:
                 $ref: '#/components/schemas/ServerErrorResponse'
 components:
   schemas:
-    Subscription:
+    Feature:
       type: object
       properties:
-        Plan:
-          $ref: '#/components/schemas/Plan'
-    RelatedParty:
+        featureCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeatureCharacteristics'
+    ServiceSpecification:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        partner:
+          type: string
+        '@type':
+          type: string
+    SupportingService:
+      type: object
+      properties:
+        serviceCharacteristic:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpServiceCharacteristics'
+        description:
+          type: string
+    RelatedEntity:
       type: object
       properties:
         id:
@@ -344,45 +366,16 @@ components:
           type: string
         role:
           type: string
-        phoneNumber:
-          type: string
-        email:
-          type: string
         '@referredType':
           type: string
-    AdditionalInfo:
+    FeatureCharacteristics:
       type: object
       properties:
-        name:
-          type: string
         value:
           type: string
-    ServiceCharacteristics:
-      type: object
-      properties:
+        id:
+          type: string
         name:
-          type: string
-        value:
-          type: string
-        additionalInfo:
-          type: array
-          items:
-            $ref: '#/components/schemas/AdditionalInfo'
-    SpServiceCharacteristics:
-      type: object
-      properties:
-        name:
-          type: string
-        value:
-          type: string
-    Bundle:
-      type: object
-      properties:
-        Id:
-          type: string
-        OfferId:
-          type: string
-        Status:
           type: string
     ServerErrorResponse:
       type: object
@@ -405,11 +398,36 @@ components:
         timestamp:
           type: string
           example: 2025-08-05 20:57:21+00:00
-    Links:
+    APIResponse:
       type: object
-      additionalProperties:
-        $ref: '#/components/schemas/Link'
-    RelatedEntity:
+      properties:
+        _links:
+          $ref: '#/components/schemas/Links'
+    AdditionalInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    RelatedServiceOrderItem:
+      type: object
+      properties:
+        itemId:
+          type: string
+        role:
+          type: string
+        cancellationReason:
+          type: string
+        serviceOrderHref:
+          type: string
+        serviceOrderId:
+          type: string
+        itemAction:
+          type: string
+        '@referredType':
+          type: string
+    RelatedParty:
       type: object
       properties:
         id:
@@ -418,29 +436,113 @@ components:
           type: string
         role:
           type: string
+        phoneNumber:
+          type: string
+        email:
+          type: string
         '@referredType':
           type: string
-    UnauthorizedErrorResponse:
+    SpServiceCharacteristics:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    BokuCallback:
+      type: object
+      properties:
+        platformId:
+          type: string
+        callbackType:
+          type: string
+        merchantReference:
+          type: string
+        operationReference:
+          type: string
+        entitlementState:
+          type: string
+        entitlementId:
+          type: string
+        billingIdentity:
+          type: string
+        timestamp:
+          type: string
+        entitlementCreated_at:
+          type: string
+    BadRequestErrorResponse:
       type: object
       properties:
         statusCode:
           type: string
-          example: '4000'
+          example: '5000'
         statusMessage:
           type: string
-          example: Unauthorized
+          example: INVALID_INPUT_PARAMETERS
         supportMessage:
           type: string
-          example: The supplied authentication is invalid.
+          example: The input parameters provided are invalid.
         httpStatus;:
           type: object
           example:
-            code: 401
+            code: 400
             series: CLIENT_ERROR
-            reason: Unauthorized
+            reason: Bad Request
         timestamp:
           type: string
           example: 2025-08-05 20:57:21+00:00
+    Plan:
+      type: object
+      properties:
+        Type:
+          type: string
+        LocalizedType:
+          type: string
+    Links:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Link'
+    Service:
+      type: object
+      properties:
+        category:
+          type: string
+        description:
+          type: string
+        feature:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feature'
+        relatedEntity:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedEntity'
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        serviceSpecification:
+          $ref: '#/components/schemas/ServiceSpecification'
+        serviceCharacteristics:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceCharacteristics'
+        relatedServiceOrderItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedServiceOrderItem'
+        state:
+          type: string
+        name:
+          type: string
+        serviceDate:
+          type: string
+        startDate:
+          type: string
+        startMode:
+          type: string
+        '@type':
+          type: string
     ApiResponse:
       type: object
       properties:
@@ -518,39 +620,6 @@ components:
           type: string
         data:
           type: object
-    Plan:
-      type: object
-      properties:
-        Type:
-          type: string
-        LocalizedType:
-          type: string
-    APIResponse:
-      type: object
-      properties:
-        _links:
-          $ref: '#/components/schemas/Links'
-    BokuCallback:
-      type: object
-      properties:
-        platformId:
-          type: string
-        callbackType:
-          type: string
-        merchantReference:
-          type: string
-        operationReference:
-          type: string
-        entitlementState:
-          type: string
-        entitlementId:
-          type: string
-        billingIdentity:
-          type: string
-        timestamp:
-          type: string
-        entitlementCreated_at:
-          type: string
     Note:
       type: object
       properties:
@@ -571,105 +640,43 @@ components:
           type: string
         transactionId:
           type: string
-    BadRequestErrorResponse:
+    Subscription:
+      type: object
+      properties:
+        Plan:
+          $ref: '#/components/schemas/Plan'
+    UnauthorizedErrorResponse:
       type: object
       properties:
         statusCode:
           type: string
-          example: '5000'
+          example: '4000'
         statusMessage:
           type: string
-          example: INVALID_INPUT_PARAMETERS
+          example: Unauthorized
         supportMessage:
           type: string
-          example: The input parameters provided are invalid.
+          example: The supplied authentication is invalid.
         httpStatus;:
           type: object
           example:
-            code: 400
+            code: 401
             series: CLIENT_ERROR
-            reason: Bad Request
+            reason: Unauthorized
         timestamp:
           type: string
           example: 2025-08-05 20:57:21+00:00
-    ServiceSpecification:
+    ServiceCharacteristics:
       type: object
       properties:
-        id:
-          type: string
         name:
           type: string
-        partner:
-          type: string
-        '@type':
-          type: string
-    RelatedServiceOrderItem:
-      type: object
-      properties:
-        itemId:
-          type: string
-        role:
-          type: string
-        cancellationReason:
-          type: string
-        serviceOrderHref:
-          type: string
-        serviceOrderId:
-          type: string
-        itemAction:
-          type: string
-        '@referredType':
-          type: string
-    Service:
-      type: object
-      properties:
-        category:
-          type: string
-        description:
-          type: string
-        feature:
-          type: array
-          items:
-            $ref: '#/components/schemas/Feature'
-        relatedEntity:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedEntity'
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedParty'
-        serviceSpecification:
-          $ref: '#/components/schemas/ServiceSpecification'
-        serviceCharacteristics:
-          type: array
-          items:
-            $ref: '#/components/schemas/ServiceCharacteristics'
-        relatedServiceOrderItem:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedServiceOrderItem'
-        state:
-          type: string
-        name:
-          type: string
-        serviceDate:
-          type: string
-        startDate:
-          type: string
-        startMode:
-          type: string
-        '@type':
-          type: string
-    FeatureCharacteristics:
-      type: object
-      properties:
         value:
           type: string
-        id:
-          type: string
-        name:
-          type: string
+        additionalInfo:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalInfo'
     Link:
       type: object
       properties:
@@ -689,19 +696,12 @@ components:
           type: string
         templated:
           type: boolean
-    SupportingService:
+    Bundle:
       type: object
       properties:
-        serviceCharacteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/SpServiceCharacteristics'
-        description:
+        Id:
           type: string
-    Feature:
-      type: object
-      properties:
-        featureCharacteristic:
-          type: array
-          items:
-            $ref: '#/components/schemas/FeatureCharacteristics'
+        OfferId:
+          type: string
+        Status:
+          type: string

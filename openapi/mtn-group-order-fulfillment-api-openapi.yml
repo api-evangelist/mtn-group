@@ -74,38 +74,6 @@ paths:
         required: true
 components:
   schemas:
-    productRef:
-      type: object
-      required:
-      - productId
-      - productType
-      - productPrice
-      properties:
-        productId:
-          type: string
-          description: Offer Id
-          example: NACT_NG_Combo_20
-        productName:
-          type: string
-          description: Offer Name
-          example: Data and Voice Bundle 20
-        productType:
-          type: string
-          description: Type of offers
-          enum:
-          - DataBundle
-          - AirtimeTopUp
-        productIsLoan:
-          type: boolean
-          description: A boolean to state if product is loaned. If loaned then "true" otherwise "false"
-        productCurrency:
-          type: string
-          description: Currency in which payment has to be made
-          example: NGN
-        productPrice:
-          type: number
-          description: Price of Product
-          example: 1000
     customerRef:
       type: object
       required:
@@ -155,6 +123,61 @@ components:
           type: string
           description: Name of call intiating channel
           example: FB
+    productRef:
+      type: object
+      required:
+      - productId
+      - productType
+      - productPrice
+      properties:
+        productId:
+          type: string
+          description: Offer Id
+          example: NACT_NG_Combo_20
+        productName:
+          type: string
+          description: Offer Name
+          example: Data and Voice Bundle 20
+        productType:
+          type: string
+          description: Type of offers
+          enum:
+          - DataBundle
+          - AirtimeTopUp
+        productIsLoan:
+          type: boolean
+          description: A boolean to state if product is loaned. If loaned then "true" otherwise "false"
+        productCurrency:
+          type: string
+          description: Currency in which payment has to be made
+          example: NGN
+        productPrice:
+          type: number
+          description: Price of Product
+          example: 1000
+    Error:
+      required:
+      - statusCode
+      - statusMessage
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          description: Timestamp of the error
+          format: date-time
     OrderResponse:
       type: object
       properties:
@@ -189,29 +212,6 @@ components:
               type: string
               description: Payment page redirection URL
               example: https://paymentpage.com/pay
-    Error:
-      required:
-      - statusCode
-      - statusMessage
-      type: object
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        timestamp:
-          type: string
-          description: Timestamp of the error
-          format: date-time
   securitySchemes:
     APIKeyAuth:
       type: apiKey

@@ -105,18 +105,6 @@ paths:
         required: true
 components:
   schemas:
-    ResourceFunctionRef:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-      required:
-      - href
-      example:
-        id: RF-6789
-        href: http://serverlocation:port/resourceSpecification/RF-6789
     Characteristic:
       type: object
       properties:
@@ -130,6 +118,29 @@ components:
       example:
         name: bandwidth
         value: 100MB
+    Error:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Time stamp of the error
+        status:
+          type: string
+          description: Status code
+        error:
+          type: string
+          description: Status description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
     ResourceFunctionSpecification:
       type: object
       properties:
@@ -142,37 +153,18 @@ components:
       example:
         id: RS-6789
         href: http://serverlocation:port/resourceSpecification/RS-6789
-    RelatedParty:
+    ResourceFunctionRef:
       type: object
       properties:
         id:
           type: string
         href:
           type: string
-        role:
-          type: string
       required:
       - href
-      - role
       example:
-        id: '1234'
-        href: http://serverlocation:port/partyManagement/partyRole/1234
-        role: Admin
-    ScheduleRef:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-        ResourceFunctionConfig:
-          $ref: '#/components/schemas/ResourceFunction'
-      required:
-      - href
-      - ResourceFunctionConfig
-      example:
-        id: SCH-78906
-        href: http://serverlocation:port/resourceSpecification/SCH-78906
+        id: RF-6789
+        href: http://serverlocation:port/resourceSpecification/RF-6789
     FeatureGroup:
       type: object
       properties:
@@ -213,6 +205,55 @@ components:
           description: Transaction id returned by the provider system.
         data:
           $ref: '#/components/schemas/ResourceFunction'
+    Feature:
+      type: object
+      properties:
+        name:
+          type: string
+          description: ' This is the name for the feature'
+        listOfCharacteristics:
+          type: array
+          description: ' This is a list of  Resource Characteristics for a particular feature '
+          items:
+            $ref: '#/components/schemas/Characteristic'
+      required:
+      - name
+      - listOfCharacteristics
+      example:
+        name: Tarpit
+    RelatedParty:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        role:
+          type: string
+      required:
+      - href
+      - role
+      example:
+        id: '1234'
+        href: http://serverlocation:port/partyManagement/partyRole/1234
+        role: Admin
+    Connectivity:
+      type: object
+      properties:
+        source:
+          $ref: '#/components/schemas/ResourceFunctionRef'
+        target:
+          $ref: '#/components/schemas/ResourceFunctionRef'
+        relationship:
+          type: string
+      required:
+      - source
+      - target
+      - relationship
+      example:
+        source: http://serverlocation:port/resourceFunction/6789
+        target: http://serverlocation:port/resourceFunction/1234
+        relationship: ConnectsTo
     SAPRef:
       type: object
       properties:
@@ -225,29 +266,21 @@ components:
       example:
         id: SAP-49876
         href: http://serverlocation:port/resourceFunction/SAP-49876
-    Error:
+    ScheduleRef:
       type: object
-      title: Error
-      required:
-      - status
-      - message
       properties:
-        timestamp:
+        id:
           type: string
-          format: date-time
-          description: Time stamp of the error
-        status:
+        href:
           type: string
-          description: Status code
-        error:
-          type: string
-          description: Status description
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: the path that caused the error
+        ResourceFunctionConfig:
+          $ref: '#/components/schemas/ResourceFunction'
+      required:
+      - href
+      - ResourceFunctionConfig
+      example:
+        id: SCH-78906
+        href: http://serverlocation:port/resourceSpecification/SCH-78906
     ResourceFunction:
       type: object
       properties:
@@ -363,39 +396,6 @@ components:
             $ref: '#/components/schemas/RelatedParty'
       required:
       - resourceFunctionSpecification
-    Connectivity:
-      type: object
-      properties:
-        source:
-          $ref: '#/components/schemas/ResourceFunctionRef'
-        target:
-          $ref: '#/components/schemas/ResourceFunctionRef'
-        relationship:
-          type: string
-      required:
-      - source
-      - target
-      - relationship
-      example:
-        source: http://serverlocation:port/resourceFunction/6789
-        target: http://serverlocation:port/resourceFunction/1234
-        relationship: ConnectsTo
-    Feature:
-      type: object
-      properties:
-        name:
-          type: string
-          description: ' This is the name for the feature'
-        listOfCharacteristics:
-          type: array
-          description: ' This is a list of  Resource Characteristics for a particular feature '
-          items:
-            $ref: '#/components/schemas/Characteristic'
-      required:
-      - name
-      - listOfCharacteristics
-      example:
-        name: Tarpit
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

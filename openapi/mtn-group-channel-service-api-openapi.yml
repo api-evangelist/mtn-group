@@ -188,117 +188,67 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    burnerOffer:
+    Error:
       type: object
-      description: provides personalized bundle details of the customer
+      title: Error
+      required:
+      - status
+      - message
       properties:
-        offerId:
+        code:
           type: string
-          description: The service option id associated with the product which is being returned
+          description: Application relevant detail, defined in the API or a common list.
+        reason:
+          type: string
+          description: Explanation of the reason for the error which can be shown to a client user.
         message:
           type: string
-          description: Bundle description
-          example: '1 Day-8GB
-
-            '
-        shortMessage:
+          description: More details and corrective actions related to the error which can be shown to a client user.
+        status:
           type: string
-          description: short Bundle description
-          example: 1 Day-8GB
-        encoding:
+          description: HTTP Error code extension
+        referenceError:
           type: string
-          description: message encoding
-          example: UTF-8
-        language:
+          format: uri
+          description: URI of documentation describing the error.
+        '@baseType':
           type: string
-          description: message language
-          example: English (UK)
-        offerType:
+          description: When sub-classing, this defines the super-class.
+        '@schemaLocation':
           type: string
-          description: Type of offer
-          example: stv
-        category:
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
           type: string
-          description: The category of the product which is being returned
-          example: DataBTL
-        subCategory:
+          description: When sub-classing, this defines the sub-class entity name
+    DynamicProductOffering:
+      type: object
+      description: Represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
+      properties:
+        statusCode:
           type: string
-          description: The validity period of the product which is being returned
-          example: Daily
-        service:
-          type: array
-          description: details of the service
-          items:
-            properties:
-              serviceType:
-                type: string
-                description: service type
-                example: Data
-              value:
-                type: string
-                description: value of the service
-                example: '8192'
-              valueUOM:
-                type: string
-                description: unit of the value
-                example: MB
-              rate:
-                type: string
-                description: effective rate
-                example: '0'
-              validity:
-                type: string
-                description: validity of the service
-              validityUOM:
-                type: string
-                description: unit of the validity value
-              promotion:
-                type: string
-                description: indicates if the offer is promotional
-                example: F
-        provisionValidity:
+        statusMessage:
           type: string
-          description: provision validity of the offer
-          example: '7'
-        provisionValidityUOM:
+        transactionId:
           type: string
-          description: provision validity unit of the offer
-          example: Days
-        provisionType:
-          type: string
-          description: provision type of the offer
-          example: Integrated
-        serviceOptionID:
-          type: string
-          description: service option ID of the offer
-          example: '2436'
-        catalogue:
-          type: string
-          description: reporting catalogue name
-          example: SupersizePrepaid
-        bundleDescription:
-          type: string
-          description: description of the bundle
-          example: 7 Day-1.25GB
-        frequency:
-          type: string
-          description: interval of offer
-          example: ADHOC
-        provisionPrice:
-          type: string
-          description: The price associated with the product that is being returned
-        validity:
-          type: string
-          description: The validity period of the product in days
-        weightage:
-          type: string
-          description: weightage of the returned offer
-        order:
-          type: string
-          description: order number
-        price:
-          type: string
-          description: price of order
+        data:
+          type: object
+          properties:
+            BundledCatalogue:
+              type: array
+              items:
+                $ref: '#/components/schemas/BundledCatalogue'
+              description: A type of ProductOffering that belongs to a grouping of ProductOfferings made available to the market. It inherits of all attributes of ProductOffering from XMF for Standard ATL offers.
+            personalizedBundles:
+              type: array
+              items:
+                $ref: '#/components/schemas/personalizedBundles'
+              description: Details of the personalized bundles returned for the customer. This is personalised ATL offers from XMF.
+            burnerOffer:
+              type: array
+              items:
+                $ref: '#/components/schemas/burnerOffer'
+              description: Details of the burner offer returned for the customer. This is Burner offers returned from NEON.
     personalizedBundles:
       type: object
       description: provides personalized bundle details of the customer
@@ -459,67 +409,117 @@ components:
         pricePlanCount:
           type: string
           description: count of the price plans
-    Error:
+    burnerOffer:
       type: object
-      title: Error
-      required:
-      - status
-      - message
+      description: provides personalized bundle details of the customer
       properties:
-        code:
+        offerId:
           type: string
-          description: Application relevant detail, defined in the API or a common list.
-        reason:
-          type: string
-          description: Explanation of the reason for the error which can be shown to a client user.
+          description: The service option id associated with the product which is being returned
         message:
           type: string
-          description: More details and corrective actions related to the error which can be shown to a client user.
-        status:
+          description: Bundle description
+          example: '1 Day-8GB
+
+            '
+        shortMessage:
           type: string
-          description: HTTP Error code extension
-        referenceError:
+          description: short Bundle description
+          example: 1 Day-8GB
+        encoding:
           type: string
-          format: uri
-          description: URI of documentation describing the error.
-        '@baseType':
+          description: message encoding
+          example: UTF-8
+        language:
           type: string
-          description: When sub-classing, this defines the super-class.
-        '@schemaLocation':
+          description: message language
+          example: English (UK)
+        offerType:
           type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
+          description: Type of offer
+          example: stv
+        category:
           type: string
-          description: When sub-classing, this defines the sub-class entity name
-    DynamicProductOffering:
-      type: object
-      description: Represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
-      properties:
-        statusCode:
+          description: The category of the product which is being returned
+          example: DataBTL
+        subCategory:
           type: string
-        statusMessage:
+          description: The validity period of the product which is being returned
+          example: Daily
+        service:
+          type: array
+          description: details of the service
+          items:
+            properties:
+              serviceType:
+                type: string
+                description: service type
+                example: Data
+              value:
+                type: string
+                description: value of the service
+                example: '8192'
+              valueUOM:
+                type: string
+                description: unit of the value
+                example: MB
+              rate:
+                type: string
+                description: effective rate
+                example: '0'
+              validity:
+                type: string
+                description: validity of the service
+              validityUOM:
+                type: string
+                description: unit of the validity value
+              promotion:
+                type: string
+                description: indicates if the offer is promotional
+                example: F
+        provisionValidity:
           type: string
-        transactionId:
+          description: provision validity of the offer
+          example: '7'
+        provisionValidityUOM:
           type: string
-        data:
-          type: object
-          properties:
-            BundledCatalogue:
-              type: array
-              items:
-                $ref: '#/components/schemas/BundledCatalogue'
-              description: A type of ProductOffering that belongs to a grouping of ProductOfferings made available to the market. It inherits of all attributes of ProductOffering from XMF for Standard ATL offers.
-            personalizedBundles:
-              type: array
-              items:
-                $ref: '#/components/schemas/personalizedBundles'
-              description: Details of the personalized bundles returned for the customer. This is personalised ATL offers from XMF.
-            burnerOffer:
-              type: array
-              items:
-                $ref: '#/components/schemas/burnerOffer'
-              description: Details of the burner offer returned for the customer. This is Burner offers returned from NEON.
+          description: provision validity unit of the offer
+          example: Days
+        provisionType:
+          type: string
+          description: provision type of the offer
+          example: Integrated
+        serviceOptionID:
+          type: string
+          description: service option ID of the offer
+          example: '2436'
+        catalogue:
+          type: string
+          description: reporting catalogue name
+          example: SupersizePrepaid
+        bundleDescription:
+          type: string
+          description: description of the bundle
+          example: 7 Day-1.25GB
+        frequency:
+          type: string
+          description: interval of offer
+          example: ADHOC
+        provisionPrice:
+          type: string
+          description: The price associated with the product that is being returned
+        validity:
+          type: string
+          description: The validity period of the product in days
+        weightage:
+          type: string
+          description: weightage of the returned offer
+        order:
+          type: string
+          description: order number
+        price:
+          type: string
+          description: price of order
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

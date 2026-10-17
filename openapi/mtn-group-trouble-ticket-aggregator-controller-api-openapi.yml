@@ -548,6 +548,227 @@ paths:
                 $ref: '#/components/schemas/ServerErrorResponse'
 components:
   schemas:
+    TroubleTicketRelationship:
+      type: object
+      properties:
+        name:
+          type: string
+    TicketRelationship:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        name:
+          type: string
+        relationshipType:
+          type: string
+        '@baseType':
+          type: string
+        '@schemaLocation':
+          type: string
+        '@type':
+          type: string
+    Assignees:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        '@schemaLocation':
+          type: string
+    ValidFor:
+      type: object
+      properties:
+        endDateTime:
+          type: string
+        startDateTime:
+          type: string
+    RelatedEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        name:
+          type: string
+        '@schemaLocation':
+          type: string
+        '@referredType':
+          type: string
+    Groups:
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+        href:
+          type: string
+        '@schemaLocation':
+          type: string
+    ServerErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '3001'
+        statusMessage:
+          type: string
+          example: INTERNAL_SERVER_ERROR
+        supportMessage:
+          type: string
+          example: An internal server error occurred and processing could not be completed.
+        httpStatus;:
+          type: object
+          example:
+            code: 500
+            series: SERVER_ERROR
+            reason: Internal Server Error
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    DCLMTroubleTicketAPIResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+        status:
+          type: string
+        productId:
+          type: array
+          items:
+            type: string
+        publicIdentifier:
+          type: array
+          items:
+            type: string
+        statusChange:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatusChange'
+        troubleTicketRelationship:
+          $ref: '#/components/schemas/TroubleTicketRelationship'
+        ticketRelationship:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketRelationship'
+        href:
+          type: string
+        ticketType:
+          type: string
+        externalId:
+          type: string
+        externalSystem:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExternalSystem'
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedParty'
+        relatedEntity:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedEntity'
+        attachment:
+          type: string
+        channel:
+          $ref: '#/components/schemas/Channel'
+        channels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Channel'
+        ticketActivity:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketActivity'
+        creationDate:
+          type: string
+        lastUpdate:
+          type: string
+        note:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
+        statusChangeReason:
+          type: string
+        customFields:
+          $ref: '#/components/schemas/CustomFields'
+        assignees:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assignees'
+        assignee:
+          $ref: '#/components/schemas/Assignee'
+        isRepeatedTicket:
+          type: boolean
+        customerId:
+          type: array
+          items:
+            type: string
+        rootCause:
+          type: string
+        isChild:
+          type: boolean
+        isSlaBreached:
+          type: boolean
+        workFlowRef:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkFlowRef'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Groups'
+        parentId:
+          type: string
+        subStatus:
+          type: string
+        accountId:
+          type: array
+          items:
+            type: string
+        postToRemedy:
+          type: string
+        expectedResolutionDate:
+          type: string
+        category:
+          type: string
+        loB:
+          type: string
+        countryInformation:
+          $ref: '#/components/schemas/CountryInformation'
+        '@baseType':
+          type: string
+        '@type':
+          type: string
+        '@schemaLocation':
+          type: string
+    WorkFlowRef:
+      type: object
+      properties:
+        formId:
+          type: string
+        processId:
+          type: string
+        groupId:
+          type: string
+        taskInfoId:
+          type: string
+        formIdentity:
+          type: string
+        balkanGraphId:
+          type: string
+        workflowId:
+          type: string
     CountryInformation:
       type: object
       properties:
@@ -582,6 +803,21 @@ components:
           type: string
         '@schemaLocation':
           type: string
+    ContactMedium:
+      type: object
+      properties:
+        medium:
+          $ref: '#/components/schemas/Medium'
+        type:
+          type: string
+        role:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        preferred:
+          type: boolean
     Medium:
       type: object
       properties:
@@ -593,17 +829,42 @@ components:
           type: boolean
         number:
           type: string
-    Groups:
+    UpdateIncidentRequest:
       type: object
       properties:
-        id:
+        statusChangeReason:
           type: string
-        date:
+        field:
           type: string
-        href:
+        categoryType:
           type: string
-        '@schemaLocation':
+        description:
           type: string
+        assignedTo:
+          type: string
+        requestedFor:
+          type: string
+    BadRequestErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '5000'
+        statusMessage:
+          type: string
+          example: INVALID_INPUT_PARAMETERS
+        supportMessage:
+          type: string
+          example: The input parameters provided are invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 400
+            series: CLIENT_ERROR
+            reason: Bad Request
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
     StatusChange:
       type: object
       properties:
@@ -615,6 +876,19 @@ components:
           type: string
         '@type':
           type: string
+    Attachments:
+      type: object
+      properties:
+        id:
+          type: string
+        validFor:
+          $ref: '#/components/schemas/ValidFor'
+        attachmentType:
+          type: string
+        content:
+          type: string
+        name:
+          type: string
     EngagedParty:
       type: object
       properties:
@@ -625,66 +899,6 @@ components:
         '@referredType':
           type: string
         '@schemaLocation':
-          type: string
-    Assignees:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-        '@schemaLocation':
-          type: string
-    ServerErrorResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '3001'
-        statusMessage:
-          type: string
-          example: INTERNAL_SERVER_ERROR
-        supportMessage:
-          type: string
-          example: An internal server error occurred and processing could not be completed.
-        httpStatus;:
-          type: object
-          example:
-            code: 500
-            series: SERVER_ERROR
-            reason: Internal Server Error
-        timestamp:
-          type: string
-          example: 2025-08-05 20:57:21+00:00
-    Channel:
-      type: object
-      properties:
-        name:
-          type: string
-        id:
-          type: string
-        role:
-          type: string
-        href:
-          type: string
-        '@schemaLocation':
-          type: string
-        '@referredType':
-          type: string
-        '@type':
-          type: string
-    RelatedEntity:
-      type: object
-      properties:
-        id:
-          type: string
-        href:
-          type: string
-        name:
-          type: string
-        '@schemaLocation':
-          type: string
-        '@referredType':
           type: string
     TicketActivity:
       type: object
@@ -711,87 +925,28 @@ components:
           type: string
         '@type':
           type: string
-    TicketRelationship:
+    Channel:
       type: object
       properties:
+        name:
+          type: string
         id:
-          type: string
-        href:
-          type: string
-        name:
-          type: string
-        relationshipType:
-          type: string
-        '@baseType':
-          type: string
-        '@schemaLocation':
-          type: string
-        '@type':
-          type: string
-    TroubleTicketRelationship:
-      type: object
-      properties:
-        name:
-          type: string
-    UpdateTicketRequest:
-      type: object
-      properties:
-        status:
-          type: string
-        note:
-          $ref: '#/components/schemas/Note'
-        description:
-          type: string
-        name:
-          type: string
-        priority:
-          type: string
-        channel:
-          $ref: '#/components/schemas/Channel'
-        attachment:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachments'
-        relatedParty:
-          $ref: '#/components/schemas/RelatedParty'
-        statusChangeReason:
-          type: string
-    UnauthorizedErrorResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '4000'
-        statusMessage:
-          type: string
-          example: Unauthorized
-        supportMessage:
-          type: string
-          example: The supplied authentication is invalid.
-        httpStatus;:
-          type: object
-          example:
-            code: 401
-            series: CLIENT_ERROR
-            reason: Unauthorized
-        timestamp:
-          type: string
-          example: 2025-08-05 20:57:21+00:00
-    ContactMedium:
-      type: object
-      properties:
-        medium:
-          $ref: '#/components/schemas/Medium'
-        type:
           type: string
         role:
           type: string
+        href:
+          type: string
+        '@schemaLocation':
+          type: string
+        '@referredType':
+          type: string
+        '@type':
+          type: string
+    ExternalSystem:
+      type: object
+      properties:
         id:
           type: string
-        name:
-          type: string
-        preferred:
-          type: boolean
     Note:
       type: object
       properties:
@@ -804,44 +959,6 @@ components:
         date:
           type: string
         '@type':
-          type: string
-    BadRequestErrorResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '5000'
-        statusMessage:
-          type: string
-          example: INVALID_INPUT_PARAMETERS
-        supportMessage:
-          type: string
-          example: The input parameters provided are invalid.
-        httpStatus;:
-          type: object
-          example:
-            code: 400
-            series: CLIENT_ERROR
-            reason: Bad Request
-        timestamp:
-          type: string
-          example: 2025-08-05 20:57:21+00:00
-    WorkFlowRef:
-      type: object
-      properties:
-        formId:
-          type: string
-        processId:
-          type: string
-        groupId:
-          type: string
-        taskInfoId:
-          type: string
-        formIdentity:
-          type: string
-        balkanGraphId:
-          type: string
-        workflowId:
           type: string
     CreateRequest:
       type: object
@@ -876,28 +993,68 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RelatedEntity'
-    UpdateIncidentRequest:
+    UnauthorizedErrorResponse:
       type: object
       properties:
-        statusChangeReason:
+        statusCode:
           type: string
-        field:
+          example: '4000'
+        statusMessage:
           type: string
-        categoryType:
+          example: Unauthorized
+        supportMessage:
           type: string
+          example: The supplied authentication is invalid.
+        httpStatus;:
+          type: object
+          example:
+            code: 401
+            series: CLIENT_ERROR
+            reason: Unauthorized
+        timestamp:
+          type: string
+          example: 2025-08-05 20:57:21+00:00
+    CustomFields:
+      type: object
+      properties:
+        country:
+          type: string
+        province:
+          type: string
+        city:
+          type: string
+        name:
+          type: string
+    UpdateTicketRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        note:
+          $ref: '#/components/schemas/Note'
         description:
           type: string
-        assignedTo:
+        name:
           type: string
-        requestedFor:
+        priority:
           type: string
-    ValidFor:
+        channel:
+          $ref: '#/components/schemas/Channel'
+        attachment:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachments'
+        relatedParty:
+          $ref: '#/components/schemas/RelatedParty'
+        statusChangeReason:
+          type: string
+    Assignee:
       type: object
       properties:
-        endDateTime:
+        id:
           type: string
-        startDateTime:
-          type: string
+        assigned:
+          type: boolean
     TroubleTicketResponse:
       type: object
       properties:
@@ -1099,163 +1256,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DCLMTroubleTicketAPIResponse'
-        '@baseType':
-          type: string
-        '@type':
-          type: string
-        '@schemaLocation':
-          type: string
-    Attachments:
-      type: object
-      properties:
-        id:
-          type: string
-        validFor:
-          $ref: '#/components/schemas/ValidFor'
-        attachmentType:
-          type: string
-        content:
-          type: string
-        name:
-          type: string
-    Assignee:
-      type: object
-      properties:
-        id:
-          type: string
-        assigned:
-          type: boolean
-    CustomFields:
-      type: object
-      properties:
-        country:
-          type: string
-        province:
-          type: string
-        city:
-          type: string
-        name:
-          type: string
-    ExternalSystem:
-      type: object
-      properties:
-        id:
-          type: string
-    DCLMTroubleTicketAPIResponse:
-      type: object
-      properties:
-        id:
-          type: string
-        description:
-          type: string
-        priority:
-          type: string
-        status:
-          type: string
-        productId:
-          type: array
-          items:
-            type: string
-        publicIdentifier:
-          type: array
-          items:
-            type: string
-        statusChange:
-          type: array
-          items:
-            $ref: '#/components/schemas/StatusChange'
-        troubleTicketRelationship:
-          $ref: '#/components/schemas/TroubleTicketRelationship'
-        ticketRelationship:
-          type: array
-          items:
-            $ref: '#/components/schemas/TicketRelationship'
-        href:
-          type: string
-        ticketType:
-          type: string
-        externalId:
-          type: string
-        externalSystem:
-          type: array
-          items:
-            $ref: '#/components/schemas/ExternalSystem'
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedParty'
-        relatedEntity:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedEntity'
-        attachment:
-          type: string
-        channel:
-          $ref: '#/components/schemas/Channel'
-        channels:
-          type: array
-          items:
-            $ref: '#/components/schemas/Channel'
-        ticketActivity:
-          type: array
-          items:
-            $ref: '#/components/schemas/TicketActivity'
-        creationDate:
-          type: string
-        lastUpdate:
-          type: string
-        note:
-          type: array
-          items:
-            $ref: '#/components/schemas/Note'
-        statusChangeReason:
-          type: string
-        customFields:
-          $ref: '#/components/schemas/CustomFields'
-        assignees:
-          type: array
-          items:
-            $ref: '#/components/schemas/Assignees'
-        assignee:
-          $ref: '#/components/schemas/Assignee'
-        isRepeatedTicket:
-          type: boolean
-        customerId:
-          type: array
-          items:
-            type: string
-        rootCause:
-          type: string
-        isChild:
-          type: boolean
-        isSlaBreached:
-          type: boolean
-        workFlowRef:
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkFlowRef'
-        groups:
-          type: array
-          items:
-            $ref: '#/components/schemas/Groups'
-        parentId:
-          type: string
-        subStatus:
-          type: string
-        accountId:
-          type: array
-          items:
-            type: string
-        postToRemedy:
-          type: string
-        expectedResolutionDate:
-          type: string
-        category:
-          type: string
-        loB:
-          type: string
-        countryInformation:
-          $ref: '#/components/schemas/CountryInformation'
         '@baseType':
           type: string
         '@type':

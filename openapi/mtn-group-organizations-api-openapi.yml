@@ -381,6 +381,16 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Error500:
+      properties:
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3001'
     DPOMetadataObject:
       type: object
       additionalProperties: false
@@ -416,30 +426,6 @@ components:
                     type: boolean
                     description: Whether the terms have been accepted
                     example: false
-    Error400:
-      properties:
-        statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-        statusMessage:
-          type: string
-          description: Status message from target system to indicate transaction status.
-        supportMessage:
-          type: string
-          description: detail message from target system to indicate transaction status.
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-    Error500:
-      properties:
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: Internal Server Error
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '3001'
     SendInvitaionResponse:
       properties:
         statusCode:
@@ -454,38 +440,34 @@ components:
         transactionId:
           type: string
           description: This is the same transactionId that is sent in the request
-    MTNIDOrgAppMetadataObject:
+    InvitationReqAppMetadataObject:
       type: object
-      additionalProperties: false
+      allOf:
+      - $ref: '#/components/schemas/MTNIDOrgAppMetadataObject'
+    Error401:
       properties:
-        orgInvite:
-          type: object
-          properties:
-            accountAlreadyExists:
-              type: boolean
-              description: true if "Search Users by Email" API returned a user and false if it did not
-            profileUpdateRequired:
-              type: boolean
-              example: true
-            profileUpdated:
-              type: boolean
-              example: false
-            profile:
-              type: object
-              properties:
-                givenName:
-                  type: string
-                  example: given_name
-                familyName:
-                  type: string
-                  example: family_name
-                name:
-                  type: string
-                  example: name
-        dpoMetadata:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/DPOMetadataObject'
+        error:
+          type: string
+          description: error message from target system to indicate transaction status.
+          example: missing_authorization
+        error_description:
+          type: string
+          description: detailed error message from target system to indicate transaction status.
+          example: Missing Authorization header
+    Error400:
+      properties:
+        statusCode:
+          type: integer
+          description: Status code from target system to indicate transaction status
+        statusMessage:
+          type: string
+          description: Status message from target system to indicate transaction status.
+        supportMessage:
+          type: string
+          description: detail message from target system to indicate transaction status.
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
     InvitationObject:
       type: object
       properties:
@@ -541,31 +523,6 @@ components:
       - invitee
       - inviter
       - clientId
-    InvitationReqAppMetadataObject:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/MTNIDOrgAppMetadataObject'
-    Error405:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 405
-        error:
-          type: string
-          description: error message
-          example: Method Not Allowed
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
     InvitationRespObject:
       type: object
       properties:
@@ -617,16 +574,36 @@ components:
                 type: object
                 allOf:
                 - $ref: '#/components/schemas/InvitationObject'
-    Error401:
+    Error405:
       properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 405
         error:
           type: string
-          description: error message from target system to indicate transaction status.
-          example: missing_authorization
-        error_description:
+          description: error message
+          example: Method Not Allowed
+        message:
           type: string
-          description: detailed error message from target system to indicate transaction status.
-          example: Missing Authorization header
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    RoleRequest:
+      properties:
+        roles:
+          type: array
+          items:
+            type: string
+            example:
+            - rol_123
+            - rol_456
     Error404:
       properties:
         status:
@@ -660,15 +637,38 @@ components:
               type: string
             example:
             - rol_123
-    RoleRequest:
+    MTNIDOrgAppMetadataObject:
+      type: object
+      additionalProperties: false
       properties:
-        roles:
-          type: array
-          items:
-            type: string
-            example:
-            - rol_123
-            - rol_456
+        orgInvite:
+          type: object
+          properties:
+            accountAlreadyExists:
+              type: boolean
+              description: true if "Search Users by Email" API returned a user and false if it did not
+            profileUpdateRequired:
+              type: boolean
+              example: true
+            profileUpdated:
+              type: boolean
+              example: false
+            profile:
+              type: object
+              properties:
+                givenName:
+                  type: string
+                  example: given_name
+                familyName:
+                  type: string
+                  example: family_name
+                name:
+                  type: string
+                  example: name
+        dpoMetadata:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/DPOMetadataObject'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

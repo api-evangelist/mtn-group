@@ -2340,85 +2340,6 @@ paths:
     - url: https://api.mtn.com/v2
 components:
   schemas:
-    LoanAdvanceResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-          description: Status Message
-        transactionId:
-          type: string
-          description: API generated Id to include for tracing requests
-        loanDetails:
-          $ref: '#/components/schemas/LoanProvisioningDetails'
-        _links:
-          type: object
-          properties:
-            self:
-              type: string
-              example: https://api.mtn.com/v1/customers/2348076891321/loans/advance
-    LoanProvisioningDetails:
-      type: object
-      properties:
-        bundleName:
-          type: string
-          description: Name of eligible loan bundle value
-        bundleValue:
-          type: string
-          description: Name of eligible loan bundle value
-        amount:
-          type: number
-          description: Price of loan bundle
-        bundleType:
-          type: string
-          enum:
-          - DAILY
-          - WEEKLY
-          - MONTHLY
-          - HOURLY
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: 2020-08-01T12:34
-        path:
-          type: string
-          description: The path that caused the error
-          example: /loans/2348024008124/...
-    LoanEligibilityTypes:
-      type: object
-      properties:
-        eligibilityType:
-          type: string
-          enum:
-          - Airtime
-          - Data
-          - Voice
-        bundles:
-          type: array
-          items:
-            $ref: '#/components/schemas/Amount'
     LoanStatusResponse:
       type: object
       properties:
@@ -2469,6 +2390,72 @@ components:
         amount:
           type: number
           description: Price of loan bundle
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /loans/2348024008124/...
+    LoanProvisioningDetails:
+      type: object
+      properties:
+        bundleName:
+          type: string
+          description: Name of eligible loan bundle value
+        bundleValue:
+          type: string
+          description: Name of eligible loan bundle value
+        amount:
+          type: number
+          description: Price of loan bundle
+        bundleType:
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - MONTHLY
+          - HOURLY
+    LoanAdvanceResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+          description: Status Message
+        transactionId:
+          type: string
+          description: API generated Id to include for tracing requests
+        loanDetails:
+          $ref: '#/components/schemas/LoanProvisioningDetails'
+        _links:
+          type: object
+          properties:
+            self:
+              type: string
+              example: https://api.mtn.com/v1/customers/2348076891321/loans/advance
     EligibilityResponse:
       title: Eligibility
       type: object
@@ -2504,6 +2491,50 @@ components:
             self:
               type: string
               example: https://api.mtn.com/v1/customers/2348076891321/loans/eligibleBungles
+    LoanEligibilityTypes:
+      type: object
+      properties:
+        eligibilityType:
+          type: string
+          enum:
+          - Airtime
+          - Data
+          - Voice
+        bundles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Amount'
+    CustomerLinks:
+      type: object
+      required:
+      - self
+      properties:
+        self:
+          type: object
+          required:
+          - href
+          description: ''
+          properties:
+            href:
+              type: string
+              description: ''
+    Error_2:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+        status:
+          type: string
+          description: Text explaining the reason for the error
+        error:
+          type: string
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: ''
     ErrorDefault:
       properties:
         error:
@@ -2523,20 +2554,6 @@ components:
           description: The link to retrieve the location of customer
           $ref: '#/components/schemas/CustomerLinks'
           example: https://api.mtn.com/v1/customers/27832000000/locations
-    CustomerLinks:
-      type: object
-      required:
-      - self
-      properties:
-        self:
-          type: object
-          required:
-          - href
-          description: ''
-          properties:
-            href:
-              type: string
-              description: ''
     Locations:
       type: object
       required:
@@ -2560,46 +2577,65 @@ components:
           - Other
           - 'null'
           example: MTN
-    Error_2:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Error response code
-        status:
-          type: string
-          description: Text explaining the reason for the error
-        error:
-          type: string
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: ''
-    Error400:
+    CustomerPlans:
+      type: object
+      required:
+      - _link
       properties:
         statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
+          type: string
+          example: '0000'
+        transactionId:
+          type: string
+          example: '21136326455582'
         statusMessage:
           type: string
-          description: Status message from target system to indicate transaction status.
+          example: Successfully Processed
         supportMessage:
           type: string
-          description: detail message from target system to indicate transaction status.
+          example: Successfully Processed request
+        sequenceNo:
+          type: string
+          description: A unique identifier for tracking all requests
+          example: '123433'
+        fttxError:
+          type: string
+          example: null
+        data:
+          $ref: '#/components/schemas/Plans'
+    Error_3:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
         transactionId:
           type: string
           description: This is the same transactionId that is sent in the request
-          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
-        links:
-          type: array
-          items:
-            properties:
-              rel:
-                type: string
-              href:
-                type: string
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+        path:
+          type: string
+          description: The path that caused the error
+        method:
+          type: string
+          description: The HTTP method type that was used
+          example: GET
+        sequenceNo:
+          type: string
+          description: A unique identifier for tracking all requests
+          example: '12939993'
     Wallet:
       type: object
       required:
@@ -2625,6 +2661,225 @@ components:
           description: Expiry date of the wallet's value.
         amount:
           $ref: '#/components/schemas/Amount_2'
+    Error404:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 404
+        error:
+          type: string
+          description: error message
+          example: Not found
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    Error415:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        status:
+          type: integer
+          description: Status code from target system to indicate transaction status
+          example: 415
+        error:
+          type: string
+          description: error message
+          example: Unsupported Media Type
+        message:
+          type: string
+          description: details
+        path:
+          type: string
+          description: The path that caused the error
+    GetFRIResponse:
+      type: object
+      properties:
+        extension:
+          type: object
+        links:
+          $ref: '#/components/schemas/Links'
+        message:
+          type: string
+        sequenceNo:
+          type: string
+      title: GetFRIResponse
+    UsageCounter:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '622'
+          description: usage counter ID
+        name:
+          type: string
+          example: 10MB Daily Plan
+          description: Product name
+        value:
+          type: string
+          example: '264844'
+        unit:
+          type: string
+          description: Currency unit
+          example: NGN
+    UpdateFRIRequest:
+      type: object
+      properties:
+        fri:
+          type: string
+          example: 2070218
+          description: resources are indivudual fri on which block and unblock actions are performed, MADAPI appends '/MM' to the fri and sends the request to backend
+        reason:
+          type: string
+          description: reason
+          example: Fraud Transction
+        state:
+          type: string
+          example: Unblock
+          description: Typical lifecycle values for an account are Blocked, Defined, Active, Suspended, pending Update, pending Closed, Closed etc,string value sent by 3PP  are used to initiate 'Block' and 'Unblock' action on  accounts(FRI)
+      title: UpddateFRIRequest
+    MomoBalanceDetail:
+      type: object
+      description: The MoMo Balance details for a requested customer.
+      properties:
+        status:
+          type: boolean
+          description: status of the user balance compared with threshold amount passed in request. FALSE if balance >= Amount sent in request. TRUE if  balance <Amount sent in request
+          default: false
+        balance:
+          $ref: '#/components/schemas/Amount_2'
+        positiveReservations:
+          $ref: '#/components/schemas/Amount_2'
+        negativeReservations:
+          $ref: '#/components/schemas/Amount_2'
+        loyaltyInformation:
+          $ref: '#/components/schemas/LoyaltyBalances'
+        overdraft:
+          $ref: '#/components/schemas/OverdraftInformation'
+    UpdateFRIResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Success
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+          example: FRI Unblock Successful
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+          example: '234321456789'
+    Accumulator:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 41
+        name:
+          type: string
+          description: accumulator name
+          example: 10MB Daily Plan
+        value:
+          type: string
+          description: Accumulator value
+          example: 264844
+        unit:
+          type: string
+          description: accumulator value
+          example: NGN
+    Plans:
+      type: object
+      required:
+      - type
+      - status
+      - startDate
+      - endDate
+      - language
+      - tariffPlan
+      - balance
+      description: The plan details for the customer.
+      properties:
+        offers:
+          $ref: '#/components/schemas/OfferDetails'
+        type:
+          type: string
+          description: The billing type of the plan.
+          enum:
+          - Prepaid
+          - Postpaid
+          - Hybrid
+        status:
+          type: string
+          description: The current status of the plan.
+          enum:
+          - Active
+          - Suspended
+          - Inactive
+          - RICA Barred
+          - Blacklisted
+        startDate:
+          type: string
+          description: The date the customer was created/provisioned
+          format: date-time
+        customerType:
+          type: string
+          description: To return the customer type of the number. E.g Staff, Contractor, etc.
+          example: Staff
+        endDate:
+          type: string
+          description: The date the plan will be deactivated.
+          format: date-time
+        language:
+          type: string
+          description: The customers language.
+        tariffPlan:
+          type: string
+          description: The customers active tariff plan.
+        balance:
+          type: array
+          description: The account balance details of a customer
+          items:
+            $ref: '#/components/schemas/CustomerBalance'
+        usageCounterAndThreshold:
+          type: array
+          description: Usage counter usage threshold
+          items:
+            $ref: '#/components/schemas/UsageCounterUsageThreshold'
+        accumulator:
+          type: array
+          description: Customer accumulators
+          items:
+            $ref: '#/components/schemas/Accumulator'
+    UsageCounterUsageThreshold:
+      type: object
+      properties:
+        usageCounter:
+          $ref: '#/components/schemas/UsageCounter'
+        usageThreshold:
+          $ref: '#/components/schemas/UsageThreshold'
+    Links:
+      type: object
+      properties:
+        empty:
+          type: boolean
+      title: Links
     AdditionalInformationBody:
       type: object
       properties:
@@ -3099,64 +3354,43 @@ components:
               type: number
               description: charge flag
               example: -1
-    LoyaltyBalances:
+    OverdraftInformation:
       type: object
-      description: Contains all the loyalty balances associated with a customer.
+      description: Contains overdraft balances if available
       properties:
-        generatedAmount:
+        balance:
           $ref: '#/components/schemas/Amount_2'
-        consumedAmount:
+        limit:
           $ref: '#/components/schemas/Amount_2'
-        newBalance:
+        accessFee:
           $ref: '#/components/schemas/Amount_2'
-    GetFRIResponse:
-      type: object
-      properties:
-        extension:
-          type: object
-        links:
-          $ref: '#/components/schemas/Links'
-        message:
-          type: string
-        sequenceNo:
-          type: string
-      title: GetFRIResponse
-    Error401:
+        interest:
+          $ref: '#/components/schemas/Amount_2'
+    Error500:
       properties:
         statusCode:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 4000
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '3001'
         statusMessage:
           type: string
-          description: Status message from target system to indicate transaction status.
-          example: Unauthorised
-        supportMessage:
+          description: More details and corrective actions related to the error which can be shown to a client
+          example: Internal Server Error
+        transactionId:
           type: string
-          description: detail message from target system to indicate transaction status.
-          example: Please verify token environment and key
-        faultMessage1:
+          description: This is the same transactionId that is sent in the request
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        timestamp:
           type: string
-          description: ''
-        faultMessage2:
+          format: date-time
+          description: Timestamp that the error occurred
+          example: '2021-07-21T17:32:28Z'
+        path:
           type: string
-          description: fault message
-    UpdateFRIRequest:
-      type: object
-      properties:
-        fri:
+          description: The path that caused the error
+        method:
           type: string
-          example: 2070218
-          description: resources are indivudual fri on which block and unblock actions are performed, MADAPI appends '/MM' to the fri and sends the request to backend
-        reason:
-          type: string
-          description: reason
-          example: Fraud Transction
-        state:
-          type: string
-          example: Unblock
-          description: Typical lifecycle values for an account are Blocked, Defined, Active, Suspended, pending Update, pending Closed, Closed etc,string value sent by 3PP  are used to initiate 'Block' and 'Unblock' action on  accounts(FRI)
-      title: UpddateFRIRequest
+          description: method used by MADAPI to get the response
     BalanceDetail:
       type: object
       required:
@@ -3201,88 +3435,6 @@ components:
           - MINUTES
           - SMS
           example: NGN
-    UpdateFRIResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: Success
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-          example: FRI Unblock Successful
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-          example: '234321456789'
-    Plans:
-      type: object
-      required:
-      - type
-      - status
-      - startDate
-      - endDate
-      - language
-      - tariffPlan
-      - balance
-      description: The plan details for the customer.
-      properties:
-        offers:
-          $ref: '#/components/schemas/OfferDetails'
-        type:
-          type: string
-          description: The billing type of the plan.
-          enum:
-          - Prepaid
-          - Postpaid
-          - Hybrid
-        status:
-          type: string
-          description: The current status of the plan.
-          enum:
-          - Active
-          - Suspended
-          - Inactive
-          - RICA Barred
-          - Blacklisted
-        startDate:
-          type: string
-          description: The date the customer was created/provisioned
-          format: date-time
-        customerType:
-          type: string
-          description: To return the customer type of the number. E.g Staff, Contractor, etc.
-          example: Staff
-        endDate:
-          type: string
-          description: The date the plan will be deactivated.
-          format: date-time
-        language:
-          type: string
-          description: The customers language.
-        tariffPlan:
-          type: string
-          description: The customers active tariff plan.
-        balance:
-          type: array
-          description: The account balance details of a customer
-          items:
-            $ref: '#/components/schemas/CustomerBalance'
-        usageCounterAndThreshold:
-          type: array
-          description: Usage counter usage threshold
-          items:
-            $ref: '#/components/schemas/UsageCounterUsageThreshold'
-        accumulator:
-          type: array
-          description: Customer accumulators
-          items:
-            $ref: '#/components/schemas/Accumulator'
     OfferDetails:
       type: object
       description: The Offer Details per customer.
@@ -3309,136 +3461,58 @@ components:
           type: string
           example: 53402237800000
           description: Value of the expiry date
-    Links:
-      type: object
-      properties:
-        empty:
-          type: boolean
-      title: Links
-    Error_3:
+    customerDetails_Request:
       type: object
       required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-        path:
-          type: string
-          description: The path that caused the error
-        method:
-          type: string
-          description: The HTTP method type that was used
-          example: GET
-        sequenceNo:
-          type: string
-          description: A unique identifier for tracking all requests
-          example: '12939993'
-    Amount_2:
-      type: object
-      required:
-      - value
       - type
-      - unit
-      description: The amount details for a wallet.
       properties:
         type:
           type: string
-          description: This is the type of the wallet value.
+          description: This indicates the what is required for the id.
+          example: INFORMATION
+        accessId:
+          type: string
+          description: Indicate the channel that was used to initiate the request.
+          example: agentx
+        serviceOptionId:
+          type: string
           enum:
-          - CURRENCY
-          - DATA
-          - MINUTES
-          - SMS
-        value:
+          - '4620'
+          - '4621'
+          description: Service option identifier. SO1 for PAYJOYOPTIN and SO2 for PAYJOYSUSPEND. The <SO1> Payjoy Opt-in is 4620 and the <SO2> Payjoy suspended is 4621.
+          example: '4620'
+        cancel:
           type: string
-          description: This is the value of a balance wallet.
-        unit:
+          description: An indication of whether to cancel the service option. "F" indicates service option to be provisioned. "T" indicates service option will be removed from subscriber's portfolio.
+          example: F
+        charge:
           type: string
-          description: This is the unit of the wallet value.
-          enum:
-          - ZAR
-          - NGN
-          - GB
-          - MB
-          - MINUTES
-          - SMS
-          - FCFA
-          example: NGN
-    Error500:
-      properties:
-        statusCode:
+          description: An indication of whether to charge the subscriber of the service option provisioning cost. Possible values T and F. F for charge and T fornot charging.
+          example: F
+        recurring:
           type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '3001'
-        statusMessage:
+          description: An indictaion of whether the service option should be provisioned as adhoc, recurring or auto-renewable. Supported values- T for recurring, F for adhoc and A for Auto renewable.
+          example: F
+        scheduleDate:
           type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-          example: Internal Server Error
-        transactionId:
+          description: The date on which the scheduled event will be executed - e.g. the date on which a scheduled _DATE provision will take place. If the service option provision action is immediate this field can be filled out with a "_".
+          example: F
+        dedicatedAmount:
           type: string
-          description: This is the same transactionId that is sent in the request
-          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
-        timestamp:
+          description: An additional value to add to the dedicated account that will be updated as a result of service option provisioning .
+          example: F
+        productCode:
           type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        path:
+          description: The product code as per the product reference data. If not applicable can be filled out with a "-".
+          example: F
+        orderTrackingNumber:
           type: string
-          description: The path that caused the error
-        method:
+          description: Order Tracking Number. If not applicable can be filled out with a "-".
+          example: 20230915085941-2be154c2f530e69ab4fd9592e621fefff15bbfb2
+        information:
           type: string
-          description: method used by MADAPI to get the response
-    Accumulator:
-      type: object
-      properties:
-        id:
-          type: string
-          example: 41
-        name:
-          type: string
-          description: accumulator name
-          example: 10MB Daily Plan
-        value:
-          type: string
-          description: Accumulator value
-          example: 264844
-        unit:
-          type: string
-          description: accumulator value
-          example: NGN
-    UsageCounterUsageThreshold:
-      type: object
-      properties:
-        usageCounter:
-          $ref: '#/components/schemas/UsageCounter'
-        usageThreshold:
-          $ref: '#/components/schemas/UsageThreshold'
-    GetFRIRequest:
-      type: object
-      properties:
-        accountHolderId:
-          type: string
-        extension:
-          type: object
-        resource:
-          type: string
-      title: GetFRIRequest
+          description: This attribute must allow for text values up to a max of 50 char. Where this attribute is present in the request, the contents must be used to populate the 'General 3* field of Service Option Provision EDRs (Rec Type=22) for the provisioned SO. This information is being used to run handset based promotions and it is expected that both iMEl and handset information will be used to populate this attribute in the request..
+          example: F
     CustomerBalance:
       type: object
       required:
@@ -3477,44 +3551,64 @@ components:
           description: Any other additional information to be added
           items:
             $ref: '#/components/schemas/AdditionalInformationBody'
-    Error415:
+    LoyaltyBalances:
+      type: object
+      description: Contains all the loyalty balances associated with a customer.
       properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
-          type: integer
-          description: Status code from target system to indicate transaction status
-          example: 415
-        error:
-          type: string
-          description: error message
-          example: Unsupported Media Type
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
-    UsageCounter:
+        generatedAmount:
+          $ref: '#/components/schemas/Amount_2'
+        consumedAmount:
+          $ref: '#/components/schemas/Amount_2'
+        newBalance:
+          $ref: '#/components/schemas/Amount_2'
+    UsageThreshold:
       type: object
       properties:
         id:
           type: string
           example: '622'
-          description: usage counter ID
+          description: usage threshold ID
         name:
           type: string
           example: 10MB Daily Plan
           description: Product name
         value:
           type: string
-          example: '264844'
+          example: '-738586'
         unit:
           type: string
           description: Currency unit
+          example: NGN
+    Amount_2:
+      type: object
+      required:
+      - value
+      - type
+      - unit
+      description: The amount details for a wallet.
+      properties:
+        type:
+          type: string
+          description: This is the type of the wallet value.
+          enum:
+          - CURRENCY
+          - DATA
+          - MINUTES
+          - SMS
+        value:
+          type: string
+          description: This is the value of a balance wallet.
+        unit:
+          type: string
+          description: This is the unit of the wallet value.
+          enum:
+          - ZAR
+          - NGN
+          - GB
+          - MB
+          - MINUTES
+          - SMS
+          - FCFA
           example: NGN
     provisionResponse:
       type: object
@@ -3596,372 +3690,59 @@ components:
               href:
                 type: string
                 example: https://api.mtn.com/v1/customers/2348064816493/refill
-    Error404:
+    GetFRIRequest:
+      type: object
       properties:
-        timestamp:
+        accountHolderId:
           type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: '2021-07-21T17:32:28Z'
-        status:
+        extension:
+          type: object
+        resource:
+          type: string
+      title: GetFRIRequest
+    Error401:
+      properties:
+        statusCode:
           type: integer
           description: Status code from target system to indicate transaction status
-          example: 404
-        error:
-          type: string
-          description: error message
-          example: Not found
-        message:
-          type: string
-          description: details
-        path:
-          type: string
-          description: The path that caused the error
-    CustomerPlans:
-      type: object
-      required:
-      - _link
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        transactionId:
-          type: string
-          example: '21136326455582'
+          example: 4000
         statusMessage:
           type: string
-          example: Successfully Processed
+          description: Status message from target system to indicate transaction status.
+          example: Unauthorised
         supportMessage:
           type: string
-          example: Successfully Processed request
-        sequenceNo:
+          description: detail message from target system to indicate transaction status.
+          example: Please verify token environment and key
+        faultMessage1:
           type: string
-          description: A unique identifier for tracking all requests
-          example: '123433'
-        fttxError:
+          description: ''
+        faultMessage2:
           type: string
-          example: null
-        data:
-          $ref: '#/components/schemas/Plans'
-    MomoBalanceDetail:
-      type: object
-      description: The MoMo Balance details for a requested customer.
-      properties:
-        status:
-          type: boolean
-          description: status of the user balance compared with threshold amount passed in request. FALSE if balance >= Amount sent in request. TRUE if  balance <Amount sent in request
-          default: false
-        balance:
-          $ref: '#/components/schemas/Amount_2'
-        positiveReservations:
-          $ref: '#/components/schemas/Amount_2'
-        negativeReservations:
-          $ref: '#/components/schemas/Amount_2'
-        loyaltyInformation:
-          $ref: '#/components/schemas/LoyaltyBalances'
-        overdraft:
-          $ref: '#/components/schemas/OverdraftInformation'
-    UsageThreshold:
-      type: object
-      properties:
-        id:
-          type: string
-          example: '622'
-          description: usage threshold ID
-        name:
-          type: string
-          example: 10MB Daily Plan
-          description: Product name
-        value:
-          type: string
-          example: '-738586'
-        unit:
-          type: string
-          description: Currency unit
-          example: NGN
-    customerDetails_Request:
-      type: object
-      required:
-      - type
-      properties:
-        type:
-          type: string
-          description: This indicates the what is required for the id.
-          example: INFORMATION
-        accessId:
-          type: string
-          description: Indicate the channel that was used to initiate the request.
-          example: agentx
-        serviceOptionId:
-          type: string
-          enum:
-          - '4620'
-          - '4621'
-          description: Service option identifier. SO1 for PAYJOYOPTIN and SO2 for PAYJOYSUSPEND. The <SO1> Payjoy Opt-in is 4620 and the <SO2> Payjoy suspended is 4621.
-          example: '4620'
-        cancel:
-          type: string
-          description: An indication of whether to cancel the service option. "F" indicates service option to be provisioned. "T" indicates service option will be removed from subscriber's portfolio.
-          example: F
-        charge:
-          type: string
-          description: An indication of whether to charge the subscriber of the service option provisioning cost. Possible values T and F. F for charge and T fornot charging.
-          example: F
-        recurring:
-          type: string
-          description: An indictaion of whether the service option should be provisioned as adhoc, recurring or auto-renewable. Supported values- T for recurring, F for adhoc and A for Auto renewable.
-          example: F
-        scheduleDate:
-          type: string
-          description: The date on which the scheduled event will be executed - e.g. the date on which a scheduled _DATE provision will take place. If the service option provision action is immediate this field can be filled out with a "_".
-          example: F
-        dedicatedAmount:
-          type: string
-          description: An additional value to add to the dedicated account that will be updated as a result of service option provisioning .
-          example: F
-        productCode:
-          type: string
-          description: The product code as per the product reference data. If not applicable can be filled out with a "-".
-          example: F
-        orderTrackingNumber:
-          type: string
-          description: Order Tracking Number. If not applicable can be filled out with a "-".
-          example: 20230915085941-2be154c2f530e69ab4fd9592e621fefff15bbfb2
-        information:
-          type: string
-          description: This attribute must allow for text values up to a max of 50 char. Where this attribute is present in the request, the contents must be used to populate the 'General 3* field of Service Option Provision EDRs (Rec Type=22) for the provisioned SO. This information is being used to run handset based promotions and it is expected that both iMEl and handset information will be used to populate this attribute in the request..
-          example: F
-    OverdraftInformation:
-      type: object
-      description: Contains overdraft balances if available
-      properties:
-        balance:
-          $ref: '#/components/schemas/Amount_2'
-        limit:
-          $ref: '#/components/schemas/Amount_2'
-        accessFee:
-          $ref: '#/components/schemas/Amount_2'
-        interest:
-          $ref: '#/components/schemas/Amount_2'
-    Loans:
-      type: object
-      required:
-      - customerId
-      description: The loans details of a customer, if it exists
-      properties:
-        _link:
-          type: array
-          xml:
-            name: link
-            attribute: false
-            wrapped: false
-          items:
-            $ref: '#/components/schemas/CustomerLinks'
-        status:
-          type: string
-          enum:
-          - FAILED
-          - COMPLETED
-          - INITED
-        transactionId:
-          type: string
-    transfers:
-      type: object
-      properties:
-        lastTransfersDate:
-          type: string
-          format: date
-          description: 'the '
-          example: '2017'
-        time-periods:
-          type: object
-          description: 'the '
-          properties:
-            1-months:
-              type: object
-              description: 'the '
-              properties:
-                totalTransfers:
-                  type: string
-                  description: 'the '
-                totalAcceptors:
-                  type: string
-                  description: 'the '
-                quantityTransfers:
-                  type: string
-                  description: 'the '
-            3-months:
-              type: object
-              properties:
-                totalTransfers:
-                  type: string
-                  description: 'the '
-                totalAcceptors:
-                  type: string
-                  description: 'the '
-                quantityTransfers:
-                  type: string
-                  description: 'the '
-            6-months:
-              type: object
-              properties:
-                totalTransfers:
-                  type: string
-                totalAcceptors:
-                  type: string
-                  description: 'the '
-                quantityTransfers:
-                  type: string
-                  description: 'the '
-                maxTransfers:
-                  type: string
-                  description: 'the '
-    Plans_2:
-      type: object
-      required:
-      - type
-      - status
-      - startDate
-      - endDate
-      - balance
-      description: The plan details for the customer.
-      properties:
-        type:
-          type: string
-          description: The billing type of the plan.
-          enum:
-          - Prepaid
-          - Postpaid
-          - Hybrid
-        id:
-          type: string
-        status:
-          type: string
-          description: The current status of the plan.
-          enum:
-          - Active
-          - Suspended
-          - Inactive
-          - RICA Barred
-          - Blacklisted
-        startDate:
-          type: string
-          description: The date the customer was created/provisioned
-          format: date-time
-        endDate:
-          type: string
-          description: The date the plan will be deactivated.
-          format: date-time
-        maxModify:
-          type: string
-          description: Number of allowed max modifications. Used to fetch Caller Feel/Tune subscriber details
-          example: 5
-        usedModify:
-          type: string
-          description: Number of used modifications. Used to fetch Caller Feel/Tune subscriber details
-          example: 1
-        balance:
-          type: array
-          description: The account balance details of a customer
-          items:
-            $ref: '#/components/schemas/CustomerBalances'
-    ErrorNew:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
+          description: fault message
+    Error400:
       properties:
         statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
+          type: integer
+          description: Status code from target system to indicate transaction status
         statusMessage:
           type: string
-          description: More details and corrective actions related to the error which can be shown to a client
+          description: Status message from target system to indicate transaction status.
         supportMessage:
           type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+          description: detail message from target system to indicate transaction status.
         transactionId:
           type: string
           description: This is the same transactionId that is sent in the request
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp of the error
-          example: 2019-08-23T07:29:25.593+0000
-        _links:
-          type: object
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
-                  example: https://api.mtn.com/v1/<path>
-    Error_4:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Error response code
-        status:
-          type: string
-          description: Text explaining the reason for the error
-        error:
-          type: string
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: ''
-    deposits:
-      type: object
-      properties:
-        lastDepositsDate:
-          type: string
-          format: date
-          description: 'the '
-          example: '2017'
-        maxDeposits-6months:
-          type: string
-          description: 'the '
-        quantities:
-          type: object
-          properties:
-            numberOfDeposits-1months:
-              type: string
-              description: 'the '
-            numberOfDeposits-3months:
-              type: string
-              description: 'the '
-            numberOfDeposits-6months:
-              type: string
-              description: 'the '
-        amounts:
-          type: object
-          properties:
-            amountOfDeposits-1months:
-              type: string
-              description: 'the '
-            amountOfDeposits-3months:
-              type: string
-              description: 'the '
-            amountOfDeposits-6months:
-              type: string
-              description: 'the '
-        acceptors:
-          type: object
-          properties:
-            numberOfAcceptors-1months:
-              type: string
-              description: 'the '
-            numberOfAcceptors-3months:
-              type: string
-              description: 'the '
-            numberOfAcceptors-6months:
-              type: string
-              description: 'the '
+          example: 0d1e1b18-1b6d-4792-8417-72d337f42a1c
+        links:
+          type: array
+          items:
+            properties:
+              rel:
+                type: string
+              href:
+                type: string
     CustomerStatusResponse:
       type: object
       properties:
@@ -3980,60 +3761,80 @@ components:
           example: '234806589013'
         data:
           $ref: '#/components/schemas/status'
-    CustomerBalances:
+    CustomerPlans_2:
       type: object
+      required:
+      - _link
+      properties:
+        category:
+          type: string
+          description: Will contain the identifier for product line. Example - GSM, Digital Services, Mobile Money etc.
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Plans_2'
+        _link:
+          type: string
+          description: The link to retrieve the plan for a customer.
+          $ref: '#/components/schemas/CustomerLinks'
+          example: https://api.mtn.com/v1/customers/27832000000/plan
+    Error_4:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+        status:
+          type: string
+          description: Text explaining the reason for the error
+        error:
+          type: string
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: ''
+    GenderEnum:
+      type: string
+      title: Gender Enum
+      example: Male
+      enum:
+      - Male
+      - Female
+    KYC:
       properties:
         data:
           type: object
-          required:
-          - balanceType
-          - amount
-          - currency
-          - expiryDate
           properties:
-            balanceType:
+            idType:
               type: string
-              description: Identifies the type of balance. A customer plan may have multiple types of balances for different usage, for example, voice, SMS, and game services.
-              example: VOICE
-            amount:
+              description: Legal ID Type
+              example: South African ID
+            idNumber:
               type: string
-              description: Amount of balance.
-              example: '26861'
-            currency:
+              description: Legal ID Number/Reference
+              example: '8002143987083'
+            dateOfBirth:
               type: string
-              description: ISO 4217 three-letter ISO code for the currency.
-              example: ZAR
-            expiryDate:
+              format: date
+              description: Date of Birth
+              pattern: YYYY-MM-DD
+              example: '1980-02-14'
+            gender:
+              $ref: '#/components/schemas/GenderEnum'
+            firstName:
               type: string
-              format: date-time
-              description: Expiry Date of the account.
-              example: '2019-12-31T12:00:00'
-    CustomerUpgradeEligibilityResponse:
-      type: object
-      properties:
-        statusCode:
+              description: Name
+              example: First n Middle
+            lastName:
+              type: string
+              description: Surname
+              example: Surname
+        _link:
           type: string
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Request Successfully processed
-        transactionId:
-          type: string
-          description: Client or API generated Id to include for tracing requests
-        data:
-          $ref: '#/components/schemas/Upgrade'
-        _links:
-          type: string
-          description: The link to retrieve the Upgrade Eligibility for a customer.
-          $ref: '#/components/schemas/links'
-    Upgrade:
-      type: object
-      properties:
-        UpgradeEligibility:
-          type: array
-          description: The list of Upgrade Eligibility parameters
-          items:
-            $ref: '#/components/schemas/UpgradeEligibilityParams'
+          description: The link to retrieve the customers KYC details.
+          $ref: '#/components/schemas/CustomerLinks'
     Devices:
       type: object
       properties:
@@ -4091,260 +3892,6 @@ components:
                     description: Secondary Unique Service Id
         _links:
           $ref: '#/components/schemas/CustomerLinks'
-    AccountRef:
-      properties:
-        data:
-          type: object
-          properties:
-            accountName:
-              type: string
-              example: MoMo
-            accountId:
-              type: string
-            description:
-              type: string
-              description: Detailed description of account
-            status:
-              type: string
-              enum:
-              - active
-              - inactive
-        _links:
-          type: object
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
-                type:
-                  type: string
-                  example: POST
-    UpgradeEligibilityParams:
-      type: object
-      description: Describes a given characteristic of an object or entity through a name/value pair.
-      required:
-      - name
-      - value
-      properties:
-        name:
-          type: string
-          description: Name of the characteristic
-          example: Eligibility Date
-        valueType:
-          type: string
-          description: Data type of the value of the characteristic
-          example: date-time
-        value:
-          $ref: '#/components/schemas/Any'
-          description: The value of the characteristic
-          example: 2019-08-23T07:29:25.593+0000
-    GenderEnum:
-      type: string
-      title: Gender Enum
-      example: Male
-      enum:
-      - Male
-      - Female
-    momo-loans:
-      type: object
-      title: loans object
-      properties:
-        time-periods:
-          type: object
-          properties:
-            1-months:
-              type: object
-              properties:
-                numberOfLoans:
-                  type: string
-                  description: Number of loans, for the last 1 month
-            3-months:
-              type: object
-              properties:
-                numberOfLoans:
-                  type: string
-                  description: Number of loans, for the last 1 month
-            6-months:
-              type: object
-              properties:
-                numberOfLoans:
-                  type: string
-                  description: Number of loans, for the last 1 month
-        totalLoansAmount:
-          type: string
-          description: tTotal loan amount
-        firstLoansDate:
-          type: string
-          format: date
-          description: First loan date
-        lastLoansDate:
-          type: string
-          format: date
-          description: Last loan date
-        numberOverdue:
-          type: string
-          description: Number of loans overdue
-        totalTerm:
-          type: string
-          description: Total loan term
-        maxTerm:
-          type: string
-          description: Maximum loan term
-        lastOverdueDate:
-          type: string
-          format: date
-          description: Last time loan was overdue
-    status:
-      type: object
-      properties:
-        activityStatus:
-          type: string
-          example: Active
-    Customer:
-      type: object
-      required:
-      - customerId
-      - _links
-      properties:
-        transactionId:
-          type: string
-          description: Transaction Id of the request
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '0000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        customerId:
-          type: string
-        customerSystem:
-          type: string
-          description: Type of Customer
-        characteristics:
-          type: array
-          description: Customer characteristics
-          items:
-            $ref: '#/components/schemas/CustomerCharacteristics'
-        locations:
-          type: object
-          description: The location of customer. Location includes Country and Network Operator
-          $ref: '#/components/schemas/CustomerLocations'
-        plans:
-          type: array
-          items:
-            $ref: '#/components/schemas/CustomerPlans_2'
-        loans:
-          type: object
-          description: the customers loan and eligibility details
-          $ref: '#/components/schemas/CustomerLoans'
-        account:
-          type: array
-          items:
-            $ref: '#/components/schemas/AccountRef'
-        kyc:
-          type: array
-          items:
-            $ref: '#/components/schemas/KYC'
-        devices:
-          type: array
-          items:
-            $ref: '#/components/schemas/Devices'
-        transactions-summaries:
-          $ref: '#/components/schemas/transactions-summaries'
-        _links:
-          type: string
-          description: link to retrieve the customer profile
-          $ref: '#/components/schemas/CustomerLinks'
-    CustomerTenureResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-        statusMessage:
-          type: string
-          example: Request Successfully processed
-        transactionId:
-          type: string
-          description: Client or API generated Id to include for tracing requests
-          example: '85499086'
-        customerId:
-          type: string
-          example: '234806589013'
-        data:
-          $ref: '#/components/schemas/tenure'
-    CustomerProfile:
-      type: object
-      required:
-      - customerId
-      - _links
-      properties:
-        transactionId:
-          type: string
-          description: Transaction Id of the request
-        customerId:
-          type: string
-        customerSystem:
-          type: string
-          description: Type of Customer
-        characteristics:
-          type: array
-          description: Customer characteristics
-          items:
-            $ref: '#/components/schemas/CustomerCharacteristics'
-        plans:
-          type: array
-          items:
-            $ref: '#/components/schemas/CustomerPlans_2'
-        account:
-          type: array
-          items:
-            $ref: '#/components/schemas/AccountRef'
-        kyc:
-          type: array
-          items:
-            $ref: '#/components/schemas/KYC'
-    tenure:
-      type: object
-      properties:
-        tenure:
-          type: integer
-          example: '12'
-    KYC:
-      properties:
-        data:
-          type: object
-          properties:
-            idType:
-              type: string
-              description: Legal ID Type
-              example: South African ID
-            idNumber:
-              type: string
-              description: Legal ID Number/Reference
-              example: '8002143987083'
-            dateOfBirth:
-              type: string
-              format: date
-              description: Date of Birth
-              pattern: YYYY-MM-DD
-              example: '1980-02-14'
-            gender:
-              $ref: '#/components/schemas/GenderEnum'
-            firstName:
-              type: string
-              description: Name
-              example: First n Middle
-            lastName:
-              type: string
-              description: Surname
-              example: Surname
-        _link:
-          type: string
-          description: The link to retrieve the customers KYC details.
-          $ref: '#/components/schemas/CustomerLinks'
     received:
       type: object
       properties:
@@ -4395,20 +3942,55 @@ components:
                 maxReceived:
                   type: string
                   description: 'the '
-    Locations_2:
+    UpgradeEligibilityParams:
       type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
       required:
-      - country
-      - operator
+      - name
+      - value
       properties:
-        country:
+        name:
           type: string
-          description: The country that the customer MSISDN was provisioned in.
-          example: South Africa
-        operator:
+          description: Name of the characteristic
+          example: Eligibility Date
+        valueType:
           type: string
-          description: The network operator that the customer MSISDN was provisioned for.
-          example: MTN
+          description: Data type of the value of the characteristic
+          example: date-time
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
+          example: 2019-08-23T07:29:25.593+0000
+    AccountRef:
+      properties:
+        data:
+          type: object
+          properties:
+            accountName:
+              type: string
+              example: MoMo
+            accountId:
+              type: string
+            description:
+              type: string
+              description: Detailed description of account
+            status:
+              type: string
+              enum:
+              - active
+              - inactive
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                type:
+                  type: string
+                  example: POST
+    Any: {}
     links:
       type: object
       properties:
@@ -4418,39 +4000,39 @@ components:
             href:
               type: string
               example: https://api.mtn.com/v1/<path>
-    send:
+    billPayments:
       type: object
       properties:
-        lastSendDate:
+        lastBillPaymentsDate:
           type: string
           format: date
           description: 'the '
           example: '2017'
-        maxSend-6months:
+        maxBillPayments-6months:
           type: string
           description: 'the '
         quantities:
           type: object
           properties:
-            numberOfSend-1months:
+            numberOfBillPayments-1months:
               type: string
               description: 'the '
-            numberOfSend-3months:
+            numberOfBillPayments-3months:
               type: string
               description: 'the '
-            numberOfSend-6months:
+            numberOfBillPayments-6months:
               type: string
               description: 'the '
         amounts:
           type: object
           properties:
-            amountOfSend-1months:
+            amountOfBillPayments-1months:
               type: string
               description: 'the '
-            amountOfSend-3months:
+            amountOfBillPayments-3months:
               type: string
               description: 'the '
-            amountOfSend-6months:
+            amountOfBillPayments-6months:
               type: string
               description: 'the '
         acceptors:
@@ -4465,23 +4047,83 @@ components:
             numberOfAcceptors-6months:
               type: string
               description: 'the '
-    CustomerPlans_2:
+    CustomerBalances:
+      type: object
+      properties:
+        data:
+          type: object
+          required:
+          - balanceType
+          - amount
+          - currency
+          - expiryDate
+          properties:
+            balanceType:
+              type: string
+              description: Identifies the type of balance. A customer plan may have multiple types of balances for different usage, for example, voice, SMS, and game services.
+              example: VOICE
+            amount:
+              type: string
+              description: Amount of balance.
+              example: '26861'
+            currency:
+              type: string
+              description: ISO 4217 three-letter ISO code for the currency.
+              example: ZAR
+            expiryDate:
+              type: string
+              format: date-time
+              description: Expiry Date of the account.
+              example: '2019-12-31T12:00:00'
+    Plans_2:
       type: object
       required:
-      - _link
+      - type
+      - status
+      - startDate
+      - endDate
+      - balance
+      description: The plan details for the customer.
       properties:
-        category:
+        type:
           type: string
-          description: Will contain the identifier for product line. Example - GSM, Digital Services, Mobile Money etc.
-        data:
+          description: The billing type of the plan.
+          enum:
+          - Prepaid
+          - Postpaid
+          - Hybrid
+        id:
+          type: string
+        status:
+          type: string
+          description: The current status of the plan.
+          enum:
+          - Active
+          - Suspended
+          - Inactive
+          - RICA Barred
+          - Blacklisted
+        startDate:
+          type: string
+          description: The date the customer was created/provisioned
+          format: date-time
+        endDate:
+          type: string
+          description: The date the plan will be deactivated.
+          format: date-time
+        maxModify:
+          type: string
+          description: Number of allowed max modifications. Used to fetch Caller Feel/Tune subscriber details
+          example: 5
+        usedModify:
+          type: string
+          description: Number of used modifications. Used to fetch Caller Feel/Tune subscriber details
+          example: 1
+        balance:
           type: array
+          description: The account balance details of a customer
           items:
-            $ref: '#/components/schemas/Plans_2'
-        _link:
-          type: string
-          description: The link to retrieve the plan for a customer.
-          $ref: '#/components/schemas/CustomerLinks'
-          example: https://api.mtn.com/v1/customers/27832000000/plan
+            $ref: '#/components/schemas/CustomerBalances'
     activity:
       type: object
       description: Actvity related to GSM calls, data bundles, and airtime
@@ -4549,6 +4191,356 @@ components:
                     me2uAmountAirtimeReceived:
                       type: string
                       description: Amount of MTN Me2U airtime received, for the last 1 month
+    CustomerLoans:
+      type: object
+      required:
+      - _link
+      properties:
+        data:
+          type: object
+          $ref: '#/components/schemas/Loans'
+        _link:
+          type: string
+          description: The link to retrieve the customers MoMo details.
+          $ref: '#/components/schemas/CustomerLinks'
+          example: https://api.mtn.com/v1/customers/27832000000/loans
+    Customer:
+      type: object
+      required:
+      - customerId
+      - _links
+      properties:
+        transactionId:
+          type: string
+          description: Transaction Id of the request
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '0000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        customerId:
+          type: string
+        customerSystem:
+          type: string
+          description: Type of Customer
+        characteristics:
+          type: array
+          description: Customer characteristics
+          items:
+            $ref: '#/components/schemas/CustomerCharacteristics'
+        locations:
+          type: object
+          description: The location of customer. Location includes Country and Network Operator
+          $ref: '#/components/schemas/CustomerLocations'
+        plans:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerPlans_2'
+        loans:
+          type: object
+          description: the customers loan and eligibility details
+          $ref: '#/components/schemas/CustomerLoans'
+        account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountRef'
+        kyc:
+          type: array
+          items:
+            $ref: '#/components/schemas/KYC'
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Devices'
+        transactions-summaries:
+          $ref: '#/components/schemas/transactions-summaries'
+        _links:
+          type: string
+          description: link to retrieve the customer profile
+          $ref: '#/components/schemas/CustomerLinks'
+    timePeriodEnum:
+      type: string
+      description: a time period for which data is available. Usually data is available for multiple time periods, like 1 month, 3 month, and 6 month. Each time period will be represented as a separate array
+      enum:
+      - month
+      - days
+    status:
+      type: object
+      properties:
+        activityStatus:
+          type: string
+          example: Active
+    deposits:
+      type: object
+      properties:
+        lastDepositsDate:
+          type: string
+          format: date
+          description: 'the '
+          example: '2017'
+        maxDeposits-6months:
+          type: string
+          description: 'the '
+        quantities:
+          type: object
+          properties:
+            numberOfDeposits-1months:
+              type: string
+              description: 'the '
+            numberOfDeposits-3months:
+              type: string
+              description: 'the '
+            numberOfDeposits-6months:
+              type: string
+              description: 'the '
+        amounts:
+          type: object
+          properties:
+            amountOfDeposits-1months:
+              type: string
+              description: 'the '
+            amountOfDeposits-3months:
+              type: string
+              description: 'the '
+            amountOfDeposits-6months:
+              type: string
+              description: 'the '
+        acceptors:
+          type: object
+          properties:
+            numberOfAcceptors-1months:
+              type: string
+              description: 'the '
+            numberOfAcceptors-3months:
+              type: string
+              description: 'the '
+            numberOfAcceptors-6months:
+              type: string
+              description: 'the '
+    transfers:
+      type: object
+      properties:
+        lastTransfersDate:
+          type: string
+          format: date
+          description: 'the '
+          example: '2017'
+        time-periods:
+          type: object
+          description: 'the '
+          properties:
+            1-months:
+              type: object
+              description: 'the '
+              properties:
+                totalTransfers:
+                  type: string
+                  description: 'the '
+                totalAcceptors:
+                  type: string
+                  description: 'the '
+                quantityTransfers:
+                  type: string
+                  description: 'the '
+            3-months:
+              type: object
+              properties:
+                totalTransfers:
+                  type: string
+                  description: 'the '
+                totalAcceptors:
+                  type: string
+                  description: 'the '
+                quantityTransfers:
+                  type: string
+                  description: 'the '
+            6-months:
+              type: object
+              properties:
+                totalTransfers:
+                  type: string
+                totalAcceptors:
+                  type: string
+                  description: 'the '
+                quantityTransfers:
+                  type: string
+                  description: 'the '
+                maxTransfers:
+                  type: string
+                  description: 'the '
+    CustomerUpgradeEligibilityResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request Successfully processed
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+        data:
+          $ref: '#/components/schemas/Upgrade'
+        _links:
+          type: string
+          description: The link to retrieve the Upgrade Eligibility for a customer.
+          $ref: '#/components/schemas/links'
+    CustomerTenureResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+        statusMessage:
+          type: string
+          example: Request Successfully processed
+        transactionId:
+          type: string
+          description: Client or API generated Id to include for tracing requests
+          example: '85499086'
+        customerId:
+          type: string
+          example: '234806589013'
+        data:
+          $ref: '#/components/schemas/tenure'
+    tenure:
+      type: object
+      properties:
+        tenure:
+          type: integer
+          example: '12'
+    Upgrade:
+      type: object
+      properties:
+        UpgradeEligibility:
+          type: array
+          description: The list of Upgrade Eligibility parameters
+          items:
+            $ref: '#/components/schemas/UpgradeEligibilityParams'
+    Locations_2:
+      type: object
+      required:
+      - country
+      - operator
+      properties:
+        country:
+          type: string
+          description: The country that the customer MSISDN was provisioned in.
+          example: South Africa
+        operator:
+          type: string
+          description: The network operator that the customer MSISDN was provisioned for.
+          example: MTN
+    Loans:
+      type: object
+      required:
+      - customerId
+      description: The loans details of a customer, if it exists
+      properties:
+        _link:
+          type: array
+          xml:
+            name: link
+            attribute: false
+            wrapped: false
+          items:
+            $ref: '#/components/schemas/CustomerLinks'
+        status:
+          type: string
+          enum:
+          - FAILED
+          - COMPLETED
+          - INITED
+        transactionId:
+          type: string
+    CustomerCharacteristics:
+      type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
+      properties:
+        name:
+          type: string
+          description: Name of the characteristic
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
+        _link:
+          type: string
+          description: The link to retrieve the characteristics for a customer.
+          $ref: '#/components/schemas/CustomerLinks'
+          example: https://api.mtn.com/v1/customers/27832000000/characterictics
+    CustomerProfile:
+      type: object
+      required:
+      - customerId
+      - _links
+      properties:
+        transactionId:
+          type: string
+          description: Transaction Id of the request
+        customerId:
+          type: string
+        customerSystem:
+          type: string
+          description: Type of Customer
+        characteristics:
+          type: array
+          description: Customer characteristics
+          items:
+            $ref: '#/components/schemas/CustomerCharacteristics'
+        plans:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerPlans_2'
+        account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountRef'
+        kyc:
+          type: array
+          items:
+            $ref: '#/components/schemas/KYC'
+    ErrorNew:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error
+          example: 2019-08-23T07:29:25.593+0000
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/<path>
     transactions-summaries:
       properties:
         requestId:
@@ -4588,47 +4580,53 @@ components:
                   $ref: '#/components/schemas/activity'
             momo-loans:
               $ref: '#/components/schemas/momo-loans'
-    CustomerLoans:
+    send:
       type: object
-      required:
-      - _link
       properties:
-        data:
+        lastSendDate:
+          type: string
+          format: date
+          description: 'the '
+          example: '2017'
+        maxSend-6months:
+          type: string
+          description: 'the '
+        quantities:
           type: object
-          $ref: '#/components/schemas/Loans'
-        _link:
-          type: string
-          description: The link to retrieve the customers MoMo details.
-          $ref: '#/components/schemas/CustomerLinks'
-          example: https://api.mtn.com/v1/customers/27832000000/loans
-    timePeriodEnum:
-      type: string
-      description: a time period for which data is available. Usually data is available for multiple time periods, like 1 month, 3 month, and 6 month. Each time period will be represented as a separate array
-      enum:
-      - month
-      - days
-    CustomerCharacteristics:
-      type: object
-      description: Describes a given characteristic of an object or entity through a name/value pair.
-      required:
-      - name
-      - value
-      properties:
-        name:
-          type: string
-          description: Name of the characteristic
-        valueType:
-          type: string
-          description: Data type of the value of the characteristic
-        value:
-          $ref: '#/components/schemas/Any'
-          description: The value of the characteristic
-        _link:
-          type: string
-          description: The link to retrieve the characteristics for a customer.
-          $ref: '#/components/schemas/CustomerLinks'
-          example: https://api.mtn.com/v1/customers/27832000000/characterictics
-    Any: {}
+          properties:
+            numberOfSend-1months:
+              type: string
+              description: 'the '
+            numberOfSend-3months:
+              type: string
+              description: 'the '
+            numberOfSend-6months:
+              type: string
+              description: 'the '
+        amounts:
+          type: object
+          properties:
+            amountOfSend-1months:
+              type: string
+              description: 'the '
+            amountOfSend-3months:
+              type: string
+              description: 'the '
+            amountOfSend-6months:
+              type: string
+              description: 'the '
+        acceptors:
+          type: object
+          properties:
+            numberOfAcceptors-1months:
+              type: string
+              description: 'the '
+            numberOfAcceptors-3months:
+              type: string
+              description: 'the '
+            numberOfAcceptors-6months:
+              type: string
+              description: 'the '
     withdrawals:
       type: object
       properties:
@@ -4675,57 +4673,119 @@ components:
             numberOfAcceptors-6months:
               type: string
               description: 'the '
-    billPayments:
+    momo-loans:
       type: object
+      title: loans object
       properties:
-        lastBillPaymentsDate:
+        time-periods:
+          type: object
+          properties:
+            1-months:
+              type: object
+              properties:
+                numberOfLoans:
+                  type: string
+                  description: Number of loans, for the last 1 month
+            3-months:
+              type: object
+              properties:
+                numberOfLoans:
+                  type: string
+                  description: Number of loans, for the last 1 month
+            6-months:
+              type: object
+              properties:
+                numberOfLoans:
+                  type: string
+                  description: Number of loans, for the last 1 month
+        totalLoansAmount:
+          type: string
+          description: tTotal loan amount
+        firstLoansDate:
           type: string
           format: date
-          description: 'the '
-          example: '2017'
-        maxBillPayments-6months:
+          description: First loan date
+        lastLoansDate:
           type: string
-          description: 'the '
-        quantities:
-          type: object
-          properties:
-            numberOfBillPayments-1months:
-              type: string
-              description: 'the '
-            numberOfBillPayments-3months:
-              type: string
-              description: 'the '
-            numberOfBillPayments-6months:
-              type: string
-              description: 'the '
-        amounts:
-          type: object
-          properties:
-            amountOfBillPayments-1months:
-              type: string
-              description: 'the '
-            amountOfBillPayments-3months:
-              type: string
-              description: 'the '
-            amountOfBillPayments-6months:
-              type: string
-              description: 'the '
-        acceptors:
-          type: object
-          properties:
-            numberOfAcceptors-1months:
-              type: string
-              description: 'the '
-            numberOfAcceptors-3months:
-              type: string
-              description: 'the '
-            numberOfAcceptors-6months:
-              type: string
-              description: 'the '
-    ErrorResponseBody:
+          format: date
+          description: Last loan date
+        numberOverdue:
+          type: string
+          description: Number of loans overdue
+        totalTerm:
+          type: string
+          description: Total loan term
+        maxTerm:
+          type: string
+          description: Maximum loan term
+        lastOverdueDate:
+          type: string
+          format: date
+          description: Last time loan was overdue
+    principalInfo:
       type: object
-      description: An response body that defines the structure of an error
       properties:
+        lastName:
+          type: string
+          example: Michael
+        firstName:
+          type: string
+          example: Ewa
+        middleName:
+          type: string
+          example: ''
+        dateOfBirth:
+          type: string
+          example: 01/01/1900
+        gender:
+          type: string
+          example: Male
+        addressOne:
+          type: string
+          example: Suite 6, 45 Apata Street, By Ship...
+        addressTwo:
+          type: string
+          example: ''
+        lga:
+          type: string
+          example: ''
+        state:
+          type: string
+          example: ''
+        country:
+          type: string
+          example: Nigeria
+        nationalId:
+          type: string
+          example: ''
+        driversLicence:
+          type: string
+          example: ''
+        BVN:
+          type: string
+          example: ''
+        passportNo:
+          type: string
+          example: ''
+        phoneNumber:
+          type: string
+          example: ''
+        email:
+          type: string
+          example: ''
+        designation:
+          type: string
+          example: CEO
+    Error_5:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
         statusMessage:
           type: string
           description: More details and corrective actions related to the error which can be shown to a client
@@ -4982,6 +5042,36 @@ components:
                 type: string
                 example: ' '
                 description: ''
+    ErrorResponseBody:
+      type: object
+      description: An response body that defines the structure of an error
+      properties:
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        sequenceNo:
+          type: string
+          description: This is the MADAPI auto generated reference for tracing purposes
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  example: https://api.mtn.com/v1/customers/2348024008124/score
     businessInfo:
       type: object
       properties:
@@ -5029,60 +5119,6 @@ components:
               preferred:
                 type: boolean
                 example: true
-    principalInfo:
-      type: object
-      properties:
-        lastName:
-          type: string
-          example: Michael
-        firstName:
-          type: string
-          example: Ewa
-        middleName:
-          type: string
-          example: ''
-        dateOfBirth:
-          type: string
-          example: 01/01/1900
-        gender:
-          type: string
-          example: Male
-        addressOne:
-          type: string
-          example: Suite 6, 45 Apata Street, By Ship...
-        addressTwo:
-          type: string
-          example: ''
-        lga:
-          type: string
-          example: ''
-        state:
-          type: string
-          example: ''
-        country:
-          type: string
-          example: Nigeria
-        nationalId:
-          type: string
-          example: ''
-        driversLicence:
-          type: string
-          example: ''
-        BVN:
-          type: string
-          example: ''
-        passportNo:
-          type: string
-          example: ''
-        phoneNumber:
-          type: string
-          example: ''
-        email:
-          type: string
-          example: ''
-        designation:
-          type: string
-          example: CEO
     creditInfo:
       type: object
       properties:
@@ -5221,33 +5257,17 @@ components:
         emailAddress:
           type: string
           example: tester@gmail.com
-    Error_5:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
+    SubscriptionServices:
       properties:
         statusCode:
           type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: 2020-08-01T12:34
-        sequenceNo:
-          type: string
-          description: This is the MADAPI auto generated reference for tracing purposes
+        data:
+          type: object
+          properties:
+            subscriptions:
+              type: array
+              items:
+                $ref: '#/components/schemas/Subscription'
         _links:
           type: object
           properties:
@@ -5256,7 +5276,135 @@ components:
               properties:
                 href:
                   type: string
-                  example: https://api.mtn.com/v1/customers/2348024008124/score
+    SubscriptionTypeEnum:
+      type: string
+      title: subscriptionTypeEnum
+      default: Adhoc
+      enum:
+      - Adhoc
+      - Recurring
+      x-enum-elements:
+      - name: Adhoc
+        description: Once off subscription, it wont recur or renew
+      - name: Recurring
+        description: Will renew at the end of the period
+    subscription:
+      type: object
+      title: subscription
+      required:
+      - subscriptionId
+      - subscriptionProviderId
+      - subscriptionName
+      properties:
+        subscriptionId:
+          type: string
+          default: 'null'
+          description: Unique identifier for the Subscription
+        subscriptionProviderId:
+          type: string
+          default: 'null'
+          description: Identifier for the provider within which the Subscription lives
+        subscriptionName:
+          type: string
+          default: 'null'
+          description: Service the customer is subscribed to
+        subscriptionStatus:
+          $ref: '#/components/schemas/SubscriptionStatusEnum'
+        subscriptionDescription:
+          type: string
+          default: 'null'
+          description: Description of the service the customer is subscribed to
+        subscriptionType:
+          $ref: '#/components/schemas/SubscriptionTypeEnum'
+        subscriptionLength:
+          type: string
+          default: 'null'
+          description: Duration of the subscription the customer is subscribed to
+        registrationChannel:
+          type: string
+          default: 'null'
+          description: Channel through which the customer subscribed to the service
+        startDate:
+          type: string
+          format: date-time
+          default: 'null'
+          description: Start date of the Subscription; full-date notation RFC 3339
+        endDate:
+          type: string
+          format: date-time
+          default: 'null'
+          description: End date of the Subscription; full-date notation RFC 3339
+        subscriptionPaymentSource:
+          type: string
+          default: Airtime
+          description: 'Which payment balance to use to pay: Airtime, MoMo, EVDS, Loyalty'
+        sendSMSNotification:
+          type: boolean
+          default: 'true'
+          description: Should an SMS be sent to the subscriber to inform them of the subscription
+        beneficiaryId:
+          type: string
+          default: 'null'
+          description: Subscription will be added to the beneficiary, but payment deducted from the main customerId
+        auto-renew:
+          type: boolean
+          default: 'false'
+          description: Recurring subscription to auto-renew at the end of the expiry period
+        email:
+          type: string
+          default: 'null'
+          description: Email address associated with the Subscription
+    ServiceDetails:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionDetails'
+        statusCode:
+          type: string
+          example: '0000'
+    Error_6:
+      type: object
+      title: Error
+      required:
+      - status
+      - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error response code
+        status:
+          type: string
+          description: HTTP Status code
+        error:
+          type: string
+          description: Status description
+        message:
+          type: string
+          description: More error details and corrective measures
+        path:
+          type: string
+          description: the path that caused the error
+    SubscriptionStatusEnum:
+      type: string
+      title: subscriptionStatusEnum
+      default: 'null'
+      example: Active
+      enum:
+      - Active
+      - Inactive
+      - Pending
+      x-enum-elements:
+      - name: Active
+        description: Subscription is active
+      - name: Inactive
+        description: Subscription has been cancelled, paused, or set for deletion at the end of the period. It is listed because the period may still be valid
+      - name: Pending
+        description: Provisioning is still in progress
     Subscription:
       type: object
       title: Subscription
@@ -5331,6 +5479,43 @@ components:
               properties:
                 href:
                   type: string
+    StatusEnum:
+      type: string
+      title: statusEnum
+      example: Unsubscribe successful
+      enum:
+      - Unsubscribe successful
+      - Unsubscribe unsuccessful
+    CustomerSubscription:
+      type: object
+      properties:
+        customerId:
+          type: string
+        services:
+          additionalProperties:
+            $ref: '#/components/schemas/SubscriptionServices'
+          example:
+            vas_hlr:
+              statusCode: '2000'
+              data:
+                subscriptionId: '4'
+                subscriptionProviderId: RBT
+                subscriptionName: CallerTunez
+                subscriptionDescription: null
+                subscriptionStatus: Inactive
+                subscriptionType: Adhoc
+                subscriptionLength: null
+                registrationChannel: null
+                startDate: '2019-04-30'
+                endDate: '2019-05-06'
+                subscriptionPaymentSource: Airtime
+                sendSMSNotification: true
+                beneficiaryId: null
+                auto-renew: true
+                email: null
+            _links:
+              self:
+                href: https://api.mtn.com/v2/customers/27832000000/subscriptions
     SubscribeAsync:
       type: object
       title: SubscribeAsync
@@ -5354,116 +5539,18 @@ components:
         description:
           type: string
           description: Details of the result of the unsubscribe action
-    subscription:
-      type: object
-      title: subscription
-      required:
-      - subscriptionId
-      - subscriptionProviderId
-      - subscriptionName
-      properties:
-        subscriptionId:
-          type: string
-          default: 'null'
-          description: Unique identifier for the Subscription
-        subscriptionProviderId:
-          type: string
-          default: 'null'
-          description: Identifier for the provider within which the Subscription lives
-        subscriptionName:
-          type: string
-          default: 'null'
-          description: Service the customer is subscribed to
-        subscriptionStatus:
-          $ref: '#/components/schemas/SubscriptionStatusEnum'
-        subscriptionDescription:
-          type: string
-          default: 'null'
-          description: Description of the service the customer is subscribed to
-        subscriptionType:
-          $ref: '#/components/schemas/SubscriptionTypeEnum'
-        subscriptionLength:
-          type: string
-          default: 'null'
-          description: Duration of the subscription the customer is subscribed to
-        registrationChannel:
-          type: string
-          default: 'null'
-          description: Channel through which the customer subscribed to the service
-        startDate:
-          type: string
-          format: date-time
-          default: 'null'
-          description: Start date of the Subscription; full-date notation RFC 3339
-        endDate:
-          type: string
-          format: date-time
-          default: 'null'
-          description: End date of the Subscription; full-date notation RFC 3339
-        subscriptionPaymentSource:
-          type: string
-          default: Airtime
-          description: 'Which payment balance to use to pay: Airtime, MoMo, EVDS, Loyalty'
-        sendSMSNotification:
-          type: boolean
-          default: 'true'
-          description: Should an SMS be sent to the subscriber to inform them of the subscription
-        beneficiaryId:
-          type: string
-          default: 'null'
-          description: Subscription will be added to the beneficiary, but payment deducted from the main customerId
-        auto-renew:
-          type: boolean
-          default: 'false'
-          description: Recurring subscription to auto-renew at the end of the expiry period
-        email:
-          type: string
-          default: 'null'
-          description: Email address associated with the Subscription
-    OffersPerMenuCode:
+    CustomerSubscriptionProvider:
       type: object
       properties:
-        httpStatus:
-          type: string
-          example: OK
         customerId:
           type: string
         services:
-          type: object
-          properties:
-            CIS:
-              $ref: '#/components/schemas/ServiceDetails'
-        statusCode:
-          type: string
-          example: '0000'
-    ServiceDetails:
-      type: object
-      properties:
-        httpStatus:
-          type: string
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/SubscriptionDetails'
-        statusCode:
-          type: string
-          example: '0000'
-    SubscriptionStatusEnum:
-      type: string
-      title: subscriptionStatusEnum
-      default: 'null'
-      example: Active
-      enum:
-      - Active
-      - Inactive
-      - Pending
-      x-enum-elements:
-      - name: Active
-        description: Subscription is active
-      - name: Inactive
-        description: Subscription has been cancelled, paused, or set for deletion at the end of the period. It is listed because the period may still be valid
-      - name: Pending
-        description: Provisioning is still in progress
+          additionalProperties:
+            $ref: '#/components/schemas/SubscriptionServicesProviders'
+          example:
+            imi:
+              subscriptionProviderName: MTN Play Services
+              subscriptionProviderDescription: MTN Play services
     SubscriptionDetails:
       type: object
       properties:
@@ -5515,135 +5602,6 @@ components:
         isDataConfirmationRequired:
           type: boolean
           example: true
-    CustomerSubscription:
-      type: object
-      properties:
-        customerId:
-          type: string
-        services:
-          additionalProperties:
-            $ref: '#/components/schemas/SubscriptionServices'
-          example:
-            vas_hlr:
-              statusCode: '2000'
-              data:
-                subscriptionId: '4'
-                subscriptionProviderId: RBT
-                subscriptionName: CallerTunez
-                subscriptionDescription: null
-                subscriptionStatus: Inactive
-                subscriptionType: Adhoc
-                subscriptionLength: null
-                registrationChannel: null
-                startDate: '2019-04-30'
-                endDate: '2019-05-06'
-                subscriptionPaymentSource: Airtime
-                sendSMSNotification: true
-                beneficiaryId: null
-                auto-renew: true
-                email: null
-            _links:
-              self:
-                href: https://api.mtn.com/v2/customers/27832000000/subscriptions
-    SubscriptionServicesProviders:
-      properties:
-        subscriptionProviderName:
-          type: string
-          default: 'null'
-          description: Service the customer is subscribed to
-        subscriptionProviderDescription:
-          type: string
-          default: 'null'
-          description: Description of the service the customer is subscribed to
-        _links:
-          type: object
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
-    CustomerSubscriptionProvider:
-      type: object
-      properties:
-        customerId:
-          type: string
-        services:
-          additionalProperties:
-            $ref: '#/components/schemas/SubscriptionServicesProviders'
-          example:
-            imi:
-              subscriptionProviderName: MTN Play Services
-              subscriptionProviderDescription: MTN Play services
-    SubscriptionServices:
-      properties:
-        statusCode:
-          type: string
-        data:
-          type: object
-          properties:
-            subscriptions:
-              type: array
-              items:
-                $ref: '#/components/schemas/Subscription'
-        _links:
-          type: object
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
-    SubscriptionTypeEnum:
-      type: string
-      title: subscriptionTypeEnum
-      default: Adhoc
-      enum:
-      - Adhoc
-      - Recurring
-      x-enum-elements:
-      - name: Adhoc
-        description: Once off subscription, it wont recur or renew
-      - name: Recurring
-        description: Will renew at the end of the period
-    Callback:
-      type: object
-      title: Callback
-      properties:
-        callbackUrl:
-          type: string
-        description:
-          type: string
-    StatusEnum:
-      type: string
-      title: statusEnum
-      example: Unsubscribe successful
-      enum:
-      - Unsubscribe successful
-      - Unsubscribe unsuccessful
-    Error_6:
-      type: object
-      title: Error
-      required:
-      - status
-      - message
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Error response code
-        status:
-          type: string
-          description: HTTP Status code
-        error:
-          type: string
-          description: Status description
-        message:
-          type: string
-          description: More error details and corrective measures
-        path:
-          type: string
-          description: the path that caused the error
     Unsubscribe:
       type: object
       title: unsubscribe
@@ -5666,6 +5624,48 @@ components:
         description:
           type: string
           description: Details of the result of the unsubscribe action
+    SubscriptionServicesProviders:
+      properties:
+        subscriptionProviderName:
+          type: string
+          default: 'null'
+          description: Service the customer is subscribed to
+        subscriptionProviderDescription:
+          type: string
+          default: 'null'
+          description: Description of the service the customer is subscribed to
+        _links:
+          type: object
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+    OffersPerMenuCode:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          example: OK
+        customerId:
+          type: string
+        services:
+          type: object
+          properties:
+            CIS:
+              $ref: '#/components/schemas/ServiceDetails'
+        statusCode:
+          type: string
+          example: '0000'
+    Callback:
+      type: object
+      title: Callback
+      properties:
+        callbackUrl:
+          type: string
+        description:
+          type: string
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

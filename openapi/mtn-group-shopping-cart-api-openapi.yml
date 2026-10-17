@@ -533,18 +533,245 @@ paths:
         required: true
 components:
   schemas:
-    ProductCharacteristicRef:
+    ShoppingCart_CreateSessionResponse:
       type: object
+      required:
+      - statusCode
+      - statusMessage
+      - supportMessage
+      - transactionId
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+        data:
+          type: object
+          properties:
+            cookie:
+              type: string
+              description: The unique ID of the session is returned. This must be passed as it is in the header of all the next ATG API calls. [Tony] - Rather call this sessionId
+              example: JSESSIONID=rvUKhWtBRaC3zuyv_KxKQQmFq4tI0wla2D--0OBC46QKBGT4cMwI
+    AgreementItemValueOrRef:
+      type: object
+      properties:
+        value:
+          type: string
+    SubmitOrderProductItem:
+      type: object
+      properties:
+        description:
+          type: string
+        isCustomerVisible:
+          type: boolean
+          example: false
+        agreement:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgreementItemValueOrRef'
+        productOrderItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOrderItemRef'
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedPartyOrderRef'
+    Error:
+      type: object
+      required:
+      - statusCode
+      - statusMessage
+      properties:
+        statusCode:
+          type: string
+          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
+          example: '1000'
+        statusMessage:
+          type: string
+          description: More details and corrective actions related to the error which can be shown to a client
+        supportMessage:
+          type: string
+          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
+        transactionId:
+          type: string
+          description: This is the same transactionId that is sent in the request
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp that the error occurred
+          example: 2020-08-01T12:34
+        path:
+          type: string
+          description: The path that caused the error
+          example: /loans/2348024008124/...
+    CartItemSubmitOrder:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/SubmitOrderProductItem'
+    ContactMediumOrderRef:
+      type: object
+      description: Indicates the contact medium that could be used to contact the party.
+      properties:
+        id:
+          type: string
+        characteristic:
+          $ref: '#/components/schemas/MediumCharacteristicOrderRef'
+          description: Any additional characteristic(s) of this contact medium
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    CharacteristicOrder:
+      type: object
+      description: Describes a given characteristic of an object or entity through a name/value pair.
+      required:
+      - name
+      - value
       properties:
         name:
           type: string
           description: Name of the characteristic
-        valueType:
-          type: string
-          description: Data type of the value of the characteristic
         value:
           $ref: '#/components/schemas/Any'
           description: The value of the characteristic
+    ContactMediumPatchShippingInfo:
+      type: object
+      description: Indicates the contact medium that could be used to contact the party.
+      properties:
+        characteristic:
+          $ref: '#/components/schemas/MediumCharacteristicPatchShippingInfo'
+          description: Any additional characteristic(s) of this contact medium
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+    ProductPriceOrderRef:
+      type: object
+      description: An amount, usually of money, that represents the actual price paid by a Customer for a purchase, a rent or a lease of a Product. The price is valid for a defined period of time.
+      required:
+      - price
+      - priceType
+      properties:
+        price:
+          $ref: '#/components/schemas/PriceOrder'
+    ContactMediumPatchUserInfo:
+      type: object
+      description: Indicates the contact medium that could be used to contact the party.
+      properties:
+        characteristic:
+          $ref: '#/components/schemas/MediumCharacteristicPatchUserInfo'
+          description: Any additional characteristic(s) of this contact medium
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+    ShoppingCart_UpdateSubmitOrderResponseData:
+      type: object
+      description: 'Shopping Cart resource is used for the temporarily selection and reservation of product offerings in e-commerce, call center and retail purchase. Shopping cart supports purchase of both physical and digital goods and service (e.g. handset, telecom network service). Shopping Cart contain list of cart items, a reference to customer (partyRole) or contact medium in case customer not exist, and the total items price including promotions
+
+        Skipped properties: id,href,validFor,cartTotalPrice'
+      properties:
+        id:
+          type: string
+        cartTotalPrice:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartPriceOrder'
+        cartItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItemOrder'
+        relatedParty:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedPartyOrderRef'
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+        contactMedium:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactMediumOrderRef'
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    CartItemRef:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifier of the cart item (generally it is a sequence number 01, 02, 03, ...) in the shopping cart
+        quantity:
+          type: integer
+          description: Quantity of cart items
+        product:
+          allOf:
+          - $ref: '#/components/schemas/ProductRef'
+          - properties:
+              productOffering:
+                $ref: '#/components/schemas/ProductOfferingRef'
+              relatedParty:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RelatedParty'
+              productCharacteristic:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductCharacteristicRef'
+              productPrice:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PriceAlterationRef'
+    ShoppingCart_UpdateOrder:
+      type: object
+      description: 'Shopping Cart resource is used for the temporarily selection and reservation of product offerings in e-commerce, call center and retail purchase. Shopping cart supports purchase of both physical and digital goods and service (e.g. handset, telecom network service). Shopping Cart contain list of cart items, a reference to customer (partyRole) or contact medium in case customer not exist, and the total items price including promotions
+
+        Skipped properties: id,href,validFor,cartTotalPrice'
+      properties:
+        cartItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItemOrder'
+    ProductOrderItemRef:
+      type: object
+      properties:
+        productOrderId:
+          type: string
+        orderItemId:
+          type: string
+    Any: {}
+    ShoppingCart_UpdateUserInfo:
+      type: object
+      description: 'Shopping Cart resource is used for the temporarily selection and reservation of product offerings in e-commerce, call center and retail purchase. Shopping cart supports purchase of both physical and digital goods and service (e.g. handset, telecom network service). Shopping Cart contain list of cart items, a reference to customer (partyRole) or contact medium in case customer not exist, and the total items price including promotions
+
+        Skipped properties: id,href,validFor,cartTotalPrice'
+      properties:
+        contactMedium:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactMediumPatchUserInfo'
+        relatedParty:
+          type: object
+          properties:
+            id:
+              type: string
+              description: This is an identifer for the calling system. eg. MTN App, Online Recharges, No Funds
     RelatedParty:
       type: object
       description: Related Entity reference. A related party defines party or party role linked to a specific entity.
@@ -577,6 +804,113 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
+    ShoppingCart_CreateSession:
+      type: object
+      properties:
+        channel:
+          type: object
+          properties:
+            id:
+              type: string
+              description: This parameter indicates which site the response must be given. eg. MTNSite, OnlineStore, EBU_CC, EBU_SME, NGMTNApp
+        relatedParty:
+          type: object
+          properties:
+            id:
+              type: string
+              description: This is the unique identifier of the source channel
+    PriceAlterationOrderRef:
+      required:
+      - price
+      properties:
+        description:
+          type: string
+          description: A narrative that explains in detail the semantics of this order item price alteration
+        name:
+          type: string
+          description: Name of the order item price alteration
+        unitOfMeasure:
+          type: string
+          description: Could be minutes, GB...
+        price:
+          $ref: '#/components/schemas/PriceOrder'
+        productOfferingPrice:
+          $ref: '#/components/schemas/ProductOfferingPriceOrder'
+    PriceRef:
+      type: object
+      properties:
+        taxRate:
+          type: number
+          format: float
+          description: Tax rate
+        dutyFreeAmount:
+          $ref: '#/components/schemas/Money'
+        taxIncludedAmount:
+          $ref: '#/components/schemas/Money'
+    MediumCharacteristicOrderRef:
+      type: object
+      description: Describes the contact medium characteristics that could be used to contact a party (an individual or an organization)
+      properties:
+        title:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        firstName:
+          type: string
+        emailAddress:
+          type: string
+          description: Full email address in standard format
+        phoneNumber:
+          type: string
+          description: The primary phone number of the contact
+        socialNetworkId:
+          type: string
+          description: Identifier as a member of a social network
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+    ShoppingCart_UpdateShippingInfoResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+    ProductCharacteristicRef:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the characteristic
+        valueType:
+          type: string
+          description: Data type of the value of the characteristic
+        value:
+          $ref: '#/components/schemas/Any'
+          description: The value of the characteristic
+    RelatedPartyOrderRef:
+      type: object
+      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        name:
+          type: string
+          description: Name of the related entity.
     MediumCharacteristicPatchShippingInfo:
       type: object
       description: Describes the contact medium characteristics that could be used to contact a party (an individual or an organization)
@@ -660,286 +994,17 @@ components:
               type: boolean
             residentialAddressId:
               type: string
-    PriceOrder:
+    ShoppingCart_SubmitOrder:
       type: object
-      description: Provides all amounts (tax included, duty free, tax rate), used currency and percentage to apply for Price Alteration.
       properties:
-        isDiscounted:
-          type: boolean
-          example: false
-        isFinal:
-          type: boolean
-          example: false
-        taxRate:
-          type: number
-          format: float
-          description: Tax rate
-        dutyFreeAmount:
-          $ref: '#/components/schemas/Money'
-          description: All taxes included amount (expressed in the given currency)
-        taxIncludedAmount:
-          $ref: '#/components/schemas/Money'
-          description: All taxes included amount (expressed in the given currency)
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-          example: xtraTimeBalanceAmount
-    ShoppingCart_UpdateSubmitOrderResponseData:
-      type: object
-      description: 'Shopping Cart resource is used for the temporarily selection and reservation of product offerings in e-commerce, call center and retail purchase. Shopping cart supports purchase of both physical and digital goods and service (e.g. handset, telecom network service). Shopping Cart contain list of cart items, a reference to customer (partyRole) or contact medium in case customer not exist, and the total items price including promotions
-
-        Skipped properties: id,href,validFor,cartTotalPrice'
-      properties:
-        id:
-          type: string
-        cartTotalPrice:
-          type: array
-          items:
-            $ref: '#/components/schemas/CartPriceOrder'
         cartItem:
           type: array
           items:
-            $ref: '#/components/schemas/CartItemOrder'
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedPartyOrderRef'
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
+            $ref: '#/components/schemas/CartItemSubmitOrder'
         contactMedium:
           type: array
           items:
-            $ref: '#/components/schemas/ContactMediumOrderRef'
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    ContactMediumSubmitOrder:
-      type: object
-      properties:
-        emailAddress:
-          type: string
-        socialNetworkId:
-          type: string
-    ProductRef:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity.
-        href:
-          type: string
-          description: Reference of the related entity.
-        name:
-          type: string
-          description: Name of the related entity.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id
-    ContactMediumPatchUserInfo:
-      type: object
-      description: Indicates the contact medium that could be used to contact the party.
-      properties:
-        characteristic:
-          $ref: '#/components/schemas/MediumCharacteristicPatchUserInfo'
-          description: Any additional characteristic(s) of this contact medium
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-    ProductPriceOrderRef:
-      type: object
-      description: An amount, usually of money, that represents the actual price paid by a Customer for a purchase, a rent or a lease of a Product. The price is valid for a defined period of time.
-      required:
-      - price
-      - priceType
-      properties:
-        price:
-          $ref: '#/components/schemas/PriceOrder'
-    ContactMediumPatchShippingInfo:
-      type: object
-      description: Indicates the contact medium that could be used to contact the party.
-      properties:
-        characteristic:
-          $ref: '#/components/schemas/MediumCharacteristicPatchShippingInfo'
-          description: Any additional characteristic(s) of this contact medium
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-    Error:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      properties:
-        statusCode:
-          type: string
-          description: This is the MADAPI Canonical Error Code (it is 4 characters long and it is not the HTTP Status Code which is 3 characters long). Back-end system errors are mapped to specific canonical error codes which are returned. More information on these mappings can be found on the MADAPI Confluence Page 'Response Codes'
-          example: '1000'
-        statusMessage:
-          type: string
-          description: More details and corrective actions related to the error which can be shown to a client
-        supportMessage:
-          type: string
-          description: Internal message meant for consumers of the API to troubleshoot the error (could possible include the back-end system error code in the message if it would be useful)
-        transactionId:
-          type: string
-          description: This is the same transactionId that is sent in the request
-        timestamp:
-          type: string
-          format: date-time
-          description: Timestamp that the error occurred
-          example: 2020-08-01T12:34
-        path:
-          type: string
-          description: The path that caused the error
-          example: /loans/2348024008124/...
-    ProductOfferingPriceOrder:
-      type: object
-      properties:
-        value:
-          type: string
-          example: 0
-        id:
-          type: string
-          example: manualAdjustmentTotal
-    SubmitOrderProductItem:
-      type: object
-      properties:
-        description:
-          type: string
-        isCustomerVisible:
-          type: boolean
-          example: false
-        agreement:
-          type: array
-          items:
-            $ref: '#/components/schemas/AgreementItemValueOrRef'
-        productOrderItem:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductOrderItemRef'
-        relatedParty:
-          type: array
-          items:
-            $ref: '#/components/schemas/RelatedPartyOrderRef'
-    ShoppingCart_CreateSession:
-      type: object
-      properties:
-        channel:
-          type: object
-          properties:
-            id:
-              type: string
-              description: This parameter indicates which site the response must be given. eg. MTNSite, OnlineStore, EBU_CC, EBU_SME, NGMTNApp
-        relatedParty:
-          type: object
-          properties:
-            id:
-              type: string
-              description: This is the unique identifier of the source channel
-    ShoppingCart_UpdateUserInfoResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-    CartItemOrder:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - INTIAL
-        id:
-          type: string
-        product:
-          $ref: '#/components/schemas/CartItemOrderProduct'
-        itemPrice:
-          type: array
-          items:
-            $ref: '#/components/schemas/CartPriceOrder'
-        '@type':
-          type: string
-    CartTotalPriceRef:
-      type: object
-      properties:
-        description:
-          type: string
-          description: A narrative that explains in detail the semantics of this order item price.
-        name:
-          type: string
-          description: A short descriptive name such as "Subscription price".
-        unitOfMeasure:
-          type: string
-          description: Could be minutes, GB...
-        priceAlteration:
-          type: array
-          items:
-            $ref: '#/components/schemas/PriceAlterationRef'
-        price:
-          $ref: '#/components/schemas/PriceRef'
-    ShoppingCart_CreateSessionResponse:
-      type: object
-      required:
-      - statusCode
-      - statusMessage
-      - supportMessage
-      - transactionId
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-        data:
-          type: object
-          properties:
-            cookie:
-              type: string
-              description: The unique ID of the session is returned. This must be passed as it is in the header of all the next ATG API calls. [Tony] - Rather call this sessionId
-              example: JSESSIONID=rvUKhWtBRaC3zuyv_KxKQQmFq4tI0wla2D--0OBC46QKBGT4cMwI
-    ShoppingCart_UpdateShippingInfo:
-      type: object
-      description: 'Shopping Cart resource is used for the temporarily selection and reservation of product offerings in e-commerce, call center and retail purchase. Shopping cart supports purchase of both physical and digital goods and service (e.g. handset, telecom network service). Shopping Cart contain list of cart items, a reference to customer (partyRole) or contact medium in case customer not exist, and the total items price including promotions
-
-        Skipped properties: id,href,validFor,cartTotalPrice'
-      properties:
-        contactMedium:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactMediumPatchShippingInfo'
-        relatedParty:
-          type: object
-          properties:
-            id:
-              type: string
-              description: This is an identifer for the calling system. eg. MTN App, Online Recharges, No Funds
+            $ref: '#/components/schemas/ContactMediumSubmitOrder'
     CartPriceOrder:
       type: object
       description: An amount, usually of money, that represents the actual price paid by the customer for this item. May represent the total price of the shopping cart or the total of the cart item depending on the relation
@@ -962,86 +1027,17 @@ components:
         '@type':
           type: string
           description: When sub-classing, this defines the sub-class entity name
-    ShoppingCart_UpdateUserInfo:
+    Money:
       type: object
-      description: 'Shopping Cart resource is used for the temporarily selection and reservation of product offerings in e-commerce, call center and retail purchase. Shopping cart supports purchase of both physical and digital goods and service (e.g. handset, telecom network service). Shopping Cart contain list of cart items, a reference to customer (partyRole) or contact medium in case customer not exist, and the total items price including promotions
-
-        Skipped properties: id,href,validFor,cartTotalPrice'
+      description: A base / value business entity used to represent money
       properties:
-        contactMedium:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactMediumPatchUserInfo'
-        relatedParty:
-          type: object
-          properties:
-            id:
-              type: string
-              description: This is an identifer for the calling system. eg. MTN App, Online Recharges, No Funds
-    PriceAlterationOrderRef:
-      required:
-      - price
-      properties:
-        description:
+        unit:
           type: string
-          description: A narrative that explains in detail the semantics of this order item price alteration
-        name:
-          type: string
-          description: Name of the order item price alteration
-        unitOfMeasure:
-          type: string
-          description: Could be minutes, GB...
-        price:
-          $ref: '#/components/schemas/PriceOrder'
-        productOfferingPrice:
-          $ref: '#/components/schemas/ProductOfferingPriceOrder'
-    ResourceRefOrder:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity.
+          description: Currency (ISO4217 norm uses 3 letters to define the currency)
         value:
-          type: string
-          description: 'The resource value that can be used to identify a resource with a public key (e.g.: a tel nr, an msisdn)'
-      required:
-      - id
-    ShoppingCartListByIDSuccessResponseData:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Identifier of the cart item (generally it is a sequence number 01, 02, 03, ...) in the shopping cart
-        cartItem:
-          type: array
-          items:
-            $ref: '#/components/schemas/CartItemRef'
-        cartTotalPrice:
-          type: array
-          items:
-            $ref: '#/components/schemas/CartTotalPriceRef'
-        relatedParty:
-          $ref: '#/components/schemas/RelatedParty'
-    CharacteristicOrder:
-      type: object
-      description: Describes a given characteristic of an object or entity through a name/value pair.
-      required:
-      - name
-      - value
-      properties:
-        name:
-          type: string
-          description: Name of the characteristic
-        value:
-          $ref: '#/components/schemas/Any'
-          description: The value of the characteristic
-    ProductOrderItemRef:
-      type: object
-      properties:
-        productOrderId:
-          type: string
-        orderItemId:
-          type: string
+          type: number
+          format: float
+          description: A positive floating point number
     CartItemOrderProduct:
       type: object
       properties:
@@ -1098,202 +1094,6 @@ components:
         '@referredType':
           type: string
           description: The actual type of the target instance when needed for disambiguation.
-    ShoppingCartListByIDSuccessResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-          description: MADAPI canonical code
-        statusMessage:
-          type: string
-          example: Successful
-        transactionId:
-          type: string
-          description: A trace id for tracking request/response
-          example: '43843948394'
-        data:
-          $ref: '#/components/schemas/ShoppingCartListByIDSuccessResponseData'
-    CartItemRef:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Identifier of the cart item (generally it is a sequence number 01, 02, 03, ...) in the shopping cart
-        quantity:
-          type: integer
-          description: Quantity of cart items
-        product:
-          allOf:
-          - $ref: '#/components/schemas/ProductRef'
-          - properties:
-              productOffering:
-                $ref: '#/components/schemas/ProductOfferingRef'
-              relatedParty:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RelatedParty'
-              productCharacteristic:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ProductCharacteristicRef'
-              productPrice:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PriceAlterationRef'
-    AgreementItemValueOrRef:
-      type: object
-      properties:
-        value:
-          type: string
-    Money:
-      type: object
-      description: A base / value business entity used to represent money
-      properties:
-        unit:
-          type: string
-          description: Currency (ISO4217 norm uses 3 letters to define the currency)
-        value:
-          type: number
-          format: float
-          description: A positive floating point number
-    RelatedPartyOrderRef:
-      type: object
-      description: Related Entity reference. A related party defines party or party role linked to a specific entity.
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity.
-        name:
-          type: string
-          description: Name of the related entity.
-    ShoppingCart_UpdateOrder:
-      type: object
-      description: 'Shopping Cart resource is used for the temporarily selection and reservation of product offerings in e-commerce, call center and retail purchase. Shopping cart supports purchase of both physical and digital goods and service (e.g. handset, telecom network service). Shopping Cart contain list of cart items, a reference to customer (partyRole) or contact medium in case customer not exist, and the total items price including promotions
-
-        Skipped properties: id,href,validFor,cartTotalPrice'
-      properties:
-        cartItem:
-          type: array
-          items:
-            $ref: '#/components/schemas/CartItemOrder'
-    ShoppingCart_UpdateShippingInfoResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-        statusMessage:
-          type: string
-        supportMessage:
-          type: string
-        transactionId:
-          type: string
-    CartItemSubmitOrder:
-      type: object
-      properties:
-        product:
-          $ref: '#/components/schemas/SubmitOrderProductItem'
-    PriceRef:
-      type: object
-      properties:
-        taxRate:
-          type: number
-          format: float
-          description: Tax rate
-        dutyFreeAmount:
-          $ref: '#/components/schemas/Money'
-        taxIncludedAmount:
-          $ref: '#/components/schemas/Money'
-    ContactMediumOrderRef:
-      type: object
-      description: Indicates the contact medium that could be used to contact the party.
-      properties:
-        id:
-          type: string
-        characteristic:
-          $ref: '#/components/schemas/MediumCharacteristicOrderRef'
-          description: Any additional characteristic(s) of this contact medium
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    Any: {}
-    ShoppingCart_UpdateSubmitOrderResponse:
-      type: object
-      properties:
-        statusCode:
-          type: string
-          example: '0000'
-          description: MADAPI canonical code
-        statusMessage:
-          type: string
-          example: Successful
-        transactionId:
-          type: string
-          description: A trace id for tracking request/response
-          example: '43843948394'
-        data:
-          $ref: '#/components/schemas/ShoppingCart_UpdateSubmitOrderResponseData'
-    ProductTermOrderRef:
-      type: object
-      properties:
-        description:
-          type: string
-          description: Description of the productTerm
-        validFor:
-          $ref: '#/components/schemas/TimePeriod'
-          description: productTerm validity period
-    TimePeriod:
-      type: object
-      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
-      properties:
-        endDateTime:
-          type: string
-          format: date-time
-          description: End of the time period, using IETC-RFC-3339 format
-        startDateTime:
-          type: string
-          format: date-time
-          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
-    PriceAlterationRef:
-      type: object
-      properties:
-        price:
-          $ref: '#/components/schemas/PriceRef'
-    ProductOfferingRef:
-      type: object
-      description: ProductOffering reference. A product offering represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
-      properties:
-        id:
-          type: string
-          description: Unique identifier of a related entity.
-        href:
-          type: string
-          description: Reference of the related entity.
-        name:
-          type: string
-          description: Name of the related entity.
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-        '@referredType':
-          type: string
-          description: The actual type of the target instance when needed for disambiguation.
-      required:
-      - id
     MediumCharacteristicPatchUserInfo:
       type: object
       description: Describes the contact medium characteristics that could be used to contact a party (an individual or an organization)
@@ -1329,48 +1129,38 @@ components:
         dealerName:
           type: string
           description: Dealer name is defined & agreed for each Channel. This value is passed to downstream to identify the dealer of the offer/promotion. This parameter is mandatory for all except user type - EBU Upgrade User, Prepaid User.
-    MediumCharacteristicOrderRef:
-      type: object
-      description: Describes the contact medium characteristics that could be used to contact a party (an individual or an organization)
-      properties:
-        title:
-          type: string
-        middleName:
-          type: string
-        lastName:
-          type: string
-        firstName:
-          type: string
-        emailAddress:
-          type: string
-          description: Full email address in standard format
-        phoneNumber:
-          type: string
-          description: The primary phone number of the contact
-        socialNetworkId:
-          type: string
-          description: Identifier as a member of a social network
-        '@baseType':
-          type: string
-          description: When sub-classing, this defines the super-class
-        '@schemaLocation':
-          type: string
-          format: uri
-          description: A URI to a JSON-Schema file that defines additional attributes and relationships
-        '@type':
-          type: string
-          description: When sub-classing, this defines the sub-class entity name
-    ShoppingCart_SubmitOrder:
+    CartTotalPriceRef:
       type: object
       properties:
-        cartItem:
+        description:
+          type: string
+          description: A narrative that explains in detail the semantics of this order item price.
+        name:
+          type: string
+          description: A short descriptive name such as "Subscription price".
+        unitOfMeasure:
+          type: string
+          description: Could be minutes, GB...
+        priceAlteration:
           type: array
           items:
-            $ref: '#/components/schemas/CartItemSubmitOrder'
-        contactMedium:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactMediumSubmitOrder'
+            $ref: '#/components/schemas/PriceAlterationRef'
+        price:
+          $ref: '#/components/schemas/PriceRef'
+    PriceAlterationRef:
+      type: object
+      properties:
+        price:
+          $ref: '#/components/schemas/PriceRef'
+    ProductTermOrderRef:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the productTerm
+        validFor:
+          $ref: '#/components/schemas/TimePeriod'
+          description: productTerm validity period
     ShoppingCart_UpdateOrderResponse:
       type: object
       required:
@@ -1395,6 +1185,216 @@ components:
               type: string
               description: The unique ID identifies the order ID to use when looking up the order.
               example: o220001
+    ShoppingCartListByIDSuccessResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: MADAPI canonical code
+        statusMessage:
+          type: string
+          example: Successful
+        transactionId:
+          type: string
+          description: A trace id for tracking request/response
+          example: '43843948394'
+        data:
+          $ref: '#/components/schemas/ShoppingCartListByIDSuccessResponseData'
+    TimePeriod:
+      type: object
+      description: A period of time, either as a deadline (endDateTime only) a startDateTime only, or both
+      properties:
+        endDateTime:
+          type: string
+          format: date-time
+          description: End of the time period, using IETC-RFC-3339 format
+        startDateTime:
+          type: string
+          format: date-time
+          description: Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end
+    ResourceRefOrder:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        value:
+          type: string
+          description: 'The resource value that can be used to identify a resource with a public key (e.g.: a tel nr, an msisdn)'
+      required:
+      - id
+    ShoppingCart_UpdateSubmitOrderResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          example: '0000'
+          description: MADAPI canonical code
+        statusMessage:
+          type: string
+          example: Successful
+        transactionId:
+          type: string
+          description: A trace id for tracking request/response
+          example: '43843948394'
+        data:
+          $ref: '#/components/schemas/ShoppingCart_UpdateSubmitOrderResponseData'
+    ShoppingCart_UpdateUserInfoResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        statusMessage:
+          type: string
+        supportMessage:
+          type: string
+        transactionId:
+          type: string
+    ProductRef:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: Name of the related entity.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
+    PriceOrder:
+      type: object
+      description: Provides all amounts (tax included, duty free, tax rate), used currency and percentage to apply for Price Alteration.
+      properties:
+        isDiscounted:
+          type: boolean
+          example: false
+        isFinal:
+          type: boolean
+          example: false
+        taxRate:
+          type: number
+          format: float
+          description: Tax rate
+        dutyFreeAmount:
+          $ref: '#/components/schemas/Money'
+          description: All taxes included amount (expressed in the given currency)
+        taxIncludedAmount:
+          $ref: '#/components/schemas/Money'
+          description: All taxes included amount (expressed in the given currency)
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+          example: xtraTimeBalanceAmount
+    ProductOfferingPriceOrder:
+      type: object
+      properties:
+        value:
+          type: string
+          example: 0
+        id:
+          type: string
+          example: manualAdjustmentTotal
+    ShoppingCartListByIDSuccessResponseData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifier of the cart item (generally it is a sequence number 01, 02, 03, ...) in the shopping cart
+        cartItem:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItemRef'
+        cartTotalPrice:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartTotalPriceRef'
+        relatedParty:
+          $ref: '#/components/schemas/RelatedParty'
+    ContactMediumSubmitOrder:
+      type: object
+      properties:
+        emailAddress:
+          type: string
+        socialNetworkId:
+          type: string
+    CartItemOrder:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - INTIAL
+        id:
+          type: string
+        product:
+          $ref: '#/components/schemas/CartItemOrderProduct'
+        itemPrice:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartPriceOrder'
+        '@type':
+          type: string
+    ShoppingCart_UpdateShippingInfo:
+      type: object
+      description: 'Shopping Cart resource is used for the temporarily selection and reservation of product offerings in e-commerce, call center and retail purchase. Shopping cart supports purchase of both physical and digital goods and service (e.g. handset, telecom network service). Shopping Cart contain list of cart items, a reference to customer (partyRole) or contact medium in case customer not exist, and the total items price including promotions
+
+        Skipped properties: id,href,validFor,cartTotalPrice'
+      properties:
+        contactMedium:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactMediumPatchShippingInfo'
+        relatedParty:
+          type: object
+          properties:
+            id:
+              type: string
+              description: This is an identifer for the calling system. eg. MTN App, Online Recharges, No Funds
+    ProductOfferingRef:
+      type: object
+      description: ProductOffering reference. A product offering represents entities that are orderable from the provider of the catalog, this resource includes pricing information.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of a related entity.
+        href:
+          type: string
+          description: Reference of the related entity.
+        name:
+          type: string
+          description: Name of the related entity.
+        '@baseType':
+          type: string
+          description: When sub-classing, this defines the super-class
+        '@schemaLocation':
+          type: string
+          format: uri
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+        '@type':
+          type: string
+          description: When sub-classing, this defines the sub-class entity name
+        '@referredType':
+          type: string
+          description: The actual type of the target instance when needed for disambiguation.
+      required:
+      - id
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
